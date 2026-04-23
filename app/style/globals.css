@@ -1,0 +1,232 @@
+@import "./theme.css";
+@import "./scrollbar.css";
+@import "./animations.css";
+@import "./swiper.css";
+@import "./social-icons.css";
+@import "./mui-inputs.css";
+@import "./datepicker.css";
+@import "./luxury-input.css";
+@import "./select.css";
+
+.hero-text {
+  font-size: 5rem;              /* حجم النص */
+  font-weight: 800;             /* سمك النص */
+  text-align: center;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  
+  /* حدود للنص (stroke) */
+  -webkit-text-stroke: 1px rgb(255, 255, 255);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(255, 247, 247, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.hero-title {
+  font-size: 1.6rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: center;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.hero-p {
+  font-size: 1.2rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: center;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(221, 187, 113, 0.795);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.sc-title {
+  font-size: 1.9rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: left;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(24, 10, 10, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.sc-p {
+  font-size: 1.2rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: left;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(24, 10, 10, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.sc-text {
+  font-size: 1.2rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: left;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(24, 10, 10, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.sc-text-bro {
+  font-size: 1.3rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: left;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(160, 91, 13, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.sc-title-first {
+  font-size: 2.5rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: center;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(24, 10, 10, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.sc-p-first {
+  font-size: 1.6rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: center;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(24, 10, 10, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.about-title {
+  font-size: 2.2rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: center;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.about-p {
+  font-size: 1.5rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: center;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.contact-p {
+  font-size: 1.8rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: left;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.contact-text {
+  font-size: 1.5rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: left;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}
+.trips-text {
+  font-size: 1.3rem;              /* حجم النص */
+  font-weight: 700;             /* سمك النص */
+  text-align: left;           /* توسيط النص */
+  color: transparent;           /* النص شفاف بالكامل */
+  -webkit-background-clip: text;/* يجعل الخلفية تظهر داخل النص */
+  background-clip: text;
+  
+  /* حدود للنص */
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.7);
+
+  /* ظل ثلاثي الأبعاد لإبراز النص */
+  text-shadow:
+    2px 2px 6px rgba(0, 0, 0, 0),
+    -2px -2px 6px rgba(255, 255, 255, 0);
+}

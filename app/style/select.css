@@ -1,0 +1,20 @@
+/* النص داخل الـ Select */
+.MuiSelect-select {
+  color: #c9a34a !important; /* اللون اللي تريده */
+  font-weight: 600 !important;
+}
+
+/* السهم */
+.MuiSelect-icon {
+  color: #999 !important;
+}
+
+/* القائمة المنسدلة (MenuItem) */
+.MuiMenuItem-root {
+  color: #c9a34a !important; /* لون النص داخل القائمة */
+  font-weight: 500 !important;
+}
+.MuiMenuItem-root:hover {
+  background: linear-gradient(to right, #fff3e0, #ffe0b2) !important;
+  color: #b9972f !important;
+}
