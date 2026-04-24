@@ -5,8 +5,8 @@ const Decor = ({ pos }) => {
   const symbolsCount =
     typeof window !== "undefined" && window.innerWidth < 640
       ? 8 // موبايل
-      : window.innerWidth < 1280 
-      ? 24 // تابلت
+      : window.innerWidth < 1400 
+      ? 26 // تابلت
       : window.innerWidth < 1800
       ? 30 // لاب توب
       : 31; // شاشات أكبر (ديسكتوب كبير)
