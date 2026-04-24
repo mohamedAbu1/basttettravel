@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-
+import LogoLetter from "@/components/LogoLetter";
 export default function Packages() {
   const { theme } = useTheme();
 
@@ -64,9 +64,26 @@ export default function Packages() {
       className="w-full max-w-3xl mt-2"
     >
       {/* العنوان */}
-      <h2 className="hero-title text-2xl md:text-3xl mb-8 uppercase">
-        Enjoy with us
-      </h2>
+     
+       <motion.div
+          initial="hidden"
+          animate="visible"
+          style={{  borderRadius: "6px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2 },
+            },
+          }}
+          className="hero-title flex flex-wrap gap-4 justify-center font-[Cinzel] mb-5 text-[32px] lg:text-[34px] xl:text-[60px]"
+        >
+          {["M", "O", "N", "T", "U", "𓂀", "T", "R", "A", "V", "E", "L"].map(
+            (char, i) => (
+              <LogoLetter key={i} char={char} theme={theme} />
+            ),
+          )}
+        </motion.div>
 
       {/* الكروت مع أنيميشن تبديل */}
       <div className="relative">

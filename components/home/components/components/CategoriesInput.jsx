@@ -32,8 +32,8 @@ const CategoriesInput = ({
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="flex flex-wrap gap-3 w-[400px] absolute left-0 top-full mt-2 
-                       bg-[rgba(255,255,255,0.05)] backdrop-blur-md border border-[#C2A878]/50 
-                       rounded-xl shadow-[0_8px_25px_rgba(194,168,120,0.4)] z-50 p-4"
+                       bg-[rgba(255,255,255,0.13)] backdrop-blur-md border border-[#C2A878]/50 
+                       rounded-xl shadow-[0_8px_25px_rgba(194,168,120,0.4)] z-99 p-4"
           >
             {categories.map((cat, i) => (
               <motion.div
@@ -48,7 +48,7 @@ const CategoriesInput = ({
                   ${
                     selectedCategories.includes(cat)
                       ? "bg-gradient-to-r from-[#C2A878] to-[#b5892e] text-black shadow-lg"
-                      : "text-[#C2A878] bg-[rgba(35,35,35,0.4)] hover:bg-[#C2A878]/20 hover:text-white"
+                      : "text-[#C2A878] bg-[rgba(35,35,35,0.69)] hover:bg-[#C2A878]/20 hover:text-white"
                   }`}
               >
                 {cat}

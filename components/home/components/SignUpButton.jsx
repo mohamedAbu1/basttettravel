@@ -122,7 +122,7 @@ export default function SignUpModal() {
               WebkitTextFillColor: "transparent",
             }}
           >
-            WasetTravel
+           Montu Travel
           </h1>
         </div>
 
