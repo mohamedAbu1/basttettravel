@@ -6,7 +6,7 @@ const Decor = ({ pos }) => {
     typeof window !== "undefined" && window.innerWidth < 640
       ? 8 // موبايل
       : window.innerWidth < 1409 
-      ? 26 // تابلت
+      ? 19 // تابلت
       : window.innerWidth < 1800
       ? 30 // لاب توب
       : 31; // شاشات أكبر (ديسكتوب كبير)
