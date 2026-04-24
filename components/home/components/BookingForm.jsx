@@ -12,7 +12,7 @@ export default function BookingForm() {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 2 }}
-      className={`mt-8 ${theme.card} shadow-lg flex flex-col gap-4 w-[80%] max-w-4xl p-6 
+      className={`mt-6 ${theme.card} shadow-lg flex flex-col gap-4 w-[80%] max-w-4xl p-6 
                   bg-transparent backdrop-blur-md border border-white/20 rounded-xl`}
     >
       {/* الحقول */}

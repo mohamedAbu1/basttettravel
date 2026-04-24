@@ -22,7 +22,7 @@ export default function HeroSection() {
         </div>
 
         {/* الفورم والباقات */}
-        <div className="w-full lg:w-[%30] flex flex-col items-center justify-center gap-8 mt-8">
+        <div className="w-full lg:w-[%30] flex flex-col items-center justify-center gap-8 mt-6">
           <BookingForm />
           <Packages />
         </div>

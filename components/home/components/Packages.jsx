@@ -61,7 +61,7 @@ export default function Packages() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 2 }}
-      className="w-full max-w-3xl mt-6"
+      className="w-full max-w-3xl mt-2"
     >
       {/* العنوان */}
       <h2 className="hero-title text-2xl md:text-3xl mb-8 uppercase">

@@ -13,6 +13,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import DividerWithIcon from "../layout/DividerWithIcon";
+import Decor from "../layout/Decor";
 
 const OurSection = () => {
   const router = useRouter();
@@ -125,39 +126,7 @@ const OurSection = () => {
           className="w-full lg:w-1/2 text-start gap-9"
           style={{ paddingLeft: "13px" }}
         >
-             <div className=" absolute top-0 flex justify-around text-5xl text-[#C2A878]">
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-          </div>
+          <Decor pos={"top"}/>
 
           <p className="sc-p text-sm uppercase mb-2 tracking-wide"  style={{
             WebkitTextStroke:
@@ -221,39 +190,8 @@ const OurSection = () => {
           >
             {t("LearnMoreAboutUs")}
           </button>
-             <div className=" absolute bottom-0 flex justify-around text-5xl text-[#C2A878]">
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-            <span>𓎛</span>
-          </div>
+                   <Decor pos={"bottom"}/>
+
 
         </motion.div>
         {/* ✅ Slider with animation */}
