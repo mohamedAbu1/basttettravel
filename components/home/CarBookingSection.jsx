@@ -100,7 +100,7 @@ const CarBookingSection = () => {
           className="flex-1 relative w-full h-80 lg:h-[400px]"
         >
           <Image
-            src="/HomePageImage/car-png-39057.png"
+            src={themeName === "dark" ? "/HomePageImage/20752-5-2014-hyundai-tucson.png":"/HomePageImage/White-Kia-PNG-High-Quality-Image.png"}
             alt="Luxury Car"
             fill
             className="object-contain drop-shadow-2xl"

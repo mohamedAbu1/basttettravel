@@ -53,7 +53,7 @@ const normalizedLang = i18n.language.split("-")[0];
         (Array.isArray(b.reviews) ? b.reviews.length : 0) -
         (Array.isArray(a.reviews) ? a.reviews.length : 0),
     )
-    .slice(0, 6);
+    .slice(0, 7);
 
   const convertPrice = (price, tripCurrency) => {
     let converted = price;
