@@ -76,7 +76,7 @@ export default function Packages() {
               transition: { staggerChildren: 0.2 },
             },
           }}
-          className="hero-title flex flex-wrap gap-4 justify-center font-[Cinzel] mb-5 text-[32px] lg:text-[34px] xl:text-[60px]"
+          className="hero-title flex flex-wrap gap-4 justify-center font-[Cinzel] mb-5 z-[-1]"
         >
           {["M", "O", "N", "T", "U", "𓂀", "T", "R", "A", "V", "E", "L"].map(
             (char, i) => (
@@ -86,7 +86,7 @@ export default function Packages() {
         </motion.div>
 
       {/* الكروت مع أنيميشن تبديل */}
-      <div className="relative">
+      <div className="relative z-[-1]">
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
@@ -94,14 +94,14 @@ export default function Packages() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 z-[-1]"
           >
             {currentPackages.map((pkg) => (
               <motion.div
                 key={pkg.title}
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 200 }}
-                className={`${theme.card} group relative overflow-hidden shadow-lg hover:shadow-2xl`}
+                className={`${theme.card} group relative overflow-hidden shadow-lg hover:shadow-2xl z-[-1]`}
               >
                 <img
                   src={pkg.img}

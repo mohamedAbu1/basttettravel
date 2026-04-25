@@ -16,7 +16,7 @@ export default function LogoLetter({ char, theme }) {
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
       }}
-      className="relative px-[8px] text-center font-extrabold border-2 rounded-lg transition-transform duration-500"
+      className="relative px-[8px] text-center font-extrabold border-2 rounded-lg transition-transform duration-500 z-[-1]"
     >
       {char}
     </motion.span>
