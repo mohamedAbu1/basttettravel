@@ -117,7 +117,10 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
           onClick={() => setOpen(!open)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg flex items-center justify-center ${theme.buttonPrimary}`}
+             className="fixed rounded-[9px] bottom-6 right-6 px-6 py-3 bg-transparent backdrop-blur-md 
+                   border border-[#C2A878] text-[#C2A878] font-semibold tracking-wide 
+                   hover:bg-[#C2A878]/20 hover:text-white transition-all duration-300 
+                   shadow-lg cursor-pointer"
         >
           <FaComments size={22} color="#fff" />
         </motion.button>

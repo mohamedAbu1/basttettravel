@@ -12,7 +12,10 @@ export default function PurchaseButton({ trip }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 left-6 px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2 transition transform hover:scale-105 hover:shadow-2xl z-40 text-white bg-gradient-to-r from-green-500 to-green-600"
+        className="fixed bottom-6 left-6 flex-row rounded-[8px] px-6 py-3 bg-transparent backdrop-blur-md 
+                   border border-[#C2A878] text-[#C2A878] font-semibold tracking-wide 
+                   hover:bg-[#C2A878]/20 hover:text-white transition-all duration-300 
+                   shadow-lg cursor-pointer"
       >
         <FaShoppingCart className="w-5 h-5 animate-bounce" />
         Buy Trip

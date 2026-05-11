@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React from "react";
+import {useState ,useEffect } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -11,23 +11,46 @@ import { useRouter } from "next/navigation";
 // دالة لتشفير الكويري
 const encodeData = (obj) => btoa(JSON.stringify(obj));
 
+// داخل CityCard
+
+
 function CityCard({ city, themeName, theme, language, t }) {
   const router = useRouter();
   const cityName =
     city.name?.[language] || city.name?.["en"] || city.name || "";
+
   const handleExplore = () => {
     const queryObj = {
-      city: [cityName], // ✅ المدينة المختارة
-      category: "all", // ✅ جميع الكاتجري
-      price: "Economy", // ✅ السعر Economy
-      popular: false, // ✅ ليس الأكثر طلباً
+      city: [cityName],
+      category: "all",
+      price: "All",
+      popular: false,
     };
-    const encoded = encodeData(queryObj);
+    const encoded = btoa(JSON.stringify(queryObj));
     router.push(`/trips?data=${encoded}`);
   };
 
+  // ✅ حالة لتبديل الصور
+  const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prev) =>
+        prev === 0 ? 1 : 0
+      );
+    }, 4000); // كل 4 ثواني يتغير
+    return () => clearInterval(interval);
+  }, []);
+
+  const images = city.images?.slice(0, 2) || ["/fallback.jpg", "/fallback.jpg"];
+
   return (
-    <div className="min-w-[250px] p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="min-w-[250px] p-4"
+    >
       <div
         className={`
           relative h-82 rounded-2xl overflow-hidden group cursor-pointer
@@ -36,12 +59,23 @@ function CityCard({ city, themeName, theme, language, t }) {
           hover:scale-[1.05] hover:shadow-2xl hover:-rotate-1
         `}
       >
-        <Image
-          src={city.images?.[0] || "/fallback.jpg"}
-          alt={cityName || "City image"}
-          fill
-          className="object-cover rounded-lg"
-        />
+        {/* ✅ أنيميشن تبديل الصور */}
+        <motion.div
+          key={currentImage}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1 }}
+          className="absolute inset-0"
+        >
+          <Image
+            src={images[currentImage]}
+            alt={cityName || "City image"}
+            fill
+            className="object-cover rounded-lg"
+          />
+        </motion.div>
+
         <div
           className={`
             absolute inset-0 
@@ -63,7 +97,7 @@ function CityCard({ city, themeName, theme, language, t }) {
             {cityName}
           </p>
           <button
-            onClick={handleExplore} // ✅ عند الضغط يتم التحويل
+            onClick={handleExplore}
             className="rounded-[9px] px-3 py-2 
              bg-transparent backdrop-blur-md 
              border border-[#C2A878] 
@@ -75,9 +109,11 @@ function CityCard({ city, themeName, theme, language, t }) {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
+
+
 
 const CitiesSection = () => {
   const { theme, themeName } = useTheme();

@@ -20,7 +20,7 @@ export function QueryProvider({ children }) {
   const [queryState, setQueryState] = useState({
     city: "all",
     category: "all",
-    price: "Economy",
+    price: "All",
     popular: false,
   });
 
@@ -32,7 +32,7 @@ export function QueryProvider({ children }) {
     setQueryState({
       city: "all",
       category: "all",
-      price: "Economy",
+      price: "All",
       popular: false,
     });
   };

@@ -31,7 +31,7 @@ export default function AboutPage() {
         <meta name="keywords" content={meta.keywords} />
       </Head>
       <main
-        className={`relative w-full min-h-screen ${theme.background} ${theme.text} overflow-hidden pt-10`}
+       className="relative flex flex-col min-h-screen justify-center items-center "
       >
         <Header />
         <EgyptianBackground />

@@ -15,12 +15,13 @@ import { useAuth } from "@/context/AuthContext"; // ✅ استدعاء الـ Au
 import Head from "next/head";
 import { useLanguage } from "@/context/LanguageContext";
 import { homeMetadata } from "@/lib/metadata/home";
+import CurrencySelector from "@/components/layout/CurrencySelector";
+import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
 // import { useQueryFilters } from "@/context/QueryContext";
 export default function Home() {
   const { user } = useAuth(); // ✅ جلب المستخدم الحالي
   const { lang } = useLanguage();
   const meta = homeMetadata[lang] || homeMetadata.en;
-    console.log(user?.user_metadata?.role)
 
   return (
     <>
@@ -69,6 +70,8 @@ export default function Home() {
 
         {/* نافذة الدردشة تظهر فقط لو المستخدم مسجل دخول */}
         {user && <ChatWidget />}
+        <CurrencySelector />
+        <ScrollToTopButton />
       </main>
     </>
   );

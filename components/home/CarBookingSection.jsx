@@ -100,7 +100,11 @@ const CarBookingSection = () => {
           className="flex-1 relative w-full h-80 lg:h-[400px]"
         >
           <Image
-            src={themeName === "dark" ? "/HomePageImage/20752-5-2014-hyundai-tucson.png":"/HomePageImage/White-Kia-PNG-High-Quality-Image.png"}
+            src={
+              themeName === "dark"
+                ? "/HomePageImage/20752-5-2014-hyundai-tucson.png"
+                : "/HomePageImage/White-Kia-PNG-High-Quality-Image.png"
+            }
             alt="Luxury Car"
             fill
             className="object-contain drop-shadow-2xl"
@@ -116,20 +120,20 @@ const CarBookingSection = () => {
         >
           <h2
             className={`sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md flex items-center gap-3 justify-center lg:justify-start`}
-          style={{
-            WebkitTextStroke:
-              themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-            textShadow:
-              themeName === "dark"
-                ? "2px 2px 6px rgba(0,0,0,0.6)"
-                : "2px 2px 6px rgba(255,255,255,0.3)",
-          }}
+            style={{
+              WebkitTextStroke:
+                themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
+              textShadow:
+                themeName === "dark"
+                  ? "2px 2px 6px rgba(0,0,0,0.6)"
+                  : "2px 2px 6px rgba(255,255,255,0.3)",
+            }}
           >
             {t("PremiumCarTransfer")}
           </h2>
           <DividerWithIcon />
 
-          <p className="mt-6 text-lg opacity-80 leading-relaxed max-w-xl" >
+          <p className="mt-6 text-lg opacity-80 leading-relaxed max-w-xl">
             {t("Experience")}
           </p>
           {user ? (
@@ -140,12 +144,12 @@ const CarBookingSection = () => {
               onClick={() => {
                 window.dispatchEvent(new CustomEvent("openCarBookingChat"));
               }}
-              className="w-full rounded-[4px] px-6 py-3 mt-4
+              className="w-full mt-8 inline-block px-10 py-4 rounded-full font-bold text-lg shadow-xl transition-transform transform hover:scale-105 
              bg-transparent backdrop-blur-md 
              border border-[#C2A878] 
-             text-[#C2A878] font-semibold tracking-wide
+             text-[#C2A878]  tracking-wide
              hover:bg-[#C2A878]/20 hover:text-white 
-             transition-all duration-300 shadow-lg cursor-pointer"
+             duration-300  cursor-pointer"
             >
               {t("Book")}
             </motion.button>
@@ -154,14 +158,14 @@ const CarBookingSection = () => {
             <motion.p
               variants={fadeInUp}
               className="sc-p-first mt-8 text-lg font-semibold opacity-80 italic text-center lg:text-left"
-               style={{
-            WebkitTextStroke:
-              themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-            textShadow:
-              themeName === "dark"
-                ? "2px 2px 6px rgba(0,0,0,0.6)"
-                : "2px 2px 6px rgba(255,255,255,0.3)",
-          }}
+              style={{
+                WebkitTextStroke:
+                  themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
+                textShadow:
+                  themeName === "dark"
+                    ? "2px 2px 6px rgba(0,0,0,0.6)"
+                    : "2px 2px 6px rgba(255,255,255,0.3)",
+              }}
             >
               Please log in and book your car now ✨
             </motion.p>

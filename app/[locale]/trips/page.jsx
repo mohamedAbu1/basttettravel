@@ -1,7 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/purity */
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TripsFilter from "@/components/trips/TripsFilter";
 import TripsSearch from "@/components/trips/TripsSearch";
 import TripsGrid from "@/components/trips/TripsGrid";
@@ -16,111 +14,96 @@ import { useAuth } from "@/context/AuthContext";
 import Head from "next/head";
 import { useLanguage } from "@/context/LanguageContext";
 import { tripsMetadata } from "@/lib/metadata/trips";
-import { useTheme } from "@/context/ThemeContext";
+import { useTrip } from "@/context/TripContext";
+import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
+import { useQueryFilters } from "@/context/QueryContext";
+import { useRouter } from "next/navigation";
+import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
 
 export default function TripsPage() {
-  const trips = [
-    {
-      title: "Nile Cruise",
-      city: "Cairo",
-      category: "Cruise",
-      price: 500,
-      popular: true,
-      img: "/HomePageImage/pexels-radwa-magdy-1718930-21668633.webp",
-    },
-    {
-      title: "Desert Safari",
-      city: "Siwa",
-      category: "Adventure",
-      price: 300,
-      popular: false,
-      img: "/HomePageImage/pexels-ozgomz-7566890.webp",
-    },
-    {
-      title: "Red Sea Diving",
-      city: "Hurghada",
-      category: "Diving",
-      price: 700,
-      popular: true,
-      img: "/HomePageImage/pexels-ozgomz-7566888.webp",
-    },
-    {
-      title: "Nile Cruise",
-      city: "Cairo",
-      category: "Cruise",
-      price: 500,
-      popular: true,
-      img: "/HomePageImage/pexels-oualid-soussi-2150533856-35050672.webp",
-    },
-    {
-      title: "Desert Safari",
-      city: "Siwa",
-      category: "Adventure",
-      price: 300,
-      popular: false,
-      img: "/HomePageImage/pexels-furknsaglam-1596977-21348185.webp",
-    },
-    {
-      title: "Red Sea Diving",
-      city: "Hurghada",
-      category: "Diving",
-      price: 700,
-      popular: true,
-      img: "/HomePageImage/pexels-yasmine-qasem-1054896-2034684.webp",
-    },
-    {
-      title: "Luxor Temples",
-      city: "Luxor",
-      category: "Historical",
-      price: 400,
-      popular: true,
-      img: "/HomePageImage/luxor-temple.webp",
-    },
-    {
-      title: "Aswan Tour",
-      city: "Aswan",
-      category: "Historical",
-      price: 350,
-      popular: false,
-      img: "/HomePageImage/aswan-tour.webp",
-    },
-    // 🔥 أضف المزيد من الرحلات هنا للتجربة (مثلاً 20 أو 30 رحلة)
-  ];
-
+  const { trips, fetchTrips, loadingTrips } = useTrip();
+  const {
+    cities: allCities,
+    categories: allCategories,
+    loading,
+  } = useCitiesCategories();
   const { lang } = useLanguage();
   const meta = tripsMetadata[lang] || tripsMetadata.en;
   const { user } = useAuth();
-  const { theme, themeName } = useTheme();
+  const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [cardStyle, setCardStyle] = useState("vertical");
-  const tripsPerPage = 9; // ✅ ثابت: 9 رحلات في كل صفحة
+  const tripsPerPage = cardStyle === "vertical" ? 9 : 8;
   const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState({
-    city: "",
-    category: "",
-    price: "",
-    popular: false,
-  });
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  // ✅ القيم من الكويري كونتكست
+  const { city, category, price, popular } = useQueryFilters();
+
+  useEffect(() => {
+    fetchTrips();
+  }, []);
+
+  // ✅ مراقبة حجم الشاشة
+  useEffect(() => {
+    const checkScreen = () => setIsSmallScreen(window.innerWidth <= 1024);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+  if (loadingTrips)
+    return <p className="text-center text-gray-500">Loading trips...</p>;
 
   // ✅ فلترة الرحلات
   const filteredTrips = trips.filter((trip) => {
     const lowerSearch = search.trim().toLowerCase();
-
     const matchesSearch =
       !lowerSearch ||
-      (trip.title && trip.title.toLowerCase().includes(lowerSearch)) ||
-      (trip.city && trip.city.toLowerCase().includes(lowerSearch)) ||
-      (trip.category && trip.category.toLowerCase().includes(lowerSearch));
+      (trip.title?.[lang] &&
+        trip.title[lang].toLowerCase().includes(lowerSearch));
 
-    const matchesCity = filters.city ? trip.city === filters.city : true;
-    const matchesCategory = filters.category
-      ? trip.category === filters.category
-      : true;
-    const matchesPrice = filters.price
-      ? trip.price <= parseInt(filters.price)
-      : true;
-    const matchesPopular = filters.popular ? trip.popular : true;
+    const tripCities =
+      trip.trip_cities
+        ?.map((c) => c?.cities?.name?.[lang] || c?.cities?.name?.en || "")
+        .filter((n) => n !== "") || [];
+
+    const matchesCity =
+      city === "all"
+        ? true
+        : Array.isArray(city)
+          ? tripCities.some((c) =>
+              city.map((x) => x.toLowerCase()).includes(c.toLowerCase()),
+            )
+          : tripCities.some((c) => c.toLowerCase() === city.toLowerCase());
+
+    const tripCategories =
+      trip.trip_categories?.map((cat) => {
+        const catObj = allCategories.find((c) => c.id === cat.category_id);
+        return catObj?.name?.[lang] || catObj?.name?.en || catObj?.name;
+      }) || [];
+    const matchesCategory =
+      category === "all"
+        ? true
+        : Array.isArray(category)
+          ? tripCategories.some((c) => category.includes(c))
+          : tripCategories.includes(category);
+
+    const ranges = {
+      Economy: { min: 0, max: 199 },
+      Standard: { min: 200, max: 599 },
+      Luxury: { min: 600, max: Infinity },
+    };
+    const selectedRange = ranges[price];
+    const matchesPrice =
+      price === "All" || !price
+        ? true
+        : selectedRange
+          ? trip.price >= selectedRange.min && trip.price <= selectedRange.max
+          : true;
+
+    const matchesPopular = popular ? trip.isPopular : true;
 
     return (
       matchesSearch &&
@@ -131,24 +114,10 @@ export default function TripsPage() {
     );
   });
 
-  // ✅ الباجينيشن
   const indexOfLastTrip = currentPage * tripsPerPage;
   const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
   const currentTrips = filteredTrips.slice(indexOfFirstTrip, indexOfLastTrip);
   const totalPages = Math.ceil(filteredTrips.length / tripsPerPage);
-  const fadeUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
-    },
-  };
-
-  const staggerContainer = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.2 } },
-  };
 
   return (
     <>
@@ -157,67 +126,84 @@ export default function TripsPage() {
         <meta name="description" content={meta.description} />
         <meta name="keywords" content={meta.keywords} />
       </Head>
+
       <main className="relative flex flex-col min-h-screen justify-center items-center">
         <EgyptianBackground />
         <Header />
 
-        {/* المحتوى الرئيسي */}
-        <motion.section
-          style={{ marginTop: "105px", paddingBottom: "20px" }}
-          className={`container flex flex-1 gap-6 px-6 relative z-10`}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
-        >
-          {/* الفلتر */}
-          <motion.div variants={fadeUp} className="w-1/4">
-            <TripsFilter filters={filters} setFilters={setFilters} />
+        {isSmallScreen ? (
+          // ✅ واجهة بديلة 3D للهواتف والشاشات الصغيرة
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, rotateY: 90 }}
+            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="flex flex-col items-center justify-center h-[70vh] text-center gap-6"
+          >
+            <h2 className="text-4xl font-extrabold text-[#c9a34a] drop-shadow-lg">
+              🚫 This page is not available on phones.
+            </h2>
+            <p className="text-lg text-gray-600">
+              You should go to the homepage to follow your trips
+            </p>
+            <button
+              onClick={() => router.push("/")}
+              className="px-6 py-3 rounded-lg bg-[#c9a34a] text-white font-bold shadow-lg hover:bg-yellow-600 transition"
+            >
+              Return to home page
+            </button>
           </motion.div>
+        ) : (
+          // ✅ التصميم العادي للرحلات
+          <motion.section
+            style={{ marginTop: "105px", paddingBottom: "20px" }}
+            className="container flex flex-1 gap-6 px-6 relative z-10"
+          >
+            <div className="w-1/4">
+              <TripsFilter
+                allCities={allCities}
+                allCategories={allCategories}
+                loading={loading}
+              />
+            </div>
 
-          {/* البحث + الرحلات */}
-          <motion.div variants={fadeUp} className="flex-1 flex flex-col gap-6">
-            <TripsSearch
-              search={search}
-              setSearch={setSearch}
-              cardStyle={cardStyle}
-              setCardStyle={setCardStyle}
-            />
-            <TripsGrid
-              trips={currentTrips}
-              cardStyle={cardStyle}
-              search={search}
-            />
+            <div className="flex-1 flex flex-col gap-6">
+              <TripsSearch
+                search={search}
+                setSearch={setSearch}
+                cardStyle={cardStyle}
+                setCardStyle={setCardStyle}
+              />
+              <TripsGrid trips={currentTrips} cardStyle={cardStyle} />
 
-            {/* الباجينيشن */}
-            {totalPages && (
-              <motion.div
-                variants={fadeUp}
-                className="flex justify-center gap-2 mt-4"
-              >
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className="rounded-[4px] px-2 py-1 
-             bg-transparent backdrop-blur-md 
-             border border-[#C2A878] 
-             text-[#C2A878] font-semibold tracking-wide
-             hover:bg-[#C2A878]/20 hover:text-white 
-             transition-all duration-300 shadow-lg cursor-pointer"
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </motion.div>
-        </motion.section>
+              {totalPages > 1 && (
+                <div className="flex justify-center gap-2 mt-4">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setCurrentPage(i + 1);
+                        window.scrollTo({ top: 30, behavior: "smooth" }); // ✅ يرجع الاسكرول عند 30
+                      }}
+                      className={`px-3 py-1 rounded-lg font-bold cursor-pointer transition ${
+                        currentPage === i + 1
+                          ? "bg-[#c9a34a] text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.section>
+        )}
 
         <Footer />
         <SignUpButton />
         <LoginModal />
         {user && <ChatWidget />}
+        {user && <AdminDashboardButton />}
       </main>
     </>
   );

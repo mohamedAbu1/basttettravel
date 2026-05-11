@@ -14,7 +14,7 @@ import DividerWithIcon from "@/components/layout/DividerWithIcon";
 
 export default function TopReviewsSection() {
   const { allReviews, likes } = useReviews();
-  const { theme,themeName} = useTheme();
+  const { theme, themeName } = useTheme();
   const { t } = useTranslation("home");
 
   // ✅ تأكد أن المصفوفة صحيحة
@@ -60,14 +60,14 @@ export default function TopReviewsSection() {
       <EgyptianBackground />
       <h2
         className={`sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-left`}
-          style={{
-            WebkitTextStroke:
-              themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-            textShadow:
-              themeName === "dark"
-                ? "2px 2px 6px rgba(0,0,0,0.6)"
-                : "2px 2px 6px rgba(255,255,255,0.3)",
-          }}
+        style={{
+          WebkitTextStroke:
+            themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
+          textShadow:
+            themeName === "dark"
+              ? "2px 2px 6px rgba(0,0,0,0.6)"
+              : "2px 2px 6px rgba(255,255,255,0.3)",
+        }}
       >
         <span className="inline-block transform scale-x-[-1] mr-4"> 𓅓</span>
         {t("h6")}
@@ -92,7 +92,20 @@ export default function TopReviewsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className={`flex flex-col gap-6 p-8 mx-4 ${theme.card} ${theme.shadow} rounded-2xl min-h-[220px]`}
+                className={`flex flex-col gap-6 p-8 mx-4 rounded-2xl min-h-[220px]`}
+                style={{
+                  background:
+                    themeName === "dark"
+                      ? "rgba(255, 255, 255, 0.08)" // خلفية شفافة في الوضع الداكن
+                      : "rgba(255, 255, 255, 0.35)", // خلفية شفافة في الوضع الفاتح
+                  backdropFilter: "blur(12px)", // تأثير الزجاج
+                  WebkitBackdropFilter: "blur(12px)", // دعم Safari
+                  border: "1px solid rgba(255, 255, 255, 0.2)", // حدود ناعمة
+                  boxShadow:
+                    themeName === "dark"
+                      ? "0 8px 24px rgba(0,0,0,0.4)"
+                      : "0 8px 24px rgba(0,0,0,0.15)",
+                }}
               >
                 {/* Header */}
                 <div className="flex items-center gap-4 border-b pb-3">
@@ -151,7 +164,7 @@ export default function TopReviewsSection() {
                   </div>
 
                   {/* اللايكات */}
-                  <div className="flex items-center gap-2 text-red-600 font-semibold text-sm bg-red-50 px-3 py-1 rounded-full shadow-sm">
+                  <div className="flex items-center gap-2 text-red-600 font-semibold text-sm bg-red-0 px-3 py-1 rounded-full shadow-sm">
                     <FaHeart />
                     <span>{rev.likesCount}</span>
                   </div>

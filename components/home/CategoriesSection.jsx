@@ -27,20 +27,26 @@ function CategoryCard({ cat, themeName, language }) {
       ? cat.name?.[language] || cat.name?.en || cat.name
       : cat.name;
 
-  console.log("🔤 اللغة المستخدمة:", language);
-  console.log("📌 اسم الكاتيجري المعروض:", displayName);
+const luxuryNames = [
+  "Luxusreisen",
+  "Luxury Tours",
+  "Tours de lujo",
+  "Voyages de luxe",
+  "Tour di lusso",
+  "豪华旅游"
+];
 
-  console.log(displayName);
-  const handleClick = () => {
-    const queryObj = {
-      city: "all",
-      category: [displayName],
-      price: "Economy",
-      popular: false,
-    };
-    const encoded = encodeData(queryObj);
-    router.push(`/trips?data=${encoded}`);
+
+const handleClick = () => {
+  const queryObj = {
+    city: "all",
+    category: [displayName],
+    price: luxuryNames.includes(displayName) ? "Luxury" : "All",
+    popular: false,
   };
+  const encoded = encodeData(queryObj);
+  router.push(`/trips?data=${encoded}`);
+};
   return (
     <div
       onClick={handleClick}
@@ -103,14 +109,12 @@ const CategoriesSection = () => {
   const { theme, themeName } = useTheme();
   const { t, i18n } = useTranslation("home");
   const { categories, loading } = useCitiesCategories();
-  console.log(categories);
   const [index, setIndex] = useState(0);
   const getLangKey = (lang) => lang.split("-")[0];
   const normalizedLang = getLangKey(i18n.language);
   // هنا بتاخد اللغة كاملة زي "zh-CN"
   const langKey = i18n.language;
-  console.log("🌐 اللغة من i18n:", i18n.language);
-  console.log("🌐 المفتاح المستخدم:", langKey);
+
 
   const looped = [...categories, ...categories];
   const cardWidth = 220;

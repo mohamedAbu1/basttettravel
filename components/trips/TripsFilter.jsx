@@ -7,77 +7,52 @@ import {
   FaTags,
   FaFire,
 } from "react-icons/fa";
-import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import Divider from "@/components/layout/Divider";
-import { useQueryFilters } from "@/context/QueryContext";
 import { usePurchase } from "@/context/PurchaseContext";
+import { useQueryFilters } from "@/context/QueryContext"; // ✅ استخدام الكويري كونتكست
 
-export default function TripsFilter() {
-  const {
-    cities: allCities,
-    categories: allCategories,
-    loading,
-  } = useCitiesCategories();
-  const { i18n } = useTranslation();
+export default function TripsFilter({ allCities, allCategories, loading }) {
+  const { i18n, t } = useTranslation("trips");
   const normalizedLang = i18n.language.split("-")[0];
-  const { t } = useTranslation("trips");
-  const { theme, themeName } = useTheme();
-
-  // ✅ القيم مباشرة من الكويري كونتكست
-  const { city, category, price, popular, updateValue } = useQueryFilters();
-
-  // ✅ العملة من PurchaseContext
+  const { themeName } = useTheme();
   const { currency } = usePurchase();
 
-  // ✅ تعديل الدالة بحيث تشيل كلمة "all" عند أول اختيار
-  const handleCheckboxChange = (type, value) => {
-    let current = (type === "city" ? city : category) || [];
+  // ✅ القيم من الكويري كونتكست
+  const { city, category, price, popular, updateValue } = useQueryFilters();
 
-    if (current === "all" || current.includes("all")) {
-      current = [];
-    }
-
-    if (current.includes(value)) {
-      updateValue(
-        type,
-        current.filter((v) => v !== value),
-      );
-    } else {
-      updateValue(type, [...current, value]);
-    }
-  };
+  if (loading)
+    return <p className="text-center text-gray-500">{t("Loading")}</p>;
 
   // ✅ أسعار بالدولار كـ base
   const rangesUSD = [
-    { label: "0 - 900", value: "Economy", min: 0, max: 900 },
-    { label: "901 - 1500", value: "Standard", min: 901, max: 1500 },
-    { label: "1500+", value: "Luxury", min: 1501, max: Infinity },
+    { label: "0 - 199", value: "Economy" },
+    { label: "200 - 599", value: "Standard" },
+    { label: "600+", value: "Luxury" },
   ];
 
-  // ✅ معدل التحويل (مثال: 1 USD = 0.85 EUR)
   const conversionRate = 0.85;
 
-  // ✅ تحويل الأسعار حسب العملة
-  const priceRanges =
-    currency === "EUR"
+  // ✅ إضافة خيار All
+  const priceRanges = [
+    { label: t("All"), value: "All" },
+    ...(currency === "EUR"
       ? rangesUSD.map((r) => ({
           ...r,
-          label:
-            r.max === Infinity
-              ? `${(r.min * conversionRate).toFixed(0)}+ €`
-              : `${(r.min * conversionRate).toFixed(0)} - ${(r.max * conversionRate).toFixed(0)} €`,
+          label: r.label.includes("+")
+            ? `${parseInt(r.label) * conversionRate}+ €`
+            : r.label
+                .split("-")
+                .map((n) => `${(parseInt(n) * conversionRate).toFixed(0)} €`)
+                .join(" - "),
         }))
       : rangesUSD.map((r) => ({
           ...r,
-          label: r.max === Infinity ? `${r.min}+ $` : `${r.min} - ${r.max} $`,
-        }));
-
-  if (loading) {
-    return <p className="text-center text-gray-500">{t("Loading")}</p>;
-  }
+          label: r.label.includes("+") ? `${r.label} $` : `${r.label} $`,
+        }))),
+  ];
 
   const fadeUp = {
     hidden: { opacity: 0, y: 30 },
@@ -88,53 +63,25 @@ export default function TripsFilter() {
     },
   };
 
-  const staggerContainer = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.2 } },
-  };
-
   return (
     <motion.aside
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
-      variants={staggerContainer}
-      style={{border:"1px solid #C2A878",borderRadius:"22px"}} 
-      className={`p-6 rounded-xl shadow-lg transition `}
+      variants={fadeUp}
+      className={`p-6 rounded-xl shadow-lg transition ${
+        themeName === "dark"
+          ? "bg-gradient-to-br from-[#0a0a0a] via-[#111] to-[#1a1a1a] text-[#b5892e] border border-[#c9a34a]/40 "
+          : "bg-white/0 border border-[#c9a34a]/30 text-[#1a1a1a]"
+      }`}
     >
-      <motion.h3
-        variants={fadeUp}
-        className="trips-text text-xl font-bold mb-6 text-[#c9a34a]"
-        style={{
-          WebkitTextStroke:
-            themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-          textShadow:
-            themeName === "dark"
-              ? "2px 2px 6px rgba(0,0,0,0.6)"
-              : "2px 2px 6px rgba(255,255,255,0.3)",
-        }}
-      >
-        {t("Filters")}
-      </motion.h3>
+      <h3 className="text-xl font-bold mb-6 text-[#c9a34a]">{t("Filters")}</h3>
 
-      <motion.div variants={staggerContainer} className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8">
         {/* المدن */}
-        <motion.div variants={fadeUp}>
-          <label className=" flex items-center gap-2 font-semibold mb-3 text-[#5C4B3B]">
-            <FaMapMarkerAlt />{" "}
-            <span
-              className="trips-text"
-              style={{
-                WebkitTextStroke:
-                  themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-                textShadow:
-                  themeName === "dark"
-                    ? "2px 2px 6px rgba(0,0,0,0.6)"
-                    : "2px 2px 6px rgba(255,255,255,0.3)",
-              }}
-            >
-              {t("Cities")} :
-            </span>
+        <div>
+          <label className="flex items-center gap-2 font-semibold mb-3 text-[#c9a34a]">
+            <FaMapMarkerAlt /> {t("Cities")} :
           </label>
           <div className="grid grid-cols-2 gap-2 ml-6">
             {allCities.map((cityObj) => {
@@ -143,143 +90,106 @@ export default function TripsFilter() {
                 cityObj.name?.["en"] ||
                 cityObj.name;
               return (
-                <motion.label
-                  variants={fadeUp}
+                <label
                   key={cityObj.id ?? cityName}
-                  className="flex items-center gap-2 cursor-pointer hover:text-[#5C4B3B] transition"
+                  className="flex items-center gap-2 cursor-pointer hover:text-[#c9a34a] transition"
                 >
                   <input
                     type="checkbox"
                     className="accent-[#c9a34a] cursor-pointer"
                     checked={
-                      city === "all" || city?.includes(cityName) || false
+                      city === "all"
+                        ? true
+                        : Array.isArray(city)
+                        ? city.includes(cityName)
+                        : city === cityName
                     }
-                    onChange={() => handleCheckboxChange("city", cityName)}
+                    onChange={() => updateValue("city", cityName)}
                   />
                   {cityName}
-                </motion.label>
+                </label>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         <Divider fadeUp={fadeUp} themeName={themeName} />
 
         {/* الكاتجري */}
-        <motion.div variants={fadeUp}>
-          <label className="flex items-center gap-2 font-semibold mb-3 text-[#5C4B3B]">
-            <FaTags />{" "}
-            <span
-              className="trips-text"
-              style={{
-                WebkitTextStroke:
-                  themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-                textShadow:
-                  themeName === "dark"
-                    ? "2px 2px 6px rgba(0,0,0,0.6)"
-                    : "2px 2px 6px rgba(255,255,255,0.3)",
-              }}
-            >
-              {t("Categories")} :
-            </span>
+        <div>
+          <label className="flex items-center gap-2 font-semibold mb-3 text-[#c9a34a]">
+            <FaTags /> {t("Categories")} :
           </label>
           <div className="grid grid-cols-2 gap-2 ml-6">
             {allCategories.map((cat) => {
               const categoryName =
                 cat.name?.[normalizedLang] || cat.name?.["en"] || cat.name;
               return (
-                <motion.label
-                  variants={fadeUp}
+                <label
                   key={cat.id ?? categoryName}
-                  className="flex items-center gap-2 cursor-pointer hover:text-[#5C4B3B] transition"
+                  className="flex items-center gap-2 cursor-pointer hover:text-[#c9a34a] transition"
                 >
                   <input
                     type="checkbox"
                     className="accent-[#c9a34a] cursor-pointer"
                     checked={
-                      category === "all" ||
-                      category?.includes(categoryName) ||
-                      false
+                      category === "all"
+                        ? true
+                        : Array.isArray(category)
+                        ? category.includes(categoryName)
+                        : category === categoryName
                     }
-                    onChange={() =>
-                      handleCheckboxChange("category", categoryName)
-                    }
+                    onChange={() => updateValue("category", categoryName)}
                   />
                   {categoryName}
-                </motion.label>
+                </label>
               );
             })}
           </div>
-        </motion.div>
+        </div>
 
         <Divider fadeUp={fadeUp} themeName={themeName} />
 
         {/* السعر */}
-        <motion.div variants={fadeUp}>
-          <label className="flex items-center gap-2 font-semibold mb-3 text-[#5C4B3B]">
+        <div>
+          <label className="flex items-center gap-2 font-semibold mb-3 text-[#c9a34a]">
             {currency === "USD" ? <FaDollarSign /> : <FaEuroSign />}{" "}
-            <span
-              className="trips-text"
-              style={{
-                WebkitTextStroke:
-                  themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-                textShadow:
-                  themeName === "dark"
-                    ? "2px 2px 6px rgba(0,0,0,0.6)"
-                    : "2px 2px 6px rgba(255,255,255,0.3)",
-              }}
-            >
-              {t("PriceRange")} :
-            </span>
+            {t("PriceRange")} :
           </label>
           <div className="flex flex-col gap-2 ml-6">
             {priceRanges.map((range) => (
-              <motion.label
-                variants={fadeUp}
+              <label
                 key={range.value}
-                className="flex items-center gap-2 cursor-pointer hover:text-[#5C4B3B] transition"
+                className="flex items-center gap-2 cursor-pointer hover:text-[#c9a34a] transition"
               >
                 <input
                   type="radio"
                   name="priceRange"
-                  className="accent-[#5C4B3B] cursor-pointer"
-                  checked={price === range.value}
+                  className="accent-[#c9a34a] cursor-pointer"
+                  checked={price === range.value} // ✅ هنا لو price = "All" يتحدد تلقائيًا
                   onChange={() => updateValue("price", range.value)}
                 />
                 {range.label}
-              </motion.label>
+              </label>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         <Divider fadeUp={fadeUp} themeName={themeName} />
 
         {/* الأكثر طلباً */}
-        <motion.div variants={fadeUp}>
-          <label className="flex items-center gap-2 font-semibold cursor-pointer text-[#5C4B3B] hover:text-[#5C4B3B] transition">
-            <FaFire />
-            <span
-              className="trips-text"
-              style={{
-                WebkitTextStroke:
-                  themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-                textShadow:
-                  themeName === "dark"
-                    ? "2px 2px 6px rgba(0,0,0,0.6)"
-                    : "2px 2px 6px rgba(255,255,255,0.3)",
-              }}
-            >
-              {t("MostPopular")}
-            </span>
+        <div>
+          <label className="flex items-center gap-2 font-semibold cursor-pointer text-[#c9a34a] hover:text-[#c9a34a] transition">
+            <FaFire /> {t("MostPopular")}
             <input
               type="checkbox"
-              className="ml-2 accent-[#5C4B3B] cursor-pointer"
+              className="ml-2 accent-[#c9a34a] cursor-pointer"
               checked={popular === true}
               onChange={(e) => updateValue("popular", e.target.checked)}
             />
           </label>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </motion.aside>
   );
 }

@@ -101,6 +101,7 @@ const OurSection = () => {
               "/Luxor/pexels-elenav-2011499497-29046654.webp",
               "/Luxor/WhatsApp Image 2025-12-31 at 11.30.42 AM.webp",
               "/Aswan/pexels-axp-photography-500641970-18991592.webp",
+              "/Luxor/wasdwaw.webp",
             ].map((imgSrc, index) => (
               <SwiperSlide key={index}>
                 <div className="w-full h-[85vh]">
@@ -223,6 +224,7 @@ const OurSection = () => {
               "/Luxor/pexels-elenav-2011499497-29046654.webp",
               "/Luxor/WhatsApp Image 2025-12-31 at 11.30.42 AM.webp",
               "/Aswan/pexels-axp-photography-500641970-18991592.webp",
+              "/Luxor/wasdwaw.webp",
             ].map((imgSrc, index) => (
               <SwiperSlide key={index}>
                 <div className="w-full h-[85vh]">

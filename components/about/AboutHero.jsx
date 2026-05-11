@@ -10,7 +10,7 @@ export default function AboutHero() {
   const { t } = useTranslation("about");
 
   return (
-    <section className="relative z-10 py-20 px-6">
+    <section className="relative z-10 py-20 px-6 mt-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
          <motion.div
           initial={{ opacity: 0, x: 60 }}
@@ -20,7 +20,7 @@ export default function AboutHero() {
           className="relative w-full h-80 lg:h-[460px] rounded-2xl overflow-hidden shadow-2xl"
         >
           <Image
-            src="/Aswan/pexels-radwa-magdy-1718930-28144568.webp"
+            src={`${themeName === "dark" ? "/Aswan/pexels-radwa-magdy-1718930-28144568.webp" : "/Aswan/pexels-girlvsglobe86-300284270-32044045.webp"}`}
             alt="WasetTravel Luxury Experience"
             fill
             className="object-cover"
@@ -81,8 +81,8 @@ export default function AboutHero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative w-full h-80 lg:h-[460px] rounded-2xl overflow-hidden shadow-2xl"
         >
-          <Image
-            src="/Aswan/pexels-radwa-magdy-1718930-28144568.webp"
+         <Image
+            src={`${themeName === "dark" ? "/Aswan/pexels-radwa-magdy-1718930-28144568.webp" : "/Aswan/pexels-girlvsglobe86-300284270-32044045.webp"}`}
             alt="WasetTravel Luxury Experience"
             fill
             className="object-cover"
