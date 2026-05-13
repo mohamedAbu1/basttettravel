@@ -49,9 +49,9 @@ export default function TripPage({ params }) {
       p.user_id === user?.id &&
       p.status !== "Cancelled",
   );
-
+console.log(trip)
   return (
-    <main className={`min-h-screen relative ${theme.background} ${theme.text}`}>
+    <main className={`min-h-screen relative  ${theme.text}`}>
       <Header />
       <EgyptianBackground />
 

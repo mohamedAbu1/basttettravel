@@ -25,7 +25,7 @@ export default function AdditionalDetails({
   guideLanguages,
   setGuideLanguages,
 }) {
-  const { themeName } = useTheme();
+  const { theme } = useTheme(); // ✅ جلب الثيم
 
   const availableLanguages = [
     "English",
@@ -48,16 +48,11 @@ export default function AdditionalDetails({
     }
   };
 
-  // ✅ توليد قائمة من 1 إلى 100
   const options = Array.from({ length: 100 }, (_, i) => i + 1);
 
   return (
-    <div className="mb-6 border-b border-gray-300/30 pb-4">
-      <h3
-        className={`text-lg font-semibold mb-3 ${
-          themeName === "dark" ? "text-[#c9a34a]" : "text-[#11111194]"
-        }`}
-      >
+    <div className={`mb-6 p-4 border-b ${theme.border}`}>
+      <h3 className={`text-lg font-semibold mb-3 ${theme.title}`}>
         Additional Details
       </h3>
 
@@ -71,20 +66,22 @@ export default function AdditionalDetails({
               onChange={() => setHasChildren(!hasChildren)}
               className="accent-[#c9a34a]"
             />
-            <FaChild className="text-[#c9a34a]" />{" "}
-            <span>Traveling with children</span>
+            <FaChild className={theme.icon} />
+            <span className={theme.subText}>Traveling with children</span>
           </label>
 
           {hasChildren && (
-            <div className="ml-6 mb-3 flex items-center gap-2">
-              <label className="font-medium">Number of children:</label>
+            <div className="ml-6 p-3 flex items-center gap-2">
+              <label className={`font-medium ${theme.subText}`}>
+                Number of children:
+              </label>
               <select
                 value={childrenCount}
                 onChange={(e) => setChildrenCount(Number(e.target.value))}
-                className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`p-2 rounded focus:outline-none focus:ring-2 ${theme.border} ${theme.text}`}
               >
                 {options.map((num) => (
-                  <option key={num} value={num} style={{backgroundColor:"#999"}}>
+                  <option key={num} value={num}>
                     {num}
                   </option>
                 ))}
@@ -102,13 +99,15 @@ export default function AdditionalDetails({
               onChange={() => setHasPets(!hasPets)}
               className="accent-[#c9a34a]"
             />
-            <FaDog className="text-[#c9a34a]" />{" "}
-            <span>Traveling with pets</span>
+            <FaDog className={theme.icon} />
+            <span className={theme.subText}>Traveling with pets</span>
           </label>
 
           {hasPets && (
-            <div className="ml-6 mb-3">
-              <label className="font-medium block mb-2">Select pets:</label>
+            <div className="ml-6 p-3">
+              <label className={`font-medium block mb-2 ${theme.subText}`}>
+                Select pets:
+              </label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -122,7 +121,7 @@ export default function AdditionalDetails({
                       )
                     }
                   />
-                  <FaCat className="text-[#c9a34a]" /> Cat
+                  <FaCat className={theme.icon} /> Cat
                 </label>
 
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -137,7 +136,7 @@ export default function AdditionalDetails({
                       )
                     }
                   />
-                  <FaDog className="text-[#c9a34a]" /> Dog
+                  <FaDog className={theme.icon} /> Dog
                 </label>
               </div>
             </div>
@@ -153,14 +152,16 @@ export default function AdditionalDetails({
               onChange={() => setHasGuide(!hasGuide)}
               className="accent-[#c9a34a]"
             />
-            <FaUserTie className="text-[#c9a34a]" /> <span>Tour Guide</span>
+            <FaUserTie className={theme.icon} />
+            <span className={theme.subText}>Tour Guide</span>
           </label>
 
           {hasGuide && (
-            <div className="ml-6 mb-3">
-              <label className="font-medium block mb-2 flex items-center gap-2">
-                <FaLanguage className="text-[#c9a34a]" /> Select up to 2
-                languages:
+            <div className="ml-6 p-3">
+              <label
+                className={`font-medium block mb-2 flex items-center gap-2 ${theme.subText}`}
+              >
+                <FaLanguage className={theme.icon} /> Select up to 2 languages:
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {availableLanguages.map((lang) => (
@@ -184,16 +185,18 @@ export default function AdditionalDetails({
         {/* حجم المجموعة */}
         <div className="flex flex-col items-center gap-2">
           <div className="flex flex-row items-center gap-2">
-            <FaUsers className="text-[#c9a34a]" />
-            <label className="block mb-1 font-medium">Group Size</label>
+            <FaUsers className={theme.icon} />
+            <label className={`block mb-1 font-medium ${theme.subText}`}>
+              Group Size
+            </label>
           </div>
           <select
             value={groupSize}
             onChange={(e) => setGroupSize(Number(e.target.value))}
-            className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`p-2 rounded focus:outline-none focus:ring-2 ${theme.border} ${theme.text}`}
           >
             {options.map((num) => (
-              <option key={num} value={num} style={{backgroundColor:"#999"}}>
+              <option key={num} value={num}>
                 {num}
               </option>
             ))}

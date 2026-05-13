@@ -14,7 +14,7 @@ import DividerWithIcon from "@/components/layout/DividerWithIcon";
 
 export default function TopReviewsSection() {
   const { allReviews, likes } = useReviews();
-  const { theme, themeName } = useTheme();
+  const { theme } = useTheme();
   const { t } = useTranslation("home");
 
   const safeReviews = Array.isArray(allReviews) ? allReviews : [];
@@ -35,31 +35,42 @@ export default function TopReviewsSection() {
     );
   };
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 700,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    arrows: false,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
-    ],
-  };
+const settings = {
+  dots: true,
+  infinite: true,
+  speed: 700,
+  slidesToShow: 3, // ✅ الكمبيوتر: 3 كروت
+  slidesToScroll: 1,
+  autoplay: true,
+  autoplaySpeed: 5000,
+  arrows: false,
+  responsive: [
+    {
+      breakpoint: 1024, // أقل من 1024px (تابلت)
+      settings: {
+        slidesToShow: 2, // ✅ يعرض 2 كروت
+      },
+    },
+    {
+      breakpoint: 640, // أقل من 640px (موبايل)
+      settings: {
+        slidesToShow: 1, // ✅ يعرض كارت واحد
+      },
+    },
+  ],
+};
+
 
   return (
-    <section className={`py-20 px-8 ${theme.background} ${theme.text} w-screen max-w-full`}>
+    <section
+      className={`py-20 px-8 ${theme.background} ${theme.text} w-screen max-w-full`}
+    >
       <EgyptianBackground />
- <h2
-  className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-left text-gradient"
->
-  <span className="inline-block transform scale-x-[-1] mr-4">𓅓</span>
-  {t("h6")}
-  <span className="inline-block ml-4">𓅓</span>
-</h2>
+      <h2 className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-left text-gradient">
+        <span className="inline-block transform scale-x-[-1] mr-4">𓅓</span>
+        {t("h6")}
+        <span className="inline-block ml-4">𓅓</span>
+      </h2>
 
       <DividerWithIcon />
 
@@ -79,7 +90,7 @@ export default function TopReviewsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className={`flex flex-col gap-6 p-8 mx-4 rounded-2xl min-h-[220px] ${theme.card}`}
+                className={`flex flex-col gap-6 p-8 ml-4 mx-6 my-4 rounded-2xl min-h-[260px] ${theme.card}`} // ✅ مسافة بين الكروت
                 style={{
                   backdropFilter: "blur(12px)",
                   WebkitBackdropFilter: "blur(12px)",
@@ -100,7 +111,9 @@ export default function TopReviewsSection() {
                     <FaUserCircle size={64} className={theme.icon} />
                   )}
                   <div>
-                    <h3 className={`font-bold text-lg ${theme.title} capitalize`}>
+                    <h3
+                      className={`font-bold text-lg ${theme.title} capitalize`}
+                    >
                       {rev.name || "Anonymous"}
                     </h3>
                     <div className="flex gap-1">
@@ -113,8 +126,13 @@ export default function TopReviewsSection() {
 
                 {/* Body */}
                 <div className="relative flex-1 mt-6">
-                  <FaQuoteLeft className={`absolute top-0 left-0 text-3xl opacity-20 ${theme.icon}`} />
-                  <p className={`italic leading-relaxed text-base pl-10 ${theme.subText}`} style={{ textAlign: "justify" }}>
+                  <FaQuoteLeft
+                    className={`absolute top-0 left-0 text-3xl opacity-20 ${theme.icon}`}
+                  />
+                  <p
+                    className={`italic leading-relaxed text-base pl-10 ${theme.subText}`}
+                    style={{ textAlign: "justify" }}
+                  >
                     {comment}
                   </p>
                   {rev.comment?.length > 150 && (
@@ -132,14 +150,18 @@ export default function TopReviewsSection() {
 
                 {/* Footer */}
                 <div className="flex justify-between items-center mt-6 border-t pt-4">
-                  <div className={`flex items-center gap-2 text-sm ${theme.subText}`}>
+                  <div
+                    className={`flex items-center gap-2 text-sm ${theme.subText}`}
+                  >
                     <span>
                       {rev.created_at
                         ? format(new Date(rev.created_at), "dd MMM yyyy")
                         : "Unknown date"}
                     </span>
                   </div>
-                  <div className={`flex items-center gap-2 font-semibold text-sm px-3 py-1 rounded-full shadow-sm ${theme.buttonPrimary}`}>
+                  <div
+                    className={`flex items-center gap-2 font-semibold text-sm px-3 py-1 rounded-full shadow-sm ${theme.buttonPrimary}`}
+                  >
                     <FaHeart />
                     <span>{rev.likesCount}</span>
                   </div>
