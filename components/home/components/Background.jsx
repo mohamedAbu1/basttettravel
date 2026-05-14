@@ -17,6 +17,8 @@ export default function Background() {
 
   // ✅ صور خاصة بالـ Light Mode
   const lightImages = [
+     "/HomePageImage/frank-mckenna-OD9EOzfSOh0-unsplash.webp",
+    "/HomePageImage/rowan-heuvel-U6t80TWJ1DM-unsplash.webp",
     "/Nile_Cruise/pexels-sahilcaptures-35645491.webp",
     "/Nile_Cruise/andres-dallimonti-hOhOltq7gEU-unsplash.webp",
     "/Nile_Cruise/nacho-diaz-latorre-W4Oc4NIL5_U-unsplash.webp",
