@@ -17,12 +17,13 @@ import {
 import { motion } from "framer-motion";
 import { MdEmail, MdLock, MdPerson } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
-import { FaFacebook, FaFemale, FaMale } from "react-icons/fa";
+import { FaFemale, FaMale } from "react-icons/fa";
 import { useData } from "@/context/DataContext";
 import { useTheme } from "@/context/ThemeContext";
 import { toast } from "react-toastify";
 import { useSecurity } from "@/context/SecurityContext";
 import { useTranslation } from "react-i18next";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function SignUpModal() {
   const { handleLoginOpen } = useData();
