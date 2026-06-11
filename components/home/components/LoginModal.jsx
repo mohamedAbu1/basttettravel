@@ -51,14 +51,24 @@ export default function LoginModal() {
   };
 
   const loginWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo:
-          process.env.NEXT_PUBLIC_BASE_URL + "/api/auth/callback/google",
-      },
-    });
-    if (error) toast.error(error.message);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          queryParams: {
+            access_type: "offline",
+            prompt: "select_account consent",
+          },
+        },
+      });
+
+      if (error) {
+        toast.error(`❌ خطأ في الاتصال بجوجل: ${error.message}`);
+      }
+    } catch (err) {
+      console.error("OAuth Error:", err);
+      toast.error("❌ حدث خطأ غير متوقع أثناء تسجيل الدخول.");
+    }
   };
 
   return (
@@ -114,12 +124,28 @@ export default function LoginModal() {
           </Divider>
 
           {/* Social Buttons */}
-          <div className="flex gap-4 justify-center">
-            <IconButton onClick={loginWithGoogle}>
-              <FcGoogle size={26} />
-            </IconButton>
-            <IconButton className={theme.iconHover}>
-              <FaFacebook size={26} />
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <IconButton
+              onClick={loginWithGoogle}
+              style={{
+                width: "280px",
+                height: "56px",
+                borderRadius: "12px",
+                background:
+                  "linear-gradient(to right, #4285F4, #34A853, #FBBC05, #EA4335)",
+                color: "#fff",
+                fontWeight: "700",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "12px",
+                boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
+                transition: "all 0.3s ease",
+              }}
+            >
+              <FcGoogle size={28} />
+              <span style={{ color: "#fff" }}>Sign in with Google</span>
             </IconButton>
           </div>
 

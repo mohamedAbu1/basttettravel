@@ -52,7 +52,26 @@ export default function SignUpModal() {
       toast.error("❌ Error: " + err.message);
     }
   };
+  const loginWithGoogle = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          queryParams: {
+            access_type: "offline",
+            prompt: "select_account consent",
+          },
+        },
+      });
 
+      if (error) {
+        toast.error(`❌ خطأ في الاتصال بجوجل: ${error.message}`);
+      }
+    } catch (err) {
+      console.error("OAuth Error:", err);
+      toast.error("❌ حدث خطأ غير متوقع أثناء تسجيل الدخول.");
+    }
+  };
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <motion.div
@@ -149,15 +168,30 @@ export default function SignUpModal() {
           </Divider>
 
           {/* Social Buttons */}
-          <div className="flex gap-4 justify-center">
-            <IconButton onClick={() => (window.location.href = "/api/oauth/google")}>
-              <FcGoogle size={26} />
-            </IconButton>
-            <IconButton className={theme.iconHover}>
-              <FaFacebook size={26} />
+         <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <IconButton
+              onClick={loginWithGoogle}
+              style={{
+                width: "280px",
+                height: "56px",
+                borderRadius: "12px",
+                background:
+                  "linear-gradient(to right, #4285F4, #34A853, #FBBC05, #EA4335)",
+                color: "#fff",
+                fontWeight: "700",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "12px",
+                boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
+                transition: "all 0.3s ease",
+              }}
+            >
+              <FcGoogle size={28} />
+              <span style={{ color: "#fff" }}>Sign in with Google</span>
             </IconButton>
           </div>
-
           {/* Sign Up Button */}
           <motion.div whileHover={{ scale: 1.05 }} className="mt-4">
             <Button
