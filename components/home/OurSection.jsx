@@ -118,10 +118,26 @@ const OurSection = () => {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="w-full lg:w-1/2 text-start gap-9"
+          className="w-full lg:w-1/2 text-start"
           style={{ paddingLeft: "13px" }}
         >
           <Decor pos={"top"} />
+
+          {/* صورة اللوجو حسب المود */}
+          <div className="flex justify-center">
+            <Image
+              src={
+                theme.name === "dark"
+                  ? "/HomePageImage/Copilot_20260613_134423.png"
+                  : "/HomePageImage/Copilot_20260613_134550.png"
+              }
+              alt="Basttet Travel Logo"
+              width={330}
+              height={330}
+              className="object-contain select-none"
+              priority
+            />
+          </div>
 
           <p className="sc-p text-sm uppercase mb-2 tracking-wide text-gradient">
             {t("AboutUs")}
@@ -139,7 +155,7 @@ const OurSection = () => {
           >
             {t("At")}{" "}
             <span style={{ color: theme.logoBorder, fontWeight: 600 }}>
-              Montu Travel
+              Basttet Travel{" "}
             </span>
             {t("AtP")}{" "}
             <span style={{ color: theme.logoBorder, fontWeight: 600 }}>
@@ -163,6 +179,7 @@ const OurSection = () => {
 
           <Decor pos={"bottom"} />
         </motion.div>
+
         <motion.div
           initial={{ opacity: 0, x: -100 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -206,10 +223,10 @@ const OurSection = () => {
       <div className="absolute bottom-0 left-0 w-full h-[150px] opacity-100 pointer-events-none">
         <Image
           src={
-              themeName === "dark"
-                ? "/HomePageImage/1547933741.svg"
-                : "/HomePageImage/1540235872.svg"
-            }
+            themeName === "dark"
+              ? "/HomePageImage/1547933741.svg"
+              : "/HomePageImage/1540235872.svg"
+          }
           alt="Decorative Style"
           fill
           className="object-contain"

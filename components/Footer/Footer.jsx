@@ -63,7 +63,7 @@ const Footer = () => {
         className="text-3xl font-extrabold tracking-wide relative z-10 bg-gradient-to-r from-[var(--logoGradientFrom)] to-[var(--logoGradientTo)] bg-clip-text text-transparent drop-shadow-lg"
         style={{ WebkitTextStroke: `1px ${theme.logoBorder}` }}
       >
-        Montu Travel
+        Basttet travel
       </motion.p>
 
       {/* الوصف */}
@@ -117,7 +117,7 @@ const Footer = () => {
         variants={fadeUp}
         className="mt-8 text-xs opacity-70 relative z-10"
       >
-        © 2026 MontuTravel. All rights reserved.
+        © 2026 Basttet travel. All rights reserved.
       </motion.p>
     </motion.footer>
   );

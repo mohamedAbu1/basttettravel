@@ -91,7 +91,7 @@ export default function Packages({ showTrips }) {
         }}
         className="hero-title flex flex-wrap gap-4 justify-center font-[Cinzel] mb-5 z-[1]"
       >
-        {["M", "O", "N", "T", "U", "𓂀", "T", "R", "A", "V", "E", "L"].map(
+        {["B", "A", "S", "T", "T","E", "T","𓂀", "T", "R", "A", "V", "E", "L"].map(
           (char, i) => (
             <LogoLetter key={i} char={char} theme={theme} />
           ),

@@ -13,7 +13,7 @@ export default function HeroText() {
       }}
     >
       <Typewriter
-        words={["Welcome to", "𓂀 MontuTravel 𓂀", "Enjoy the Journey"]}
+        words={["Welcome to", "𓂀 Basttet travel 𓂀", "Enjoy the Journey"]}
         loop={true}
         cursor
         cursorStyle="𓂀"

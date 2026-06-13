@@ -85,7 +85,7 @@ export default function SignUpModal() {
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className={`text-4xl font-bold tracking-wide ${theme.title}`}>
-            Montu Travel
+           Basttet travel
           </h1>
         </div>
 

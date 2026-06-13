@@ -36,40 +36,38 @@ export default function HeritageSection() {
       viewport={{ once: true, amount: 0.2 }}
     >
       <div
-        className={`max-w-7xl mx-auto rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 border text-gradient`}
+        className={`max-w-7xl mx-auto rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8  text-gradient`}
       >
         {/* النص */}
         <motion.div variants={fadeLeft} className="flex-1">
-          <h3
-            className={`about-p text-2xl font-bold mb-3 text-gradient`}
-          >
+          {/* اللوجو في الأعلى */}
+          <div className="flex justify-center mb-6">
+            <Image
+               src={
+                themeName === "dark"
+                  ? "/HomePageImage/Copilot_20260613_134423.png"
+                  : "/HomePageImage/Copilot_20260613_134550.png"
+              }
+              alt="Basttet Travel Logo"
+              width={400}
+              height={400}
+              className="object-contain select-none"
+              priority
+            />
+          </div>
+
+          <h3 className={`about-p text-2xl font-bold mb-3 text-gradient`}>
             {t("h5")}
           </h3>
           <DividerWithIcon />
 
-          <p
-            className={`text-center text-gradient`}
-          >
+          <p className={`text-center text-gradient`}>
             {t("p4")}
           </p>
         </motion.div>
 
         {/* الصورة */}
-        <motion.div
-          variants={fadeRight}
-          className="flex-1 relative w-full h-56"
-        >
-          <Image
-           src={
-              themeName === "dark"
-                ? "/HomePageImage/pexels-axp-photography-500641970-18934596.webp"
-                : "/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp"
-            }
-            alt="Egyptian Heritage"
-            fill
-            className="object-cover rounded-2xl"
-          />
-        </motion.div>
+     
       </div>
     </motion.section>
   );
