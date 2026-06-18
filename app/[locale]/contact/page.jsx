@@ -154,7 +154,7 @@ export default function ContactPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <FaEnvelope className="icon-theme" />
-                  <span>wasettravel@outlook.com</span>
+                  <span>BasttetTravel@outlook.com</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <FaMapMarkerAlt className="icon-theme" />
