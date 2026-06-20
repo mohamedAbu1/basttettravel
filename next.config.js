@@ -7,7 +7,6 @@ const nextConfig = {
       "bsrlydzntfpuyxcqwjpl.supabase.co",
     ],
   },
-  output: 'export', // علشان تعمل static export
 };
 
 module.exports = nextConfig;

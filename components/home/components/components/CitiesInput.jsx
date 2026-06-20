@@ -24,9 +24,9 @@ const CitiesInput = ({
       <input
         type="text"
         placeholder="City"
-        value={selectedCities
+        value={(selectedCities || [])
           .map((c) => c.name?.[normalizedLang] || c.name?.["en"] || c.name)
-          .join(" - ")} // ✅ عرض الاسم حسب اللغة الحالية
+          .join(" - ")}
         onFocus={() => setShowCities(true)}
         readOnly
         className={`flex-1 p-3 bg-transparent ${theme.text} ${theme.placeholder} 
@@ -56,7 +56,9 @@ const CitiesInput = ({
                 onMouseDown={() => toggleCity(city)}
                 className={`px-4 py-2 rounded-lg cursor-pointer transition-all duration-300 
                   ${
-                    selectedCities.some((c) => c.id === city.id || c.name === city.name)
+                    (selectedCities || []).some(
+                      (c) => c.id === city.id || c.name === city.name,
+                    )
                       ? `${theme.buttonPrimary} text-black shadow-lg`
                       : `${theme.text} ${theme.card} hover:${theme.buttonSecondary}`
                   }`}

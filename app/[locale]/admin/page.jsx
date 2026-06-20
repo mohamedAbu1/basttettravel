@@ -19,8 +19,6 @@ const symbols = ["𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽","𓃾",
 export default function DashboardPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const { theme, themeName } = useTheme();
-   const { user } = useAuth();
-  const router = useRouter();
   // ✅ تحقق من المستخدم وصلاحيته داخل useEffect
   // useEffect(() => {
   //   if (!user || user?.user_metadata?.role !== "ADMIN") {

@@ -12,8 +12,8 @@ const LeftSocialIcons = () => {
   const socialLinks = [
     { Icon: FaFacebookF, url: "https://facebook.com/YourPage" },
     { Icon: FaInstagram, url: "https://instagram.com/YourPage" },
-    { Icon: FaWhatsapp, url: "https://wa.me/201234567890" }, // رقم واتساب
-    { Icon: MdEmail, url: "mailto:yourmail@example.com" }, // فتح البريد
+    { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
+    { Icon: MdEmail, url: "https://account.microsoft.com/profile/" }, // فتح البريد
   ];
 
   return (

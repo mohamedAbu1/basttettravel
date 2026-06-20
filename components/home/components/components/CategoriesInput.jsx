@@ -45,12 +45,9 @@ const CategoriesInput = ({
       <input
         type="text"
         placeholder="Category"
-        value={selectedCategories
-          .map(
-            (c) =>
-              c.name?.[normalizedLang] || c.name?.["en"] || c.displayName || c.name
-          )
-          .join(" - ")} // ✅ عرض أسماء الكاتيجريز حسب اللغة الحالية
+       value={(selectedCategories || [])
+          .map((c) => c.name?.[normalizedLang] || c.name?.["en"] || c.name)
+          .join(" - ")}
         onFocus={() => setShowCategories(true)}
         readOnly
         className={`flex-1 p-3 bg-transparent ${theme.text} ${theme.placeholder} 
@@ -83,13 +80,16 @@ const CategoriesInput = ({
                 className={`px-4 py-2 rounded-lg cursor-pointer transition-all duration-300 
                   ${
                     selectedCategories.some(
-                      (c) => c.id === cat.id || c.name === cat.name
+                      (c) => c.id === cat.id || c.name === cat.name,
                     )
                       ? `${theme.buttonPrimary} text-black shadow-lg`
                       : `${theme.text} ${theme.card} hover:${theme.buttonSecondary}`
                   }`}
               >
-                {cat.name?.[normalizedLang] || cat.name?.["en"] || cat.displayName || cat.name}
+                {cat.name?.[normalizedLang] ||
+                  cat.name?.["en"] ||
+                  cat.displayName ||
+                  cat.name}
               </motion.div>
             ))}
 

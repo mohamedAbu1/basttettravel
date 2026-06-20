@@ -6,6 +6,7 @@ import LogoLetter from "@/components/LogoLetter";
 import { useTrip } from "@/context/TripContext";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { useLanguage } from "@/context/LanguageContext";
+import { useRouter } from "next/navigation";
 
 export default function Packages({ showTrips }) {
   const { theme, themeName } = useTheme();
@@ -17,6 +18,7 @@ export default function Packages({ showTrips }) {
   useEffect(() => {
     fetchTrips();
   }, []);
+  const router = useRouter();
 
   // Nile Cruises (Light Mode)
   const nileCruisesCategories = [
@@ -91,15 +93,30 @@ export default function Packages({ showTrips }) {
         }}
         className="hero-title flex flex-wrap gap-4 justify-center font-[Cinzel] mb-5 z-[1]"
       >
-        {["B", "A", "S", "T", "T","E", "T","𓂀", "T", "R", "A", "V", "E", "L"].map(
-          (char, i) => (
-            <LogoLetter key={i} char={char} theme={theme} />
-          ),
-        )}
+        {[
+          "B",
+          "A",
+          "S",
+          "T",
+          "T",
+          "E",
+          "T",
+          "𓂀",
+          "T",
+          "R",
+          "A",
+          "V",
+          "E",
+          "L",
+        ].map((char, i) => (
+          <LogoLetter key={i} char={char} theme={theme} />
+        ))}
       </motion.div>
 
       {/* الكروت */}
-  <div className={`relative z-[1] backdrop-blur-md p-4 border ${theme.logoBorder}  ${theme.card} rounded-[40px]`}>
+      <div
+        className={`relative z-[1] backdrop-blur-md p-4 border ${theme.logoBorder}  ${theme.card} rounded-[40px]`}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
@@ -132,6 +149,7 @@ export default function Packages({ showTrips }) {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={() => router.push(`/trips/${trip.id}`)} // ✅ تحويل لصفحة الرحلة
                     className={`w-full rounded-[9px] px-4 py-2 mt-4 font-semibold tracking-wide cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
                     style={{ border: `2px solid ${theme.logoBorder}` }}
                   >
@@ -142,7 +160,7 @@ export default function Packages({ showTrips }) {
             ))}
           </motion.div>
         </AnimatePresence>
-      </div> 
+      </div>
     </motion.div>
   );
 }

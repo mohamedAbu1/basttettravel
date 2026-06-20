@@ -90,7 +90,7 @@ export default function ContactPage() {
         <meta name="description" content={meta.description} />
         <meta name="keywords" content={meta.keywords} />
       </Head>
-      <main className="relative flex flex-col min-h-screen justify-center items-center ">
+      <main className="relative flex flex-col min-h-screen justify-center items-center mt-7">
         <Header />
         {/* خلفية الرموز الفرعونية */}
         <div className="absolute inset-0 pointer-events-none">
@@ -150,7 +150,7 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <FaPhoneAlt className="icon-theme" />
-                  <span>+20 1091126069</span>
+                  <span>+201100507802</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <FaEnvelope className="icon-theme" />

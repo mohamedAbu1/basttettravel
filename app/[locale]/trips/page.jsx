@@ -21,7 +21,6 @@ import { useRouter } from "next/navigation";
 import CurrencySelector from "../../../components/layout/CurrencySelector";
 import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
 
-
 export default function TripsPage() {
   const { trips, fetchTrips, loadingTrips } = useTrip();
   const {
@@ -72,10 +71,10 @@ export default function TripsPage() {
       city === "all"
         ? true
         : Array.isArray(city)
-        ? tripCities.some((c) =>
-            city.map((x) => x.toLowerCase()).includes(c.toLowerCase())
-          )
-        : tripCities.some((c) => c.toLowerCase() === city.toLowerCase());
+          ? tripCities.some((c) =>
+              city.map((x) => x.toLowerCase()).includes(c.toLowerCase()),
+            )
+          : tripCities.some((c) => c.toLowerCase() === city.toLowerCase());
 
     const tripCategories =
       trip.trip_categories?.map((cat) => {
@@ -86,8 +85,8 @@ export default function TripsPage() {
       category === "all"
         ? true
         : Array.isArray(category)
-        ? tripCategories.some((c) => category.includes(c))
-        : tripCategories.includes(category);
+          ? tripCategories.some((c) => category.includes(c))
+          : tripCategories.includes(category);
 
     const ranges = {
       Economy: { min: 0, max: 199 },
@@ -99,8 +98,8 @@ export default function TripsPage() {
       price === "All" || !price
         ? true
         : selectedRange
-        ? trip.price >= selectedRange.min && trip.price <= selectedRange.max
-        : true;
+          ? trip.price >= selectedRange.min && trip.price <= selectedRange.max
+          : true;
 
     const matchesPopular = popular ? trip.isPopular : true;
 
@@ -126,7 +125,7 @@ export default function TripsPage() {
         <meta name="keywords" content={meta.keywords} />
       </Head>
 
-      <main className="relative flex flex-col min-h-screen justify-center items-center">
+      <main className="relative flex flex-col min-h-screen justify-center items-center mt-7">
         <EgyptianBackground />
         <Header />
 
@@ -143,10 +142,7 @@ export default function TripsPage() {
             <p className="text-lg text-gray-600">
               You should go to the homepage to follow your trips
             </p>
-            <button
-              onClick={() => router.push("/")}
-              className="btn-theme"
-            >
+            <button onClick={() => router.push("/")} className="btn-theme">
               Return to home page
             </button>
           </motion.div>

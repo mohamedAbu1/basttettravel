@@ -71,7 +71,6 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
       }`}
     >
       <h3 className="filter-title">{t("Filters")}</h3>
-
       <div className="flex flex-col gap-8">
         {/* المدن */}
         <div>

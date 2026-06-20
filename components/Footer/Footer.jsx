@@ -1,10 +1,11 @@
 "use client";
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { MdEmail } from "react-icons/md";
 
 const Footer = () => {
   const { theme, themeName } = useTheme();
@@ -95,22 +96,30 @@ const Footer = () => {
       ></motion.div>
 
       {/* أيقونات السوشيال ميديا */}
-      <motion.div variants={fadeUp} className="flex gap-5 mt-4 relative z-10">
-        {[FaFacebookF, FaInstagram, FaTwitter, FaYoutube].map((Icon, i) => (
-          <motion.a
-            key={i}
-            href="#"
-            whileHover={{ scale: 1.2, rotate: 5 }}
-            className={`p-3 rounded-full transition shadow-md ${
-              themeName === "dark"
-                ? "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[var(--logoBorder)]"
-                : "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[#222]"
-            }`}
-          >
-            <Icon />
-          </motion.a>
-        ))}
-      </motion.div>
+     <motion.div variants={fadeUp} className="flex gap-5 mt-4 relative z-10">
+  {[
+     { Icon: FaFacebookF, url: "https://facebook.com/YourPage" },
+        { Icon: FaInstagram, url: "https://instagram.com/YourPage" },
+        { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
+        { Icon: MdEmail, url: "https://mail.google.com/mail/u/3/#inbox" }, // فتح البريد
+      ].map(({ Icon, link }, i) => (
+    <motion.a
+      key={i}
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      whileHover={{ scale: 1.2, rotate: 5 }}
+      className={`p-3 rounded-full transition shadow-md ${
+        themeName === "dark"
+          ? "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[var(--logoBorder)]"
+          : "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[#222]"
+      }`}
+    >
+      <Icon />
+    </motion.a>
+  ))}
+</motion.div>
+
 
       {/* حقوق النشر */}
       <motion.p
