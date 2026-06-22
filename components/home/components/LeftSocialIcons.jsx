@@ -10,8 +10,8 @@ const LeftSocialIcons = () => {
   const { theme } = useTheme();
   // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   const socialLinks = [
-    { Icon: FaFacebookF, url: "https://facebook.com/YourPage" },
-    { Icon: FaInstagram, url: "https://instagram.com/YourPage" },
+    { Icon: FaFacebookF, url: "https://www.facebook.com/profile.php?id=61591222981163" },
+    { Icon: FaInstagram, url: "https://www.instagram.com/ismailharoun225/" },
     { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
     { Icon: MdEmail, url: "https://account.microsoft.com/profile/" }, // فتح البريد
   ];

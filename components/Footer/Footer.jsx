@@ -11,11 +11,32 @@ const Footer = () => {
   const { theme, themeName } = useTheme();
   const { t } = useTranslation("footer");
 
-  const symbols = ["𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽","𓃾","𓅓","𓈇","𓉐","𓊹","𓌙","𓍿","𓎟"];
+  const symbols = [
+    "𓂀",
+    "𓋹",
+    "𓆣",
+    "𓇼",
+    "𓇯",
+    "𓏏",
+    "𓎛",
+    "𓊽",
+    "𓃾",
+    "𓅓",
+    "𓈇",
+    "𓉐",
+    "𓊹",
+    "𓌙",
+    "𓍿",
+    "𓎟",
+  ];
 
   const fadeUp = {
     hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
   };
 
   const staggerContainer = {
@@ -68,12 +89,18 @@ const Footer = () => {
       </motion.p>
 
       {/* الوصف */}
-      <motion.p variants={fadeUp} className="mt-2 text-sm opacity-80 text-center max-w-xl relative z-10">
+      <motion.p
+        variants={fadeUp}
+        className="mt-2 text-sm opacity-80 text-center max-w-xl relative z-10"
+      >
         {t("p")}
       </motion.p>
 
       {/* روابط سريعة */}
-      <motion.div variants={fadeUp} className="flex gap-6 mt-6 text-sm font-medium relative z-10">
+      <motion.div
+        variants={fadeUp}
+        className="flex gap-6 mt-6 text-sm font-medium relative z-10"
+      >
         {["Home", "AboutUs", "Tours", "Contact"].map((link) => (
           <Link
             key={link}
@@ -96,30 +123,32 @@ const Footer = () => {
       ></motion.div>
 
       {/* أيقونات السوشيال ميديا */}
-     <motion.div variants={fadeUp} className="flex gap-5 mt-4 relative z-10">
-  {[
-     { Icon: FaFacebookF, url: "https://facebook.com/YourPage" },
-        { Icon: FaInstagram, url: "https://instagram.com/YourPage" },
-        { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
-        { Icon: MdEmail, url: "https://mail.google.com/mail/u/3/#inbox" }, // فتح البريد
-      ].map(({ Icon, link }, i) => (
-    <motion.a
-      key={i}
-      href={link}
-      target="_blank"
-      rel="noopener noreferrer"
-      whileHover={{ scale: 1.2, rotate: 5 }}
-      className={`p-3 rounded-full transition shadow-md ${
-        themeName === "dark"
-          ? "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[var(--logoBorder)]"
-          : "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[#222]"
-      }`}
-    >
-      <Icon />
-    </motion.a>
-  ))}
-</motion.div>
-
+      <motion.div variants={fadeUp} className="flex gap-5 mt-4 relative z-10">
+        {[
+          {
+            Icon: FaFacebookF,
+            url: "https://www.facebook.com/profile.php?id=61591222981163",
+          },
+          { Icon: FaInstagram, url: "https://www.instagram.com/ismailharoun225/" },
+          { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
+          { Icon: MdEmail, url: "https://mail.google.com/mail/u/3/#inbox" }, // فتح البريد
+        ].map(({ Icon, link }, i) => (
+          <motion.a
+            key={i}
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.2, rotate: 5 }}
+            className={`p-3 rounded-full transition shadow-md cursor-pointer${
+              themeName === "dark"
+                ? "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[var(--logoBorder)]"
+                : "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[#222]"
+            }`}
+          >
+            <Icon />
+          </motion.a>
+        ))}
+      </motion.div>
 
       {/* حقوق النشر */}
       <motion.p
