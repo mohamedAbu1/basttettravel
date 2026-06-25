@@ -114,10 +114,10 @@ const TopTripsSection = () => {
           }}
         >
           <Image
-            src={
+           src={
               themeName === "dark"
-                ? "/HomePageImage/Temple-of-Bell-Street-2015100903.svg"
-                : "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
+                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
+                : "/HomePageImage/cruiseliner.svg"
             }
             alt="Decorative Left"
             fill
@@ -146,8 +146,8 @@ const TopTripsSection = () => {
           <Image
             src={
               themeName === "dark"
-                ? "/HomePageImage/Temple-of-Bell-Street-2015100903.svg"
-                : "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
+                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
+                : "/HomePageImage/cruiseliner.svg"
             }
             alt="Decorative Right"
             fill
