@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import React from "react";
-import { FaFacebookF, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import { MdEmail } from "react-icons/md";
 // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$

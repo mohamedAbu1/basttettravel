@@ -178,7 +178,7 @@ const CategoriesSection = () => {
           src={
               themeName === "dark"
                 ? "/HomePageImage/Temple-of-Bell-Street-2015100903.svg"
-                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
+                : "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
             }
           alt="Decorative Style"
           fill
@@ -214,7 +214,7 @@ const CategoriesSection = () => {
            src={
               themeName === "dark"
                 ? "/HomePageImage/Temple-of-Bell-Street-2015100903.svg"
-                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
+                : "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
             }
           alt="Decorative Style"
           fill
