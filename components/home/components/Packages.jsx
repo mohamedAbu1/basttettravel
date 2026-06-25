@@ -21,8 +21,8 @@ export default function Packages({ showTrips }) {
       { id: 3, title: { en: "Budget Nile Cruise" }, price: 150, currency: "USD", cover_image: "/Nile_Cruise/peter-hansen-MeGmdPNe36w-unsplash.webp", category_id: 2 }
     ],
     darkModeTrips: [
-      { id: 4, title: { en: "Cairo One Day Tour" }, price: 100, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044045.webp", category_id: 3 },
-      { id: 5, title: { en: "Giza Pyramids Day Trip" }, price: 120, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044043.webp", category_id: 3 },
+      { id: 4, title: { en: "Cairo One Day Tour" }, price: 150, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044045.webp", category_id: 3 },
+      { id: 5, title: { en: "Giza Pyramids Day Trip" }, price: 320, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044043.webp", category_id: 3 },
       { id: 6, title: { en: "Alexandria One Day Tour" }, price: 180, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-30468560.webp", category_id: 4 }
     ]
   };
