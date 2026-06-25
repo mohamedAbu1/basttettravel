@@ -3,57 +3,35 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import LogoLetter from "@/components/LogoLetter";
-import { useTrip } from "@/context/TripContext";
-import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
 
 export default function Packages({ showTrips }) {
   const { theme, themeName } = useTheme();
-  const { trips, fetchTrips, loadingTrips } = useTrip();
-  const { categories: allCategories } = useCitiesCategories();
   const { lang } = useLanguage();
-  if (showTrips === true) return null; // ✅ إخفاء الكروت عند فتح التاريخ
-
-  useEffect(() => {
-    fetchTrips();
-  }, []);
   const router = useRouter();
 
-  // Nile Cruises (Light Mode)
-  const nileCruisesCategories = [
-    "Nilkreuzfahrten",
-    "Nile Cruises",
-    "Cruceros por el Nilo",
-    "Croisières sur le Nil",
-    "Crociere sul Nilo",
-    "尼罗河游轮",
-  ];
+  if (showTrips === true) return null;
 
-  // One Day Trips (Dark Mode)
-  const oneDayTripsCategories = [
-    "Tagesausflüge",
-    "One Day Trips",
-    "Excursiones de un día",
-    "Excursions d'une journée",
-    "Gite di un giorno",
-    "一日游",
-  ];
+  // ✅ بيانات ستاتيك
+  const staticTrips = {
+    lightModeTrips: [
+      { id: 1, title: { en: "Nile Cruise Luxor-Aswan" }, price: 250, currency: "USD", cover_image: "/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp", category_id: 1 },
+      { id: 2, title: { en: "Luxury Nile Cruise" }, price: 400, currency: "USD", cover_image: "/Nile_Cruise/5116-900x600.webp", category_id: 1 },
+      { id: 3, title: { en: "Budget Nile Cruise" }, price: 150, currency: "USD", cover_image: "/Nile_Cruise/peter-hansen-MeGmdPNe36w-unsplash.webp", category_id: 2 }
+    ],
+    darkModeTrips: [
+      { id: 4, title: { en: "Cairo One Day Tour" }, price: 100, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044045.webp", category_id: 3 },
+      { id: 5, title: { en: "Giza Pyramids Day Trip" }, price: 120, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044043.webp", category_id: 3 },
+      { id: 6, title: { en: "Alexandria One Day Tour" }, price: 180, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-30468560.webp", category_id: 4 }
+    ]
+  };
 
-  const targetCategories =
-    themeName === "dark" ? oneDayTripsCategories : nileCruisesCategories;
+  // ✅ اختيار الرحلات حسب الـ theme
+  const trips = themeName === "dark" ? staticTrips.darkModeTrips : staticTrips.lightModeTrips;
 
-  const filteredTrips = trips.filter((trip) => {
-    const tripCategories =
-      trip.trip_categories?.map((cat) => {
-        const catObj = allCategories.find((c) => c.id === cat.category_id);
-        return catObj?.name?.[lang] || catObj?.name?.en || catObj?.name;
-      }) || [];
-    return tripCategories.some((catName) => targetCategories.includes(catName));
-  });
-
-  // ✅ عرض أول 6 رحلات فقط
-  const limitedTrips = filteredTrips.slice(0, 6);
+  // ✅ عرض أول 6 رحلات فقط (هنا عندنا 3 فقط)
+  const limitedTrips = trips.slice(0, 6);
 
   const [page, setPage] = useState(0);
   const itemsPerPage = 3;
@@ -73,9 +51,9 @@ export default function Packages({ showTrips }) {
     page * itemsPerPage + itemsPerPage,
   );
 
-  if (loadingTrips) return <p className="text-center">Loading trips...</p>;
   if (limitedTrips.length === 0)
     return <p className="text-center">لا توجد رحلات متاحة حالياً</p>;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -93,29 +71,14 @@ export default function Packages({ showTrips }) {
         }}
         className="hero-title flex flex-wrap gap-4 justify-center font-[Cinzel] mb-5 z-[1]"
       >
-        {[
-          "B",
-          "A",
-          "S",
-          "T",
-          "T",
-          "E",
-          "T",
-          "𓂀",
-          "T",
-          "R",
-          "A",
-          "V",
-          "E",
-          "L",
-        ].map((char, i) => (
+        {["B","A","S","T","T","E","T","𓂀","T","R","A","V","E","L"].map((char, i) => (
           <LogoLetter key={i} char={char} theme={theme} />
         ))}
       </motion.div>
 
       {/* الكروت */}
       <div
-        className={`relative z-[1] backdrop-blur-md p-4 border ${theme.logoBorder}  ${theme.card} rounded-[40px]`}
+        className={`relative z-[1] backdrop-blur-md p-4 border ${theme.logoBorder} ${theme.card} rounded-[40px]`}
       >
         <AnimatePresence mode="wait">
           <motion.div
@@ -149,7 +112,7 @@ export default function Packages({ showTrips }) {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => router.push(`/trips/${trip.id}`)} // ✅ تحويل لصفحة الرحلة
+                    onClick={() => router.push(`/trips/${trip.id}`)}
                     className={`w-full rounded-[9px] px-4 py-2 mt-4 font-semibold tracking-wide cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
                     style={{ border: `2px solid ${theme.logoBorder}` }}
                   >
