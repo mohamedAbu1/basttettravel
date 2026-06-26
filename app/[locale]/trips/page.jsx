@@ -162,7 +162,7 @@ const matchesCity =
             style={{ marginTop: "105px", paddingBottom: "20px" }}
             className="container flex flex-1 gap-6 px-6 relative z-10"
           >
-            <div className="w-1/4 bg-[url('/HomePageImage/427421070_8ee61396-b440-41b5-af8d-619e23dd51b5.svg')] bg-cover bg-center rounded-2xl">
+            <div className="w-1/4 max-h-fit bg-[url('/HomePageImage/427421070_8ee61396-b440-41b5-af8d-619e23dd51b5.svg')] bg-cover bg-center rounded-2xl">
               <TripsFilter
                 allCities={allCities}
                 allCategories={allCategories}

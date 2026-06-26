@@ -128,7 +128,7 @@ export default function ContactPage() {
                 <Image
                   src={
                     themeName === "dark"
-                      ? "/HomePageImage/egyptian-pyramids-sphinx-pop-up-book.png"
+                      ? "/HomePageImage/egyptian-pyramids-sphinx-pop-up-book.webp"
                       : "/HomePageImage/1547933741.svg"
                   }
                   alt="Decorative Background"

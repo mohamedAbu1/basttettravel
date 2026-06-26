@@ -17,9 +17,9 @@ export default function Background() {
 
   // ✅ صور خاصة بالـ Dark Mode للشاشات الصغيرة والمتوسطة
   const darkImagesSmall = [
-    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-insid__39338.png",
-    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-inspi__39335.png",
-    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-insid__39337.png",
+    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-insid__39338.webp",
+    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-inspi__39335.webp",
+    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-insid__39337.webp",
   ];
 
   // ✅ صور خاصة بالـ Light Mode

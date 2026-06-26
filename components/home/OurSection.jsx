@@ -128,8 +128,8 @@ const OurSection = () => {
             <Image
               src={
                 theme.name === "dark"
-                  ? "/HomePageImage/Copilot_20260613_134423.png"
-                  : "/HomePageImage/Copilot_20260613_134550.png"
+                  ? "/HomePageImage/Copilot_20260613_134423.webp"
+                  : "/HomePageImage/Copilot_20260613_134550.webp"
               }
               alt="Basttet Travel Logo"
               width={330}

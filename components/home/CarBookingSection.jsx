@@ -102,8 +102,8 @@ const CarBookingSection = () => {
           <Image
             src={
               themeName === "dark"
-                ? "/HomePageImage/20752-5-2014-hyundai-tucson.png"
-                : "/HomePageImage/White-Kia-PNG-High-Quality-Image.png"
+                ? "/HomePageImage/20752-5-2014-hyundai-tucson.webp"
+                : "/HomePageImage/White-Kia-PNG-High-Quality-Image.webp"
             }
             alt="Luxury Car"
             fill
