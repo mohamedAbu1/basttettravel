@@ -1,22 +1,32 @@
 "use client";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { motion } from "framer-motion";
 
 export default function Decor({ pos }) {
   const { theme } = useTheme();
+  const containerRef = useRef(null);
+  const [symbolsCount, setSymbolsCount] = useState(10);
 
-  const symbolsCount =
-    typeof window !== "undefined" && window.innerWidth < 640
-      ? 8
-      : window.innerWidth < 1409
-      ? 19
-      : window.innerWidth < 1800
-      ? 27
-      : 27;
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0].contentRect.width;
+
+      // ✅ حساب عدد الرموز حسب عرض الـ container
+      let count = Math.floor(width / 200); // كل 70px رمز واحد
+      if (count < 6) count = 6;           // حد أدنى
+      if (count > 30) count = 30;         // حد أقصى
+      setSymbolsCount(count);
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className={`absolute ${pos}-0 flex justify-around `}>
+    <div ref={containerRef} className={`absolute ${pos}-0 flex justify-around`}>
       {Array.from({ length: symbolsCount }).map((_, i) => (
         <motion.span
           key={i}

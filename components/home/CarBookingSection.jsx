@@ -54,7 +54,7 @@ const CarBookingSection = () => {
       {/* Background Car Image */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/HomePageImage/421009550_cc929d60-b9e0-426e-84d8-74d70ab10d55.svg"
+          src="/HomePageImage/30204164_jaipur_bw_001.svg"
           alt="Luxury Car Background"
           fill
           className="object-cover opacity-20 rounded-lg"

@@ -14,7 +14,7 @@ import { useQueryFilters } from "@/context/QueryContext";
 
 const encodeData = (obj) => btoa(JSON.stringify(obj));
 
-export default function BookingForm({ setShowTrips }) {
+export default function BookingForm({ setShowTrips, trips = [] }) {
   const { theme } = useTheme();
   const { cities, categories } = useCitiesCategories();
   const { updateValue } = useQueryFilters();
@@ -41,14 +41,25 @@ export default function BookingForm({ setShowTrips }) {
       popular: false,
     };
 
+    // ✅ اطبع القيم علشان نعرف السبب
+    console.log("Query object:", queryObj);
+    const encoded = encodeData(queryObj);
+    console.log("Encoded query:", encoded);
+
+    // ✅ اطبع القيم الحقيقية للرحلات
+    trips.forEach((trip) => {
+      console.log("Trip city:", trip.city);
+      console.log("Trip category:", trip.category);
+    });
+
     updateValue("city", queryObj.city);
     updateValue("category", queryObj.category);
     updateValue("price", queryObj.price);
     updateValue("popular", queryObj.popular);
 
-    const encoded = encodeData(queryObj);
     router.push(`/trips?data=${encoded}`);
   };
+
   const toggleCity = (city) => {
     setSelectedCities((prev) =>
       prev.some((c) => c.id === city.id)
@@ -57,7 +68,6 @@ export default function BookingForm({ setShowTrips }) {
     );
   };
 
-  // ✅ دالة لتبديل الكاتجري
   const toggleCategory = (cat) => {
     setSelectedCategories((prev) =>
       prev.some((c) => c.id === cat.id)
@@ -65,6 +75,7 @@ export default function BookingForm({ setShowTrips }) {
         : [...prev, cat],
     );
   };
+
   const CustomInput = ({ value, onClick }) => (
     <div
       onClick={onClick}
@@ -89,7 +100,6 @@ export default function BookingForm({ setShowTrips }) {
     >
       {/* ✅ الصف الأول: المدن + الكاتجري */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Cities */}
         <div
           className={`flex items-center border ${theme.logoBorder} rounded-[4px] px-3 ${theme.card}`}
         >
@@ -104,7 +114,6 @@ export default function BookingForm({ setShowTrips }) {
           />
         </div>
 
-        {/* Categories */}
         <div
           className={`flex items-center border ${theme.logoBorder} rounded-[4px] px-3 ${theme.card}`}
         >
@@ -158,7 +167,6 @@ export default function BookingForm({ setShowTrips }) {
         </div>
       </div>
 
-      {/* زر الحجز */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

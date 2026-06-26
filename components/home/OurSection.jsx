@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState  } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -17,7 +17,6 @@ const OurSection = () => {
   const router = useRouter();
   const { theme, themeName } = useTheme();
   const { t } = useTranslation("home");
-
   const [hasMounted, setHasMounted] = useState(false);
   useEffect(() => {
     setHasMounted(true);
@@ -46,9 +45,10 @@ const OurSection = () => {
   return (
     <section
       id="section-four"
-      className={`hidden lg:flex relative w-full min-h-screen px-4 sm:py-10 md:py-12 lg:py-0 flex-col items-center justify-start ${theme.background} ${theme.text}`}
+      className={`hidden lg:flex relative w-full min-h-screen px-4 sm:py-10 md:py-12 lg:py-0 flex-col items-center justify-start ${theme.background} ${theme.text} `}
       style={{ paddingBottom: "40px", paddingTop: "20px" }}
     >
+        {/* <Decor pos={"top"} /> */}
       {/* خلفية الرموز الفرعونية */}
       <div className="absolute inset-0 pointer-events-none -z-10">
         {Array.from({ length: 25 }).map((_, i) => (
@@ -121,7 +121,7 @@ const OurSection = () => {
           className="w-full lg:w-1/2 text-start"
           style={{ paddingLeft: "13px" }}
         >
-          <Decor pos={"top"} />
+        
 
           {/* صورة اللوجو حسب المود */}
           <div className="flex justify-center">
@@ -177,7 +177,6 @@ const OurSection = () => {
             {t("LearnMoreAboutUs")}
           </motion.button>
 
-          <Decor pos={"bottom"} />
         </motion.div>
 
         <motion.div
@@ -220,18 +219,8 @@ const OurSection = () => {
           </Swiper>
         </motion.div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-[150px] opacity-100 pointer-events-none">
-        <Image
-          src={
-            themeName === "dark"
-              ? "/HomePageImage/1547933741.svg"
-              : "/HomePageImage/1540235872.svg"
-          }
-          alt="Decorative Style"
-          fill
-          className="object-contain"
-        />
-      </div>
+                {/* <Decor  pos={"bottom"} /> */}
+
     </section>
   );
 };

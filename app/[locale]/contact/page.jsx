@@ -17,7 +17,6 @@ import { contactMetadata } from "@/lib/metadata/contact";
 import DividerWithIcon from "@/components/layout/DividerWithIcon";
 import Image from "next/image";
 
-
 const symbols = [
   "𓂀",
   "𓋹",
@@ -127,7 +126,11 @@ export default function ContactPage() {
               {/* ✅ صورة SVG خلفية */}
               <div className="absolute top-80 left-0 w-full h-[450px] opacity-50 pointer-events-none">
                 <Image
-                  src="/HomePageImage/1547933741.svg" // ضع ملف SVG هنا
+                  src={
+                    themeName === "dark"
+                      ? "/HomePageImage/egyptian-pyramids-sphinx-pop-up-book.png"
+                      : "/HomePageImage/1547933741.svg"
+                  }
                   alt="Decorative Background"
                   fill
                   className="object-contain"
@@ -287,7 +290,7 @@ export default function ContactPage() {
               </div>
 
               {/* زر الإرسال */}
-              <button type="submit" className="btn-gradient w-full">
+              <button type="submit" className="btn-gradient w-full p-4 rounded-2xl cursor-pointer">
                 {t("btn")}
               </button>
             </motion.form>

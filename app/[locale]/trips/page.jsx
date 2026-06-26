@@ -67,26 +67,37 @@ export default function TripsPage() {
         ?.map((c) => c?.cities?.name?.[lang] || c?.cities?.name?.en || "")
         .filter((n) => n !== "") || [];
 
-    const matchesCity =
-      city === "all"
-        ? true
-        : Array.isArray(city)
-          ? tripCities.some((c) =>
-              city.map((x) => x.toLowerCase()).includes(c.toLowerCase()),
-            )
-          : tripCities.some((c) => c.toLowerCase() === city.toLowerCase());
+const matchesCity =
+  city === "all"
+    ? true
+    : Array.isArray(city)
+      ? tripCities.some((c) =>
+          city.some((x) =>
+            c.toLowerCase().includes(x.toLowerCase())
+          )
+        )
+      : tripCities.some((c) =>
+          c.toLowerCase().includes(city.toLowerCase())
+        );
+
 
     const tripCategories =
       trip.trip_categories?.map((cat) => {
         const catObj = allCategories.find((c) => c.id === cat.category_id);
         return catObj?.name?.[lang] || catObj?.name?.en || catObj?.name;
       }) || [];
-    const matchesCategory =
-      category === "all"
-        ? true
-        : Array.isArray(category)
-          ? tripCategories.some((c) => category.includes(c))
-          : tripCategories.includes(category);
+ const matchesCategory =
+  category === "all"
+    ? true
+    : Array.isArray(category)
+      ? tripCategories.some((c) =>
+          category.some((x) =>
+            c.toLowerCase().includes(x.toLowerCase())
+          )
+        )
+      : tripCategories.some((c) =>
+          c.toLowerCase().includes(category.toLowerCase())
+        );
 
     const ranges = {
       Economy: { min: 0, max: 199 },
@@ -151,7 +162,7 @@ export default function TripsPage() {
             style={{ marginTop: "105px", paddingBottom: "20px" }}
             className="container flex flex-1 gap-6 px-6 relative z-10"
           >
-            <div className="w-1/4">
+            <div className="w-1/4 bg-[url('/HomePageImage/427421070_8ee61396-b440-41b5-af8d-619e23dd51b5.svg')] bg-cover bg-center rounded-2xl">
               <TripsFilter
                 allCities={allCities}
                 allCategories={allCategories}

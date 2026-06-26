@@ -78,7 +78,7 @@ const TopTripsSection = () => {
 
   return (
     <section
-      className={`hidden lg:flex w-full flex-col relative py-24 px-6 transition-colors duration-500 ${theme.background}`}
+  className={`hidden lg:flex w-full flex-col relative py-24 px-6 transition-colors duration-500 ${theme.background} `}
     >
       {/* خلفية الرموز */}
       <div className="absolute inset-0 pointer-events-none">

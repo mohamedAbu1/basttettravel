@@ -68,7 +68,7 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
       variants={fadeUp}
       className={`filter-card ${
         themeName === "dark" ? "card-dark" : "card-light"
-      }`}
+      } `}
     >
       <h3 className="filter-title">{t("Filters")}</h3>
       <div className="flex flex-col gap-8">
@@ -84,10 +84,7 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
                 cityObj.name?.["en"] ||
                 cityObj.name;
               return (
-                <label
-                  key={cityObj.id ?? cityName}
-                  className="filter-option"
-                >
+                <label key={cityObj.id ?? cityName} className="filter-option">
                   <input
                     type="checkbox"
                     className="filter-input"
@@ -95,8 +92,8 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
                       city === "all"
                         ? true
                         : Array.isArray(city)
-                        ? city.includes(cityName)
-                        : city === cityName
+                          ? city.includes(cityName)
+                          : city === cityName
                     }
                     onChange={() => updateValue("city", cityName)}
                   />
@@ -119,10 +116,7 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
               const categoryName =
                 cat.name?.[normalizedLang] || cat.name?.["en"] || cat.name;
               return (
-                <label
-                  key={cat.id ?? categoryName}
-                  className="filter-option"
-                >
+                <label key={cat.id ?? categoryName} className="filter-option">
                   <input
                     type="checkbox"
                     className="filter-input"
@@ -130,8 +124,8 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
                       category === "all"
                         ? true
                         : Array.isArray(category)
-                        ? category.includes(categoryName)
-                        : category === categoryName
+                          ? category.includes(categoryName)
+                          : category === categoryName
                     }
                     onChange={() => updateValue("category", categoryName)}
                   />

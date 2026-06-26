@@ -23,7 +23,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
         cardStyle === "vertical"
           ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           : "grid grid-cols-1 md:grid-cols-2 gap-6"
-      }`}
+      } bg-[url('/HomePageImage/69060352_tutankhamon_mask_hand_drawn.svg')] bg-cover bg-center`}
     >
       {trips.map((trip, i) => {
         const avgStars = getRandomStars();
@@ -39,7 +39,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
             (p) =>
               p.user_id?.toString() === user.id?.toString() &&
               p.trip_id?.toString() === trip.id?.toString() &&
-              p.status !== "Cancelled"
+              p.status !== "Cancelled",
           );
 
         return (
@@ -75,7 +75,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
                     (c) =>
                       c.cities?.name?.[lang] ||
                       c.cities?.name?.en ||
-                      c.city_name
+                      c.city_name,
                   )
                   .join(", ") || t("NoCity")}
               </p>

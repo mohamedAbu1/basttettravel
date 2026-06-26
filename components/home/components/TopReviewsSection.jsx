@@ -63,7 +63,7 @@ export default function TopReviewsSection() {
   }, []);
 
   return (
-    <section className={`py-20 px-4 md:px-8 ${theme.background} ${theme.text} w-screen max-w-full`}>
+    <section className={`py-20 px-4 md:px-8 ${theme.background} ${theme.text} w-screen max-w-full bg-[url('/HomePageImage/421009550_cc929d60-b9e0-426e-84d8-74d70ab10d55.svg')] bg-cover bg-center`}>
       <EgyptianBackground />
       <h2 className="sc-title-first text-[21px] md:text-5xl font-extrabold tracking-wide drop-shadow-md text-left text-gradient">
         <span className="inline-block transform scale-x-[-1] mr-4">𓅓</span>
