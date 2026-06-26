@@ -1,85 +1,67 @@
 "use client";
 import React from "react";
+import * as Popover from "@radix-ui/react-popover";
 import { MdLocationCity } from "react-icons/md";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
-const CitiesInput = ({
-  selectedCities,
-  confirmSelection,
-  toggleCity,
-  showCities,
-  cities,
-  setShowCities,
-  rightValue,
-  topValue,
-}) => {
+
+const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
   const { theme } = useTheme();
-  const { i18n } = useTranslation(); // ✅ اللغة الحالية
+  const { i18n } = useTranslation();
   const normalizedLang = i18n.language.split("-")[0]; // مثل en أو ar أو fr
 
   return (
-    <>
-      <MdLocationCity className={`mr-2 text-xl ${theme.iconHover}`} />
-      <input
-        type="text"
-        placeholder="City"
-        value={(selectedCities || [])
-          .map((c) => c.name?.[normalizedLang] || c.name?.["en"] || c.name)
-          .join(" - ")}
-        onFocus={() => setShowCities(true)}
-        readOnly
-        className={`flex-1 p-3 bg-transparent ${theme.text} ${theme.placeholder} 
-                   focus:outline-none cursor-pointer`}
-      />
+    <Popover.Root>
+      {/* زر الإدخال */}
+      <Popover.Trigger asChild>
+        <button
+          className={`flex items-center w-full px-4 py-2 rounded-lg border ${theme.logoBorder} ${theme.card} shadow-sm cursor-pointer`}
+        >
+          <MdLocationCity className={`mr-2 text-xl ${theme.iconHover}`} />
+          <span className={`flex-1 text-left ${theme.text}`}>
+            {(selectedCities || [])
+              .map((c) => c.name?.[normalizedLang] || c.name?.["en"] || c.name)
+              .join(" - ") || "Select City"}
+          </span>
+        </button>
+      </Popover.Trigger>
 
-      <AnimatePresence>
-        {showCities && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            style={{ zIndex: 999, right: rightValue, top: topValue }}
-            className={`flex flex-wrap gap-3 w-[400px] absolute 
-                       ${theme.card} backdrop-blur-md border ${theme.logoBorder} 
-                       rounded-xl shadow-lg z-50 p-4`}
-          >
-            {cities.map((city) => (
-              <motion.div
-                key={city.id}
-                whileHover={{
-                  scale: 1.1,
-                  rotate: -2,
-                  boxShadow: `0 6px 15px ${theme.logoBorderColor || "rgba(194,168,120,0.6)"}`,
-                }}
-                onMouseDown={() => toggleCity(city)}
-                className={`px-4 py-2 rounded-lg cursor-pointer transition-all duration-300 
-                  ${
-                    (selectedCities || []).some(
-                      (c) => c.id === city.id || c.name === city.name,
-                    )
-                      ? `${theme.buttonPrimary} text-black shadow-lg`
-                      : `${theme.text} ${theme.card} hover:${theme.buttonSecondary}`
-                  }`}
-              >
-                {city.name?.[normalizedLang] || city.name?.["en"] || city.name}
-              </motion.div>
-            ))}
-
-            <motion.div
+      {/* محتوى الـ dropdown */}
+      <Popover.Portal>
+        <Popover.Content
+          side="left"
+          align="start"
+          sideOffset={45}
+          className={`w-[350px] p-4 rounded-xl z-[9999] shadow-lg border ${theme.logoBorder} ${theme.card} flex flex-col gap-3`}
+        >
+          {cities.map((city) => (
+            <motion.button
+              key={city.id}
               whileHover={{ scale: 1.05 }}
-              onMouseDown={confirmSelection}
-              className={`w-full rounded-[6px] px-6 py-3 text-center font-semibold tracking-wide 
-                          cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
-              style={{ border: `2px solid ${theme.logoBorder}` }}
+              onClick={() => toggleCity(city)}
+              className={`px-4 py-2 rounded-lg text-left transition-all duration-300 cursor-pointer
+                ${
+                  (selectedCities || []).some((c) => c.id === city.id)
+                    ? `${theme.buttonPrimary} text-black shadow-lg`
+                    : `${theme.text} hover:${theme.buttonSecondary}`
+                }`}
             >
-              ✅ Confirm
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+              {city.name?.[normalizedLang] || city.name?.["en"] || city.name}
+            </motion.button>
+          ))}
+
+          {/* زر التأكيد */}
+          <Popover.Close
+            className={`w-full rounded-[6px] px-6 py-3 text-center font-semibold tracking-wide 
+                        cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
+            style={{ border: `2px solid ${theme.logoBorder}` }}
+          >
+            ✅ Confirm
+          </Popover.Close>
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
   );
 };
 

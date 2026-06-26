@@ -78,7 +78,7 @@ export default function Packages({ showTrips }) {
 
       {/* الكروت */}
       <div
-        className={`relative z-[1] backdrop-blur-md p-4 border ${theme.logoBorder} ${theme.card} rounded-[40px]`}
+        className={`hidden 2xl:flex relative z-[1] backdrop-blur-md p-4 border ${theme.logoBorder} ${theme.card} rounded-[40px]`}
       >
         <AnimatePresence mode="wait">
           <motion.div
