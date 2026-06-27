@@ -3,7 +3,7 @@ export default function ChatHeader({ onClose, theme }) {
     <div
       className={`font-bold p-3 rounded-t-xl flex justify-between items-center text-white ${theme.buttonPrimary}`}
     >
-      <span className="capitalize">montu travel Support</span>
+      <span className="capitalize">Basttet Travel Support</span>
       <button
         onClick={onClose}
         style={{ cursor: "pointer" }}

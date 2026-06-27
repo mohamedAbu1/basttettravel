@@ -22,8 +22,8 @@ export default function ConfirmButton({
   const { purchaseTrip } = usePurchase();
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
-  const { theme } = useTheme(); // ✅ جلب الثيم
-  const { t } = useTranslation("home"); // ✅ الترجمة
+  const { theme } = useTheme();
+  const { t } = useTranslation("home");
 
   const handlePurchase = async () => {
     setLoading(true);
@@ -48,7 +48,7 @@ export default function ConfirmButton({
       const result = await purchaseTrip(bookingData);
 
       if (result.success) {
-        toast.success(t("TripBookedSuccessfully")); // ✅ مترجم
+        toast.success(t("TripBookedSuccessfully"));
       } else {
         toast.error("❌ " + result.error);
       }
@@ -61,12 +61,38 @@ export default function ConfirmButton({
 
   return (
     <button
-      onClick={handlePurchase}
+      onClick={async () => {
+        try {
+          const res = await fetch("/api/paymob", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              amount: 100,
+              userDetails: {
+                email: "test@example.com",
+                firstName: "Mohamed",
+                lastName: "Ahmed",
+                phone: "+201000000000",
+              },
+            }),
+          });
+
+          const data = await res.json();
+
+          if (data.error) {
+            alert("Error: " + data.error);
+          } else {
+            // افتح الـ Iframe مع الـ Payment Token
+            const iframeUrl = `${process.env.PAYMOB_IFRAME_URL}?payment_token=${data.token}`;
+            window.location.href = iframeUrl;
+          }
+        } catch (err) {
+          alert("Failed: " + err.message);
+        }
+      }}
       disabled={loading}
       className={`mt-4 w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition cursor-pointer ${
-        loading
-          ? "opacity-50 cursor-not-allowed"
-          : theme.buttonSuccess // ✅ زر من الثيم
+        loading ? "opacity-50 cursor-not-allowed" : theme.buttonSuccess
       }`}
     >
       <FaCheckCircle className="w-5 h-5 animate-pulse" />
