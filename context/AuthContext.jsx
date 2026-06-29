@@ -7,7 +7,6 @@ import { useQueryFilters } from "./QueryContext";
 import { useRouter } from "next/navigation"; // ✅ لإدارة التنقل
 import { supabase } from "@/lib/supabaseClient";
 const AuthContext = createContext();
-
 export function AuthProvider({ children }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -166,19 +165,23 @@ const login = async (email, password, onSuccess) => {
     setLoading(false);
   }
 };
+const logout = async () => {
+  const router = useRouter();
 
-  const logout = async () => {
-    try {
-      await axios.post("/api/auth/logout", {}, { withCredentials: true });
-    } catch (err) {
-      console.error("❌ Error clearing cookies on server:", err);
-    }
+  try {
+    await axios.post("/api/auth/logout", {}, { withCredentials: true });
+  } catch (err) {
+    console.error("❌ Error clearing cookies on server:", err);
+  }
 
-    setUser(null);
-    setIsLoggedIn(false);
-    removeToken();
-    toast.info("🚪 Logged out successfully");
-  };
+  setUser(null);
+  setIsLoggedIn(false);
+  removeToken();
+  toast.info("🚪 Logged out successfully");
+
+  // ✅ تحويل المستخدم مباشرة إلى الصفحة الرئيسية
+  router.push("/");
+};
   return (
     <AuthContext.Provider
       value={{
