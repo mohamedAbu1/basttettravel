@@ -40,7 +40,7 @@ export default function ConfirmButton({
       arrivalDate,
       departureDate,
       userId: user.id,
-      status: "Pending",
+      status: "Paid",
       platform: "web",
     };
 
@@ -77,13 +77,18 @@ export default function ConfirmButton({
             }),
           });
 
+          // ... باقي الكود العلوي كما هو دون تغيير
+
           const data = await res.json();
 
           if (data.error) {
             alert("Error: " + data.error);
           } else {
-            // افتح الـ Iframe مع الـ Payment Token
-            const iframeUrl = `${process.env.PAYMOB_IFRAME_URL}?payment_token=${data.token}`;
+            // التعديل هنا: قراءة المتغير العام المسموح للمتصفح برؤيته
+            const iframeBaseUrl = process.env.NEXT_PUBLIC_PAYMOB_IFRAME_URL;
+            const iframeUrl = `${iframeBaseUrl}?payment_token=${data.token}`;
+
+            // التوجيه لصفحة الدفع
             window.location.href = iframeUrl;
           }
         } catch (err) {

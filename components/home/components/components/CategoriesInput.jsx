@@ -17,7 +17,7 @@ const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => 
         {/* زر الإدخال */}
         <Popover.Trigger asChild>
           <button
-            className={`flex items-center w-full px-4 py-2 rounded-lg border ${theme.logoBorder} ${theme.card} shadow-sm cursor-pointer`}
+            className={`flex items-center w-full px-4 py-2 rounded-lg ${theme.card} shadow-sm cursor-pointer`}
           >
             <MdCategory className={`mr-2 text-xl ${theme.iconHover}`} />
             <span className={`flex-1 text-left ${theme.text}`}>
@@ -34,7 +34,7 @@ const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => 
             side="left"        // ✅ يظهر بجانب الزر من اليسار
             align="start"      // ✅ يبدأ من أعلى الزر
             sideOffset={10}    // مسافة صغيرة بين الزر والـ Popover
-            className={`absolute w-[350px] z-[9999] p-4 rounded-xl shadow-lg border ${theme.logoBorder} ${theme.card} flex flex-col gap-3`}
+            className={`absolute w-[350px] z-[9999] p-4 rounded-xl shadow-lg ${theme.card} flex flex-col gap-3`}
           >
             {categories.map((cat) => (
               <motion.button

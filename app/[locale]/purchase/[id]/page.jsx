@@ -4,7 +4,7 @@ import { useTrip } from "@/context/TripContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useAuth } from "@/context/AuthContext";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/header/Header";
 import Footer from "@/components/Footer/Footer";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
@@ -14,6 +14,7 @@ import TripSchedule from "../../trips/[id]/components/components/TripSchedule";
 import AdditionalDetails from "../../trips/[id]/components/components/AdditionalDetails";
 import TripDetails from "../../trips/[id]/components/components/TripDetails";
 import ConfirmButton from "../../trips/[id]/components/components/ConfirmButton";
+import ReserveButton from "../../trips/[id]/components/components/ReserveButton";
 
 export default function PurchasePage() {
   const { id } = useParams();
@@ -48,13 +49,34 @@ export default function PurchasePage() {
     trip.title?.en ||
     trip.title;
 
-  const handlePurchase = () => {
-    if (!fullName || !email || !cardNumber || !expiry || !cvv) {
-      toast.error("❌ Please fill all fields");
-      return;
+  // const handlePurchase = () => {
+  //   if (!fullName || !email || !cardNumber || !expiry || !cvv) {
+  //     toast.error("❌ Please fill all fields");
+  //     return;
+  //   }
+  //   toast.success("✅ Purchase completed successfully!");
+  // };
+const savePaymentData = async (data) => {
+  try {
+    const res = await fetch("/api/purchase", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      toast.error("❌ Error: " + (result.error || "Unknown error"));
+    } else {
+      toast.success("✅ " + result.message);
     }
-    toast.success("✅ Purchase completed successfully!");
-  };
+  } catch (error) {
+    console.error("Error saving payment:", error);
+    toast.error("❌ Failed to save payment");
+  }
+};
+
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -70,35 +92,41 @@ export default function PurchasePage() {
     <>
       <Header />
       <main
-        className={`min-h-screen relative ${theme.background} ${theme.text}`}
+        className={`min-h-screen relative flex items-center justify-center flex-col ${theme.background} ${theme.text}`}
       >
         {/* ✅ العمود الأيسر */}
-        <div className="absolute scale-x-[-1] h-full flex flex-col items-center"  style={{
-          left: screenSize.width * 0.05, // 10% من عرض الشاشة
-          top: screenSize.height * 0.14, // 20% من ارتفاع الشاشة
-          width: "240px",
-          height: "200px",
-        }}> 
+        <div
+          className="absolute scale-x-[-1] h-full flex flex-col items-center"
+          style={{
+            left: screenSize.width * 0.05, // 10% من عرض الشاشة
+            top: screenSize.height * 0.14, // 20% من ارتفاع الشاشة
+            width: "240px",
+            height: "200px",
+          }}
+        >
           {Array.from({ length: 5 }).map((_, i) => (
             <img
               key={i}
-              src="/HomePageImage/Temple-of-Bell-Street-2015100903.svg"
+              src="/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
               className="mb-4 opacity-30"
             />
           ))}
         </div>
 
         {/* ✅ العمود الأيمن */}
-        <div className="absolute h-full flex flex-col items-center" style={{
-          right: screenSize.width * 0.05, // 10% من عرض الشاشة
-          top: screenSize.height * 0.14, // 20% من ارتفاع الشاشة
-          width: "240px",
-          height: "200px",
-        }}>
+        <div
+          className="absolute h-full flex flex-col items-center"
+          style={{
+            right: screenSize.width * 0.05, // 10% من عرض الشاشة
+            top: screenSize.height * 0.14, // 20% من ارتفاع الشاشة
+            width: "240px",
+            height: "200px",
+          }}
+        >
           {Array.from({ length: 5 }).map((_, i) => (
             <img
               key={i}
-              src="/HomePageImage/Temple-of-Bell-Street-2015100903.svg"
+              src="/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
               className="mb-4 opacity-30"
             />
           ))}
@@ -185,60 +213,22 @@ export default function PurchasePage() {
           />
 
           <TripDetails trip={trip} groupSize={groupSize} />
-
-          {/* فورم الدفع */}
-          <div
-            className={`p-6 rounded-xl shadow-lg ${theme.card} flex flex-col gap-4`}
-          >
-            <input
-              type="text"
-              placeholder="Full Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="p-3 rounded-md border focus:outline-none"
-            />
-            <input
-              type="email"
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="p-3 rounded-md border focus:outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Card Number"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-              className="p-3 rounded-md border focus:outline-none"
-            />
-            <div className="flex gap-4">
-              <input
-                type="text"
-                placeholder="MM/YY"
-                value={expiry}
-                onChange={(e) => setExpiry(e.target.value)}
-                className="p-3 rounded-md border focus:outline-none flex-1"
-              />
-              <input
-                type="text"
-                placeholder="CVV"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
-                className="p-3 rounded-md border focus:outline-none flex-1"
-              />
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handlePurchase}
-              className={theme.buttonPrimary}
-            >
-              Confirm Purchase
-            </motion.button>
-          </div>
         </div>
 
+        <ReserveButton
+          trip={trip.id}
+          arrivalDate={arrivalDate}
+          departureDate={departureDate}
+          hasChildren={hasChildren}
+          childrenCount={childrenCount}
+          hasPets={hasPets}
+          pets={pets}
+          groupSize={groupSize}
+          hasGuide={hasGuide}
+          guideLanguages={guideLanguages}
+          savePaymentData={savePaymentData}
+          user={user}
+        />
         {/* زر التأكيد */}
         <ConfirmButton
           trip={trip.id}

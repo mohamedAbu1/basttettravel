@@ -16,7 +16,7 @@ const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
       {/* زر الإدخال */}
       <Popover.Trigger asChild>
         <button
-          className={`flex items-center w-full px-4 py-2 rounded-lg border ${theme.logoBorder} ${theme.card} shadow-sm cursor-pointer`}
+          className={`flex items-center w-full px-4 py-2 rounded-lg ${theme.card} shadow-sm cursor-pointer`}
         >
           <MdLocationCity className={`mr-2 text-xl ${theme.iconHover}`} />
           <span className={`flex-1 text-left ${theme.text}`}>
@@ -33,7 +33,7 @@ const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
           side="left"
           align="start"
           sideOffset={45}
-          className={`w-[350px] p-4 rounded-xl z-[9999] shadow-lg border ${theme.logoBorder} ${theme.card} flex flex-col gap-3`}
+          className={`w-[350px] p-4 rounded-xl z-[9999] shadow-lg ${theme.card} flex flex-col gap-3`}
         >
           {cities.map((city) => (
             <motion.button
