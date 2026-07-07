@@ -40,7 +40,7 @@ function CategoryCard({ cat, theme, language }) {
     const queryObj = {
       city: "all",
       category: [displayName],
-      price: luxuryNames.includes(displayName) ? "Luxury" : "All",
+      group_price: luxuryNames.includes(displayName) ? "Luxury" : "All",
       popular: false,
     };
     const encoded = encodeData(queryObj);

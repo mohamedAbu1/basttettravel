@@ -21,7 +21,7 @@ export function QueryProvider({ children }) {
   const [queryState, setQueryState] = useState({
     city: "all",
     category: "all",
-    price: "All",
+    group_price: "All",
     popular: false,
   });
 const updateValue = (key, value) => {
@@ -35,7 +35,7 @@ const updateValue = (key, value) => {
     setQueryState({
       city: "all",
       category: "all",
-      price: "All",
+      group_price: "All",
       popular: false,
     });
   };
@@ -89,9 +89,9 @@ useEffect(() => {
         if (!tripCategories.some((c) => queryState.category.includes(c))) return false;
       }
 
-      if (queryState.price === "Economy" && !(trip.price <= 900)) return false;
-      if (queryState.price === "Standard" && !(trip.price > 900 && trip.price <= 1500)) return false;
-      if (queryState.price === "Luxury" && !(trip.price > 1500)) return false;
+      if (queryState.group_price === "Economy" && !(trip.group_price <= 249)) return false;
+      if (queryState.group_price === "Standard" && !(trip.group_price > 249 && trip.group_price <= 449)) return false;
+      if (queryState.group_price === "Luxury" && !(trip.group_price > 450)) return false;
 
       if (queryState.popular === true && !trip.isPopular) return false;
 

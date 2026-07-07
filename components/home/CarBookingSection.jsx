@@ -53,14 +53,14 @@ const CarBookingSection = () => {
     >
       {/* Background Car Image */}
       <div className="absolute inset-0 -z-10">
-        <Image
+        {/* <Image
           src="/HomePageImage/30204164_jaipur_bw_001.svg"
           alt="Luxury Car Background"
           fill
           className="object-cover opacity-20 rounded-lg"
           priority // ✅ لو الصورة أساسية في الصفحة (خلفية أو Hero)
           quality={85} // ✅ يقلل حجم الصورة ويحافظ على الجودة
-        />
+        /> */}
         <div
           className={`absolute inset-0 bg-gradient-to-br ${
             themeName === "dark"

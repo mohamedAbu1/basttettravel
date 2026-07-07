@@ -1,11 +1,18 @@
 "use client";
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { FaFacebookF, FaInstagram, FaTiktok, FaWhatsapp } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTiktok,
+  FaWhatsapp,
+  FaTripadvisor,
+} from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { MdEmail } from "react-icons/md";
+import { FaGlobe } from "react-icons/fa"; // مؤقت لـ Viator
 
 const Footer = () => {
   const { theme, themeName } = useTheme();
@@ -50,12 +57,7 @@ const Footer = () => {
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={staggerContainer}
-      className={`
-        flex flex-col items-center justify-center
-        py-12 px-6 w-full relative overflow-hidden
-        transition-colors duration-500
-        ${theme.background} ${theme.text}
-      `}
+      className={`flex flex-col items-center justify-center py-12 px-6 w-full relative overflow-hidden transition-colors duration-500 ${theme.background} ${theme.text}`}
     >
       {/* خلفية الرموز الفرعونية */}
       <div className="absolute inset-0 pointer-events-none -z-10">
@@ -65,9 +67,7 @@ const Footer = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 0.15, y: 0 }}
             transition={{ duration: 2, delay: i * 0.1 }}
-            className={`absolute ${
-              themeName === "dark" ? "text-gray-700" : "text-[#222]"
-            } text-6xl`}
+            className={`absolute ${themeName === "dark" ? "text-gray-700" : "text-[#222]"} text-6xl`}
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
@@ -119,7 +119,7 @@ const Footer = () => {
       {/* Divider متدرج */}
       <motion.div
         variants={fadeUp}
-        className="w-32 h-[2px] bg-gradient-to-r from-[var(--logoGradientFrom)] to-[var(--logoGradientTo)] mt-6 mb-6 animate-pulse"
+        className="w-32 h-[2px] bg-gradient-to-r from-[var(--logoGradientFrom)] to-[var(--logoGradientTo)]  mb-6 animate-pulse"
       ></motion.div>
 
       {/* أيقونات السوشيال ميديا */}
@@ -129,33 +129,56 @@ const Footer = () => {
             Icon: FaFacebookF,
             url: "https://www.facebook.com/profile.php?id=61591222981163",
           },
-          { Icon: FaInstagram, url: "https://www.instagram.com/ismailharoun225/" },
-          { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
-          { Icon: MdEmail, url: "https://mail.google.com/mail/u/3/#inbox" }, // فتح البريد
-        ].map(({ Icon, link }, i) => (
+          {
+            Icon: FaInstagram,
+            url: "https://www.instagram.com/ismailharoun225/",
+          },
+          { Icon: FaWhatsapp, url: "https://wa.me/201100507802" },
+          { Icon: MdEmail, url: "https://mail.google.com/mail/u/3/#inbox" },
+          { Icon: FaGlobe, url: "https://www.viator.com/" }, // ✅ Viator
+          { Icon: FaTripadvisor, url: "https://www.tripadvisor.com/" }, // ✅ Tripadvisor
+        ].map(({ Icon, url }, i) => (
           <motion.a
             key={i}
-            href={link}
+            href={url}
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.2, rotate: 5 }}
-            className={`p-3 rounded-full transition shadow-md cursor-pointer${
+            whileHover={{ scale: 1.6, rotate: 5 }} // ✅ تكبير أفضل
+            className={`p-3 rounded-full transition shadow-md cursor-pointer ${
               themeName === "dark"
-                ? "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[var(--logoBorder)]"
-                : "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40 text-[#222]"
+                ? "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40"
+                : "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40"
             }`}
+            style={{
+              fontSize: "22px",
+              color:
+                Icon === FaFacebookF
+                  ? "#1877F2" // أزرق فيسبوك
+                  : Icon === FaInstagram
+                    ? "#E1306C" // وردي إنستجرام
+                    : Icon === FaWhatsapp
+                      ? "#25D366" // أخضر واتساب
+                      : Icon === MdEmail
+                        ? "#EA4335" // أحمر Gmail
+                        : Icon === FaGlobe
+                          ? "#0A7A8C" // تركواز Viator
+                          : Icon === FaTripadvisor
+                            ? "#34E0A1" // أخضر Tripadvisor
+                            : theme.icon,
+            }}
           >
             <Icon />
           </motion.a>
         ))}
       </motion.div>
 
-      {/* حقوق النشر */}
+      {/* حقوق النشر + اسم ورقم الأونر */}
       <motion.p
         variants={fadeUp}
-        className="mt-8 text-xs opacity-70 relative z-10"
+        className="mt-8 text-sm text-2xl opacity-70 relative z-10"
       >
-        © 2026 Basttet travel. All rights reserved.
+        © 2026 Basttet travel. All rights reserved. <br />
+        Owner: Ismail Haroun — Phone: +20 1100507802
       </motion.p>
     </motion.footer>
   );

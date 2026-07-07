@@ -39,14 +39,14 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
   }, []);
 
   // 🟢 دالة التحويل
-  const convertPrice = (price, tripCurrency) => {
-    let converted = price;
+  const convertPrice = (group_price, tripCurrency) => {
+    let converted = group_price;
     if (currency === "EUR" && tripCurrency === "USD") {
-      converted = (price * exchangeRate.USD_EUR).toFixed(2);
+      converted = (group_price * exchangeRate.USD_EUR).toFixed(2);
     } else if (currency === "USD" && tripCurrency === "EUR") {
-      converted = (price * exchangeRate.EUR_USD).toFixed(2);
+      converted = (group_price * exchangeRate.EUR_USD).toFixed(2);
     } else if (currency === "EGP" && tripCurrency === "USD") {
-      converted = (price * exchangeRate.USD_EGP).toFixed(2);
+      converted = (group_price * exchangeRate.USD_EGP).toFixed(2);
     }
     return converted;
   };

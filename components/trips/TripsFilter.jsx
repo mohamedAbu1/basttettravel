@@ -20,15 +20,15 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
   const { themeName } = useTheme();
   const { currency } = usePurchase();
 
-  const { city, category, price, popular, updateValue } = useQueryFilters();
+  const { city, category, group_price, popular, updateValue } = useQueryFilters();
 
   if (loading)
     return <p className="text-center text-gray-500">{t("Loading")}</p>;
 
   const rangesUSD = [
-    { label: "0 - 199", value: "Economy" },
-    { label: "200 - 599", value: "Standard" },
-    { label: "600+", value: "Luxury" },
+    { label: "0 - 249", value: "Economy" },
+    { label: "250 - 449", value: "Standard" },
+    { label: "450+", value: "Luxury" },
   ];
 
   const conversionRate = 0.85;
@@ -151,8 +151,8 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
                   type="radio"
                   name="priceRange"
                   className="filter-input"
-                  checked={price === range.value}
-                  onChange={() => updateValue("price", range.value)}
+                  checked={group_price === range.value}
+                  onChange={() => updateValue("group_price", range.value)}
                 />
                 {range.label}
               </label>

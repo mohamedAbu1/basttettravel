@@ -7,7 +7,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import CelebrationIcon from "@mui/icons-material/Celebration";
 import StarIcon from "@mui/icons-material/Star";
-import { Box } from "@mui/material";
+import Box from '@mui/material/Box';
 import { PickersDay } from "@mui/x-date-pickers";
 import { desktopImages, mobileImages } from "@/constants/images";
 import { useTranslation } from "react-i18next";
@@ -19,7 +19,7 @@ export function DataProvider({ children }) {
 
   const { themeName, theme } = useTheme(); // theme يحتوي على خصائص من lightTheme أو darkTheme
   const [city, setCity] = useState(t("Luxor"));
-  const [price, setPrice] = useState("Economy");
+  const [group_price, setGroupPrice] = useState("Economy");
   const [tripType, setTripType] = useState(t("OneDayTrips"));
   const [arrival, setArrival] = useState(addDays(new Date(), 2));
   const [departure, setDeparture] = useState(addDays(new Date(), 9));
@@ -33,7 +33,7 @@ export function DataProvider({ children }) {
   // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
   const handleSearch = () => {
-    console.log({ city, price, tripType, arrival, departure });
+    console.log({ city, group_price, tripType, arrival, departure });
   };
   // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   const specialDatesBase = [
@@ -133,8 +133,8 @@ export function DataProvider({ children }) {
         city,
         setCity,
         addDays,
-        price,
-        setPrice,
+        group_price,
+        setGroupPrice,
         tripType,
         setTripType,
         arrival,

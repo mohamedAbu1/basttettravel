@@ -40,7 +40,7 @@ export default function NavBar({ scrolled }) {
           const encoded = encodeQuery({
             city: "all",
             category: "all",
-            price: "All",
+            group_price: "All",
             popular: false,
           });
           path = `/trips?data=${encoded}`;

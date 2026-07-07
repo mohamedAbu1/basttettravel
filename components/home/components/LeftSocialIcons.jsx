@@ -2,18 +2,24 @@
 import { motion } from "framer-motion";
 import React from "react";
 import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
-import { useTheme } from "@/context/ThemeContext";
 import { MdEmail } from "react-icons/md";
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+import { useTheme } from "@/context/ThemeContext";
+// لو مش لاقي أيقونات جاهزة ل Viator و Tripadvisor في react-icons
+// ممكن تستخدم FaGlobe أو أيقونات عامة أو تضيف SVG مخصص
+
+import { FaGlobe } from "react-icons/fa"; // مؤقت لـ Viator
+import { FaTripadvisor } from "react-icons/fa"; // موجود في react-icons
+
 const LeftSocialIcons = () => {
-  // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   const { theme } = useTheme();
-  // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
   const socialLinks = [
     { Icon: FaFacebookF, url: "https://www.facebook.com/profile.php?id=61591222981163" },
     { Icon: FaInstagram, url: "https://www.instagram.com/ismailharoun225/" },
     { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
     { Icon: MdEmail, url: "https://account.microsoft.com/profile/" }, // فتح البريد
+    { Icon: FaGlobe, url: "https://www.viator.com/" }, // ✅ Viator
+    { Icon: FaTripadvisor, url: "https://www.tripadvisor.com/" }, // ✅ Tripadvisor
   ];
 
   return (
@@ -28,7 +34,7 @@ const LeftSocialIcons = () => {
           whileHover={{ scale: 1.2, rotate: -5 }}
           key={i}
           href={url}
-          target="_blank" // يفتح الرابط في تبويب جديد
+          target="_blank"
           rel="noopener noreferrer"
           className={`p-3 rounded-full ${theme.card} ${theme.shadow}`}
         >

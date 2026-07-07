@@ -39,7 +39,7 @@ export default function TripsPage() {
   const [search, setSearch] = useState("");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-  const { city, category, price, popular } = useQueryFilters();
+  const { city, category, group_price, popular } = useQueryFilters();
 
   useEffect(() => {
     fetchTrips();
@@ -104,12 +104,12 @@ const matchesCity =
       Standard: { min: 200, max: 599 },
       Luxury: { min: 600, max: Infinity },
     };
-    const selectedRange = ranges[price];
+    const selectedRange = ranges[group_price];
     const matchesPrice =
-      price === "All" || !price
+      group_price === "All" || !group_price
         ? true
         : selectedRange
-          ? trip.price >= selectedRange.min && trip.price <= selectedRange.max
+          ? trip.group_price >= selectedRange.min && trip.group_price <= selectedRange.max
           : true;
 
     const matchesPopular = popular ? trip.isPopular : true;
