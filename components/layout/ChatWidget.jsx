@@ -84,7 +84,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     return () => window.removeEventListener("openCarBookingChat", handler);
   }, [user]);
 
-  const isAdmin = user?.user_metadata?.role === "ADMIN";
+  const isAdmin = user?.role === "admin";
 
   const handleSendImage = async (file) => {
     const fileName = `${user.id}-${Date.now()}-${file.name}`;

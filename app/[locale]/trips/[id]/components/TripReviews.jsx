@@ -102,7 +102,7 @@ export default function TripReviews({ trip, lang }) {
         theme={theme}
       />
 
-      {user && (
+      {user && user?.role !== "admin" && (
         <>
           {/* تقييم النجوم */}
           <StarRating

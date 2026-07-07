@@ -8,17 +8,18 @@ const TripContext = createContext();
 const emptyTrip = {
   title: { en: "", es: "", fr: "", de: "", it: "", zh: "" },
   description: { en: "", es: "", fr: "", de: "", it: "", zh: "" },
-  price: 0,
+  solo_price: 0,
+  group_price: 0,
   currency: "USD",
   duration: 0,
   duration_unit: "days",
   priceLevel: "",
   cover_image: "",
   gallery_images: [],
-  cities: [],       // ✅ IDs للمدن
-  categories: [],   // ✅ IDs للفئات
+  cities: [], // ✅ IDs للمدن
+  categories: [], // ✅ IDs للفئات
   includes: [],
-  itinerary: [],    // كل يوم فيه activities
+  itinerary: [], // كل يوم فيه activities
 };
 
 export function TripProvider({ children }) {
@@ -125,7 +126,10 @@ export function TripProvider({ children }) {
       // رفع صورة الغلاف
       let coverImageUrl = "";
       if (tripData.cover_file) {
-        coverImageUrl = await uploadFileToSupabase(tripData.cover_file, "cover");
+        coverImageUrl = await uploadFileToSupabase(
+          tripData.cover_file,
+          "cover",
+        );
       }
 
       // رفع صور المعرض
@@ -133,7 +137,7 @@ export function TripProvider({ children }) {
         tripData.gallery_images.map(async (img, i) => {
           const url = await uploadFileToSupabase(img.file, `gallery_${i}`);
           return { url, name: img.name };
-        })
+        }),
       );
 
       const payload = {

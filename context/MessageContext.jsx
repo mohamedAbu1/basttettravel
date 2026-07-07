@@ -98,39 +98,38 @@ const sendMessage = async ({ user_id, content, sender_type, status = "sent" }) =
   }, [user?.id]);
 
   // ✅ Realtime Subscriptions
-  useEffect(() => {
-    const channel = supabase
-      .channel("messages-channel")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
-          setMessages((prev) => {
-            // فلترة لمنع التكرار
-            if (prev.find((msg) => msg.id === payload.new.id)) {
-              return prev;
-            }
-            return [...prev, payload.new];
-          });
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "messages" },
-        (payload) => {
-          setMessages((prev) =>
-            prev.map((msg) =>
-              msg.id === payload.new.id ? payload.new : msg
-            )
-          );
-        }
-      )
-      .subscribe();
+useEffect(() => {
+  if (!user?.id) return; // اشترك فقط لو فيه مستخدم
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  const channel = supabase
+    .channel(`messages-channel-${user.id}`) // 👈 اجعل اسم القناة مرتبط بالمستخدم
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "messages" },
+      (payload) => {
+        setMessages((prev) => {
+          if (prev.find((msg) => msg.id === payload.new.id)) return prev;
+          return [...prev, payload.new];
+        });
+      }
+    )
+    .on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "messages" },
+      (payload) => {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === payload.new.id ? payload.new : msg
+          )
+        );
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [user?.id]); // 👈 اربط الاشتراك بالمستخدم
 
   return (
     <MessageContext.Provider

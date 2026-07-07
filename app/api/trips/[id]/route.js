@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
-
 // ================== GET ==================
 export async function GET(req, context) {
   try {
@@ -15,11 +14,12 @@ export async function GET(req, context) {
         id,
         title,
         description,
-        price,
         currency,
         duration,
         duration_unit,
         priceLevel,
+          solo_price,
+      group_price,
         cover_image,
         gallery_images,
         trip_cities (
@@ -111,8 +111,17 @@ export async function PUT(req, context) {
 
     // ✅ تحديث بيانات الرحلة الأساسية فقط لو اتغيرت
     const tripPayload = {};
-    const fields = ["title","description","price","duration","priceLevel","cover_image","gallery_images"];
-    fields.forEach(f => {
+    const fields = [
+      "title",
+      "description",
+      "duration",
+      "solo_price",
+      "group_price",
+      "priceLevel",
+      "cover_image",
+      "gallery_images",
+    ];
+    fields.forEach((f) => {
       if (body[f] !== undefined) tripPayload[f] = body[f];
     });
 
@@ -122,7 +131,10 @@ export async function PUT(req, context) {
         .update(tripPayload)
         .eq("id", id);
       if (error) {
-        return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+        return NextResponse.json(
+          { success: false, error: error.message },
+          { status: 400 },
+        );
       }
     }
 
@@ -133,17 +145,23 @@ export async function PUT(req, context) {
         .select("category_id")
         .eq("trip_id", id);
 
-      const oldCategoryIds = oldCategories.map(c => c.category_id);
+      const oldCategoryIds = oldCategories.map((c) => c.category_id);
       const newCategories = [...new Set(body.categories)];
 
-      const toAdd = newCategories.filter(c => !oldCategoryIds.includes(c));
-      const toRemove = oldCategoryIds.filter(c => !newCategories.includes(c));
+      const toAdd = newCategories.filter((c) => !oldCategoryIds.includes(c));
+      const toRemove = oldCategoryIds.filter((c) => !newCategories.includes(c));
 
       if (toAdd.length > 0) {
-        await supabase.from("trip_categories").insert(toAdd.map(catId => ({ trip_id: id, category_id: catId })));
+        await supabase
+          .from("trip_categories")
+          .insert(toAdd.map((catId) => ({ trip_id: id, category_id: catId })));
       }
       if (toRemove.length > 0) {
-        await supabase.from("trip_categories").delete().eq("trip_id", id).in("category_id", toRemove);
+        await supabase
+          .from("trip_categories")
+          .delete()
+          .eq("trip_id", id)
+          .in("category_id", toRemove);
       }
     }
 
@@ -154,17 +172,23 @@ export async function PUT(req, context) {
         .select("city_id")
         .eq("trip_id", id);
 
-      const oldCityIds = oldCities.map(c => c.city_id);
+      const oldCityIds = oldCities.map((c) => c.city_id);
       const newCities = [...new Set(body.cities)];
 
-      const toAdd = newCities.filter(c => !oldCityIds.includes(c));
-      const toRemove = oldCityIds.filter(c => !newCities.includes(c));
+      const toAdd = newCities.filter((c) => !oldCityIds.includes(c));
+      const toRemove = oldCityIds.filter((c) => !newCities.includes(c));
 
       if (toAdd.length > 0) {
-        await supabase.from("trip_cities").insert(toAdd.map(cityId => ({ trip_id: id, city_id: cityId })));
+        await supabase
+          .from("trip_cities")
+          .insert(toAdd.map((cityId) => ({ trip_id: id, city_id: cityId })));
       }
       if (toRemove.length > 0) {
-        await supabase.from("trip_cities").delete().eq("trip_id", id).in("city_id", toRemove);
+        await supabase
+          .from("trip_cities")
+          .delete()
+          .eq("trip_id", id)
+          .in("city_id", toRemove);
       }
     }
 
@@ -176,7 +200,7 @@ export async function PUT(req, context) {
         .eq("trip_id", id);
 
       const seen = new Set();
-      const uniqueIncludes = body.includes.filter(inc => {
+      const uniqueIncludes = body.includes.filter((inc) => {
         const key = JSON.stringify(inc.include_translations);
         if (seen.has(key)) return false;
         seen.add(key);
@@ -186,10 +210,12 @@ export async function PUT(req, context) {
       // احذف القديم كله وأدخل الجديد النظيف
       await supabase.from("includes").delete().eq("trip_id", id);
       if (uniqueIncludes.length > 0) {
-        await supabase.from("includes").insert(uniqueIncludes.map(inc => ({
-          trip_id: id,
-          include_translations: inc.include_translations
-        })));
+        await supabase.from("includes").insert(
+          uniqueIncludes.map((inc) => ({
+            trip_id: id,
+            include_translations: inc.include_translations,
+          })),
+        );
       }
     }
 
@@ -198,7 +224,7 @@ export async function PUT(req, context) {
       await supabase.from("trip_days").delete().eq("trip_id", id);
 
       const seenDays = new Set();
-      const uniqueDays = body.itinerary.filter(day => {
+      const uniqueDays = body.itinerary.filter((day) => {
         if (seenDays.has(day.day_number)) return false;
         seenDays.add(day.day_number);
         return true;
@@ -220,13 +246,13 @@ export async function PUT(req, context) {
       insertedDays.forEach((dayRow, index) => {
         const activities = uniqueDays[index].activities || [];
         const seenActs = new Set();
-        const uniqueActs = activities.filter(act => {
+        const uniqueActs = activities.filter((act) => {
           const key = `${act.time}-${JSON.stringify(act.activity_translations)}`;
           if (seenActs.has(key)) return false;
           seenActs.add(key);
           return true;
         });
-        uniqueActs.forEach(act => {
+        uniqueActs.forEach((act) => {
           activitiesData.push({
             day_id: dayRow.id,
             time: act.time,
@@ -244,11 +270,12 @@ export async function PUT(req, context) {
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error("❌ [PUT] Exception:", error.message);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 },
+    );
   }
 }
-
-
 
 // ================== DELETE ==================
 export async function DELETE(req, context) {
@@ -270,20 +297,20 @@ export async function DELETE(req, context) {
       console.error("❌ [DELETE] Error:", error.message);
       return NextResponse.json(
         { success: false, error: error.message },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.log("✅ [DELETE] Trip deleted successfully");
     return NextResponse.json(
       { success: true, message: "Trip deleted successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("❌ [DELETE] Exception:", error.message);
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

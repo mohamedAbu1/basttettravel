@@ -82,33 +82,32 @@ export function MessageProvider({ children }) {
     }
   }, [user?.id]);
 
-  useEffect(() => {
-    // ✅ إنشاء قناة Realtime
-    const channel = supabase
-      .channel("messages-channel")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages" },
-        (payload) => {
-          setMessages((prev) => [...prev, payload.new]);
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "messages" },
-        (payload) => {
-          setMessages((prev) =>
-            prev.map((msg) => (msg.id === payload.new.id ? payload.new : msg)),
-          );
-        },
-      )
-      .subscribe();
+useEffect(() => {
+  const channel = supabase
+    .channel("messages-channel")
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "messages" },
+      (payload) => {
+        setMessages((prev) => [...prev, payload.new]);
+      }
+    )
+    .on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "messages" },
+      (payload) => {
+        setMessages((prev) =>
+          prev.map((msg) => (msg.id === payload.new.id ? payload.new : msg))
+        );
+      }
+    )
+    .subscribe();
 
-    // ✅ تنظيف الاشتراك عند إلغاء المكون
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
+
 
   return (
     <MessageContext.Provider

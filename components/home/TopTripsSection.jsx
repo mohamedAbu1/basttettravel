@@ -65,20 +65,25 @@ const TopTripsSection = () => {
         (Array.isArray(a.reviews) ? a.reviews.length : 0),
     )
     .slice(0, 7);
+  const convertPrice = (group_price, tripCurrency) => {
+    let converted = group_price;
 
-  const convertPrice = (price, tripCurrency) => {
-    let converted = price;
     if (currency === "EUR" && tripCurrency === "USD") {
-      converted = (price * 0.85).toFixed(2);
+      converted = (group_price * 0.85).toFixed(2);
     } else if (currency === "USD" && tripCurrency === "EUR") {
-      converted = (price * 1.18).toFixed(2);
+      converted = (group_price * 1.18).toFixed(2);
+    } else if (currency === "EGP" && tripCurrency === "USD") {
+      converted = (group_price * 49.1).toFixed(2); // USD → EGP
+    } else if (currency === "USD" && tripCurrency === "EGP") {
+      converted = (group_price / 49.1).toFixed(2); // EGP → USD
     }
+
     return converted;
   };
 
   return (
     <section
-  className={`hidden lg:flex w-full flex-col relative py-24 px-6 transition-colors duration-500 ${theme.background} `}
+      className={`hidden lg:flex w-full flex-col relative py-24 px-6 transition-colors duration-500 ${theme.background} `}
     >
       {/* خلفية الرموز */}
       <div className="absolute inset-0 pointer-events-none">
@@ -114,7 +119,7 @@ const TopTripsSection = () => {
           }}
         >
           <Image
-           src={
+            src={
               themeName === "dark"
                 ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
                 : "/HomePageImage/cruiseliner.svg"
@@ -205,7 +210,7 @@ const TopTripsSection = () => {
 
                 <div className="flex items-center justify-between">
                   <p className={`text-lg font-semibold ${theme.text}`}>
-                    {convertPrice(trip.price, trip.currency)} {currency}
+                    {convertPrice(trip.group_price, trip.currency)} {currency}
                   </p>
                   <motion.button
                     whileHover={{ scale: 1.05 }}

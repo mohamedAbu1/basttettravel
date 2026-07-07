@@ -1,17 +1,19 @@
 "use client";
 import React from "react";
-import { Select, MenuItem } from "@mui/material";
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import { usePurchase } from "@/context/PurchaseContext";
 import { useTheme } from "@/context/ThemeContext";
 import { motion } from "framer-motion";
 
 export default function CurrencySelector() {
   const { currency, setCurrency } = usePurchase();
-  const { theme, themeName } = useTheme();
+  const { theme } = useTheme();
 
-  // ألوان مخصصة من الثيم مع fallback
+  // 🎨 ألوان مخصصة من الثيم مع fallback
   const usdColor = theme.stone || "#C2A878";       // ذهبي
   const eurColor = theme.sandIvory || "#E6E6E6";   // عاج رملي
+  const egpColor = theme.pharaohGold || "#B8860B"; // لون مميز للجنيه المصري
 
   return (
     <motion.div
@@ -49,10 +51,13 @@ export default function CurrencySelector() {
         }}
       >
         <MenuItem value="USD" sx={{ color: usdColor, fontWeight: "600" }}>
-           $
+          $
         </MenuItem>
         <MenuItem value="EUR" sx={{ color: eurColor, fontWeight: "600" }}>
-           €
+          €
+        </MenuItem>
+        <MenuItem value="EGP" sx={{ color: egpColor, fontWeight: "600" }}>
+          £
         </MenuItem>
       </Select>
     </motion.div>

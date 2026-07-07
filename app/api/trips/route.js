@@ -12,13 +12,14 @@ export async function POST(req) {
       .insert({
         title: body.title,
         description: body.description,
-        price: body.price,
         currency: body.currency,
         duration: body.duration,
         duration_unit: body.duration_unit,
         cover_image: body.cover_image,
         gallery_images: body.gallery_images,
         priceLevel: body.priceLevel,
+        group_price: body.group_price,
+        solo_price: body.solo_price,
       })
       .select()
       .single();
@@ -140,9 +141,10 @@ export async function GET() {
       id,
       title,
       description,
-      price,
       currency,
       duration,
+        solo_price,
+      group_price,
       duration_unit,
       priceLevel,
       cover_image,
@@ -184,10 +186,9 @@ export async function GET() {
     }
 
     return new Response(JSON.stringify({ success: true, trips }), {
-  status: 200,
-  headers: { "Cache-Control": "public, max-age=3600" } // ساعة
-});
-
+      status: 200,
+      headers: { "Cache-Control": "public, max-age=3600" }, // ساعة
+    });
   } catch (err) {
     console.error("GET /api/trips error:", err);
     return new Response(

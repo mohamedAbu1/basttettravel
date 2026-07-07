@@ -91,12 +91,13 @@ console.log(trip)
         {/* ✅ المراجعات + الأزرار */}
         <div className="col-span-1 lg:col-span-3">
           <TripReviews trip={trip} lang={lang} theme={theme} />
-          {user &&
-            (hasActivePurchase ? (
+          {user && user?.role !== "admin" && (
+            hasActivePurchase ? (
               <CancelButton trip={trip} theme={theme} />
             ) : (
               <PurchaseButton trip={trip} theme={theme} />
-            ))}
+            )
+          )}
         </div>
       </div>
 

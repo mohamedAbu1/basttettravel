@@ -7,7 +7,8 @@ const TripIDContext = createContext();
 const emptyTrip = {
   title: { en: "", ar: "" },
   description: { en: "", ar: "" },
-  price: 0,
+  solo_price: 0,
+  group_price: 0,
   currency: "USD",
   duration: 0,
   duration_unit: "days",

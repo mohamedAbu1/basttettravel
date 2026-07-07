@@ -17,8 +17,8 @@ import { useLanguage } from "@/context/LanguageContext";
 import { homeMetadata } from "@/lib/metadata/home";
 import CurrencySelector from "@/components/layout/CurrencySelector";
 import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
+import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
 // import { useQueryFilters } from "@/context/QueryContext";
-
 
 export default function Home() {
   const { user } = useAuth(); // ✅ جلب المستخدم الحالي
@@ -72,6 +72,8 @@ export default function Home() {
 
         {/* نافذة الدردشة تظهر فقط لو المستخدم مسجل دخول */}
         {user && <ChatWidget />}
+        {user && <AdminDashboardButton />}
+
         <CurrencySelector />
         <ScrollToTopButton />
       </main>

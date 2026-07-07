@@ -136,8 +136,8 @@ const CarBookingSection = () => {
           <p className="mt-6 text-lg opacity-80 leading-relaxed max-w-xl">
             {t("Experience")}
           </p>
-          {user ? (
-            // ✅ زر الحجز يظهر فقط إذا كان فيه مستخدم
+          {user && user?.role !== "admin" ? (
+            // ✅ زر الحجز يظهر فقط لو فيه مستخدم عادي
             <motion.button
               variants={fadeInUp}
               style={{ cursor: "pointer" }}
@@ -145,16 +145,16 @@ const CarBookingSection = () => {
                 window.dispatchEvent(new CustomEvent("openCarBookingChat"));
               }}
               className="w-full mt-8 inline-block px-10 py-4 rounded-full font-bold text-lg shadow-xl transition-transform transform hover:scale-105 
-             bg-transparent backdrop-blur-md 
-             border border-[#C2A878] 
-             text-[#C2A878]  tracking-wide
-             hover:bg-[#C2A878]/20 hover:text-white 
-             duration-300  cursor-pointer"
+       bg-transparent backdrop-blur-md 
+       border border-[#C2A878] 
+       text-[#C2A878] tracking-wide
+       hover:bg-[#C2A878]/20 hover:text-white 
+       duration-300 cursor-pointer"
             >
               {t("Book")}
             </motion.button>
           ) : (
-            // ✅ رسالة أنيقة بدل الزر لو ما فيش مستخدم
+            // ✅ رسالة أنيقة بدل الزر لو ما فيش مستخدم أو لو أدمن
             <motion.p
               variants={fadeInUp}
               className="sc-p-first mt-8 text-lg font-semibold opacity-80 italic text-center lg:text-left"

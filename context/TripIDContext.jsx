@@ -90,11 +90,12 @@ export function TripIDProvider({ children }) {
     const tripPayload = {
       title: tripData.title,
       description: tripData.description,
-      price: tripData.price,
       duration: tripData.duration,
       priceLevel: tripData.priceLevel,
       cover_image: tripData.cover_image,
       gallery_images: tripData.gallery_images,
+       solo_price: tripData.solo_price,
+      group_price: tripData.group_price,
     };
 
     try {
