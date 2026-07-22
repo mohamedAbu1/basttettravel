@@ -102,7 +102,8 @@ export default function LoginModal() {
           <div className="flex justify-center mt-4">
             <IconButton
               onClick={loginWithGoogle}
-              className="w-[280px] h-[56px] rounded-sm bg-gradient-to-r from-[#4285F4] via-[#34A853] via-[#FBBC05] to-[#EA4335] text-white font-bold shadow-md hover:shadow-lg flex items-center gap-3 transition-all"
+              style={{borderRadius:"5px"}}
+              className="w-[280px] h-[56px] bg-gradient-to-r from-[#4285F4] via-[#34A853] via-[#FBBC05] to-[#EA4335] text-white font-bold shadow-md hover:shadow-lg flex items-center gap-3 transition-all"
             >
               <FcGoogle size={28} />
               <span>Sign in with Google</span>
