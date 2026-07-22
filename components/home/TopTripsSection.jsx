@@ -9,6 +9,7 @@ import { useTrip } from "@/context/TripContext";
 import { usePurchase } from "@/context/PurchaseContext";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useCurrency } from "@/context/CurrencyContext";
 
 const TopTripsSection = () => {
   const { theme, themeName } = useTheme();
@@ -19,17 +20,19 @@ const TopTripsSection = () => {
 
   const { trips, fetchTrips, loadingTrips } = useTrip();
   const { currency, purchases } = usePurchase();
+  const { rates } = useCurrency(); // ✅ جلب أسعار العملات من الكونتكست
+
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const handleResize = () => {
       setScreenSize({ width: window.innerWidth, height: window.innerHeight });
     };
-
-    handleResize(); // أول مرة
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   useEffect(() => {
     fetchTrips();
   }, []);
@@ -65,17 +68,19 @@ const TopTripsSection = () => {
         (Array.isArray(a.reviews) ? a.reviews.length : 0),
     )
     .slice(0, 7);
+
+  // ✅ التحويل باستخدام القيم من CurrencyContext
   const convertPrice = (group_price, tripCurrency) => {
     let converted = group_price;
 
     if (currency === "EUR" && tripCurrency === "USD") {
-      converted = (group_price * 0.85).toFixed(2);
+      converted = (group_price * (rates.EUR || 0.85)).toFixed(2);
     } else if (currency === "USD" && tripCurrency === "EUR") {
-      converted = (group_price * 1.18).toFixed(2);
+      converted = (group_price * (1 / (rates.EUR || 1.18))).toFixed(2);
     } else if (currency === "EGP" && tripCurrency === "USD") {
-      converted = (group_price * 49.1).toFixed(2); // USD → EGP
+      converted = (group_price * (rates.USD || 49.1)).toFixed(2); // USD → EGP
     } else if (currency === "USD" && tripCurrency === "EGP") {
-      converted = (group_price / 49.1).toFixed(2); // EGP → USD
+      converted = (group_price / (rates.USD || 49.1)).toFixed(2); // EGP → USD
     }
 
     return converted;
@@ -108,57 +113,12 @@ const TopTripsSection = () => {
 
       {/* العنوان */}
       <div className="relative flex items-center justify-center w-full mb-12">
-        {/* صورة يسار */}
-        <div
-          className="absolute -translate-y-1/2 scale-x-[-1] opacity-40 pointer-events-none"
-          style={{
-            left: screenSize.width * 0.05, // 10% من عرض الشاشة
-            top: screenSize.height * 0.0, // 20% من ارتفاع الشاشة
-            width: "420px",
-            height: "200px",
-          }}
-        >
-          <Image
-            src={
-              themeName === "dark"
-                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
-                : "/HomePageImage/cruiseliner.svg"
-            }
-            alt="Decorative Left"
-            fill
-            className="object-contain"
-          />
-        </div>
-
-        {/* النص */}
         <h2 className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-gradient text-center">
           <span className="inline-block transform scale-x-[-1] mr-4">𓅓</span>
           {t("TopTrips")}
           <span className="inline-block ml-4">𓅓</span>
           <DividerWithIcon />
         </h2>
-
-        {/* صورة يمين */}
-        <div
-          className="absolute -translate-y-1/2 opacity-40 pointer-events-none "
-          style={{
-            right: screenSize.width * 0.05, // 10% من عرض الشاشة
-            top: screenSize.height * 0.0, // 20% من ارتفاع الشاشة
-            width: "420px",
-            height: "200px",
-          }}
-        >
-          <Image
-            src={
-              themeName === "dark"
-                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
-                : "/HomePageImage/cruiseliner.svg"
-            }
-            alt="Decorative Right"
-            fill
-            className="object-contain"
-          />
-        </div>
       </div>
 
       {/* الكروت */}
@@ -170,7 +130,12 @@ const TopTripsSection = () => {
               p.user_id === user?.id &&
               p.status !== "Cancelled",
           );
-
+          const hasActivePurchase = purchases.some(
+            (p) =>
+              p.trip_id === trips.id &&
+              p.user_id === userData?.id &&
+              p.status !== "Cancelled",
+          );
           return (
             <motion.div
               key={trip.id || i}

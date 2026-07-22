@@ -29,7 +29,7 @@ export default function TripPage({ params }) {
   const { trips, fetchTrips, getTripById, loadingTrips } = useTrip();
   const { lang } = useLanguage();
   const { theme, themeName } = useTheme();
-  const { user } = useAuth();
+  const { userData } = useAuth();
   const { purchases } = usePurchase();
 
   useEffect(() => {
@@ -46,10 +46,52 @@ export default function TripPage({ params }) {
   const hasActivePurchase = purchases.some(
     (p) =>
       p.trip_id === trip.id &&
-      p.user_id === user?.id &&
+      p.user_id === userData?.id &&
       p.status !== "Cancelled",
   );
-console.log(trip)
+  
+const localizedTrip = {
+  ...trip,
+  title: trip.title?.[lang] || trip.title?.en,
+  description: trip.description?.[lang] || trip.description?.en,
+
+  // ✅ المدن
+  cities: Array.isArray(trip.cities)
+    ? trip.cities.map(c =>
+        typeof c?.name === "object"
+          ? c.name[lang] || c.name.en || Object.values(c.name)[0]
+          : c?.name || c
+      )
+    : trip.cities,
+
+  // ✅ التصنيفات
+  categories: Array.isArray(trip.categories)
+    ? trip.categories.map(cat =>
+        typeof cat?.name === "object"
+          ? cat.name[lang] || cat.name.en || Object.values(cat.name)[0]
+          : cat?.name || cat
+      )
+    : trip.categories,
+
+  // ✅ الباقي زي ما هو
+  includes: Array.isArray(trip.includes)
+    ? trip.includes.map(i =>
+        typeof i === "object" ? i?.[lang] || i?.en : i
+      )
+    : trip.includes,
+
+  itinerary: Array.isArray(trip.itinerary)
+    ? trip.itinerary.map((day) => ({
+        ...day,
+        activities: Array.isArray(day.activities)
+          ? day.activities.map((act) =>
+              typeof act === "object" ? act?.[lang] || act?.en : act
+            )
+          : day.activities,
+      }))
+    : trip.itinerary,
+};
+console.log(localizedTrip)
   return (
     <main className={`min-h-screen relative  ${theme.text}`}>
       <Header />
@@ -91,7 +133,7 @@ console.log(trip)
         {/* ✅ المراجعات + الأزرار */}
         <div className="col-span-1 lg:col-span-3">
           <TripReviews trip={trip} lang={lang} theme={theme} />
-          {user && user?.role !== "admin" && (
+          {userData && userData?.role !== "ADMIN" && (
             hasActivePurchase ? (
               <CancelButton trip={trip} theme={theme} />
             ) : (
@@ -104,7 +146,7 @@ console.log(trip)
       <Footer />
       <SignUpButton />
       <LoginModal />
-      {user && <ChatWidget />}
+      {userData && <ChatWidget />}
     </main>
   );
 }

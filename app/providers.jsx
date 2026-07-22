@@ -1,5 +1,6 @@
-// app/providers.tsx
+// app/providers.jsx
 "use client";
+
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/i18n";
 import { ThemeProvider } from "@/context/ThemeContext";
@@ -13,45 +14,60 @@ import { TripIDProvider } from "@/context/TripIDContext";
 import { PurchaseProvider } from "@/context/PurchaseContext";
 import { QueryProvider } from "@/context/QueryContext";
 import { MessageProvider } from "@/context/MessageContext";
+import { UserProvider } from "@/context/UserContext";
+import { NotificationsProvider } from "@/context/NotificationsContext";
+import { CurrencyProvider } from "@/context/CurrencyContext";
+import { ChatProvider } from "@/context/ChatContext";
 import { CitiesCategoriesProvider } from "@/context/CitiesCategoriesContext";
 import { ToastContainer } from "react-toastify";
 import { Suspense } from "react";
+import { SessionProvider } from "next-auth/react"; // ✅ إضافة SessionProvider
 
 export default function Providers({ children }) {
   return (
-    <I18nextProvider i18n={i18n}>
-      <ThemeProvider>
-        <Suspense fallback={<div>Loading filters...</div>}>
-          <QueryProvider>
-            <AuthProvider>
-              <DataProvider>
-                <SecurityProvider>
-                  <TripProvider>
-                    <CitiesCategoriesProvider>
-                      <LanguageProvider>
-                        <ReviewsProvider>
-                          <MessageProvider>
-                            <TripIDProvider>
-                              <PurchaseProvider>
-                                <ToastContainer
-                                  position="top-right"
-                                  autoClose={3000}
-                                  theme="colored"
-                                />
-                                {children}
-                              </PurchaseProvider>
-                            </TripIDProvider>
-                          </MessageProvider>
-                        </ReviewsProvider>
-                      </LanguageProvider>
-                    </CitiesCategoriesProvider>
-                  </TripProvider>
-                </SecurityProvider>
-              </DataProvider>
-            </AuthProvider>
-          </QueryProvider>
-        </Suspense>
-      </ThemeProvider>
-    </I18nextProvider>
+    <SessionProvider>
+      <I18nextProvider i18n={i18n}>
+        <ThemeProvider>
+          <Suspense fallback={<div>Loading filters...</div>}>
+            <NotificationsProvider>
+              <CurrencyProvider>
+                <QueryProvider>
+                  <AuthProvider>
+                    <UserProvider>
+                      <DataProvider>
+                        <SecurityProvider>
+                          <TripProvider>
+                            <CitiesCategoriesProvider>
+                              <LanguageProvider>
+                                <ReviewsProvider>
+                                  <MessageProvider>
+                                    <TripIDProvider>
+                                      <ChatProvider>
+                                        <PurchaseProvider>
+                                          <ToastContainer
+                                            position="top-right"
+                                            autoClose={3000}
+                                            theme="colored"
+                                          />
+                                          {children}
+                                        </PurchaseProvider>
+                                      </ChatProvider>
+                                    </TripIDProvider>
+                                  </MessageProvider>
+                                </ReviewsProvider>
+                              </LanguageProvider>
+                            </CitiesCategoriesProvider>
+                          </TripProvider>
+                        </SecurityProvider>
+                      </DataProvider>
+                    </UserProvider>
+                  </AuthProvider>
+                </QueryProvider>
+              </CurrencyProvider>
+            </NotificationsProvider>
+          </Suspense>
+        </ThemeProvider>
+      </I18nextProvider>
+    </SessionProvider>
   );
 }

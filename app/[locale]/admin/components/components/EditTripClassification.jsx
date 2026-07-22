@@ -17,11 +17,19 @@ const EditTripClassification = () => {
   const { i18n } = useTranslation();
   const currentLang = i18n.language || "en";
 
-  // ✅ تأمين القيم الافتراضية
-  const categories = Array.isArray(tripData?.categories)
-    ? tripData.categories
-    : [];
-  const cities = Array.isArray(tripData?.cities) ? tripData.cities : [];
+const categories = Array.isArray(tripData?.categories)
+  ? tripData.categories.map((c) =>
+      typeof c === "string" ? c : c?.category_id || c?.id
+    )
+  : [];
+
+const cities = Array.isArray(tripData?.cities)
+  ? tripData.cities.map((c) =>
+      typeof c === "string" ? c : c?.city_id || c?.id
+    )
+  : [];
+
+
   const priceLevel = tripData?.priceLevel ?? "";
 
   const baseBoxStyle = `flex items-center gap-2 p-2 rounded-lg cursor-pointer transition`;
@@ -45,7 +53,7 @@ const EditTripClassification = () => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-      {/* الكاتجري */}
+      {/* الفئات */}
       <div className="flex flex-col gap-2">
         <label
           className={`flex items-center gap-2 font-bold ${
@@ -64,12 +72,12 @@ const EditTripClassification = () => {
                 themeName === "dark" ? darkBoxStyle : lightBoxStyle
               }`}
               onClick={() =>
-                toggleSelection(categories, "categories", cat.id) // ✅ تخزين ID
+                toggleSelection(categories, "categories", cat.id)
               }
             >
               <input
                 type="checkbox"
-                checked={categories.includes(cat.id)} // ✅ مقارنة بالـ ID
+                checked={categories.includes(cat.id)} // ✅ التحديد التلقائي
                 onChange={() =>
                   toggleSelection(categories, "categories", cat.id)
                 }
@@ -91,7 +99,7 @@ const EditTripClassification = () => {
         </label>
         {allCities.map((city) => {
           const cityName =
-            city.name?.[currentLang] || city.name?.["en"] || "Unknown";
+            city.name?.[currentLang] || city.name?.["en"] || String(city.name);
 
           return (
             <div
@@ -99,11 +107,11 @@ const EditTripClassification = () => {
               className={`${baseBoxStyle} ${
                 themeName === "dark" ? darkBoxStyle : lightBoxStyle
               }`}
-              onClick={() => toggleSelection(cities, "cities", city.id)} // ✅ تخزين ID
+              onClick={() => toggleSelection(cities, "cities", city.id)}
             >
               <input
                 type="checkbox"
-                checked={cities.includes(city.id)} // ✅ مقارنة بالـ ID
+                checked={cities.includes(city.id)} // ✅ التحديد التلقائي
                 onChange={() => toggleSelection(cities, "cities", city.id)}
               />
               <span>{cityName}</span>

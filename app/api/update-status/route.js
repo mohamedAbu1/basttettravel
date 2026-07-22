@@ -1,22 +1,26 @@
 // /app/api/update-status/route.js
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db"; // ملف الاتصال بقاعدة بيانات MySQL
 
 export async function POST(req) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY // ✅ استخدم Service Role Key
-  );
+  try {
+    const { purchaseId, status } = await req.json();
+    const db = await connectDB();
 
-  const { purchaseId, status } = await req.json();
+    // ✅ تحديث حالة الحجز
+    const [result] = await db.query(
+      `UPDATE purchases 
+       SET status = ?, updated_at = NOW() 
+       WHERE id = ?`,
+      [status, purchaseId]
+    );
 
-  const { error } = await supabase
-    .from("purchases")
-    .update({ status, updated_at: new Date() })
-    .eq("id", purchaseId);
+    if (result.affectedRows === 0) {
+      return NextResponse.json({ error: "Purchase not found" }, { status: 404 });
+    }
 
-  if (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 400 });
   }
-
-  return new Response(JSON.stringify({ success: true }), { status: 200 });
 }

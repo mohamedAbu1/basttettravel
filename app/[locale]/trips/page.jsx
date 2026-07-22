@@ -54,50 +54,66 @@ export default function TripsPage() {
 
   if (loadingTrips)
     return <p className="text-center text-gray-500">Loading trips...</p>;
-
   const filteredTrips = trips.filter((trip) => {
     const lowerSearch = search.trim().toLowerCase();
+
     const matchesSearch =
       !lowerSearch ||
       (trip.title?.[lang] &&
         trip.title[lang].toLowerCase().includes(lowerSearch));
 
+    // 🟢 اجمع أسماء المدن من trip.cities
+    // 🟢 اجمع أسماء المدن كـ strings بعد فك JSON
     const tripCities =
-      trip.trip_cities
-        ?.map((c) => c?.cities?.name?.[lang] || c?.cities?.name?.en || "")
+      trip.cities
+        ?.map((c) => {
+          let nameObj;
+          try {
+            nameObj =
+              typeof c?.name === "string" ? JSON.parse(c.name) : c?.name;
+          } catch {
+            nameObj = {};
+          }
+          return typeof nameObj === "object" ? nameObj.en || "" : "";
+        })
         .filter((n) => n !== "") || [];
 
-const matchesCity =
-  city === "all"
-    ? true
-    : Array.isArray(city)
-      ? tripCities.some((c) =>
-          city.some((x) =>
-            c.toLowerCase().includes(x.toLowerCase())
-          )
-        )
-      : tripCities.some((c) =>
-          c.toLowerCase().includes(city.toLowerCase())
-        );
+    // 🟢 اجمع أسماء التصنيفات كـ strings بعد فك JSON
 
+    const matchesCity =
+      !city || city === "all"
+        ? true
+        : Array.isArray(city)
+          ? tripCities.some((c) =>
+              city.some((x) => c.toLowerCase() === x.toLowerCase()),
+            )
+          : tripCities.some((c) => c.toLowerCase() === city.toLowerCase());
 
+    // 🟢 اجمع أسماء التصنيفات من trip.categories
     const tripCategories =
-      trip.trip_categories?.map((cat) => {
-        const catObj = allCategories.find((c) => c.id === cat.category_id);
-        return catObj?.name?.[lang] || catObj?.name?.en || catObj?.name;
-      }) || [];
- const matchesCategory =
-  category === "all"
-    ? true
-    : Array.isArray(category)
-      ? tripCategories.some((c) =>
-          category.some((x) =>
-            c.toLowerCase().includes(x.toLowerCase())
-          )
-        )
-      : tripCategories.some((c) =>
-          c.toLowerCase().includes(category.toLowerCase())
-        );
+      trip.categories
+        ?.map((cat) => {
+          let nameObj;
+          try {
+            nameObj =
+              typeof cat?.name === "string" ? JSON.parse(cat.name) : cat?.name;
+          } catch {
+            nameObj = {};
+          }
+          return typeof nameObj === "object" ? nameObj.en || "" : "";
+        })
+        .filter((n) => n !== "") || [];
+
+    const matchesCategory =
+      !category || category === "all"
+        ? true
+        : Array.isArray(category)
+          ? tripCategories.some((c) =>
+              category.some((x) => c.toLowerCase() === x.toLowerCase()),
+            )
+          : tripCategories.some(
+              (c) => c.toLowerCase() === category.toLowerCase(),
+            );
 
     const ranges = {
       Economy: { min: 0, max: 199 },
@@ -105,22 +121,25 @@ const matchesCity =
       Luxury: { min: 600, max: Infinity },
     };
     const selectedRange = ranges[group_price];
+
     const matchesPrice =
       group_price === "All" || !group_price
         ? true
         : selectedRange
-          ? trip.group_price >= selectedRange.min && trip.group_price <= selectedRange.max
+          ? trip.group_price >= selectedRange.min &&
+            trip.group_price <= selectedRange.max
           : true;
 
     const matchesPopular = popular ? trip.isPopular : true;
 
-    return (
+    const result =
       matchesSearch &&
       matchesCity &&
       matchesCategory &&
       matchesPrice &&
-      matchesPopular
-    );
+      matchesPopular;
+
+    return result;
   });
 
   const indexOfLastTrip = currentPage * tripsPerPage;

@@ -1,25 +1,27 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabaseClient";
 
 const TripContext = createContext();
 
 const emptyTrip = {
   title: { en: "", es: "", fr: "", de: "", it: "", zh: "" },
   description: { en: "", es: "", fr: "", de: "", it: "", zh: "" },
-  solo_price: 0,
-  group_price: 0,
   currency: "USD",
   duration: 0,
   duration_unit: "days",
   priceLevel: "",
-  cover_image: "",
-  gallery_images: [],
-  cities: [], // ✅ IDs للمدن
-  categories: [], // ✅ IDs للفئات
+  cover_image: "",   // رابط دائم من السيرفر
+  cover_file: null,  // الملف نفسه قبل الرفع
+  cover_name: "",
+  gallery_images: [], // روابط الصور بعد الرفع
+  gallery_files: [],  // الملفات نفسها قبل الرفع
+  cities: [],
+  categories: [],
   includes: [],
-  itinerary: [], // كل يوم فيه activities
+  itinerary: [],
+  solo_price: 0,
+  group_price: 0,
 };
 
 export function TripProvider({ children }) {
@@ -28,184 +30,136 @@ export function TripProvider({ children }) {
   const [loadingTrips, setLoadingTrips] = useState(false);
   const [error, setError] = useState(null);
 
-  // ✅ تحديث أي حقل
   const updateTripField = (field, value) => {
     setTripData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // ✅ إضافة Include
-  const addInclude = (include) => {
-    setTripData((prev) => ({
-      ...prev,
-      includes: [...prev.includes, include],
-    }));
-  };
+  // ✅ رفع صورة الغلاف
+  const uploadCover = async (file) => {
+    const formData = new FormData();
+    formData.append("cover_image", file);
 
-  // ✅ إضافة يوم جديد
-  const addDay = (day) => {
-    setTripData((prev) => ({
-      ...prev,
-      itinerary: [...prev.itinerary, { ...day, activities: [] }],
-    }));
-  };
-
-  // ✅ إضافة نشاط ليوم معين
-  const addActivity = (dayIndex, activity) => {
-    setTripData((prev) => {
-      const updatedItinerary = [...prev.itinerary];
-      if (!updatedItinerary[dayIndex].activities) {
-        updatedItinerary[dayIndex].activities = [];
-      }
-      updatedItinerary[dayIndex].activities.push({
-        time: activity.time || "",
-        activity_translations: activity.activity_translations || {
-          en: "",
-          es: "",
-          fr: "",
-          de: "",
-          it: "",
-          zh: "",
-        },
-      });
-      return { ...prev, itinerary: updatedItinerary };
+    const res = await fetch("/api/cover", {
+      method: "POST",
+      body: formData,
     });
+
+    const result = await res.json();
+    if (!result.success) throw new Error(result.error || "Upload cover failed");
+    return result.cover_image; // رابط الغلاف بعد الرفع
   };
 
-  // ✅ تحديث نشاط معين
-  const updateActivity = (dayIndex, activityIndex, updatedActivity) => {
-    setTripData((prev) => {
-      const updatedItinerary = [...prev.itinerary];
-      updatedItinerary[dayIndex].activities[activityIndex] = {
-        ...updatedItinerary[dayIndex].activities[activityIndex],
-        ...updatedActivity,
-      };
-      return { ...prev, itinerary: updatedItinerary };
-    });
-  };
+const uploadGallery = async () => {
+  const formData = new FormData();
 
-  // ✅ إضافة مدينة
-  const addCity = (cityId) => {
-    setTripData((prev) => ({
-      ...prev,
-      cities: [...prev.cities, cityId],
-    }));
-  };
+  tripData.gallery_files.forEach((file, index) => {
+    formData.append("gallery_images", file);
 
-  // ✅ إضافة فئة
-  const addCategory = (categoryId) => {
-    setTripData((prev) => ({
-      ...prev,
-      categories: [...prev.categories, categoryId],
-    }));
-  };
+    const names = tripData.gallery_images[index].name;
+    formData.append(`name_en_${file.name}`, names.en);
+    formData.append(`name_ar_${file.name}`, names.ar);
+    formData.append(`name_fr_${file.name}`, names.fr);
+    formData.append(`name_de_${file.name}`, names.de);
+    formData.append(`name_it_${file.name}`, names.it);
+    formData.append(`name_zh_${file.name}`, names.zh);
+    formData.append(`name_es_${file.name}`, names.es);
+  });
 
-  // ✅ رفع ملف إلى Supabase Storage مع Cache-Control
-  const uploadFileToSupabase = async (file, folder = "gallery") => {
-    const safeName = file.name.replace(/\s+/g, "_");
-    const fileName = `${folder}_${Date.now()}_${safeName}`;
-    const { error } = await supabase.storage
-      .from("trips-bucket")
-      .upload(fileName, file, {
-        contentType: file.type,
-        cacheControl: "31536000", // سنة كاملة
-      });
+  const res = await fetch("/api/gallery", {
+    method: "POST",
+    body: formData,
+  });
 
-    if (error) throw error;
+  const result = await res.json();
+  if (!result.success) throw new Error(result.error || "Upload gallery failed");
+  return result.gallery_images; // ✅ رجّع المصفوفة مباشرة
+};
 
-    const { data } = supabase.storage
-      .from("trips-bucket")
-      .getPublicUrl(fileName);
-    return data.publicUrl;
-  };
 
-  // ✅ حفظ الرحلة
-  const saveTrip = async () => {
-    try {
-      setError(null);
+// ✅ حفظ الرحلة بعد التعديل
+const saveTrip = async () => {
+  try {
+    setError(null);
 
-      // رفع صورة الغلاف
-      let coverImageUrl = "";
-      if (tripData.cover_file) {
-        coverImageUrl = await uploadFileToSupabase(
-          tripData.cover_file,
-          "cover",
-        );
-      }
-
-      // رفع صور المعرض
-      const galleryUrls = await Promise.all(
-        tripData.gallery_images.map(async (img, i) => {
-          const url = await uploadFileToSupabase(img.file, `gallery_${i}`);
-          return { url, name: img.name };
-        }),
-      );
-
-      const payload = {
-        ...tripData,
-        cover_image: coverImageUrl,
-        gallery_images: galleryUrls,
-      };
-
-      const res = await fetch("/api/trips", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        setTripData(emptyTrip); // ✅ Reset بعد الحفظ
-      }
-
-      return data;
-    } catch (err) {
-      console.error("Error saving trip:", err);
-      setError(err.message);
-      return { success: false, error: err.message };
+    let coverUrl = tripData.cover_image;
+    if (tripData.cover_file) {
+      coverUrl = await uploadCover(tripData.cover_file);
     }
-  };
 
-  // ✅ جلب الرحلات (useCallback لمنع loop)
+    let galleryData = tripData.gallery_images;
+    if (tripData.gallery_files?.length > 0) {
+      galleryData = await uploadGallery();
+    }
+
+    const payload = {
+      ...tripData,
+      cover_image: coverUrl,
+      gallery_images: galleryData,
+    };
+
+    // ✅ تتبع قبل الإرسال
+    console.log("➡️ Saving trip with payload:", payload);
+    console.log("➡️ Itinerary being sent:", payload.itinerary);
+
+    const res = await fetch("/api/trips", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      setTripData(emptyTrip);
+    }
+
+    return result;
+  } catch (err) {
+    setError(err.message);
+    return { success: false, error: err.message };
+  }
+};
+
+
+
+
+  // ✅ جلب الرحلات
   const fetchTrips = useCallback(async () => {
     setLoadingTrips(true);
     setError(null);
     try {
-      const res = await fetch("/api/trips", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await fetch("/api/trips");
       const result = await res.json();
       if (result.success) {
         setTrips(result.trips);
-      } else {
-        setError("Failed to fetch trips");
+        localStorage.setItem("trips", JSON.stringify(result.trips));
       }
     } catch (err) {
-      console.error("Error fetching trips:", err);
       setError(err.message);
     } finally {
       setLoadingTrips(false);
     }
   }, []);
 
+  const getTripById = (id) => {
+    return trips.find((trip) => String(trip.id) === String(id));
+  };
+console.log("object12346",tripData)
   return (
     <TripContext.Provider
       value={{
         tripData,
         updateTripField,
-        addInclude,
-        addDay,
-        addActivity,
-        updateActivity,
-        addCity,
-        addCategory,
         saveTrip,
         setTripData,
         trips,
         fetchTrips,
         loadingTrips,
-        error, // ✅ متاح الآن
+        getTripById,
+        uploadCover,
+        setTrips,
+        uploadGallery,
+        error,
       }}
     >
       {children}

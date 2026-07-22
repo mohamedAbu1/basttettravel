@@ -1,54 +1,43 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useAuth } from "@/context/AuthContext"; 
 
 const ReviewsContext = createContext();
 
 export function ReviewsProvider({ children }) {
+  const { user } = useAuth(); 
   const [reviewsByTrip, setReviewsByTrip] = useState({});
   const [allReviews, setAllReviews] = useState([]);
-  const [likes, setLikes] = useState({});
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [likes, setLikes] = useState({});
 
-  // ✅ Fetch current user
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get("/api/auth/me", { withCredentials: true });
-      setUser(res.data?.user || null);
-    } catch (err) {
-      console.error("❌ Error fetching user:", err.response?.data || err.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-    fetchAllReviews();
-  }, []);
-
-  // ✅ Fetch reviews for a specific trip
+  // ✅ جلب التعليقات الخاصة برحلة معينة
   const fetchReviewsByTrip = async (tripId) => {
     if (!tripId) return;
     setLoading(true);
     try {
-      const res = await axios.get(`/api/reviews?tripId=${tripId}`, { withCredentials: true });
+      const res = await axios.get(`/api/reviews?tripId=${tripId}`);
       const data = res.data?.reviews || [];
-      setReviewsByTrip((prev) => ({ ...prev, [tripId]: data }));
+      const filtered = data.filter((review) => review.trip_id === tripId);
 
-      // Fetch likes for each review
-      data.forEach((review) => review?.id && fetchLikes(review.id));
+      setReviewsByTrip((prev) => ({ ...prev, [tripId]: filtered }));
+
+      filtered.forEach((review) => {
+        if (review?.id) fetchLikes(review.id);
+      });
     } catch (err) {
-      console.error("❌ Error fetching reviews:", err.response?.data || err.message);
+      console.error("❌ Error fetching reviews:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Fetch all reviews
+  // ✅ جلب جميع التعليقات
   const fetchAllReviews = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/reviews`, { withCredentials: true });
+      const res = await axios.get(`/api/reviews`);
       const data = res.data?.reviews || [];
       setAllReviews(data);
 
@@ -57,20 +46,26 @@ export function ReviewsProvider({ children }) {
         if (review.trip_id) {
           if (!grouped[review.trip_id]) grouped[review.trip_id] = [];
           grouped[review.trip_id].push(review);
-          review?.id && fetchLikes(review.id);
+          if (review?.id) fetchLikes(review.id);
         }
       });
       setReviewsByTrip(grouped);
     } catch (err) {
-      console.error("❌ Error fetching all reviews:", err.response?.data || err.message);
+      console.error("❌ Error fetching all reviews:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Add new review
+  useEffect(() => {
+    fetchAllReviews();
+  }, []);
+
+  // ✅ إضافة تعليق جديد
   const addReview = async (review) => {
-    if (!review.trip_id || !user?.id) return { success: false, error: "Missing trip_id or user.id" };
+    if (!review.trip_id || !user?.id) {
+      return { success: false, error: "No user or trip ID" };
+    }
 
     try {
       const res = await axios.post(`/api/reviews`, {
@@ -78,9 +73,10 @@ export function ReviewsProvider({ children }) {
         user_id: user.id,
         rating: review.rating,
         comment: review.comment,
-        name: review.name,
-        avatar_url: review.avatar_url,
-      }, { withCredentials: true });
+        name: review.name || user.name || user.email,
+        avatar_url: user.avatar_url || "/default-avatar.png",
+        time: review.time,
+      });
 
       const data = res.data;
       if (data.success) {
@@ -91,15 +87,15 @@ export function ReviewsProvider({ children }) {
       }
       return data;
     } catch (err) {
-      console.error("❌ Error adding review:", err.response?.data || err.message);
+      console.error("❌ Error adding review:", err);
       return { success: false, error: err.message };
     }
   };
 
-  // ✅ Fetch likes for a review
+  // ✅ جلب اللايكات
   const fetchLikes = async (reviewId) => {
     try {
-      const res = await axios.get(`/api/reviews/${reviewId}/like`, { withCredentials: true });
+      const res = await axios.get(`/api/reviews/${reviewId}/like`);
       setLikes((prev) => ({
         ...prev,
         [reviewId]: {
@@ -108,53 +104,65 @@ export function ReviewsProvider({ children }) {
         },
       }));
     } catch (err) {
-      console.error("❌ Error fetching likes:", err.response?.data || err.message);
+      console.error("❌ Error fetching likes:", err);
     }
   };
 
-  // ✅ Add like
+  // ✅ إضافة لايك
   const addLike = async (reviewId) => {
     if (!reviewId || !user?.id) return;
-    if (likes[reviewId]?.users?.includes(user.id)) return;
 
     try {
-      await axios.post(`/api/reviews/${reviewId}/like`, null, { withCredentials: true });
-      setLikes((prev) => ({
-        ...prev,
-        [reviewId]: {
-          count: (prev[reviewId]?.count || 0) + 1,
-          users: [...(prev[reviewId]?.users || []), user.id],
-        },
-      }));
+      const res = await axios.post(`/api/reviews/${reviewId}/like`, {
+        user_id: user.id,
+      });
+
+      if (!res.data?.error) {
+        setLikes((prev) => ({
+          ...prev,
+          [reviewId]: {
+            count: (prev[reviewId]?.count || 0) + 1,
+            users: [...(prev[reviewId]?.users || []), user.id],
+          },
+        }));
+      }
     } catch (err) {
-      console.error("❌ Error adding like:", err.response?.data || err.message);
+      console.error("❌ Error adding like:", err);
     }
   };
 
-  // ✅ Remove like
+  // ✅ إزالة لايك
   const removeLike = async (reviewId) => {
     if (!user?.id) return;
+
     try {
-      await axios.delete(`/api/reviews/${reviewId}/like`, { withCredentials: true });
-      setLikes((prev) => ({
-        ...prev,
-        [reviewId]: {
-          count: Math.max((prev[reviewId]?.count || 1) - 1, 0),
-          users: (prev[reviewId]?.users || []).filter((id) => id !== user.id),
-        },
-      }));
+      const res = await axios.delete(`/api/reviews/${reviewId}/like`, {
+        data: { user_id: user.id },
+      });
+
+      if (!res.data?.error) {
+        setLikes((prev) => ({
+          ...prev,
+          [reviewId]: {
+            count: Math.max((prev[reviewId]?.count || 1) - 1, 0),
+            users: (prev[reviewId]?.users || []).filter((id) => id !== user.id),
+          },
+        }));
+      }
     } catch (err) {
-      console.error("❌ Error removing like:", err.response?.data || err.message);
+      console.error("❌ Error removing like:", err);
     }
   };
 
-  // ✅ Get likes for a specific user
+  // ✅ جلب لايكات المستخدم
   const getUserLikes = (userId) => {
     if (!userId) return [];
+
     const userReviews = allReviews.filter((review) => review.user_id === userId);
 
     return userReviews.map((review) => ({
       reviewId: review.id,
+      tripId: review.trip_id,
       tripTitle: review.trip?.title?.en || "Unknown Trip",
       comment: review.comment,
       rating: review.rating,
@@ -169,10 +177,9 @@ export function ReviewsProvider({ children }) {
       value={{
         reviewsByTrip,
         allReviews,
-        likes,
         loading,
         user,
-        fetchUser,
+        likes,
         fetchReviewsByTrip,
         fetchAllReviews,
         addReview,

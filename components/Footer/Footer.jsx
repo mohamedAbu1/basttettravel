@@ -136,7 +136,7 @@ const Footer = () => {
           { Icon: FaWhatsapp, url: "https://wa.me/201100507802" },
           { Icon: MdEmail, url: "https://mail.google.com/mail/u/3/#inbox" },
           { Icon: FaGlobe, url: "https://www.viator.com/" }, // ✅ Viator
-          { Icon: FaTripadvisor, url: "https://www.tripadvisor.com/" }, // ✅ Tripadvisor
+          { Icon: FaTripadvisor, url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html" }, // ✅ Tripadvisor
         ].map(({ Icon, url }, i) => (
           <motion.a
             key={i}

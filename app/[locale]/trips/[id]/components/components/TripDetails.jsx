@@ -10,11 +10,11 @@ export default function TripDetails({ trip, groupSize }) {
   const { lang } = useLanguage(); // ✅ اللغة الحالية
 
   // ✅ حساب السعر للفرد حسب العملة
-  let pricePerPerson = trip.price;
+  let pricePerPerson = trip.group_price;
   if (currency === "EUR" && trip.currency === "USD") {
-    pricePerPerson = (trip.price * 0.85).toFixed(2);
+    pricePerPerson = (trip.group_price * 0.85).toFixed(2);
   } else if (currency === "USD" && trip.currency === "EUR") {
-    pricePerPerson = (trip.price * 1.18).toFixed(2);
+    pricePerPerson = (trip.group_price * 1.18).toFixed(2);
   }
   console.log(pricePerPerson)
   console.log(groupSize)

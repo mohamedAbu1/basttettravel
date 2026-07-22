@@ -59,18 +59,6 @@ const EditTripDailyItinerary = () => {
     updateTripField("itinerary", updatedDays); // ✅ الحقل الصحيح
   };
 
-  // ✅ حذف يوم
-  const removeDay = (dayIndex) => {
-    const updatedDays = [...safeItinerary];
-    updatedDays.splice(dayIndex, 1); // حذف اليوم المحدد
-    // إعادة ترقيم الأيام بعد الحذف
-    const reIndexedDays = updatedDays.map((day, idx) => ({
-      ...day,
-      day_number: idx + 1,
-    }));
-    updateTripField("itinerary", reIndexedDays);
-  };
-
   return (
     <div>
       <h3
@@ -98,20 +86,7 @@ const EditTripDailyItinerary = () => {
                   : "bg-[#fdf6e3] border-[#c9a34a]/40 text-[#3a2c0a]"
               }`}
             >
-              <h4 className="font-semibold mb-2 flex justify-between items-center">
-                Day {day?.day_number ?? dayIndex + 1}
-                <button
-                  type="button"
-                  onClick={() => removeDay(dayIndex)}
-                  className={`ml-2 px-3 py-1 rounded font-bold ${
-                    themeName === "dark"
-                      ? "bg-red-600 text-white hover:bg-red-700"
-                      : "bg-red-500 text-white hover:bg-red-600"
-                  }`}
-                >
-                  ✕ Remove Day
-                </button>
-              </h4>
+              <h4 className="font-semibold mb-2">Day {day?.day_number ?? dayIndex + 1}</h4>
 
               {activities.map((act, actIndex) => (
                 <div key={actIndex} className="space-y-2 mb-4">
@@ -157,7 +132,7 @@ const EditTripDailyItinerary = () => {
                 </div>
               ))}
 
-              <button
+                           <button
                 type="button"
                 onClick={() => addActivity(dayIndex)}
                 className={`px-3 py-1 rounded font-bold ${

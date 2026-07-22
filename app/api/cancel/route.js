@@ -1,24 +1,29 @@
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
 
 export async function POST(req) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  try {
+    const db = await connectDB();
+    const { tripId, userId } = await req.json();
 
+    // ✅ تحديث حالة الحجز إلى Cancelled
+    const [result] = await db.query(
+      `UPDATE purchases 
+       SET status = 'Cancelled', updated_at = NOW() 
+       WHERE trip_id = ? AND user_id = ?`,
+      [tripId, userId]
+    );
 
-  const { tripId ,userId} = await req.json();
+    if (result.affectedRows === 0) {
+      return NextResponse.json(
+        { error: "لم يتم العثور على الحجز" },
+        { status: 404 }
+      );
+    }
 
-  // ✅ تحديث حالة الحجز إلى Cancelled
-  const { error } = await supabase
-    .from("purchases")
-    .update({ status: "Cancelled" })
-    .eq("trip_id", tripId)
-    .eq("user_id", userId);
-
-  if (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400 });
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (err) {
+    console.error("❌ Error cancelling purchase:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-
-  return new Response(JSON.stringify({ success: true }), { status: 200 });
 }

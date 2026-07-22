@@ -76,6 +76,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         <NavButton section="bookings" icon={<FaClipboardList />} label="Bookings" />
         <NavButton section="reports" icon={<FaChartBar />} label="Reports" />
         <NavButton section="messages" icon={<FaEnvelope />} label="Messages" />
+        <NavButton section="currency" icon={<FaChartBar />} label="Currency Rates" />
       </nav>
     </aside>
   );

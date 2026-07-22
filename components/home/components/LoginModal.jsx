@@ -1,38 +1,36 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import {
-  Dialog,
-  DialogContent,
-  TextField,
-  Button,
-  InputAdornment,
-  IconButton,
-  Divider,
-} from "@mui/material";
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Divider from '@mui/material/Divider';
 import { MdEmail, MdLock } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { useData } from "@/context/DataContext";
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext"; // ✅ جلب الثيم
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { useSecurity } from "@/context/SecurityContext";
 import { useTranslation } from "react-i18next";
-import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginModal() {
-  const { loginOpen, handleLoginClose, handleOpen } = useData();
-  const { theme } = useTheme(); // ✅ جلب الثيم
+  const { loginOpen, handleLoginClose, handleSignUpOpen } = useData();
+  const { theme } = useTheme(); // ✅ يرجع DarkTheme أو LightTheme
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { t } = useTranslation("home");
 
-  const { login, loading, handleClose } = useAuth();
+  const { login, loginWithGoogle, loading, handleClose } = useAuth();
   const { validateField } = useSecurity();
 
-  const handleSubmit = async () => {
-    const emailError = validateField("Email", email);
-    const passwordError = validateField("Password", password);
+  const handleSubmit = useCallback(async () => {
+    const emailError = validateField("email", email);
+    const passwordError = validateField("password", password);
 
     if (emailError || passwordError) {
       toast.error(emailError || passwordError);
@@ -41,34 +39,13 @@ export default function LoginModal() {
 
     try {
       await login(email, password);
-      toast.success("Logged in successfully!");
+      toast.success("✅ Logged in successfully!");
       handleLoginClose();
       handleClose();
     } catch (err) {
       toast.error("❌ Error: The email or password is incorrect.");
     }
-  };
-
-  const loginWithGoogle = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          queryParams: {
-            access_type: "offline",
-            prompt: "select_account consent",
-          },
-        },
-      });
-
-      if (error) {
-        toast.error(`❌ خطأ في الاتصال بجوجل: ${error.message}`);
-      }
-    } catch (err) {
-      console.error("OAuth Error:", err);
-      toast.error("❌ حدث خطأ غير متوقع أثناء تسجيل الدخول.");
-    }
-  };
+  }, [email, password, validateField, login, handleLoginClose, handleClose]);
 
   return (
     <Dialog open={loginOpen} onClose={handleLoginClose} fullWidth maxWidth="sm">
@@ -76,18 +53,17 @@ export default function LoginModal() {
         initial={{ opacity: 0, y: 40, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`p-6 ${theme.card}`} // ✅ خلفية الكارد من الثيم
-        style={{ borderRadius: "24px" }}
+        className={`${theme.card} ${theme.shadow}`} // ✅ خلفية الكارد من الثيم
       >
         {/* Header */}
-        <div className="text-center mb-6">
-          <h2 className={`text-3xl font-bold ${theme.title}`}>
+        <div className="text-center py-6">
+          <h2 className={`${theme.title} text-4xl`}>
             {t("Login")}
           </h2>
         </div>
 
         {/* Content */}
-        <DialogContent className="flex flex-col gap-5">
+        <DialogContent className="flex flex-col gap-5 p-8">
           <TextField
             label={t("Email")}
             type="email"
@@ -123,28 +99,13 @@ export default function LoginModal() {
           </Divider>
 
           {/* Social Buttons */}
-          <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+          <div className="flex justify-center mt-4">
             <IconButton
               onClick={loginWithGoogle}
-              style={{
-                width: "280px",
-                height: "56px",
-                borderRadius: "12px",
-                background:
-                  "linear-gradient(to right, #4285F4, #34A853, #FBBC05, #EA4335)",
-                color: "#fff",
-                fontWeight: "700",
-                fontSize: "16px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "12px",
-                boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
-                transition: "all 0.3s ease",
-              }}
+              className="w-[280px] h-[56px] rounded-sm bg-gradient-to-r from-[#4285F4] via-[#34A853] via-[#FBBC05] to-[#EA4335] text-white font-bold shadow-md hover:shadow-lg flex items-center gap-3 transition-all"
             >
               <FcGoogle size={28} />
-              <span style={{ color: "#fff" }}>Sign in with Google</span>
+              <span>Sign in with Google</span>
             </IconButton>
           </div>
 
@@ -154,7 +115,7 @@ export default function LoginModal() {
               fullWidth
               onClick={handleSubmit}
               disabled={loading}
-              className={theme.buttonPrimary} // ✅ زر من الثيم
+              className={theme.buttonPrimary}
             >
               {loading ? t("Loggingin") : t("Login")}
             </Button>
@@ -165,9 +126,9 @@ export default function LoginModal() {
             fullWidth
             onClick={() => {
               handleLoginClose();
-              handleOpen();
+              handleSignUpOpen();
             }}
-            className={theme.buttonSecondary} // ✅ زر ثانوي من الثيم
+            className={theme.buttonSecondary}
           >
             {t("Don’thaveanaccount?SignUp")}
           </Button>

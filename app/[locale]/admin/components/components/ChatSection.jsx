@@ -6,12 +6,11 @@ import { useAuth } from "@/context/AuthContext";
 import ChatHeader from "./components/ChatHeader";
 import ChatMessages from "./components/ChatMessages";
 import ChatInput from "./components/ChatInput";
-import { supabase } from "@/lib/supabaseClient";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 
 const ChatSection = ({ activeUser, theme, themeName }) => {
   const { messages, fetchMessages, sendMessage, markMessageSeen } = useMessages();
-  const { user } = useAuth(); // الأدمن الحالي من التوكين
+  const { userData } = useAuth(); // الأدمن الحالي من التوكين
   const [newMessage, setNewMessage] = useState("");
   const [replyTo, setReplyTo] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
@@ -40,12 +39,12 @@ const ChatSection = ({ activeUser, theme, themeName }) => {
 
     await sendMessage({
       user_id: activeUser.id,
-      user_name: user?.user_metadata?.name || "Admin",
-      user_image: "https://dxpbyrcbklqrjlytmkum.supabase.co/storage/v1/object/public/avatars/technical-writer-digital-avatar-generative-ai_934475-9098.webp",
+      user_name: userData?.name || "Admin",
+      user_image: userData?.image || "/default-avatar.png",
       content: newMessage,
       sender_type: "admin",
       reply_to: replyTo ? replyTo.id : null,
-      admin_id: user.id,
+      admin_id: userData.id,
       status: "sent",
     });
 
@@ -71,34 +70,36 @@ const ChatSection = ({ activeUser, theme, themeName }) => {
     return () => clearInterval(interval);
   }, [activeUser]);
 
-  const handleSendImage = async (file) => {
-    const fileName = `${user.id}-${Date.now()}-${file.name}`;
+const handleSendImage = async (file) => {
+  console.log("📤 Step 1: Preparing FormData for image upload...");
+  const formData = new FormData();
+  formData.append("file", file);
 
-    const { error: uploadError } = await supabase.storage
-      .from("chat-images")
-      .upload(fileName, file);
+  // ✅ نضيف بيانات المستخدم
+  formData.append("user_id", activeUser.id);
+  formData.append("sender_type", "admin");
+  formData.append("user_name", userData?.name || "Admin");
+  formData.append("user_image", userData?.image || "/default-avatar.png");
+  formData.append("admin_id", userData.id);
 
-    if (uploadError) {
-      console.error("Upload error:", uploadError.message);
-      return;
-    }
+  console.log("📤 Step 2: Sending image to /api/messages...");
+  const res = await fetch("/api/messages", {
+    method: "POST",
+    body: formData,
+  });
 
-    const { data: publicUrlData } = supabase.storage
-      .from("chat-images")
-      .getPublicUrl(fileName);
+  const data = await res.json();
+  console.log("📥 Step 3: Response from API:", data);
 
-    const uploadedUrl = publicUrlData.publicUrl;
+  if (data.error) {
+    console.error("❌ Error uploading image:", data.error);
+    return;
+  }
 
-    await sendMessage({
-      user_id: activeUser.id,
-      user_name: user?.user_metadata?.name || "Admin",
-      user_image: user?.user_metadata?.avatar || "https://dxpbyrcbklqrjlytmkum.supabase.co/storage/v1/object/public/avatars/technical-writer-digital-avatar-generative-ai_934475-9098.webp",
-      content: uploadedUrl,
-      sender_type: "admin",
-      admin_id: user.id,
-      status: "sent",
-    });
-  };
+  const uploadedUrl = data.url;
+  console.log("✅ Step 4: Image uploaded successfully, URL:", uploadedUrl);
+};
+
 
   return (
     <section className="flex-1 flex flex-col">

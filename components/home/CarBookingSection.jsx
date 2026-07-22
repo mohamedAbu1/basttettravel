@@ -8,11 +8,12 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import DividerWithIcon from "../layout/DividerWithIcon";
 import { useAuth } from "@/context/AuthContext";
-
+import { useChat } from "@/context/ChatContext";
 const CarBookingSection = () => {
   const { theme, themeName } = useTheme();
   const { t } = useTranslation("home");
-  const { user } = useAuth();
+  const { openChatWithCarBooking  } = useChat();
+  const { userData } = useAuth();
 
   const symbols = [
     "𓂀",
@@ -136,20 +137,18 @@ const CarBookingSection = () => {
           <p className="mt-6 text-lg opacity-80 leading-relaxed max-w-xl">
             {t("Experience")}
           </p>
-          {user && user?.role !== "admin" ? (
+          {userData && userData?.role !== "ADMIN" ? (
             // ✅ زر الحجز يظهر فقط لو فيه مستخدم عادي
             <motion.button
               variants={fadeInUp}
               style={{ cursor: "pointer" }}
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent("openCarBookingChat"));
-              }}
+              onClick={openChatWithCarBooking} // ✅ يفتح الدردشة ويضيف رسالة ترحيب
               className="w-full mt-8 inline-block px-10 py-4 rounded-full font-bold text-lg shadow-xl transition-transform transform hover:scale-105 
-       bg-transparent backdrop-blur-md 
-       border border-[#C2A878] 
-       text-[#C2A878] tracking-wide
-       hover:bg-[#C2A878]/20 hover:text-white 
-       duration-300 cursor-pointer"
+     bg-transparent backdrop-blur-md 
+     border border-[#C2A878] 
+     text-[#C2A878] tracking-wide
+     hover:bg-[#C2A878]/20 hover:text-white 
+     duration-300 cursor-pointer"
             >
               {t("Book")}
             </motion.button>

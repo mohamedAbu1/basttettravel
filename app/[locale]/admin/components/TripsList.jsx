@@ -3,14 +3,14 @@ import React, { useEffect } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { FaTrash, FaMapMarkedAlt } from "react-icons/fa";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
-import { useTrip } from "../context/TripContext"; 
-import { useTripID } from "../context/TripIDContext"; 
+import { useTrip } from "../context/TripContext";
+import { useTripID } from "../context/TripIDContext";
 import DividerWithIcon from "@/components/layout/DividerWithIcon";
 import { motion } from "framer-motion";
 
 export default function TripsList() {
   const { themeName } = useTheme();
-  const { trips, fetchTrips } = useTrip();
+  const { trips, fetchTrips, setTrips } = useTrip();
   const { deleteTrip } = useTripID();
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function TripsList() {
   const handleDelete = async (id) => {
     const result = await deleteTrip(id);
     if (result.success) {
-      fetchTrips();
+      setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== id));
     }
   };
 
@@ -79,9 +79,8 @@ export default function TripsList() {
         </thead>
         <tbody>
           {trips.map((trip) => (
-            <>
+            <React.Fragment key={trip.id}>
               <motion.tr
-                key={trip.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
@@ -93,18 +92,37 @@ export default function TripsList() {
               >
                 <td className="p-3">{trip.title?.en || trip.title}</td>
                 <td className="p-3">
-                  {Array.isArray(trip.trip_cities)
-                    ? trip.trip_cities
-                        .map((c) =>
-                          typeof c.cities?.name === "object"
-                            ? c.cities.name.en || c.cities.name.ar
-                            : c.cities?.name,
-                        )
+                  {Array.isArray(trip.cities)
+                    ? trip.cities
+                        .map((c) => {
+                          // ✅ اطبع بيانات المدينة في الـ console
+                          console.log("City object:", c);
+
+                          // ✅ استخرج الـ id
+                          const cityId =
+                            typeof c === "number"
+                              ? c
+                              : c?.id || c?.city_id || c?.cityId;
+
+                          // ✅ ابحث عن المدينة في قائمة allCities (لو عندك Context للمدن)
+                          // const cityObj = allCities.find((city) => city.id === cityId);
+
+                          // ✅ الاسم النهائي
+                          const cityName =
+                            typeof c?.name === "object"
+                              ? c.name.en ||
+                                c.name.ar ||
+                                Object.values(c.name)[0]
+                              : c?.name || "Unknown";
+
+                          return cityName;
+                        })
                         .join("  𓋹  ")
                     : "—"}
                 </td>
+
                 <td className="p-3 font-semibold">
-                  {trip.price} {trip.currency}
+                  {trip.solo_price} {trip.currency}
                 </td>
                 <td className="p-3 flex gap-3">
                   <button
@@ -121,7 +139,7 @@ export default function TripsList() {
                 </td>
               </motion.tr>
               <DividerWithIcon />
-            </>
+            </React.Fragment>
           ))}
         </tbody>
       </table>

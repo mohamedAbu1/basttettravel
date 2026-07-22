@@ -22,8 +22,8 @@ export function TripIDProvider({ children }) {
       const res = await fetch("/api/trips", {
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache"
-        }
+          "Cache-Control": "no-cache",
+        },
       });
 
       const data = await res.json();
@@ -31,7 +31,10 @@ export function TripIDProvider({ children }) {
       if (res.ok) {
         const titles = (data.trips || []).map((trip) => ({
           id: trip.id,
-          title: trip.title?.en ?? "Untitled",
+          title:
+            typeof trip.title === "object"
+              ? trip.title.en || Object.values(trip.title)[0]
+              : trip.title || "Untitled",
         }));
         setTripsList(titles);
         localStorage.setItem("tripsList", JSON.stringify(titles));
@@ -46,36 +49,57 @@ export function TripIDProvider({ children }) {
   };
 
   // ✅ استدعاء رحلة واحدة بالـ ID مع Cache-Control
-  const fetchTripById = async (id) => {
-    if (!id) {
-      setError("No trip ID provided");
-      return;
-    }
+ const fetchTripById = async (id) => {
+  if (!id) {
+    setError("No trip ID provided");
+    return;
+  }
 
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
 
-    try {
-      const res = await fetch(`/api/trips/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache"
-        }
+  try {
+    const res = await fetch(`/api/trips/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
+      },
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setTripData({
+        ...data.trip,
+        title:
+          typeof data.trip.title === "object"
+            ? data.trip.title
+            : { en: data.trip.title },
+        description:
+          typeof data.trip.description === "object"
+            ? data.trip.description
+            : { en: data.trip.description },
+        gallery_images: Array.isArray(data.trip.gallery_images)
+          ? data.trip.gallery_images
+          : JSON.parse(data.trip.gallery_images || "[]"),
+        // ✅ تحويل المدن والفئات إلى Array جاهز للعرض
+        cities: Array.isArray(data.trip.cities)
+          ? data.trip.cities
+          : JSON.parse(data.trip.cities || "[]"),
+        categories: Array.isArray(data.trip.categories)
+          ? data.trip.categories
+          : JSON.parse(data.trip.categories || "[]"),
       });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setTripData(data.trip);
-      } else {
-        setError(data.error || "Failed to fetch trip");
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    } else {
+      setError(data.error || "Failed to fetch trip");
     }
-  };
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const updateTripField = (field, value) => {
     setTripData((prev) => ({
@@ -94,7 +118,7 @@ export function TripIDProvider({ children }) {
       priceLevel: tripData.priceLevel,
       cover_image: tripData.cover_image,
       gallery_images: tripData.gallery_images,
-       solo_price: tripData.solo_price,
+      solo_price: tripData.solo_price,
       group_price: tripData.group_price,
     };
 

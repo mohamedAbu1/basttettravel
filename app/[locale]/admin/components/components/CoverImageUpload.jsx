@@ -14,16 +14,22 @@ export default function CoverImageUpload() {
       // نخزن preview مؤقت للعرض فقط
       const previewUrl = URL.createObjectURL(file);
 
-      updateTripField("cover_image", previewUrl); // عرض مؤقت
-      updateTripField("cover_file", file); // نخزن الملف نفسه للـ API
+      // العرض المؤقت
+      updateTripField("cover_preview", previewUrl);
+
+      // نخزن الملف نفسه للـ API
+      updateTripField("cover_file", file);
+
+      // نخزن الاسم الأصلي للملف
       updateTripField("cover_name", file.name);
     }
   };
 
   const removeCoverImage = () => {
-    updateTripField("cover_image", null);
+    updateTripField("cover_preview", null);
     updateTripField("cover_file", null);
     updateTripField("cover_name", "");
+    updateTripField("cover_image", null); // الرابط النهائي من السيرفر
   };
 
   return (
@@ -53,11 +59,11 @@ export default function CoverImageUpload() {
         />
       </label>
 
-      {/* معاينة الصورة + اسم + زر حذف */}
-      {tripData.cover_image && (
+      {/* معاينة الصورة */}
+      {tripData.cover_preview && (
         <div className="mt-3">
           <Image
-            src={tripData.cover_image}
+            src={tripData.cover_preview}
             alt="Cover Preview"
             width={128}
             height={128}
@@ -70,7 +76,9 @@ export default function CoverImageUpload() {
               key={lang}
               type="text"
               value={tripData.cover_name ?? ""}
-              onChange={(e) => updateTripField("cover_name", e.target.value)}
+              onChange={(e) =>
+                updateTripField("cover_name", e.target.value)
+              }
               placeholder={`Name (${lang.toUpperCase()})`}
               className={`mt-2 w-full p-2 rounded-lg border text-sm outline-none ${
                 themeName === "dark"
@@ -79,6 +87,7 @@ export default function CoverImageUpload() {
               }`}
             />
           ))}
+
           {/* زر حذف الصورة */}
           <button
             type="button"
@@ -91,6 +100,13 @@ export default function CoverImageUpload() {
           >
             <FaTrash /> Remove Image
           </button>
+        </div>
+      )}
+
+      {/* لو السيرفر رجّع رابط دائم */}
+      {tripData.cover_image && (
+        <div className="mt-3">
+          <p className="text-sm">✅ Uploaded: {tripData.cover_image}</p>
         </div>
       )}
     </div>

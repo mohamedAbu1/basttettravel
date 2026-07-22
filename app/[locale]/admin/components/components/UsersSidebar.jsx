@@ -2,12 +2,12 @@
 import React from "react";
 import { FaUserCircle } from "react-icons/fa";
 
-const UsersSidebar = ({ users, activeUser, setActiveUser, theme, themeName, markMessageSeen, messages }) => {
+const UsersSidebar = ({ users,userData, activeUser, setActiveUser, theme, themeName, markMessageSeen, messages }) => {
   // فلترة المستخدمين بحيث نستبعد الـ Admin
   const nonAdminUsers = users.filter(
-    (user) => user?.user_metadata?.role?.toUpperCase() !== "ADMIN"
+    (user) => user?.role?.toUpperCase() !== "ADMIN"
   );
-
+console.log(users)
   return (
     <aside
       style={{ marginRight: "5px" }}
@@ -26,13 +26,13 @@ const UsersSidebar = ({ users, activeUser, setActiveUser, theme, themeName, mark
       {/* قائمة المستخدمين */}
       {nonAdminUsers.length > 0 ? (
         nonAdminUsers.map((user) => {
-          // تحقق إذا عنده رسائل جديدة غير مقروءة
-          const hasNew = messages.some(
+          // عدد الرسائل الجديدة غير المقروءة
+          const unreadCount = messages.filter(
             (msg) =>
               msg.user_id === user.id &&
               msg.sender_type === "user" &&
               msg.status === "sent"
-          );
+          ).length;
 
           return (
             <div
@@ -40,11 +40,9 @@ const UsersSidebar = ({ users, activeUser, setActiveUser, theme, themeName, mark
               onClick={() => {
                 setActiveUser(user);
                 // تحديث حالة الرسائل إلى "seen" عند فتح المحادثة
-                messages.forEach((msg) => {
-                  if (msg.user_id === user.id && msg.status === "sent") {
-                    markMessageSeen(msg.id);
-                  }
-                });
+                messages
+                  .filter((msg) => msg.user_id === user.id && msg.status === "sent")
+                  .forEach((msg) => markMessageSeen(msg.id));
               }}
               className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-300
                 ${
@@ -58,10 +56,10 @@ const UsersSidebar = ({ users, activeUser, setActiveUser, theme, themeName, mark
                 }`}
             >
               {/* صورة المستخدم أو أيقونة افتراضية */}
-              {user?.user_metadata?.avatar ? (
+              {user?.avatar_url ? (
                 <img
-                  src={user?.user_metadata?.avatar }
-                  alt={user?.user_metadata?.name}
+                  src={user?.avatar_url}
+                  alt={user.name}
                   className="w-10 h-10 rounded-full border object-cover"
                 />
               ) : (
@@ -69,12 +67,12 @@ const UsersSidebar = ({ users, activeUser, setActiveUser, theme, themeName, mark
               )}
 
               {/* الاسم */}
-              <span className="flex-1 font-medium capitalize">{user?.user_metadata?.name}</span>
+              <span className="flex-1 font-medium capitalize">{user?.name}</span>
 
-              {/* Badge لو فيه جديد */}
-              {hasNew && (
+              {/* Badge لو فيه رسائل جديدة */}
+              {unreadCount > 0 && (
                 <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full shadow-sm">
-                  New
+                  {unreadCount}
                 </span>
               )}
             </div>

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
 import lightTheme from "@/constants/theme/lightTheme";

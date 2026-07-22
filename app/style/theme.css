@@ -11,7 +11,7 @@
   /* خلفية */
   --background: rgba(255, 255, 255, 0.25);
   --backdrop-blur: 20px;
-  --text-gradient: var(--gradient-light);
+  --text-gradient: var(--gradient-light) !important;
 
   /* النصوص */
   --text: #0A2E36;
@@ -75,7 +75,7 @@
 :root[data-theme="dark"] {
   --background: rgba(20, 20, 20, 0.95);
   --backdrop-blur: 18px;
-  --text-gradient: var(--gradient-dark);
+  --text-gradient: var(--gradient-dark) !important;
 
   --text: #E6DCCF;
   --sub-text: #B3A58C;

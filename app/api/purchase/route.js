@@ -1,94 +1,115 @@
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST(req) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  try {
+    const {
+      tripId,
+      user_name,
+      user_email,
+      user_image,
+      numPersons,
+      hasChildren,
+      numChildren,
+      hasPets,
+      petTypes,
+      hasGuide,
+      selectedLanguages,
+      arrivalDate,
+      userId,
+      status,
+      departureDate,
+      platform,
+    } = await req.json();
 
-  const {
-    tripId,
-    numPersons,
-    hasChildren,
-    numChildren,
-    hasPets,
-    petTypes,
-    hasGuide,
-    selectedLanguages,
-    arrivalDate,
-    userId,
-    status,
-    departureDate,
-    platform
-  } = await req.json();
+    const db = await connectDB();
 
-  // تحقق إذا كان فيه حجز سابق
-  const { data: existing, error: selectError } = await supabase
-    .from("purchases")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("trip_id", tripId);
+    // ✅ Check if there is an existing purchase
+    const [existing] = await db.query(
+      "SELECT * FROM purchases WHERE user_id = ? AND trip_id = ?",
+      [userId, tripId],
+    );
 
-  if (selectError) {
-    return new Response(JSON.stringify({ error: selectError.message }), { status: 400 });
-  }
+    if (existing.length > 0) {
+      const oldPurchase = existing[0];
 
-if (existing && existing.length > 0) {
-  const oldPurchase = existing[0];
+      if (oldPurchase.status === "Cancelled") {
+        const purchaseId = uuidv4();
 
-  if (oldPurchase.status === "Cancelled") {
-    // ✅ تحديث الحجز الملغي
-    const { error: updateError } = await supabase
-      .from("purchases")
-      .update({
-        num_persons: numPersons,
-        has_children: hasChildren,
-        num_children: numChildren,
-        has_pets: hasPets,
-        pet_type: petTypes,
-        has_guide: hasGuide,
-        guide_languages: selectedLanguages,
-        arrival_date: arrivalDate,
-        departure_date: departureDate,
-        platform,
-        status,
-        updated_at: new Date()
-      })
-      .eq("id", oldPurchase.id);
+        await db.query(
+          `INSERT INTO purchases 
+            (id, user_id, trip_id, user_name, user_email, user_image, num_persons, has_children, num_children, has_pets, pet_type, 
+             has_guide, guide_languages, arrival_date, departure_date, platform, status, created_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+          [
+            purchaseId,
+            userId,
+            tripId,
+            user_name,                // ✅ correct position
+            user_email,               // ✅ correct position
+            user_image,               // ✅ correct position
+            numPersons,
+            hasChildren,
+            numChildren,
+            hasPets,
+            JSON.stringify(petTypes),
+            hasGuide,
+            JSON.stringify(selectedLanguages),
+            arrivalDate,
+            departureDate,
+            platform,
+            status,
+          ],
+        );
 
-    if (updateError) {
-      return new Response(JSON.stringify({ error: updateError.message }), { status: 400 });
+        return NextResponse.json(
+          { message: "Trip re-purchased successfully!" },
+          { status: 200 },
+        );
+      }
+
+      return NextResponse.json(
+        { error: "You already purchased this trip" },
+        { status: 400 },
+      );
     }
 
-    return new Response(JSON.stringify({ message: "Trip re-purchased successfully!" }), { status: 200 });
+    // ✅ Add a new purchase if none exists
+    const purchaseId = uuidv4();
+
+    await db.query(
+      `INSERT INTO purchases 
+        (id, user_id, trip_id, user_name, user_email, user_image, num_persons, has_children, num_children, has_pets, pet_type, 
+         has_guide, guide_languages, arrival_date, departure_date, platform, status, created_at) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+      [
+        purchaseId,
+        userId,
+        tripId,
+        user_name,                // ✅ correct position
+        user_email,               // ✅ correct position
+        user_image,               // ✅ correct position
+        numPersons,
+        hasChildren,
+        numChildren,
+        hasPets,
+        JSON.stringify(petTypes),
+        hasGuide,
+        JSON.stringify(selectedLanguages),
+        arrivalDate,
+        departureDate,
+        platform,
+        status,
+      ],
+    );
+
+    return NextResponse.json(
+      { message: "Trip purchased successfully!" },
+      { status: 200 },
+    );
+  } catch (err) {
+    console.error("❌ Error in purchase:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-
-  return new Response(JSON.stringify({ error: "You already purchased this trip" }), { status: 400 });
-}
-
-  // ✅ إضافة عملية شراء جديدة لو مفيش أي حجز سابق
-  const { error: insertError } = await supabase
-    .from("purchases")
-    .insert([{
-      user_id: userId,
-      trip_id: tripId,
-      num_persons: numPersons,
-      has_children: hasChildren,
-      num_children: numChildren,
-      has_pets: hasPets,
-      pet_type: petTypes,
-      has_guide: hasGuide,
-      guide_languages: selectedLanguages,
-      arrival_date: arrivalDate,
-      departure_date: departureDate,
-      platform,
-      status,
-      created_at: new Date()
-    }]);
-
-  if (insertError) {
-    return new Response(JSON.stringify({ error: insertError.message }), { status: 400 });
-  }
-
-  return new Response(JSON.stringify({ message: "Trip purchased successfully!" }), { status: 200 });
 }

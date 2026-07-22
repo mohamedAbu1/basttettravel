@@ -2,15 +2,12 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { supabase } from "@/lib/supabaseClient";
 
 const TripContext = createContext();
 
 const emptyTrip = {
   title: { en: "", es: "", fr: "", de: "", it: "", zh: "" },
   description: { en: "", es: "", fr: "", de: "", it: "", zh: "" },
-  solo_price: 0,
-  group_price: 0,
   currency: "USD",
   duration: 0,
   duration_unit: "days",
@@ -21,6 +18,8 @@ const emptyTrip = {
   categories: [],
   includes: [],
   itinerary: [],
+  solo_price: 0,
+  group_price: 0,
 };
 
 export function TripProvider({ children }) {
@@ -50,26 +49,23 @@ export function TripProvider({ children }) {
     }));
   };
 
-  // ✅ رفع ملف إلى Supabase Storage مع Cache-Control
-  const uploadFileToSupabase = async (file, folder = "gallery") => {
-    const safeName = file.name.replace(/\s+/g, "_");
-    const fileName = `${folder}_${Date.now()}_${safeName}`;
-    const { error } = await supabase.storage
-      .from("trips-bucket")
-      .upload(fileName, file, {
-        contentType: file.type,
-        cacheControl: "31536000", // سنة كاملة
-      });
+  // ✅ رفع ملف إلى السيرفر (بدل Supabase)
+  const uploadFile = async (file, folder = "gallery") => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", folder);
 
-    if (error) throw error;
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-    const { data } = supabase.storage
-      .from("trips-bucket")
-      .getPublicUrl(fileName);
-    return data.publicUrl;
+    const result = await res.json();
+    if (!result.success) throw new Error(result.error || "Upload failed");
+    return result.url; // رابط الصورة بعد الرفع
   };
 
-  // ✅ إرسال البيانات للـ API (إنشاء رحلة جديدة)
+  // ✅ إرسال البيانات للـ API (إنشاء رحلة جديدة في MySQL)
   const saveTrip = async () => {
     try {
       setError(null);
@@ -85,7 +81,7 @@ export function TripProvider({ children }) {
     }
   };
 
-  // ✅ جلب جميع الرحلات مع Cache-Control
+  // ✅ جلب جميع الرحلات من MySQL
   const fetchTrips = useCallback(async () => {
     setLoadingTrips(true);
     setError(null);
@@ -94,13 +90,12 @@ export function TripProvider({ children }) {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Cache-Control": "no-cache", // تأكد إن الطلب يجلب أحدث بيانات
+          "Cache-Control": "no-cache",
         },
       });
       const result = await res.json();
       if (result.success) {
         setTrips(result.trips);
-        // ✅ تخزين محلي لتقليل الطلبات المتكررة
         localStorage.setItem("trips", JSON.stringify(result.trips));
       }
     } catch (err) {
@@ -129,7 +124,7 @@ export function TripProvider({ children }) {
         fetchTrips,
         loadingTrips,
         getTripById,
-        uploadFileToSupabase,
+        uploadFile,
         error,
       }}
     >

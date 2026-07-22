@@ -9,55 +9,62 @@ import { useAuth } from "@/context/AuthContext";
 import ChatHeader from "./components/ChatHeader";
 import ChatMessages from "./components/ChatMessages";
 import ChatInput from "./components/ChatInput";
-import { supabase } from "@/lib/supabaseClient";
-
+import { useChat } from "@/context/ChatContext";
 export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
-  const [open, setOpen] = useState(false);
   const { theme, themeName } = useTheme();
-  const { messages, sendMessage, fetchMessages, markMessageSeen } = useMessages();
+  const { messages, sendMessage, fetchMessages, markMessageSeen } =
+    useMessages();
   const [text, setText] = useState("");
-  const { user } = useAuth();
+  const { userData } = useAuth(); // ✅ بيانات من AuthContext
   const [adminTyping, setAdminTyping] = useState(false);
-
-  const [bookingMode, setBookingMode] = useState(false);
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const {
+    open,
+    bookingMode,
+    from,
+    setFrom,
+    setOpen,
+    to,
+    setTo,
+    setBookingMode,
+    setMessageses,
+  } = useChat();
 
   // ✅ جلب رسائل المستخدم
   useEffect(() => {
-    if (user?.id) {
-      fetchMessages(user.id);
+    if (userData?.id) {
+      fetchMessages(userData.id);
     }
-  }, [user]);
+  }, [userData]);
 
   // ✅ تحديث حالة الرسائل إلى "seen"
   useEffect(() => {
-    if (user?.id && messages.length > 0) {
+    if (userData?.id && messages.length > 0) {
       messages.forEach((msg) => {
         if (msg.sender_type === "admin" && msg.status === "sent") {
           markMessageSeen(msg.id);
         }
       });
     }
-  }, [user, messages]);
+  }, [userData, messages]);
 
   // ✅ استعلام حالة الكتابة للأدمن
   useEffect(() => {
-    if (!user?.id) return;
+    if (!userData?.id) return;
     const interval = setInterval(async () => {
-      const res = await fetch(`/api/typing?userId=${user.id}`);
+      const res = await fetch(`/api/typing?userId=${userData.id}`);
       const data = await res.json();
       setAdminTyping(data.adminTyping || false);
     }, 2000);
     return () => clearInterval(interval);
-  }, [user?.id]);
+  }, [userData?.id]);
 
   const handleSend = async () => {
     if (text.trim() !== "") {
       await sendMessage({
-        user_id: user.id,
-        user_name: user.user_metadata?.name,
-        user_image: user.user_metadata?.avatar,
+        user_id: userData?.id,
+        user_name: userData?.name,
+        user_image:
+          userData?.avatar_url || userData?.image || "/default-avatar.png",
         content: text,
         sender_type: "user",
         status: "sent",
@@ -66,44 +73,37 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     }
   };
 
-  // ✅ استقبال حدث من CarBookingSection
-  useEffect(() => {
-    const handler = () => {
-      setOpen(true);
-      sendMessage({
-        user_id: user.id,
-        user_name: "Admin",
-        user_image: "/default-admin.png",
-        content: "Welcome to our premium transfer service ✨🚘",
-        sender_type: "admin",
-        status: "sent",
-      });
-      setBookingMode(true);
-    };
-    window.addEventListener("openCarBookingChat", handler);
-    return () => window.removeEventListener("openCarBookingChat", handler);
-  }, [user]);
-
-  const isAdmin = user?.role === "admin";
+  const isAdmin = userData?.role === "ADMIN";
 
   const handleSendImage = async (file) => {
-    const fileName = `${user.id}-${Date.now()}-${file.name}`;
-    const { error: uploadError } = await supabase.storage
-      .from("chat-images")
-      .upload(fileName, file);
-    if (uploadError) {
-      console.error("Upload error:", uploadError.message);
-      return;
-    }
-    const { data: publicUrlData } = supabase.storage
-      .from("chat-images")
-      .getPublicUrl(fileName);
-    const uploadedUrl = publicUrlData.publicUrl;
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // ✅ لازم تبعت بيانات المستخدم مع الصورة
+    formData.append("user_id", userData?.id);
+    formData.append("user_name", userData?.name || "Unknown User");
+    formData.append(
+      "user_image",
+      userData?.avatar_url || userData?.image || "/default-avatar.png",
+    );
+    formData.append("sender_type", "user");
+    formData.append("admin_id", "SYSTEM"); // أو أي قيمة مناسبة
+
+    const res = await fetch("/api/messages", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!data.url) return;
+
+    // ✅ الرسالة الجديدة تدخل في الـ context
     await sendMessage({
-      user_id: user.id,
-      user_name: user.user_metadata?.name,
-      user_image: user.user_metadata?.avatar,
-      content: uploadedUrl,
+      user_id: userData?.id,
+      user_name: userData?.name,
+      user_image:
+        userData?.avatar_url || userData?.image || "/default-avatar.png",
+      content: data.url, // الرابط النهائي للصورة
       sender_type: "user",
       status: "sent",
     });
@@ -117,10 +117,9 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
           onClick={() => setOpen(!open)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className={`fixed bottom-6 right-6 px-6 py-3 rounded-lg transition-all duration-300 shadow-lg 
-            ${theme.buttonPrimary}`}
+          className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg flex items-center justify-center ${theme.buttonPrimary}`}
         >
-          <FaComments size={22} />
+          <FaComments size={22} color="#fff" />
         </motion.button>
       )}
 
@@ -130,8 +129,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className={`fixed bottom-20 right-6 w-[28rem] h-[32rem] rounded-xl shadow-xl flex flex-col z-50 
-              ${theme.card} ${theme.text}`}
+            className={`fixed overflow-x-hidden bottom-20 right-6 w-110 h-125 rounded-xl shadow-xl flex flex-col z-50 ${theme.card} ${theme.text}`}
           >
             <EgyptianBackground />
             <ChatHeader onClose={() => setOpen(false)} theme={theme} />
@@ -141,56 +139,53 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
               themeName={themeName}
             />
 
-            {bookingMode && (
-              <div className="p-6 border-t bg-opacity-50">
-                <p className="mb-4 text-lg font-semibold text-center">
-                  Please enter your trip details:
+            {bookingMode ? (
+              <div className="p-6 rounded-xl shadow-lg bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900">
+                <p className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
+                  🚗 Where would you like to book the car from and to?
                 </p>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">From</label>
-                    <input
-                      type="text"
-                      placeholder="Enter pickup location"
-                      value={from}
-                      onChange={(e) => setFrom(e.target.value)}
-                      className={`w-full p-3 rounded-lg border focus:ring-2 focus:outline-none 
-                        ${theme.text}`}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">To</label>
-                    <input
-                      type="text"
-                      placeholder="Enter destination"
-                      value={to}
-                      onChange={(e) => setTo(e.target.value)}
-                      className={`w-full p-3 rounded-lg border focus:ring-2 focus:outline-none 
-                        ${theme.text}`}
-                    />
-                  </div>
-                </div>
+
+                <input
+                  type="text"
+                  placeholder="From"
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                  className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 w-full mb-3 
+               focus:outline-none focus:ring-2 focus:ring-[#C2A878] dark:bg-gray-700 dark:text-white"
+                />
+
+                <input
+                  type="text"
+                  placeholder="To"
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                  className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 w-full mb-3 
+               focus:outline-none focus:ring-2 focus:ring-[#C2A878] dark:bg-gray-700 dark:text-white"
+                />
+
                 <button
-                  onClick={async () => {
-                    await sendMessage({
-                      user_id: user.id,
-                      user_name: user.user_metadata?.name,
-                      user_image: user.user_metadata?.avatar,
-                      content: `Car booking request: from ${from} to ${to}`,
-                      sender_type: "user",
-                      status: "sent",
-                    });
+                  onClick={() => {
+                    const bookingMessage = `🚗 Car booking request from ${from} to ${to}`;
+                    setText(bookingMessage); // ✅ يملأ النص
+                    handleSend(); // يرسل الرسالة للـ backend
+                    setMessageses((prev) => [
+                      ...prev,
+                      {
+                        sender: "assistant",
+                        content:
+                          "✅ Your request has been recorded. Please select the date and time.",
+                      },
+                    ]);
                     setBookingMode(false);
                   }}
-                  className={`mt-6 w-full px-4 py-3 rounded-lg shadow-md transition-transform flex items-center justify-center gap-2 
-                    ${theme.buttonPrimary}`}
+                  className="mt-4 w-full px-6 py-3 rounded-lg font-bold text-white 
+               bg-gradient-to-r from-[#C2A878] to-[#eab308] 
+               shadow-md hover:scale-105 transition-transform duration-300"
                 >
-                  <span>Send Request</span> 🚘
+                  Confirm Booking
                 </button>
               </div>
-            )}
-
-            {!bookingMode && (
+            ) : (
               <ChatInput
                 text={text}
                 setText={setText}
@@ -198,7 +193,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
                 handleSendImage={handleSendImage}
                 theme={theme}
                 themeName={themeName}
-                user={user}
+                user={userData}
                 setShowEmojiPicker={setShowEmojiPicker}
                 showEmojiPicker={showEmojiPicker}
               />

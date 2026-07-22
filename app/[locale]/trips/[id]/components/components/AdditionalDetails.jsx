@@ -82,47 +82,93 @@ export default function AdditionalDetails({
         Additional Details
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* الأطفال */}
-        <div className="flex flex-col gap-3">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={hasChildren}
-              onChange={() => setHasChildren(!hasChildren)}
-              className="accent-[#c9a34a]"
-            />
-            <FaChild className={theme.icon} />
-            <span className={theme.subText}>Traveling with children</span>
-          </label>
+      {/* الأطفال */}
+      <div className="flex flex-col gap-3">
+        <label className="relative flex items-center cursor-pointer gap-2">
+          <input
+            type="checkbox"
+            checked={hasChildren}
+            onChange={() => setHasChildren(!hasChildren)}
+            className="peer hidden"
+          />
+          <span
+            className={`w-6 h-6 rounded-md border-2 flex items-center justify-center 
+                  bg-white/10 dark:bg-black/20 backdrop-blur-md 
+                  border-[#c9a34a]/50 shadow-sm 
+                  peer-checked:bg-[#c9a34a]/80 peer-checked:border-[#c9a34a] 
+                  transition-all duration-300`}
+          >
+            <svg
+              className="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 13l4 4L19 7" />
+            </svg>
+          </span>
+          <FaChild className={theme.icon} />
+          <span className={theme.subText}>Traveling with children</span>
+        </label>
 
-          {hasChildren && (
-            <Select
-              value={options.find((o) => o.value === childrenCount)}
-              onChange={(opt) => setChildrenCount(opt.value)}
-              options={options}
-              styles={customSelectStyles}
-              placeholder="Select number of children"
-            />
-          )}
-        </div>
+        {hasChildren && (
+          <div className="flex flex-col gap-2">
+            <label className={`font-medium ${theme.subText}`}>
+              Number of children:
+            </label>
+            <div className="grid grid-cols-5 gap-2">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                <button
+                  key={num}
+                  onClick={() => setChildrenCount(num)}
+                  className={`px-3 py-2 rounded-lg font-semibold 
+                      ${childrenCount === num ? "bg-[#c9a34a] text-white" : `${theme.card} ${theme.text}`} 
+                      hover:bg-[#c9a34a]/70 transition`}
+                >
+                  {num}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* الحيوانات */}
         <div className="flex flex-col gap-3">
-          <label className="flex items-center gap-2 cursor-pointer">
+          {/* ✅ Checkbox رئيسي */}
+          <label className="relative flex items-center cursor-pointer gap-2">
             <input
               type="checkbox"
               checked={hasPets}
               onChange={() => setHasPets(!hasPets)}
-              className="accent-[#c9a34a]"
+              className="peer hidden"
             />
+            <span
+              className={`w-6 h-6 rounded-md border-2 flex items-center justify-center 
+                  bg-white/10 dark:bg-black/20 backdrop-blur-md 
+                  border-[#c9a34a]/50 shadow-sm 
+                  peer-checked:bg-[#c9a34a]/80 peer-checked:border-[#c9a34a] 
+                  transition-all duration-300`}
+            >
+              <svg
+                className="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+            </span>
             <FaDog className={theme.icon} />
             <span className={theme.subText}>Traveling with pets</span>
           </label>
 
+          {/* ✅ اختيارات الحيوانات */}
           {hasPets && (
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="flex gap-6 mt-2">
+              {/* Cat */}
+              <label className="relative flex items-center cursor-pointer gap-2">
                 <input
                   type="checkbox"
                   checked={pets.includes("cat")}
@@ -130,14 +176,33 @@ export default function AdditionalDetails({
                     setPets(
                       pets.includes("cat")
                         ? pets.filter((p) => p !== "cat")
-                        : [...pets, "cat"]
+                        : [...pets, "cat"],
                     )
                   }
+                  className="peer hidden"
                 />
+                <span
+                  className={`w-6 h-6 rounded-md border-2 flex items-center justify-center 
+                      bg-white/10 dark:bg-black/20 backdrop-blur-md 
+                      border-[#c9a34a]/50 shadow-sm 
+                      peer-checked:bg-[#c9a34a]/80 peer-checked:border-[#c9a34a] 
+                      transition-all duration-300`}
+                >
+                  <svg
+                    className="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
                 <FaCat className={theme.icon} /> Cat
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer">
+              {/* Dog */}
+              <label className="relative flex items-center cursor-pointer gap-2">
                 <input
                   type="checkbox"
                   checked={pets.includes("dog")}
@@ -145,10 +210,28 @@ export default function AdditionalDetails({
                     setPets(
                       pets.includes("dog")
                         ? pets.filter((p) => p !== "dog")
-                        : [...pets, "dog"]
+                        : [...pets, "dog"],
                     )
                   }
+                  className="peer hidden"
                 />
+                <span
+                  className={`w-6 h-6 rounded-md border-2 flex items-center justify-center 
+                      bg-white/10 dark:bg-black/20 backdrop-blur-md 
+                      border-[#c9a34a]/50 shadow-sm 
+                      peer-checked:bg-[#c9a34a]/80 peer-checked:border-[#c9a34a] 
+                      transition-all duration-300`}
+                >
+                  <svg
+                    className="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
                 <FaDog className={theme.icon} /> Dog
               </label>
             </div>
@@ -157,30 +240,71 @@ export default function AdditionalDetails({
 
         {/* المرشد السياحي */}
         <div className="flex flex-col gap-3">
-          <label className="flex items-center gap-2 cursor-pointer">
+          {/* ✅ Checkbox رئيسي للمرشد */}
+          <label className="relative flex items-center cursor-pointer gap-2">
             <input
               type="checkbox"
               checked={hasGuide}
               onChange={() => setHasGuide(!hasGuide)}
-              className="accent-[#c9a34a]"
+              className="peer hidden"
             />
+            <span
+              className={`w-6 h-6 rounded-md border-2 flex items-center justify-center 
+                  bg-white/10 dark:bg-black/20 backdrop-blur-md 
+                  border-[#c9a34a]/50 shadow-sm 
+                  peer-checked:bg-[#c9a34a]/80 peer-checked:border-[#c9a34a] 
+                  transition-all duration-300`}
+            >
+              <svg
+                className="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+            </span>
             <FaUserTie className={theme.icon} />
             <span className={theme.subText}>Tour Guide</span>
           </label>
 
+          {/* ✅ اختيارات اللغات */}
           {hasGuide && (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3 mt-2">
               {availableLanguages.map((lang) => (
                 <label
                   key={lang}
-                  className="flex items-center gap-2 cursor-pointer"
+                  className="relative flex items-center cursor-pointer gap-2"
                 >
                   <input
                     type="checkbox"
                     checked={guideLanguages.includes(lang)}
                     onChange={() => toggleLanguage(lang)}
+                    className="peer hidden"
                   />
-                  <FaLanguage className={theme.icon} /> {lang}
+                  <span
+                    className={`w-6 h-6 rounded-md border-2 flex items-center justify-center 
+                        bg-white/10 dark:bg-black/20 backdrop-blur-md 
+                        border-[#c9a34a]/50 shadow-sm 
+                        peer-checked:bg-[#c9a34a]/80 peer-checked:border-[#c9a34a] 
+                        transition-all duration-300`}
+                  >
+                    <svg
+                      className="w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+
+                  {/* ✅ أيقونة اللغة + العلم */}
+                  <FaLanguage className={theme.icon} />
+
+                  <span className={theme.subText}>{lang}</span>
                 </label>
               ))}
             </div>
@@ -193,13 +317,19 @@ export default function AdditionalDetails({
             <FaUsers className={theme.icon} />
             <span className={theme.subText}>Group Size</span>
           </label>
-          <Select
-            value={options.find((o) => o.value === groupSize)}
-            onChange={(opt) => setGroupSize(opt.value)}
-            options={options}
-            styles={customSelectStyles}
-            placeholder="Select group size"
-          />
+          <div className="grid grid-cols-5 gap-2">
+            {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (
+              <button
+                key={num}
+                onClick={() => setGroupSize(num)}
+                className={`px-3 py-2 rounded-lg font-semibold 
+                    ${groupSize === num ? "bg-[#c9a34a] text-white" : `${theme.card} ${theme.text}`} 
+                    hover:bg-[#c9a34a]/70 transition`}
+              >
+                {num}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ export function DataProvider({ children }) {
 
   const { themeName, theme } = useTheme(); // theme يحتوي على خصائص من lightTheme أو darkTheme
   const [city, setCity] = useState(t("Luxor"));
-  const [group_price, setGroupPrice] = useState("Economy");
+  const [price, setPrice] = useState("Economy");
   const [tripType, setTripType] = useState(t("OneDayTrips"));
   const [arrival, setArrival] = useState(addDays(new Date(), 2));
   const [departure, setDeparture] = useState(addDays(new Date(), 9));
@@ -28,12 +28,15 @@ export function DataProvider({ children }) {
   const [images, setImages] = useState(desktopImages);
   const [index, setIndex] = useState(0);
   const [loginOpen, setLoginOpen] = useState(false);
-  const handleLoginOpen = () => {setLoginOpen(true) ,setOpen(false)};
+  const [signUpOpen, setSignUpOpen] = useState(false);
+  const handleLoginOpen = () => {setLoginOpen(true) ,setSignUpOpen(false)};
+  const handleSignUpOpen = () => {setSignUpOpen(true) ,setLoginOpen(false)};
   const handleLoginClose = () => setLoginOpen(false);
+  const handleSignUpClose = () => setSignUpOpen(false);
   // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
   const handleSearch = () => {
-    console.log({ city, group_price, tripType, arrival, departure });
+    console.log({ city, price, tripType, arrival, departure });
   };
   // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   const specialDatesBase = [
@@ -115,7 +118,7 @@ export function DataProvider({ children }) {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         setImages(mobileImages);
       } else {
         setImages(desktopImages);
@@ -133,8 +136,8 @@ export function DataProvider({ children }) {
         city,
         setCity,
         addDays,
-        group_price,
-        setGroupPrice,
+        price,
+        setPrice,
         tripType,
         setTripType,
         arrival,
@@ -153,8 +156,12 @@ export function DataProvider({ children }) {
         index,
         loginOpen,
         setLoginOpen,
+        signUpOpen,
+        setSignUpOpen,
         handleLoginClose,
         handleLoginOpen,
+        handleSignUpOpen,
+        handleSignUpClose,
       }}
     >
       {children}

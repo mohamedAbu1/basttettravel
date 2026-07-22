@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
+import { useTrip } from "../context/TripContext";
 
 // استدعاء الكومبوننتات
 import BasicInfo from "./components/BasicInfo";
@@ -15,21 +16,16 @@ import EgyptianBackground from "@/components/layout/EgyptianBackground";
 
 export default function AddTrip() {
   const { themeName } = useTheme();
-
-  // الحالة الخاصة بالصور والبيانات
-  const [coverImage, setCoverImage] = useState(null);
-  const [coverName, setCoverName] = useState("");
-  const [galleryImages, setGalleryImages] = useState([]);
-  const [tripIncludes, setTripIncludes] = useState([""]);
-  const [itinerary, setItinerary] = useState([
-    { day: 1, activities: [{ time: "", activity: "" }] },
-  ]);
-  const [category, setCategory] = useState("");
-  const [city, setCity] = useState("");
-  const [priceLevel, setPriceLevel] = useState("");
+  const { tripData, updateTripField, saveTrip } = useTrip();
 
   return (
     <motion.form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        console.log("➡️ Saving tripData:", tripData);
+        const result = await saveTrip();
+        console.log("✅ Save result:", result);
+      }}
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
@@ -40,6 +36,7 @@ export default function AddTrip() {
       }`}
     >
       <EgyptianBackground />
+
       {/* العنوان */}
       <h2
         className={`text-3xl font-extrabold text-center ${
@@ -53,36 +50,36 @@ export default function AddTrip() {
 
       {/* معلومات أساسية */}
       <BasicInfo />
+
+      {/* التصنيف (مدن + فئات + مستوى السعر) */}
       <TripClassification
-        category={category}
-        setCategory={setCategory}
-        city={city}
-        setCity={setCity}
-        priceLevel={priceLevel}
-        setPriceLevel={setPriceLevel}
+        category={tripData.categories}
+        setCategory={(val) => updateTripField("categories", val)}
+        city={tripData.cities}
+        setCity={(val) => updateTripField("cities", val)}
+        priceLevel={tripData.priceLevel}
+        setPriceLevel={(val) => updateTripField("priceLevel", val)}
       />
+
       {/* صورة الغلاف */}
       <CoverImageUpload
-        coverImage={coverImage}
-        setCoverImage={setCoverImage}
-        coverName={coverName}
-        setCoverName={setCoverName}
+        coverImage={tripData.cover_file}
+        setCoverImage={(file) => updateTripField("cover_file", file)}
+        coverName={tripData.cover_name}
+        setCoverName={(name) => updateTripField("cover_name", name)}
       />
 
       {/* صور المعرض */}
       <GalleryUpload
-        galleryImages={galleryImages}
-        setGalleryImages={setGalleryImages}
+        galleryImages={tripData.gallery_files}
+        setGalleryImages={(files) => updateTripField("gallery_files", files)}
       />
 
       {/* ما تحتوي عليه الرحلة */}
-      <TripIncludes
-        tripIncludes={tripIncludes}
-        setTripIncludes={setTripIncludes}
-      />
+      <TripIncludes />
 
       {/* البرنامج اليومي */}
-      <DailyItinerary itinerary={itinerary} setItinerary={setItinerary} />
+      <DailyItinerary />
 
       {/* زر الحفظ */}
       <SaveButton />

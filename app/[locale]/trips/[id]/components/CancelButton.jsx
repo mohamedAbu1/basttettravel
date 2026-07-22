@@ -8,13 +8,13 @@ export default function CancelButton({ trip }) {
   const { cancelTrip } = usePurchase();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { user } = useAuth(); // ✅ جلب المستخدم الحالي
+  const { userData } = useAuth(); // ✅ جلب المستخدم الحالي
 
   const cancelBooking = async () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await cancelTrip(trip.id,user.id);
+      const result = await cancelTrip(trip.id,userData.id);
       if (result.success) {
         toast.success("✅ Booking cancelled successfully!");
       } else {

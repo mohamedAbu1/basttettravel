@@ -14,7 +14,7 @@ export default function TripClassification() {
     loading,
   } = useCitiesCategories();
   const { tripData, setTripData } = useTrip();
-  const { i18n } = useTranslation(); 
+  const { i18n } = useTranslation();
   const currentLang = i18n.language || "en";
 
   const baseBoxStyle = `flex items-center gap-2 p-2 rounded-lg cursor-pointer transition`;
@@ -36,6 +36,11 @@ export default function TripClassification() {
       </p>
     );
   }
+  const categories = Array.isArray(tripData?.categories)
+    ? tripData.categories
+    : [];
+
+  const cities = Array.isArray(tripData?.cities) ? tripData.cities : [];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
@@ -68,6 +73,11 @@ export default function TripClassification() {
                   toggleSelection(tripData.categories, "categories", cat.id)
                 }
               />
+               <img
+                src={cat.images[0]}
+                alt={categoryName}
+                className="w-8 h-8 rounded-full object-cover"
+              />
               <span>{categoryName}</span>
             </div>
           );
@@ -85,24 +95,24 @@ export default function TripClassification() {
         </label>
         {allCities.map((city) => {
           const cityName =
-            city.name?.[currentLang] || city.name?.["en"] || "Unknown";
-
+            city.name?.[currentLang] || city.name?.["en"] || String(city.name);
           return (
             <div
               key={city.id}
               className={`${baseBoxStyle} ${
                 themeName === "dark" ? darkBoxStyle : lightBoxStyle
               }`}
-              onClick={() =>
-                toggleSelection(tripData.cities, "cities", city.id)
-              }
+              onClick={() => toggleSelection(cities, "cities", city.id)}
             >
               <input
                 type="checkbox"
-                checked={tripData.cities.includes(city.id)}
-                onChange={() =>
-                  toggleSelection(tripData.cities, "cities", city.id)
-                }
+                checked={cities.includes(city.id)}
+                onChange={() => toggleSelection(cities, "cities", city.id)}
+              />
+              <img
+                src={city.images[0]}
+                alt={cityName}
+                className="w-8 h-8 rounded-full object-cover"
               />
               <span>{cityName}</span>
             </div>

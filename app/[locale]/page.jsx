@@ -18,16 +18,17 @@ import { homeMetadata } from "@/lib/metadata/home";
 import CurrencySelector from "@/components/layout/CurrencySelector";
 import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
 import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
+import AdminChatWindow from "@/components/layout/AdminChatWindow";
 // import { useQueryFilters } from "@/context/QueryContext";
 
 export default function Home() {
-  const { user } = useAuth(); // ✅ جلب المستخدم الحالي
+  const { userData,chatUser ,setChatUser, chatMessages } = useAuth(); // ✅ جلب المستخدم الحالي
   const { lang } = useLanguage();
   const meta = homeMetadata[lang] || homeMetadata.en;
 
   return (
     <>
-      <Head>
+      <Head >
         <title>{meta.title}</title>
         <meta name="description" content={meta.description} />
         <meta name="keywords" content={meta.keywords} />
@@ -71,10 +72,13 @@ export default function Home() {
         <LoginModal />
 
         {/* نافذة الدردشة تظهر فقط لو المستخدم مسجل دخول */}
-        {user && <ChatWidget />}
-        {user && <AdminDashboardButton />}
+        {userData && <ChatWidget />}
+        {userData && <AdminDashboardButton />}
 
         <CurrencySelector />
+         {chatUser && (
+          <AdminChatWindow user={chatUser} admin={userData} messages={chatMessages} onClose={() => setChatUser(null)} />
+        )}
         <ScrollToTopButton />
       </main>
     </>

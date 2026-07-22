@@ -7,53 +7,41 @@ import { useAuth } from "@/context/AuthContext";
 import { usePurchase } from "@/context/PurchaseContext";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/context/LanguageContext";
-import { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
+import { useCurrency } from "@/context/CurrencyContext"; // ✅ استدعاء الكونتكست
 
 export default function TripsGrid({ trips, cardStyle = "vertical" }) {
   const router = useRouter();
-  const { user } = useAuth();
+  const { userData } = useAuth();
   const { currency, purchases } = usePurchase();
   const { t } = useTranslation("trips");
   const { lang } = useLanguage();
   const { theme } = useTheme();
+  const { rates, loading, error } = useCurrency(); // ✅ جلب أسعار العملات
 
   const getRandomStars = () => Math.floor(Math.random() * 3) + 3;
 
-  // 🟢 state لتخزين سعر الصرف
-  const [exchangeRate, setExchangeRate] = useState({ USD_EGP: 49.1, EUR_USD: 1.18, USD_EUR: 0.85 });
-
-  useEffect(() => {
-    const fetchRate = async () => {
-      try {
-        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=EGP");
-        const data = await res.json();
-        if (data && data.rates && data.rates.EGP) {
-          setExchangeRate((prev) => ({ ...prev, USD_EGP: data.rates.EGP }));
-        }
-      } catch (err) {
-        console.error("Error fetching EGP rate:", err);
-      }
-    };
-    fetchRate();
-  }, []);
-
-  // 🟢 دالة التحويل
+  // 🟢 دالة التحويل باستخدام CurrencyContext
   const convertPrice = (group_price, tripCurrency) => {
     let converted = group_price;
+
     if (currency === "EUR" && tripCurrency === "USD") {
-      converted = (group_price * exchangeRate.USD_EUR).toFixed(2);
+      converted = (group_price * (rates.USD_EUR || 0.85)).toFixed(2);
     } else if (currency === "USD" && tripCurrency === "EUR") {
-      converted = (group_price * exchangeRate.EUR_USD).toFixed(2);
+      converted = (group_price * (rates.EUR_USD || 1.18)).toFixed(2);
     } else if (currency === "EGP" && tripCurrency === "USD") {
-      converted = (group_price * exchangeRate.USD_EGP).toFixed(2);
+      converted = (group_price * (rates.USD || 49.1)).toFixed(2);
     }
     return converted;
   };
 
+  if (loading)
+    return <p className="text-center">⏳ Loading currency rates...</p>;
+  if (error) return <p className="text-center text-red-500">❌ {error}</p>;
+
   return (
     <div
-     className={`flex-1 z-[0] ${
+      className={`flex-1 z-[0] ${
         cardStyle === "vertical"
           ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           : "grid grid-cols-1 md:grid-cols-2 gap-6"
@@ -61,17 +49,22 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
     >
       {trips.map((trip, i) => {
         const avgStars = getRandomStars();
-        const displayedPrice = convertPrice(trip.group_price, "USD");
+        const displayedPrice = convertPrice(trip.group_price, trip.currency);
 
         const hasPurchased =
-          user &&
+          userData &&
           purchases.some(
             (p) =>
-              p.user_id?.toString() === user.id?.toString() &&
+              p.user_id?.toString() === userData.id?.toString() &&
               p.trip_id?.toString() === trip.id?.toString() &&
               p.status !== "Cancelled",
           );
-
+        const hasActivePurchase = purchases.some(
+          (p) =>
+            p.trip_id === trip.id &&
+            p.user_id === userData?.id &&
+            p.status !== "Cancelled",
+        );
         // 🟢 اختيار الأيقونة حسب العملة
         let CurrencyIcon;
         let currencyColor;
@@ -109,20 +102,37 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               priority
             />
 
-            <div className={`absolute bottom-0 p-4 w-full flex flex-col gap-2 ${theme.overlay} text-white`}>
+            <div
+              className={`absolute bottom-0 p-4 w-full flex flex-col gap-2 ${theme.overlay} text-white`}
+            >
               <h4 className={`text-lg font-bold ${theme.title}`}>
                 {trip.title?.[lang] || trip.title?.en || "Untitled"}
               </h4>
               <p className={`${theme.subText} text-sm`}>
-                {trip.trip_cities?.map((c) => c.cities?.name?.[lang] || c.cities?.name?.en || c.city_name).join(", ") ||
-                  t("NoCity")}
+                {trip.trip_cities
+                  ?.map(
+                    (c) =>
+                      c.cities?.name?.[lang] ||
+                      c.cities?.name?.en ||
+                      c.city_name,
+                  )
+                  .join(", ") || t("NoCity")}
               </p>
               <p className={`${theme.subText} text-sm`}>
-                {trip.trip_categories?.map((cat) => cat.categories?.name?.[lang] || cat.categories?.name?.en).join(", ") ||
-                  t("NoCategory")}
+                {trip.trip_categories
+                  ?.map(
+                    (cat) =>
+                      cat.categories?.name?.[lang] || cat.categories?.name?.en,
+                  )
+                  .join(", ") || t("NoCategory")}
               </p>
               <p className="text-md font-semibold flex items-center gap-2">
-                <span className={`px-2 py-1 rounded flex items-center gap-1 ${theme.buttonPrimary}`}>
+                <span
+                  className={`px-3 py-2 rounded-lg flex items-center gap-2 
+              bg-white/10 dark:bg-black/20 
+              backdrop-blur-md border border-[#C2A878]/40 
+              shadow-sm`}
+                >
                   <CurrencyIcon style={{ color: currencyColor }} />
                   {displayedPrice} {currency}
                 </span>
@@ -135,17 +145,33 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
                     className={idx < avgStars ? theme.icon : theme.iconInactive}
                   />
                 ))}
-                <span className={`${theme.subText} text-sm`}>({t("reviews")})</span>
+                <span className={`${theme.subText} text-sm`}>
+                  ({t("reviews")})
+                </span>
               </div>
-
-              <button
-                onClick={() => router.push(`/trips/${trip.id}`)}
-                className={`mt-2 px-4 py-2 rounded-lg font-bold transition cursor-pointer ${
-                  hasPurchased ? "bg-green-500 hover:bg-green-600" : theme.buttonPrimary
-                }`}
-              >
-                {hasPurchased ? t("Tripdetails") : t("btn")}
-              </button>
+              {hasActivePurchase === true ? (
+                <button
+                  onClick={() => router.push(`/trips/${trip.id}`)}
+                  className={`mt-3 px-5 py-2 rounded-lg font-bold transition cursor-pointer 
+              bg-white/10 dark:bg-black/20 
+              backdrop-blur-md border border-[#C2A878]/40 
+              text-[#C2A878] hover:bg-[#C2A878]/20 hover:text-white 
+              shadow-md`}
+                >
+                  {hasPurchased ? t("Tripdetails") : t("btn")}
+                </button>
+              ) : (
+                <button
+                  onClick={() => router.push(`/trips/${trip.id}`)}
+                  className={`mt-3 px-5 py-2 rounded-lg font-bold transition cursor-pointer 
+              bg-white/10 dark:bg-black/20 
+              backdrop-blur-md border border-[#C2A878]/40 
+              text-[#C2A878] hover:bg-[#C2A878]/20 hover:text-white 
+              shadow-md`}
+                >
+                 {hasPurchased ? t("Tripdetails") : t("btn")}
+                </button>
+              )}
             </div>
           </motion.div>
         );

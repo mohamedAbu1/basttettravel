@@ -5,6 +5,7 @@ import { UserProvider } from "./context/UserContext";
 import { AuthProvider } from "./context/AuthContext";
 import { ReviewsProvider } from "./context/ReviewsContext";
 import { PurchaseProvider } from "./context/PurchaseContext";
+import { CurrencyProvider } from "./context/CurrencyContext";
 import { CitiesCategoriesProvider } from "./context/CitiesCategoriesContext";
 
 export default function AdminLayout({ children }) {
@@ -17,7 +18,7 @@ export default function AdminLayout({ children }) {
               <ReviewsProvider>
                 <PurchaseProvider>
                   <CitiesCategoriesProvider>
-                    {children}
+                    <CurrencyProvider>{children}</CurrencyProvider>
                   </CitiesCategoriesProvider>
                 </PurchaseProvider>
               </ReviewsProvider>

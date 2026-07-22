@@ -1,74 +1,69 @@
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db"; // ملف الاتصال بقاعدة البيانات MySQL
 
 export async function GET() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
+  try {
+    const db = await connectDB();
 
-  // ✅ أولاً: جلب الحجوزات
-  const { data: purchases, error: purchaseError } = await supabase
-    .from("purchases")
-    .select(`
-      id,
-      created_at,
-      arrival_date,
-      departure_date,
-      guide_languages,
-      num_children,
-      num_persons,
-      pet_type,
-      platform,
-      has_children,
-      has_guide,
-      status,
-      has_pets,
-      user_id,
-      trip_id
+    // 1️⃣ جلب الحجوزات
+    const [purchases] = await db.query(`
+      SELECT 
+        id, created_at, arrival_date, departure_date, guide_languages, 
+        num_children, num_persons, pet_type, platform, has_children, 
+        has_guide, status, has_pets, user_id, trip_id
+      FROM purchases
     `);
 
-  if (purchaseError) {
-    return new Response(JSON.stringify({ error: purchaseError.message }), { status: 400 });
+    // 2️⃣ جلب الرحلات المرتبطة
+    const tripIds = purchases.map((p) => p.trip_id);
+    let trips = [];
+    if (tripIds.length > 0) {
+      const [tripRows] = await db.query(
+        `SELECT id, title FROM trips WHERE id IN (?)`,
+        [tripIds],
+      );
+
+      // ✅ تحويل النص JSON إلى كائن
+      trips = tripRows.map((t) => {
+        let parsedTitle;
+        try {
+          parsedTitle = JSON.parse(t.title); // لو النص عبارة عن JSON متعدد اللغات
+        } catch {
+          parsedTitle = { en: t.title }; // fallback لو مش JSON
+        }
+        return { ...t, title: parsedTitle };
+      });
+
+    }
+
+    // 3️⃣ جلب المستخدمين المرتبطين
+    const userIds = purchases.map((p) => p.user_id);
+    let users = [];
+    if (userIds.length > 0) {
+      const [userRows] = await db.query(
+        `SELECT id, name, email FROM users WHERE id IN (?)`,
+        [userIds],
+      );
+      users = userRows;
+    }
+
+    // 4️⃣ دمج البيانات
+    const enrichedPurchases = purchases.map((p) => {
+      const user = users.find((u) => u.id === p.user_id);
+      const trip = trips.find((t) => t.id === p.trip_id);
+
+      return {
+        ...p,
+        userName: user?.name || user?.email || "Unknown User",
+        userEmail: user?.email || "No Email",
+        tripTitle: trip?.title || { en: "Unknown Trip" }, // ✅ الآن كائن وليس نص
+      };
+    });
+
+
+    return NextResponse.json(enrichedPurchases, { status: 200 });
+  } catch (err) {
+    console.error("❌ Error fetching purchases:", err);
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-
-  // ✅ ثانياً: جلب الرحلات
-  const tripIds = purchases.map(p => p.trip_id);
-  const { data: trips, error: tripError } = await supabase
-    .from("trips")
-    .select("id, title")
-    .in("id", tripIds);
-
-  if (tripError) {
-    return new Response(JSON.stringify({ error: tripError.message }), { status: 400 });
-  }
-
-  // ✅ ثالثاً: جلب المستخدمين من Supabase Auth
-  // هنا بنستخدم admin API (لازم يكون عندك service_role key في السيرفر)
-  const adminClient = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY // ⚠️ مهم: مش الـ anon key
-  );
-
-  const userIds = purchases.map(p => p.user_id);
-  const { data: users, error: userError } = await adminClient.auth.admin.listUsers({
-    filter: { id: userIds }
-  });
-
-  if (userError) {
-    return new Response(JSON.stringify({ error: userError.message }), { status: 400 });
-  }
-
-  // ✅ رابعاً: دمج البيانات يدويًا
-  const enrichedPurchases = purchases.map(p => {
-    const user = users?.users?.find(u => u.id === p.user_id);
-    const trip = trips.find(t => t.id === p.trip_id);
-
-    return {
-      ...p,
-      userName: user?.user_metadata?.name || user?.email || "Unknown User",
-      tripTitle: trip?.title?.en || "Unknown Trip"
-    };
-  });
-
-  return new Response(JSON.stringify(enrichedPurchases), { status: 200 });
 }

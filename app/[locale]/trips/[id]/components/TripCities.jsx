@@ -4,7 +4,6 @@ import { useTheme } from "@/context/ThemeContext";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { motion } from "framer-motion";
 
-// كائن الترجمات للعناوين
 const translations = {
   en: { title: "Cities" },
   de: { title: "Städte" },
@@ -15,18 +14,39 @@ const translations = {
 };
 
 export default function TripCities({ trip, lang }) {
-  const { theme } = useTheme();
+  const { theme } = useTheme(); // ✅ جلب الثيم من الكونتكست
   const { cities: allCities } = useCitiesCategories();
-
-  // لو اللغة مش موجودة، نرجع للإنجليزية
   const t = translations[lang] || translations.en;
 
-  // دالة ترجمة النصوص من jsonb
   const getLocalizedText = (obj) => {
     if (!obj) return "Unknown";
-    if (typeof obj === "string") return obj;
-    return obj?.[lang] || obj?.en || "Unknown";
+    if (typeof obj === "string") {
+      try {
+        const parsed = JSON.parse(obj);
+        return parsed?.[lang] || parsed?.en || Object.values(parsed)[0];
+      } catch {
+        return obj;
+      }
+    }
+    if (typeof obj === "object") {
+      return obj?.[lang] || obj?.en || Object.values(obj)[0];
+    }
+    return "Unknown";
   };
+
+  let cities = [];
+  try {
+    if (Array.isArray(trip.cities)) {
+      cities = trip.cities;
+    } else if (typeof trip.cities === "string") {
+      const parsed = JSON.parse(trip.cities);
+      cities = Array.isArray(parsed) ? parsed : [parsed];
+    } else if (typeof trip.cities === "object" && trip.cities !== null) {
+      cities = [trip.cities];
+    }
+  } catch {
+    cities = [];
+  }
 
   return (
     <motion.section
@@ -34,7 +54,8 @@ export default function TripCities({ trip, lang }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`p-6 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text}`}
+      className={`p-6 rounded-xl shadow-lg transition ${theme.card} ${theme.text}`}
+      style={{ boxShadow: theme.shadow }}
     >
       {/* العنوان */}
       <motion.h2
@@ -42,7 +63,7 @@ export default function TripCities({ trip, lang }) {
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className={`text-2xl font-bold flex items-center gap-2 mb-4 border-b p-2 ${theme.title} ${theme.border}`}
+        className={`text-2xl font-bold flex items-center gap-2 mb-4 border-b pb-2 ${theme.border}`}
       >
         <FaMapMarkerAlt className={theme.icon} />
         {t.title}
@@ -50,26 +71,24 @@ export default function TripCities({ trip, lang }) {
 
       {/* المدن */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {trip.trip_cities?.map((c, idx) => {
-          const cityObj = allCities.find((city) => city.id === c.city_id);
-
+        {cities.filter(Boolean).map((c, idx) => {
+          const cityId = c?.id || c?.city_id || c?.cityId || idx;
           const cityName =
-            getLocalizedText(cityObj?.name) ||
-            getLocalizedText(c.cities?.name) ||
-            "Unknown";
+            getLocalizedText(c?.name) ||
+            getLocalizedText(allCities.find((city) => city.id === cityId)?.name);
 
           return (
             <motion.div
-              key={c.city_id}
+              key={cityId}
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
               whileHover={{ scale: 1.05, rotate: 1 }}
-              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${theme.card}`}
+              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${theme.card} ${theme.hover}`}
             >
               <FaMapMarkerAlt className={theme.icon} />
-              <span className={`text-sm md:text-base font-medium ${theme.subText}`}>
+              <span className="text-sm md:text-base font-medium">
                 {cityName}
               </span>
             </motion.div>

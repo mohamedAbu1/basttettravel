@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useQueryFilters } from "./QueryContext";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
+import { useSession, signIn } from "next-auth/react"; // ✅ NextAuth
 
 const AuthContext = createContext();
 
@@ -13,95 +13,52 @@ export function AuthProvider({ children }) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const { data: session } = useSession(); // ✅ جلب المستخدم من جوجل عبر NextAuth
+  const [chatUser, setChatUser] = useState(null);
+  const [chatMessages, setChatMessages] = useState([]);
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null); // بيانات من API
+  const [UserToken, setUserToken] = useState(null); // بيانات من التوكين
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const { updateValue, getEncodedQuery } = useQueryFilters();
 
- const loginWithGoogle = async () => {
+  // ✅ جلب بيانات المستخدم من السيرفر
+  const fetchUserFromServer = async () => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo:
-            process.env.NEXT_PUBLIC_BASE_URL + "/api/auth/callback/google",
-          queryParams: {
-            access_type: "offline",
-            prompt: "select_account consent",
-          },
-        },
-      });
-      if (error) {
-        toast.error("❌ خطأ في تسجيل الدخول بجوجل: " + error.message);
-      }
+      const res = await axios.get("/api/auth/me", { withCredentials: true });
+      setUserToken(res.data.user);
+      setIsLoggedIn(true);
+      console.log("📌 User from server:", res.data.user);
     } catch (err) {
-      console.error("OAuth Error:", err);
-      toast.error("❌ حدث خطأ غير متوقع أثناء تسجيل الدخول بجوجل.");
+      setUserToken(null);
+      setIsLoggedIn(false);
     }
   };
 
-  // ✅ متابعة الجلسة بشكل مباشر
+  // ✅ استدعاء عند تحميل الصفحة
   useEffect(() => {
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          const u = session.user;
-
-          // ✅ الدور موجود في user_metadata بعد أول تسجيل
-          const role = u.user_metadata?.role ||  u.email === "ismailharoun225@gmail.com" ||
-      u.email === "Basttettravel@outlook.com" || u.email === "mohamedahmed33m11@gmail.com" ? "admin" : "user";
-
-          const mergedUser = { ...u, role };
-          setUser(mergedUser);
-          setIsLoggedIn(true);
-        console.log("🔎 Current User:", mergedUser);
-          // تحديث الفلاتر
-          updateValue("id", u.id);
-          updateValue("email", u.email);
-          updateValue("role", role);
-          updateValue("name", u.user_metadata?.name);
-          updateValue("avatar", u.user_metadata?.avatar);
-          updateValue("gender", u.user_metadata?.gender);
-        } else {
-          setUser(null);
-          setIsLoggedIn(false);
-        }
-      }
-    );
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    fetchUserFromServer();
   }, []);
 
-
-
+  // ✅ تسجيل مستخدم جديد يدويًا
   const register = async (email, password, name, gender) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post("/api/auth/register", {
-        name,
-        email,
-        password,
-        gender,
-      });
+      const res = await axios.post(
+        "/api/auth/register",
+        { name, email, password, gender },
+        { withCredentials: true },
+      );
       const data = res.data;
-      if (!data.user) throw new Error(data.error || "Registration failed");
-
-      // ✅ حفظ الجلسة بعد التسجيل
-      if (data.session) {
-        await supabase.auth.setSession({
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token,
-        });
-      }
+      if (res.status !== 201)
+        throw new Error(data.error || "Registration failed");
 
       toast.success("✅ Account created successfully!");
-      return data.user;
+      return data;
     } catch (err) {
       setError(err.message);
       toast.error("❌ Error: " + err.message);
@@ -110,6 +67,7 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // ✅ تسجيل الدخول يدويًا
   const login = async (email, password, onSuccess) => {
     setLoading(true);
     setError(null);
@@ -117,29 +75,18 @@ export function AuthProvider({ children }) {
       const res = await axios.post(
         "/api/auth/login",
         { email, password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       const data = res.data;
       if (res.status !== 200) throw new Error(data.error || "Login failed");
 
       const user = data.user;
-      const session = data.session;
-
-      // ✅ حفظ الجلسة في Supabase client
-      await supabase.auth.setSession({
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-      });
-
       setUser(user);
-      setIsLoggedIn(true);
 
-      updateValue("id", user.id);
-      updateValue("email", user.email);
-      updateValue("role", user.user_metadata?.role);
-      updateValue("name", user.user_metadata?.name);
-      updateValue("avatar", user.user_metadata?.avatar);
-      updateValue("gender", user.user_metadata?.gender);
+      // ✅ جلب بيانات المستخدم من السيرفر بعد تسجيل الدخول
+      await fetchUserFromServer();
+
+      setIsLoggedIn(true);
 
       if (onSuccess) onSuccess();
       const encodedQuery = getEncodedQuery();
@@ -155,24 +102,61 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // ✅ تسجيل الدخول بجوجل
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signIn("google", { redirect: false });
+      if (result?.error) {
+        toast.error("❌ خطأ أثناء تسجيل الدخول بجوجل: " + result.error);
+        return;
+      }
+
+      const res = await fetch("/api/auth/session");
+      const sessionData = await res.json();
+      const userData = sessionData?.user;
+
+      if (!userData) {
+        toast.error("❌ لم يتم العثور على بيانات المستخدم.");
+        return;
+      }
+
+      // ✅ استدعاء API route للتعامل مع MySQL
+      const dbRes = await axios.post("/api/auth/google", {
+        email: userData.email,
+        name: userData.name,
+      });
+
+      setUser(dbRes.data);
+      setIsLoggedIn(true);
+      toast.success("✅ تم تسجيل الدخول بجوجل!");
+    } catch (err) {
+      console.error("OAuth Error:", err);
+      toast.error("❌ حدث خطأ غير متوقع أثناء تسجيل الدخول بجوجل.");
+    }
+  };
+
+  // ✅ تسجيل الخروج
   const logout = async () => {
     try {
       await axios.post("/api/auth/logout", {}, { withCredentials: true });
-      await supabase.auth.signOut(); // ✅ إنهاء الجلسة في Supabase
     } catch (err) {
       console.error("❌ Error clearing cookies on server:", err);
     }
     setUser(null);
+    setUserToken(null);
     setIsLoggedIn(false);
     toast.info("🚪 Logged out successfully");
   };
 
+  const userData = user || session?.user;
+
   return (
     <AuthContext.Provider
       value={{
-        user,
+        userData, // بيانات من API أو من Google
         register,
         login,
+        loginWithGoogle, // ✅ تسجيل الدخول بجوجل
         logout,
         loading,
         error,
@@ -181,7 +165,11 @@ export function AuthProvider({ children }) {
         setOpen,
         handleOpen,
         handleClose,
-        loginWithGoogle,
+        fetchUserFromServer,
+        chatUser,
+        setChatUser,
+        chatMessages,
+        setChatMessages,
       }}
     >
       {children}

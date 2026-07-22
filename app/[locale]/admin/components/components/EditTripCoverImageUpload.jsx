@@ -62,7 +62,7 @@ const EditTripCoverImageUpload = () => {
             className="w-32 h-32 object-cover rounded-lg shadow"
           />
           {/* حقول إدخال متعددة اللغات */}
-          {["en", "es", "fr", "de", "it", "zh"].map((lang) => (
+          {/* {["en", "es", "fr", "de", "it", "zh"].map((lang) => (
             <input
               key={lang}
               type="text"
@@ -80,7 +80,7 @@ const EditTripCoverImageUpload = () => {
                   : "bg-[#fdf6e3] border-[#c9a34a]/40 text-[#3a2c0a]"
               }`}
             />
-          ))}
+          ))} */}
 
           {/* زر حذف الصورة */}
           <button

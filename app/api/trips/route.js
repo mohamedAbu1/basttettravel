@@ -1,199 +1,214 @@
-import { supabase } from "@/lib/supabaseClient";
+import { connectDB } from "@/lib/db";
+import { v4 as uuidv4 } from "uuid";
+
+// دالة آمنة لتحويل أي قيمة إلى JSON نصي
+const safeStringify = (value) => {
+  try {
+    return JSON.stringify(value ?? []);
+  } catch {
+    return "[]";
+  }
+};
 
 export async function POST(req) {
   try {
     const body = await req.json();
-    console.log("📥 Request body:", JSON.stringify(body, null, 2));
+    const tripId = uuidv4();
 
-    // ✅ إدخال الرحلة في جدول trips
-    console.log("➡️ Inserting trip...");
-    const { data: trip, error: tripError } = await supabase
-      .from("trips")
-      .insert({
-        title: body.title,
-        description: body.description,
-        currency: body.currency,
-        duration: body.duration,
-        duration_unit: body.duration_unit,
-        cover_image: body.cover_image,
-        gallery_images: body.gallery_images,
-        priceLevel: body.priceLevel,
-        group_price: body.group_price,
-        solo_price: body.solo_price,
-      })
-      .select()
-      .single();
+    const db = await connectDB();
 
-    if (tripError) throw tripError;
-    console.log("✅ Trip inserted:", trip);
+    // ✅ إدخال الرحلة
+    await db.execute(
+      `INSERT INTO trips 
+      (id, title, description, currency, duration, duration_unit, cover_image, gallery_images, priceLevel, group_price, solo_price)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        tripId,
+        safeStringify(body.title),
+        safeStringify(body.description),
+        body.currency,
+        body.duration,
+        body.duration_unit,
+        body.cover_image,
+        safeStringify(body.gallery_images),
+        body.priceLevel,
+        body.group_price,
+        body.solo_price,
+      ]
+    );
 
-    // ✅ إدخال الـ includes
+    // ✅ إدخال includes
     if (body.includes?.length > 0) {
-      console.log("➡️ Inserting includes:", body.includes);
-      const includesData = body.includes.map((inc) => ({
-        trip_id: trip.id,
-        include_translations: {
-          en: inc.en,
-          es: inc.es,
-          fr: inc.fr,
-          de: inc.de,
-          it: inc.it,
-          zh: inc.zh,
-        },
-      }));
-      const { error: includesError } = await supabase
-        .from("includes")
-        .insert(includesData);
-      if (includesError) throw includesError;
-      console.log("✅ Includes inserted");
+      const includesData = body.includes.map((inc) => [
+        uuidv4(),
+        tripId,
+        safeStringify(inc),
+      ]);
+      await db.query(
+        "INSERT INTO includes (id, trip_id, include_translations) VALUES ?",
+        [includesData]
+      );
     }
 
-    // ✅ إدخال المدن (باستخدام IDs مباشرة)
+    // ✅ إدخال المدن
     if (body.cities?.length > 0) {
-      console.log("➡️ Linking cities:", body.cities);
-      const citiesData = body.cities.map((cityId) => ({
-        trip_id: trip.id,
-        city_id: cityId,
-      }));
-      const { error: citiesError } = await supabase
-        .from("trip_cities")
-        .insert(citiesData);
-      if (citiesError) throw citiesError;
-      console.log("✅ Cities linked to trip");
+      const citiesData = body.cities.map((cityId) => [
+        uuidv4(),
+        tripId,
+        cityId,
+      ]);
+      await db.query(
+        "INSERT INTO trip_cities (id, trip_id, city_id) VALUES ?",
+        [citiesData]
+      );
     }
 
-    // ✅ إدخال التصنيفات (باستخدام IDs مباشرة)
+    // ✅ إدخال التصنيفات
     if (body.categories?.length > 0) {
-      console.log("➡️ Linking categories:", body.categories);
-      const categoriesData = body.categories.map((catId) => ({
-        trip_id: trip.id,
-        category_id: catId,
-      }));
-      const { error: categoriesError } = await supabase
-        .from("trip_categories")
-        .insert(categoriesData);
-      if (categoriesError) throw categoriesError;
-      console.log("✅ Categories linked to trip");
+      const categoriesData = body.categories.map((catId) => [
+        uuidv4(),
+        tripId,
+        catId,
+      ]);
+      await db.query(
+        "INSERT INTO trip_categories (id, trip_id, category_id) VALUES ?",
+        [categoriesData]
+      );
     }
 
     // ✅ إدخال الأيام والأنشطة
-    if (body.itinerary?.length > 0) {
-      console.log("➡️ Inserting days:", body.itinerary);
-      const daysData = body.itinerary.map((day, index) => ({
-        trip_id: trip.id,
-        day_number: day.day || index + 1,
-      }));
+    if (body.trip_days?.length > 0) {
+      for (const [index, day] of body.trip_days.entries()) {
+        const dayId = uuidv4();
+        await db.execute(
+          "INSERT INTO trip_days (id, trip_id, day_number) VALUES (?, ?, ?)",
+          [dayId, tripId, day.day_number || index + 1]
+        );
 
-      const { data: insertedDays, error: daysError } = await supabase
-        .from("trip_days")
-        .insert(daysData)
-        .select();
-
-      if (daysError) throw daysError;
-      console.log("✅ Days inserted:", insertedDays);
-
-      const activitiesData = [];
-      insertedDays.forEach((dayRow, index) => {
-        const activities = body.itinerary[index].activities || [];
-        console.log(`➡️ Activities for day ${dayRow.day_number}:`, activities);
-        activities.forEach((act) => {
-          activitiesData.push({
-            day_id: dayRow.id,
-            time: act.time,
-            activity_translations: act.activity || {
-              en: act.en || null,
-              es: act.es || null,
-              fr: act.fr || null,
-              de: act.de || null,
-              it: act.it || null,
-              zh: act.zh || null,
-            },
-          });
-        });
-      });
-
-      console.log("📦 Final activities payload:", activitiesData);
-
-      if (activitiesData.length > 0) {
-        const { error: activitiesError } = await supabase
-          .from("day_activities")
-          .insert(activitiesData);
-        if (activitiesError) throw activitiesError;
-        console.log("✅ Activities inserted");
+        if (day.activities?.length > 0) {
+          const activitiesData = day.activities.map((act) => [
+            uuidv4(),
+            dayId,
+            act.time,
+            safeStringify(act.activity_translations || act.activity),
+          ]);
+          await db.query(
+            "INSERT INTO day_activities (id, day_id, time, activity_translations) VALUES ?",
+            [activitiesData]
+          );
+        }
       }
     }
 
-    return new Response(JSON.stringify({ success: true, trip }), {
+    return new Response(JSON.stringify({ success: true, tripId }), {
       status: 201,
     });
   } catch (err) {
     console.error("❌ API Error:", err);
     return new Response(
       JSON.stringify({ success: false, error: err.message }),
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
 export async function GET() {
   try {
-    const { data: trips, error } = await supabase.from("trips").select(`
-      id,
-      title,
-      description,
-      currency,
-      duration,
-        solo_price,
-      group_price,
-      duration_unit,
-      priceLevel,
-      cover_image,
-      gallery_images,
-      trip_cities (
-        city_id,
-        cities ( id, name )
-      ),
-      trip_categories (
-        category_id,
-        categories ( id, name )
-      ),
-      includes (
-        id,
-        include_translations
-      ),
-      trip_days (
-        id,
-        day_number,
-        day_activities (
-          id,
-          time,
-          activity_translations
-        )
-      ),
-       reviews (
-          id,
-          user_id,
-          trip_id,
-          rating,
-          comment,
-          created_at
-        )
+    const db = await connectDB();
+    const [trips] = await db.query(`
+      SELECT 
+        t.*,
+        COALESCE(
+          CAST(
+            (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', c.id, 'name', c.name, 'images', c.images)) 
+             FROM trip_cities tc 
+             JOIN cities c ON tc.city_id = c.id 
+             WHERE tc.trip_id = t.id)
+          AS CHAR
+          ),
+          '[]'
+        ) AS cities,
+        COALESCE(
+          CAST(
+            (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', cat.id, 'name', cat.name, 'images', cat.images)) 
+             FROM trip_categories tc 
+             JOIN categories cat ON tc.category_id = cat.id 
+             WHERE tc.trip_id = t.id)
+          AS CHAR
+          ),
+          '[]'
+        ) AS categories,
+        COALESCE(
+          CAST(
+            (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', inc.id, 'include_translations', inc.include_translations)) 
+             FROM includes inc WHERE inc.trip_id = t.id)
+          AS CHAR
+          ),
+          '[]'
+        ) AS includes,
+        COALESCE(
+          CAST(
+            (SELECT JSON_ARRAYAGG(
+                JSON_OBJECT(
+                  'id', td.id, 
+                  'day_number', td.day_number,
+                  'activities', (
+                    SELECT JSON_ARRAYAGG(
+                      JSON_OBJECT(
+                        'id', da.id,
+                        'time', da.time,
+                        'activity_translations', da.activity_translations
+                      )
+                    )
+                    FROM day_activities da WHERE da.day_id = td.id
+                  )
+                )
+             ) 
+             FROM trip_days td WHERE td.trip_id = t.id)
+          AS CHAR
+          ),
+          '[]'
+        ) AS days
+      FROM trips t
     `);
 
-    if (error) {
-      console.error("Trips fetch error:", error);
-      throw error;
-    }
+    const safeParse = (value) => {
+      try {
+        return value ? JSON.parse(value) : [];
+      } catch {
+        return [];
+      }
+    };
 
-    return new Response(JSON.stringify({ success: true, trips }), {
+    const parsedTrips = trips.map((trip) => ({
+      ...trip,
+      title: trip.title ? JSON.parse(trip.title) : {},
+      description: trip.description ? JSON.parse(trip.description) : {},
+      cover_image: trip.cover_image,
+      solo_price: Number(trip.solo_price),
+      group_price: Number(trip.group_price),
+      currency: trip.currency,
+      duration: Number(trip.duration),
+      priceLevel: trip.priceLevel,
+      duration_unit: trip.duration_unit || "",
+      gallery_images: safeParse(trip.gallery_images),
+      cities: safeParse(trip.cities),
+      categories: safeParse(trip.categories),
+      includes: safeParse(trip.includes),
+      itinerary: safeParse(trip.days),
+    }));
+
+    console.log("object", parsedTrips);
+
+    return new Response(JSON.stringify({ success: true, trips: parsedTrips }), {
       status: 200,
-      headers: { "Cache-Control": "public, max-age=3600" }, // ساعة
+      headers: { "Cache-Control": "public, max-age=3600" },
     });
   } catch (err) {
     console.error("GET /api/trips error:", err);
     return new Response(
       JSON.stringify({ success: false, error: err.message }),
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

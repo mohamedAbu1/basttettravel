@@ -5,14 +5,17 @@ import { useTheme } from "@/context/ThemeContext";
 import Logo from "./components/Logo";
 import NavBar from "./components/NavBar";
 import RightBar from "./components/RightBar";
-import { Button } from "@mui/material";
+import Button from '@mui/material/Button';
 import { useAuth } from "@/context/AuthContext";
 import { FaSignOutAlt, FaUserPlus } from "react-icons/fa";
+import { useData } from "@/context/DataContext";
+import { signOut, signIn } from "next-auth/react"; // ✅ إضافة
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { theme } = useTheme();
-  const { user, isLoggedIn, logout, handleOpen } = useAuth();
+  const { userData, isLoggedIn, logout, handleOpen } = useAuth();
+  const { handleLoginOpen } = useData();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -44,12 +47,12 @@ export default function Header() {
         {/* زر تسجيل الدخول/الخروج */}
         <motion.div whileHover={{ scale: 1.05 }} className="hidden lg:flex">
           <Button
-            onClick={isLoggedIn ? logout : handleOpen}
+             onClick={userData ? () => signOut() : () => handleLoginOpen()}
             className={`transition-all font-semibold tracking-wide uppercase shadow-md flex items-center gap-2 px-6 py-3 rounded-xl ${
-              isLoggedIn ? theme.buttonSecondary : theme.buttonPrimary
+              userData ? theme.buttonSecondary : theme.buttonPrimary
             }`}
           >
-            {isLoggedIn ? (
+            {userData ? (
               <>
                 <FaSignOutAlt size={20} />
                 <span>Logout</span>

@@ -7,11 +7,11 @@ import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function AdminDashboardButton() {
-  const { user } = useAuth();
+  const { userData } = useAuth();
   const router = useRouter();
   const { theme } = useTheme();
   // ✅ تحقق من أن المستخدم أدمن
-  const isAdmin = user?.role?.includes("admin");
+  const isAdmin = userData?.role?.toLowerCase() === "admin";
 
   const goToDashboard = () => {
     router.push("/admin"); // المسار الخاص بلوحة التحكم

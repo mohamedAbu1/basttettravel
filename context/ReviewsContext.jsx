@@ -1,45 +1,30 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { useAuth } from "@/context/AuthContext"; // ✅ استدعاء المستخدم من useAuth
-import { supabase } from "@/lib/supabaseClient"; // ملف تهيئة Supabase
+import { useAuth } from "@/context/AuthContext"; 
+
 const ReviewsContext = createContext();
 
 export function ReviewsProvider({ children }) {
-  const { user } = useAuth(); // ✅ جلب المستخدم من AuthContext
+  const { userData } = useAuth(); 
   const [reviewsByTrip, setReviewsByTrip] = useState({});
   const [allReviews, setAllReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [likes, setLikes] = useState({});
-
+console.log("userData", userData);
   // ✅ جلب التعليقات الخاصة برحلة معينة
   const fetchReviewsByTrip = async (tripId) => {
-    console.log(tripId);
-    if (!tripId) {
-      console.log("⚠️ No tripId provided to fetchReviewsByTrip");
-      return;
-    }
+    if (!tripId) return;
     setLoading(true);
     try {
-      console.log("➡️ Fetching reviews for trip:", tripId);
-      const res = await axios.get(`/api/reviews?tripId=${tripId}`, {
-        withCredentials: true,
-      });
-      console.log("📥 Raw response from API:", res.data);
-
+      const res = await axios.get(`/api/reviews?tripId=${tripId}`);
       const data = res.data?.reviews || [];
-      console.log("📦 Extracted reviews array:", data);
-
       const filtered = data.filter((review) => review.trip_id === tripId);
-      console.log("✅ Filtered reviews for trip:", tripId, filtered);
 
       setReviewsByTrip((prev) => ({ ...prev, [tripId]: filtered }));
 
       filtered.forEach((review) => {
-        if (review?.id) {
-          console.log("➡️ Fetching likes for review:", review.id);
-          fetchLikes(review.id);
-        }
+        if (review?.id) fetchLikes(review.id);
       });
     } catch (err) {
       console.error("❌ Error fetching reviews:", err);
@@ -52,7 +37,7 @@ export function ReviewsProvider({ children }) {
   const fetchAllReviews = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/reviews`, { withCredentials: true });
+      const res = await axios.get(`/api/reviews`);
       const data = res.data?.reviews || [];
       setAllReviews(data);
 
@@ -61,7 +46,6 @@ export function ReviewsProvider({ children }) {
         if (review.trip_id) {
           if (!grouped[review.trip_id]) grouped[review.trip_id] = [];
           grouped[review.trip_id].push(review);
-
           if (review?.id) fetchLikes(review.id);
         }
       });
@@ -79,35 +63,27 @@ export function ReviewsProvider({ children }) {
 
   // ✅ إضافة تعليق جديد
   const addReview = async (review) => {
-    if (!review.trip_id || !user?.id) {
-      console.log("⚠️ Missing trip_id or user.id in addReview:", review, user);
+    if (!review.trip_id || !userData?.id) {
       return { success: false, error: "No user or trip ID" };
     }
 
     try {
-      const res = await axios.post(
-        `/api/reviews`,
-        {
-          trip_id: review.trip_id,
-          user_id: user.id, // ✅ من useAuth
-          rating: review.rating,
-          comment: review.comment,
-          name: review.name || user.email, // ✅ fallback على الإيميل لو الاسم مش موجود
-          avatar_url: review.avatar_url,
-          time: review.time,
-        },
-        { withCredentials: true },
-      );
+      const res = await axios.post(`/api/reviews`, {
+        trip_id: review.trip_id,
+        user_id: userData.id,
+        rating: review.rating,
+        comment: review.comment,
+        name: review.name || userData.name || userData.email,
+        avatar_url: userData.avatar_url || userData?.image,
+        time: review.time,
+      });
 
       const data = res.data;
       if (data.success) {
-        console.log("✅ Review successfully saved in DB:", data.review);
         setReviewsByTrip((prev) => ({
           ...prev,
           [review.trip_id]: [...(prev[review.trip_id] || []), data.review],
         }));
-      } else {
-        console.log("⚠️ API returned failure:", data);
       }
       return data;
     } catch (err) {
@@ -119,9 +95,7 @@ export function ReviewsProvider({ children }) {
   // ✅ جلب اللايكات
   const fetchLikes = async (reviewId) => {
     try {
-      const res = await axios.get(`/api/reviews/${reviewId}/like`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(`/api/reviews/${reviewId}/like`);
       setLikes((prev) => ({
         ...prev,
         [reviewId]: {
@@ -135,93 +109,56 @@ export function ReviewsProvider({ children }) {
   };
 
   // ✅ إضافة لايك
- const addLike = async (reviewId) => {
-  if (!reviewId || !user?.id) {
-    console.log("⚠️ Missing reviewId or user.id");
-    return;
-  }
+  const addLike = async (reviewId) => {
+    if (!reviewId || !userData?.id) return;
 
-  try {
-    // ✅ الحصول على التوكن من Supabase
-    const { data } = await supabase.auth.getSession();
-    const token = data.session?.access_token;
-    console.log("📥 Access token fetched:", token);
+    try {
+      const res = await axios.post(`/api/reviews/${reviewId}/like`, {
+        user_id: userData.id,
+      });
 
-    // ✅ إرسال الطلب للـ API
-    console.log("➡️ Sending POST request to API:", `/api/reviews/${reviewId}/like`);
-    const res = await axios.post(
-      `/api/reviews/${reviewId}/like`,
-      null,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      if (!res.data?.error) {
+        setLikes((prev) => ({
+          ...prev,
+          [reviewId]: {
+            count: (prev[reviewId]?.count || 0) + 1,
+            users: [...(prev[reviewId]?.users || []), userData.id],
+          },
+        }));
       }
-    );
-
-    console.log("📥 Raw response from API:", res.data);
-
-    if (!res.data?.error) {
-      console.log("✅ Like added successfully in client state");
-      setLikes((prev) => ({
-        ...prev,
-        [reviewId]: {
-          count: (prev[reviewId]?.count || 0) + 1,
-          users: [...(prev[reviewId]?.users || []), user.id],
-        },
-      }));
+    } catch (err) {
+      console.error("❌ Error adding like:", err);
     }
-  } catch (err) {
-    console.error("❌ Error adding like:", err);
-  }
-};
+  };
 
   // ✅ إزالة لايك
- const removeLike = async (reviewId) => {
-  if (!user?.id) {
-    console.log("⚠️ No user found in context");
-    return;
-  }
+  const removeLike = async (reviewId) => {
+    if (!user?.id) return;
 
-  try {
-    // ✅ الحصول على التوكن من Supabase
-    const { data } = await supabase.auth.getSession();
-    const token = data.session?.access_token;
-    console.log("📥 Access token fetched:", token);
+    try {
+      const res = await axios.delete(`/api/reviews/${reviewId}/like`, {
+        data: { user_id: userData.id },
+      });
 
-    // ✅ إرسال الطلب للـ API مع التوكن
-    console.log("➡️ Sending DELETE request to API:", `/api/reviews/${reviewId}/like`);
-    const res = await axios.delete(`/api/reviews/${reviewId}/like`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    console.log("📥 Raw response from API:", res.data);
-
-    if (!res.data?.error) {
-      console.log("✅ Like removed successfully in client state");
-      setLikes((prev) => ({
-        ...prev,
-        [reviewId]: {
-          count: Math.max((prev[reviewId]?.count || 1) - 1, 0),
-          users: (prev[reviewId]?.users || []).filter((id) => id !== user.id),
-        },
-      }));
+      if (!res.data?.error) {
+        setLikes((prev) => ({
+          ...prev,
+          [reviewId]: {
+            count: Math.max((prev[reviewId]?.count || 1) - 1, 0),
+            users: (prev[reviewId]?.users || []).filter((id) => id !== userData.id),
+          },
+        }));
+      }
+    } catch (err) {
+      console.error("❌ Error removing like:", err);
     }
-  } catch (err) {
-    console.error("❌ Error removing like:", err);
-  }
-};
-
+  };
 
   // ✅ جلب لايكات المستخدم
   const getUserLikes = (userId) => {
     if (!userId) return [];
 
-    const userReviews = allReviews.filter(
-      (review) => review.user_id === userId,
-    );
+    const userReviews = allReviews.filter((review) => review.user_id === userId);
 
     return userReviews.map((review) => ({
       reviewId: review.id,
@@ -241,7 +178,7 @@ export function ReviewsProvider({ children }) {
         reviewsByTrip,
         allReviews,
         loading,
-        user,
+        userData,
         likes,
         fetchReviewsByTrip,
         fetchAllReviews,

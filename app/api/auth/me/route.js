@@ -1,11 +1,19 @@
-import { cookies } from "next/headers";
+// file: app/api/auth/me/route.js
+import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
-export async function GET() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("sb_access")?.value;
-  console.log("this me",token)
-  if (!token) {
-    return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401 });
+export async function GET(request) {
+  try {
+    const accessToken = request.cookies.get("access-token")?.value;
+
+    if (!accessToken) {
+      return NextResponse.json({ error: "No token found" }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+
+    return NextResponse.json({ user: decoded }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
-  return new Response(JSON.stringify({ message: "Token موجود" }), { status: 200 });
 }

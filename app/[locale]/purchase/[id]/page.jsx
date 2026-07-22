@@ -21,11 +21,11 @@ export default function PurchasePage() {
   const { getTripById } = useTrip();
   const { theme } = useTheme();
   const { lang } = useLanguage();
-  const { user } = useAuth();
+  const { userData } = useAuth();
 
   const trip = getTripById(id);
-  const [fullName, setFullName] = useState(user?.name || "");
-  const [email, setEmail] = useState(user?.email || "");
+  const [fullName, setFullName] = useState(userData?.name || "");
+  const [email, setEmail] = useState(userData?.email || "");
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
@@ -56,29 +56,29 @@ export default function PurchasePage() {
   //   }
   //   toast.success("✅ Purchase completed successfully!");
   // };
-const savePaymentData = async (data) => {
-  try {
-    const res = await fetch("/api/purchase", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+  const savePaymentData = async (data) => {
+    try {
+      const res = await fetch("/api/purchase", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    const result = await res.json();
+      const result = await res.json();
 
-    if (!res.ok) {
-      toast.error("❌ Error: " + (result.error || "Unknown error"));
-    } else {
-      toast.success("✅ " + result.message);
+      if (!res.ok) {
+        toast.error("❌ Error: " + (result.error || "Unknown error"));
+      } else {
+        toast.success("✅ " + result.message);
+      }
+    } catch (error) {
+      console.error("Error saving payment:", error);
+      toast.error("❌ Failed to save payment");
     }
-  } catch (error) {
-    console.error("Error saving payment:", error);
-    toast.error("❌ Failed to save payment");
-  }
-};
+  };
 
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
-
+  console.log("object852", trip);
   useEffect(() => {
     const handleResize = () => {
       setScreenSize({ width: window.innerWidth, height: window.innerHeight });
@@ -94,6 +94,7 @@ const savePaymentData = async (data) => {
       <main
         className={`min-h-screen relative flex items-center justify-center flex-col ${theme.background} ${theme.text}`}
       >
+        <EgyptianBackground />
         {/* ✅ العمود الأيسر */}
         <div
           className="absolute scale-x-[-1] h-full flex flex-col items-center"
@@ -150,22 +151,42 @@ const savePaymentData = async (data) => {
           >
             <p className={theme.subText}>Duration: {trip.duration} days</p>
             <p className={theme.subText}>
-              Price: {trip.price} {trip.currency}
+              Price: {trip.group_price} {trip.currency}
             </p>
 
-            {trip.trip_cities?.length > 0 && (
+            {trip.cities?.length > 0 && (
               <div>
                 <h3 className={`font-semibold mb-2 ${theme.heading}`}>
                   Cities:
                 </h3>
                 <ul className="list-disc pl-6">
-                  {trip.trip_cities.map((city, idx) => (
-                    <li key={idx} className={theme.subText}>
-                      {city.cities?.name?.[lang] ||
-                        city.cities?.name?.en ||
-                        city.cities?.name}
-                    </li>
-                  ))}
+                  {trip.cities.map((city, idx) => {
+                    let cityName = "Unknown";
+
+                    try {
+                      // ✅ لو الاسم عبارة عن JSON string نحوله لكائن
+                      if (typeof city.name === "string") {
+                        const parsed = JSON.parse(city.name);
+                        cityName =
+                          parsed[lang] || parsed.en || Object.values(parsed)[0];
+                      } else if (typeof city.name === "object") {
+                        cityName =
+                          city.name?.[lang] ||
+                          city.name?.en ||
+                          Object.values(city.name)[0];
+                      } else {
+                        cityName = city.name || "Unknown";
+                      }
+                    } catch {
+                      cityName = city.name || "Unknown";
+                    }
+
+                    return (
+                      <li key={idx} className={theme.subText}>
+                        {cityName}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -176,12 +197,36 @@ const savePaymentData = async (data) => {
                   Includes:
                 </h3>
                 <ul className="list-disc pl-6">
-                  {trip.includes.map((inc, idx) => (
-                    <li key={idx} className={theme.subText}>
-                      {inc.include_translations?.[lang] ||
-                        inc.include_translations?.en}
-                    </li>
-                  ))}
+                  {trip.includes.map((inc, idx) => {
+                    let includeText = "Unknown";
+
+                    try {
+                      // ✅ لو الترجمة جاية كـ JSON string نحولها
+                      if (typeof inc.include_translations === "string") {
+                        const parsed = JSON.parse(inc.include_translations);
+                        includeText =
+                          parsed[lang] || parsed.en || Object.values(parsed)[0];
+                      } else if (typeof inc.include_translations === "object") {
+                        includeText =
+                          inc.include_translations?.[lang] ||
+                          inc.include_translations?.en ||
+                          Object.values(inc.include_translations)[0];
+                      } else {
+                        includeText = inc.include_translations || "Unknown";
+                      }
+                    } catch {
+                      includeText =
+                        inc.include_translations?.[lang] ||
+                        inc.include_translations?.en ||
+                        "Unknown";
+                    }
+
+                    return (
+                      <li key={idx} className={theme.subText}>
+                        {includeText}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -227,7 +272,7 @@ const savePaymentData = async (data) => {
           hasGuide={hasGuide}
           guideLanguages={guideLanguages}
           savePaymentData={savePaymentData}
-          user={user}
+          user={userData}
         />
         {/* زر التأكيد */}
         <ConfirmButton

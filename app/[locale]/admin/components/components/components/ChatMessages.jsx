@@ -8,7 +8,6 @@ export default function ChatMessages({ messages, userTyping, themeName }) {
   const handleDownload = async (url, id) => {
     const response = await fetch(url);
     const blob = await response.blob();
-
     // نحول الصورة لـ object URL
     const img = new Image();
     img.src = URL.createObjectURL(blob);
@@ -24,13 +23,13 @@ export default function ChatMessages({ messages, userTyping, themeName }) {
       // نرسم الصورة على الـ canvas
       ctx.drawImage(img, 0, 0);
 
-      // نحولها لـ Blob بجودة محددة (0.5 = 50%)
+      // نحولها لـ Blob بجودة محددة (0.7 = 70%)
       canvas.toBlob(
         (newBlob) => {
           saveAs(newBlob, `chat-image-${id}.jpg`);
         },
         "image/jpeg",
-        0.7, // هنا تتحكم في الجودة (من 0 إلى 1)
+        0.7,
       );
     };
   };
@@ -53,15 +52,15 @@ export default function ChatMessages({ messages, userTyping, themeName }) {
                   : "self-end flex-row-reverse"
               }`}
             >
+              {/* ✅ صورة المرسل من قاعدة البيانات */}
               <img
-                src={
-                  "https://dxpbyrcbklqrjlytmkum.supabase.co/storage/v1/object/public/avatars/technical-writer-digital-avatar-generative-ai_934475-9098.webp"
-                }
+                src={msg.user_image || "/default-avatar.png"}
                 alt={msg.user_name}
                 className={`w-12 h-12 rounded-full border ${
                   msg.sender_type === "admin" ? "border-yellow-500" : ""
                 } object-cover`}
               />
+
               <div
                 className={`p-3 rounded-lg shadow-md max-w-[70%] ${
                   msg.sender_type === "user"
@@ -74,45 +73,30 @@ export default function ChatMessages({ messages, userTyping, themeName }) {
                 }`}
               >
                 <p className="text-sm font-semibold mb-1 capitalize">
-                  {msg.sender_type === "admin" ? "👑 admin" : msg.user_name}
+                  {msg.sender_type === "admin" ? "👑 Admin" : msg.user_name}
                 </p>
 
-                {/* عرض الصور أو الروابط أو النصوص */}
-                {msg.content.startsWith("http") &&
+                {/* ✅ عرض الصور أو النصوص */}
+                {typeof msg.content === "string" &&
+                msg.content.startsWith("http") &&
                 msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/) ? (
-                  <div className="relative group w-full max-w-xs">
-                    {" "}
-                    {/* الصورة */}{" "}
-                    <img
-                      src={msg.content}
-                      alt="uploaded"
-                      className="w-full rounded-lg object-cover"
-                    />{" "}
-                    {/* الأزرار تظهر أسفل الصورة عند hover */}{" "}
-                    <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {" "}
-                      {/* زر تنزيل باستخدام FileSaver */}{" "}
-                      <button
-                        onClick={() => handleDownload(msg.content, msg.id)}
-                        className={`flex items-center gap-2 px-3 py-1 text-xs font-medium rounded shadow ${themeName === "dark" ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-blue-500 text-white hover:bg-blue-600"} transition`}
-                      >
-                        {" "}
-                        <FaDownload className="text-sm" /> Download{" "}
-                      </button>
-                      {/* زر عرض الصورة */}{" "}
-                      <button
-                        onClick={() => window.open(msg.content, "_blank")}
-                        className={`flex items-center gap-2 px-3 py-1 text-xs font-medium rounded shadow ${themeName === "dark" ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-green-500 text-white hover:bg-green-600"} transition`}
-                      >
-                        {" "}
-                        <FaExpand className="text-sm" /> View{" "}
-                      </button>{" "}
-                    </div>{" "}
-                  </div>
+                  <img
+                    src={msg.content}
+                    alt="message image"
+                    className="rounded-lg shadow-md"
+                  />
+                ) : typeof msg.content === "string" &&
+                  msg.content.startsWith("data:image/") ? (
+                  <img
+                    src={msg.content}
+                    alt="message image"
+                    className="rounded-lg shadow-md"
+                  />
                 ) : (
-                  <p>{msg.content}</p>
+                  <p className="text-sm">{msg.content || ""}</p>
                 )}
 
+                {/* ✅ وقت الإرسال وحالة الرسالة */}
                 <div className="flex items-center gap-1 mt-1">
                   <FaClock className="text-xs opacity-70" />
                   <span className="text-xs italic opacity-70">

@@ -6,12 +6,12 @@ import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import { usePurchase } from "../context/PurchaseContext";
 import { motion } from "framer-motion";
 import DividerWithIcon from "@/components/layout/DividerWithIcon";
-
+import { useTranslation } from "react-i18next";
 export default function BookingsList() {
   const { themeName } = useTheme();
   const { purchases, loading, error, fetchPurchases, handleStatusChange } =
     usePurchase();
-
+  const { i18n } = useTranslation();
   const getStatusIcon = (status) => {
     switch (status) {
       case "Confirmed":
@@ -118,8 +118,24 @@ export default function BookingsList() {
                     {purchase.userName || "Unknown User"}
                   </td>
                   <td className="p-3">
-                    {purchase.tripTitle || "Unknown Trip"}
+                    {(() => {
+                      try {
+                        const titleObj =
+                          typeof purchase.tripTitle === "string"
+                            ? JSON.parse(purchase.tripTitle)
+                            : purchase.tripTitle;
+
+                        return (
+                          titleObj[i18n.language] ||
+                          titleObj.en ||
+                          "Unknown Trip"
+                        );
+                      } catch {
+                        return purchase.tripTitle || "Unknown Trip";
+                      }
+                    })()}
                   </td>
+
                   <td className="p-3">{purchase.num_persons}</td>
                   <td className="p-3">{purchase.num_children}</td>
                   <td className="p-3">
@@ -136,37 +152,40 @@ export default function BookingsList() {
                   <td className="p-3">
                     <div className="flex items-center gap-3">
                       {getStatusIcon(purchase.status)}
-                      <select
-                        value={purchase.status}
-                        onChange={(e) =>
-                          handleStatusChange(purchase.id, e.target.value)
-                        }
-                        className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 
-                 text-sm font-medium text-gray-700 dark:text-gray-200 
-                 border border-gray-300 dark:border-gray-600 
-                 rounded-lg px-3 py-2 shadow-sm 
-                 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
-                 transition duration-200 ease-in-out"
-                      >
-                        <option
-                          value="Pending"
-                          className="text-yellow-600 font-semibold"
-                        >
-                          ⏳ Pending
-                        </option>
-                        <option
-                          value="Confirmed"
-                          className="text-green-600 font-semibold"
-                        >
-                          ✅ Confirmed
-                        </option>
-                        <option
-                          value="Cancelled"
-                          className="text-red-600 font-semibold"
-                        >
+
+                      {purchase.status === "Cancelled" ? (
+                        // ✅ حالة الإلغاء: نص ثابت فقط
+                        <span className="text-red-600 font-semibold">
                           ❌ Cancelled
-                        </option>
-                      </select>
+                        </span>
+                      ) : (
+                        // ✅ باقي الحالات: قائمة منسدلة للتغيير
+                        <select
+                          value={purchase.status}
+                          onChange={(e) =>
+                            handleStatusChange(purchase.id, e.target.value)
+                          }
+                          className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 
+          text-sm font-medium text-gray-700 dark:text-gray-200 
+          border border-gray-300 dark:border-gray-600 
+          rounded-lg px-3 py-2 shadow-sm 
+          focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 
+          transition duration-200 ease-in-out"
+                        >
+                          <option
+                            value="Pending"
+                            className="text-yellow-600 font-semibold"
+                          >
+                            ⏳ Pending
+                          </option>
+                          <option
+                            value="Confirmed"
+                            className="text-green-600 font-semibold"
+                          >
+                            ✅ Confirmed
+                          </option>
+                        </select>
+                      )}
                     </div>
                   </td>
                 </motion.tr>

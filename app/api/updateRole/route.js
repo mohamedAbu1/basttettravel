@@ -1,25 +1,24 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+import { connectDB } from "@/lib/db";
 
 export async function POST(req) {
   try {
     const { userId, newRole } = await req.json();
+    const db = await connectDB();
 
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-      user_metadata: { role: newRole },
-    });
+    // ✅ تحديث الدور في قاعدة البيانات
+    await db.query("UPDATE users SET role = ? WHERE id = ?", [newRole, userId]);
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-
-    return NextResponse.json({ success: true, role: newRole }, { status: 200 });
+    // ✅ رجع استجابة واضحة
+    return NextResponse.json(
+      { success: true, role: newRole, userId },
+      { status: 200 }
+    );
   } catch (err) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error("❌ Error updating role:", err);
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 }
+    );
   }
 }

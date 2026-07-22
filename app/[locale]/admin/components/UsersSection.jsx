@@ -9,10 +9,9 @@ import UserCard from "./components/UserCard";
 import UserActions from "./components/UserActions";
 import UserDetails from "./components/UserDetails";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
-import { supabase } from "@/lib/supabaseClient";
 
 const UsersSection = () => {
-  const { users, fetchUsers, setUsers } = useUsers(); // ✅ تأكد أن context يسمح بتحديث users
+  const { users, fetchUsers, setUsers } = useUsers();
   const { theme } = useTheme();
   const [activeUser, setActiveUser] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
@@ -28,46 +27,44 @@ const UsersSection = () => {
   };
 
   // ✅ تغيير الدور (USER ⇄ ADMIN)
- const handleToggleRole = async (user) => {
-  const newRole = user?.user_metadata?.role === "ADMIN" ? "USER" : "ADMIN";
+  const handleToggleRole = async (user) => {
+    const newRole = user?.role === "ADMIN" ? "USER" : "ADMIN";
 
-  const res = await fetch("/api/updateRole", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: user.id, newRole }),
-  });
+    const res = await fetch("/api/updateRole", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: user.id, newRole }),
+    });
 
-  if (!res.ok) {
-    console.error("❌ Server error:", res.status);
-    return;
-  }
+    if (!res.ok) {
+      console.error("❌ Server error:", res.status);
+      return;
+    }
 
-  let data;
-  try {
-    data = await res.json();
-  } catch (err) {
-    console.error("❌ Failed to parse JSON:", err);
-    return;
-  }
+    let data;
+    try {
+      data = await res.json();
+    } catch (err) {
+      console.error("❌ Failed to parse JSON:", err);
+      return;
+    }
 
-  if (data.error) {
-    console.error("❌ Error updating role:", data.error);
-  } else {
-    console.log(`✅ Role updated to ${data.role} for user ${user.id}`);
+    if (data.error) {
+      console.error("❌ Error updating role:", data.error);
+    } else {
+      console.log(`✅ Role updated to ${data.role} for user ${user.id}`);
 
-    // تحديث محلي سريع
-    setUsers((prev) =>
-      prev.map((u) =>
-        u.id === user.id
-          ? { ...u, user_metadata: { ...u.user_metadata, role: data.role } }
-          : u
-      )
-    );
+      // ✅ تحديث محلي سريع باستخدام العمود role مباشرة
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === user.id ? { ...u, role: data.role } : u
+        )
+      );
 
-    // إعادة تحميل للتأكد من التزامن مع Supabase
-    fetchUsers();
-  }
-};
+      // ✅ إعادة تحميل للتأكد من التزامن مع قاعدة البيانات
+      fetchUsers();
+    }
+  };
 
   return (
     <motion.div
@@ -105,24 +102,37 @@ const UsersSection = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className={`py-4 px-4`}
+            className={`py-4 px-4 flex items-center gap-4`}
           >
-            <UserCard user={user} />
+            {/* ✅ صورة المستخدم */}
+            <im
+              src={user?.avatar_url || "/default-avatar.png"}
+              alt={user?.name || "User"}
+              className="w-12 h-12 rounded-full border"
+            />
 
-            {/* ✅ عرض الدور الحالي */}
-            <p className="text-sm font-medium mt-2">
-              Role: {user?.user_metadata?.role || "USER"}
-            </p>
+            <div className="flex-1">
+              {/* ✅ عرض الاسم والإيميل */}
+              <p className="text-sm font-medium">
+                Name: {user?.name || "Unknown"}
+              </p>
+              <p className="text-sm font-medium">
+                Email: {user?.email || "No email"}
+              </p>
 
-            {/* ✅ زر لتغيير الدور */}
-            <button
-              onClick={() => handleToggleRole(user)}
-              className="mt-2 px-3 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600 transition"
-            >
-              {user?.user_metadata?.role === "ADMIN"
-                ? "Make User"
-                : "Make Admin"}
-            </button>
+              {/* ✅ عرض الدور الحالي */}
+              <p className="text-sm font-medium mt-2">
+                Role: {user?.role || "USER"}
+              </p>
+
+              {/* ✅ زر لتغيير الدور */}
+              <button
+                onClick={() => handleToggleRole(user)}
+                className="mt-2 px-3 py-1 text-xs rounded bg-blue-500 text-white hover:bg-blue-600 transition"
+              >
+                {user?.role === "ADMIN" ? "Make User" : "Make Admin"}
+              </button>
+            </div>
 
             <UserActions user={user} handleToggle={handleToggle} />
             {activeUser === user.id && (

@@ -10,8 +10,15 @@ export default function GalleryUpload() {
 
   const handleGalleryImages = (e) => {
     const files = Array.from(e.target.files);
+
+    // ✅ نخزن الملفات نفسها في gallery_files
+    updateTripField("gallery_files", [
+      ...(tripData.gallery_files || []),
+      ...files,
+    ]);
+
+    // ✅ نخزن بيانات العرض (preview + name) في gallery_images
     const newImages = files.map((file) => ({
-      file,
       preview: URL.createObjectURL(file),
       name: {
         en: file.name,
@@ -19,9 +26,10 @@ export default function GalleryUpload() {
         fr: "",
         de: "",
         it: "",
-        zh: ""
+        zh: "",
       },
     }));
+
     updateTripField("gallery_images", [
       ...(tripData.gallery_images || []),
       ...newImages,
@@ -35,8 +43,11 @@ export default function GalleryUpload() {
   };
 
   const removeImage = (index) => {
-    const updated = tripData.gallery_images.filter((_, i) => i !== index);
-    updateTripField("gallery_images", updated);
+    const updatedImages = tripData.gallery_images.filter((_, i) => i !== index);
+    const updatedFiles = tripData.gallery_files.filter((_, i) => i !== index);
+
+    updateTripField("gallery_images", updatedImages);
+    updateTripField("gallery_files", updatedFiles);
   };
 
   return (
@@ -81,7 +92,7 @@ export default function GalleryUpload() {
               )}
 
               {/* حقول إدخال متعددة اللغات */}
-              {["en","es","fr","de","it","zh"].map((lang) => (
+              {["en", "es", "fr", "de", "it", "zh"].map((lang) => (
                 <input
                   key={lang}
                   type="text"

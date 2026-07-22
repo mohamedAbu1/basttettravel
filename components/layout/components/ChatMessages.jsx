@@ -45,10 +45,14 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
               }`}
             >
               <img
-                src={msg.user_image || "https://dxpbyrcbklqrjlytmkum.supabase.co/storage/v1/object/public/avatars/technical-writer-digital-avatar-generative-ai_934475-9098.webp"}
+               src={
+                  msg.sender_type === "admin" ?   themeName === "dark"
+                ? "/HomePageImage/Copilot_20260613_134423.webp"
+                : "/HomePageImage/Copilot_20260613_134550.webp" :
+                  msg.user_image}
                 alt={msg.user_name}
                 className={`w-12 h-12 rounded-full border ${
-                  msg.sender_type === "admin" ? "border-yellow-500" : ""
+                  msg.sender_type === "admin" ? "border-yellow-500" : "border-[#41707e]"
                 } object-cover`}
               />
               <div
@@ -59,11 +63,11 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
                       : "bg-gray-200 text-black"
                     : themeName === "dark"
                     ? "bg-yellow-500 text-black"
-                    : "bg-yellow-400 text-white"
+                    : "bg-[#41707e] text-white"
                 }`}
               >
                 <p className="text-sm font-semibold mb-1 capitalize">
-                  {msg.sender_type === "admin" ? "👑 Admin" : msg.user_name} 
+                  {msg.sender_type === "admin" ? "👑 Basttet Travel" : msg.user_name} 
                 </p>
 
                 {msg.content.startsWith("http") &&

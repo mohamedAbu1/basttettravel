@@ -1,4 +1,5 @@
 // file: context/CitiesCategoriesContext.js
+"use client"
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -11,7 +12,7 @@ export function CitiesCategoriesProvider({ children }) {
 
   const { i18n } = useTranslation(); // اللغة الحالية للموقع
   const getLangKey = (lang) => lang.split("-")[0];
-const normalizedLang = getLangKey(i18n.language);
+  const normalizedLang = getLangKey(i18n.language);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,21 +36,72 @@ const normalizedLang = getLangKey(i18n.language);
 
     fetchData();
   }, []);
-  // فلترة أسماء المدن حسب لغة الموقع الحالي
-  const localizedCities = cities.map(city => ({
-    ...city,
-    name: city.translations?.[normalizedLang] || city.translations?.["en"] || city.name,
-  }));
 
-  // فلترة الكاتجري حسب لغة الموقع الحالي
-  const localizedCategories = categories.map(cat => ({
-    ...cat,
-    name: cat.name?.[normalizedLang] || cat.name?.["en"] || cat.name,
-  }));
+  // ✅ فلترة المدن وتحويل الحقول من JSON string إلى كائن/مصفوفة
+ // ✅ فلترة المدن وتحويل الحقول من JSON string إلى كائن/مصفوفة
+const localizedCities = cities.map((city) => {
+  let parsedName = {};
+  let parsedImages = [];
+
+  try {
+    parsedName = JSON.parse(city.name); // ← استخدم name بدل translations
+  } catch {
+    parsedName = { en: city.name };
+  }
+
+  try {
+    parsedImages = JSON.parse(city.images);
+  } catch {
+    parsedImages = ["/fallback.jpg"];
+  }
+
+  return {
+    ...city,
+    name:
+      parsedName?.[normalizedLang] ||
+      parsedName?.["en"] ||
+      Object.values(parsedName)[0] ||
+      city.name,
+    images: Array.isArray(parsedImages) ? parsedImages : ["/fallback.jpg"],
+  };
+});
+
+
+  // ✅ فلترة الكاتجري بنفس الأسلوب
+  const localizedCategories = categories.map((cat) => {
+    let parsedName = {};
+    let parsedImages = [];
+
+    try {
+      parsedName = JSON.parse(cat.name);
+    } catch {
+      parsedName = { en: cat.name };
+    }
+
+    try {
+      parsedImages = JSON.parse(cat.images);
+    } catch {
+      parsedImages = ["/fallback.jpg"];
+    }
+
+    return {
+      ...cat,
+      name:
+        parsedName?.[normalizedLang] ||
+        parsedName?.["en"] ||
+        Object.values(parsedName)[0] ||
+        cat.name,
+      images: Array.isArray(parsedImages) ? parsedImages : ["/fallback.jpg"],
+    };
+  });
 
   return (
     <CitiesCategoriesContext.Provider
-      value={{ cities: localizedCities, categories: localizedCategories, loading }}
+      value={{
+        cities: localizedCities,
+        categories: localizedCategories,
+        loading,
+      }}
     >
       {children}
     </CitiesCategoriesContext.Provider>

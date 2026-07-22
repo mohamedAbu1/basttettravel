@@ -22,7 +22,7 @@ export default function TripReviews({ trip, lang }) {
     fetchReviewsByTrip,
     removeLike,
   } = useReviews();
-  const { user } = useAuth();
+  const { userData } = useAuth();
   const { t } = useTranslation("tripsId");
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export default function TripReviews({ trip, lang }) {
         theme={theme}
       />
 
-      {user && user?.role !== "admin" && (
+      {userData && userData?.role !== "ADMIN" && (
         <>
           {/* تقييم النجوم */}
           <StarRating
@@ -147,7 +147,7 @@ export default function TripReviews({ trip, lang }) {
         ))}
         {tripReviews.length === 0 && (
           <p className={`text-center w-full opacity-70 ${theme.subText}`}>
-            {!user
+            {!userData
               ? "Please log in to write your review"
               : "Be the first to review this trip ✨"}
           </p>

@@ -3,6 +3,7 @@ import { FaDollarSign, FaEuroSign, FaPoundSign, FaClock } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import { usePurchase } from "@/context/PurchaseContext"; 
 import { motion } from "framer-motion";
+import { useCurrency } from "@/context/CurrencyContext"; // ✅ استدعاء الكونتكست
 
 const translations = {
   en: { title: "Trip Info", Adult: "Adult", Child:"Child", duration: "Duration" },
@@ -16,33 +17,36 @@ const translations = {
 export default function TripInfo({ trip, lang }) {
   const { themeName, theme } = useTheme();
   const { currency } = usePurchase();
+  const { rates, loading, error } = useCurrency(); // ✅ جلب أسعار العملات
   const t = translations[lang] || translations.en;
 
-  // ✅ تحويل الأسعار مع دعم الجنيه المصري
+  if (loading) return <p className="text-center">⏳ Loading currency rates...</p>;
+  if (error) return <p className="text-center text-red-500">❌ {error}</p>;
+
+  // ✅ تحويل الأسعار باستخدام CurrencyContext
   let displayedSolo = trip.solo_price;
   if (currency === "EUR" && trip.currency === "USD") {
-    displayedSolo = (trip.solo_price * 0.85).toFixed(2);
+    displayedSolo = (trip.solo_price * (rates.USD_EUR || 0.85)).toFixed(2);
   } else if (currency === "USD" && trip.currency === "EUR") {
-    displayedSolo = (trip.solo_price * 1.18).toFixed(2);
+    displayedSolo = (trip.solo_price * (rates.EUR_USD || 1.18)).toFixed(2);
   } else if (currency === "EGP" && trip.currency === "USD") {
-    displayedSolo = (trip.solo_price * 49.1).toFixed(2);
+    displayedSolo = (trip.solo_price * (rates.USD || 49.1)).toFixed(2);
   } else if (currency === "USD" && trip.currency === "EGP") {
-    displayedSolo = (trip.solo_price / 49.1).toFixed(2);
+    displayedSolo = (trip.solo_price / (rates.USD || 49.1)).toFixed(2);
   }
 
   let displayedGroup = trip.group_price;
   if (currency === "EUR" && trip.currency === "USD") {
-    displayedGroup = (trip.group_price * 0.85).toFixed(2);
+    displayedGroup = (trip.group_price * (rates.USD_EUR || 0.85)).toFixed(2);
   } else if (currency === "USD" && trip.currency === "EUR") {
-    displayedGroup = (trip.group_price * 1.18).toFixed(2);
+    displayedGroup = (trip.group_price * (rates.EUR_USD || 1.18)).toFixed(2);
   } else if (currency === "EGP" && trip.currency === "USD") {
-    displayedGroup = (trip.group_price * 49.1).toFixed(2);
+    displayedGroup = (trip.group_price * (rates.USD || 49.1)).toFixed(2);
   } else if (currency === "USD" && trip.currency === "EGP") {
-    displayedGroup = (trip.group_price / 49.1).toFixed(2);
+    displayedGroup = (trip.group_price / (rates.USD || 49.1)).toFixed(2);
   }
 
   const displayedChild = (displayedGroup / 2).toFixed(2);
-
   const localizedDurationUnit = trip.duration_unit?.[lang] || trip.duration_unit?.en || "";
 
   return (
@@ -78,13 +82,13 @@ function PriceRow({ label, value, currency, theme }) {
 
   if (currency === "USD") {
     Icon = FaDollarSign;
-    color = theme.usdColor || "#2ecc71"; // أخضر
+    color = theme.usdColor || "#2ecc71";
   } else if (currency === "EUR") {
     Icon = FaEuroSign;
-    color = theme.eurColor || "#3498db"; // أزرق
+    color = theme.eurColor || "#3498db";
   } else if (currency === "EGP") {
     Icon = FaPoundSign;
-    color = theme.egpColor || "#b8860b"; // ذهبي للجنيه المصري
+    color = theme.egpColor || "#b8860b";
   }
 
   return (

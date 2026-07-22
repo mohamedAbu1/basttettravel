@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { decodeJwt } from "@/lib/utils/JWToken";
 import { toast } from "react-toastify";
+import { useSession } from "next-auth/react"; // ✅ إضافة NextAuth
+
 // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 const AuthContext = createContext();
 // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -15,6 +17,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: session } = useSession(); // ✅ جلب المستخدم من جوجل عبر NextAuth
 
   
 // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -132,10 +135,12 @@ export function AuthProvider({ children }) {
     removeToken();
   };
 // ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+  const userData = user || session?.user;
+
   return (
     <AuthContext.Provider
       value={{
-        user,
+        userData,
         register,
         login,
         logout,

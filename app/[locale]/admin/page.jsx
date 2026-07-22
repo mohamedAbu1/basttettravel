@@ -9,27 +9,34 @@ import TripsList from "./components/TripsList";
 import BookingsList from "./components/BookingsList";
 import Reports from "./components/Reports";
 import MessagesList from "./components/MessagesList";
-import EditTrip from "./components/EditTrip"; // ✅ استدعاء مكون التعديل
+import EditTrip from "./components/EditTrip"; 
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import UsersSection from "./components/UsersSection";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./context/AuthContext";
+import CurrencyRates from "./components/CurrencyRates";
+
 const symbols = ["𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽","𓃾","𓅓","𓈇","𓉐","𓊹","𓌙","𓍿","𓎟"];
 
 export default function DashboardPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const { theme, themeName } = useTheme();
+  const { userData } = useAuth(); // ✅ بيانات من الـ API
+  const router = useRouter();
+
+
   // ✅ تحقق من المستخدم وصلاحيته داخل useEffect
   // useEffect(() => {
-  //   if (!user || user?.user_metadata?.role !== "ADMIN") {
-  //     router.replace("/"); // رجعه للصفحة الرئيسية
+  //   if (!userData || userData?.role?.toLowerCase() !== "admin") {
+  //     router.replace("/"); // رجعه للصفحة الرئيسية لو مش أدمن
   //   }
-  // }, [user, router]);
+  // }, []);
 
   // // لو المستخدم مش Admin، ما تعرضش أي محتوى
-  // if (!user || user?.user_metadata?.role !== "ADMIN") {
+  // if (!userData || userData?.role?.toLowerCase() !== "admin") {
   //   return null;
   // }
+
   return (
     <main className={`relative flex min-h-screen ${theme.background} ${theme.text} overflow-hidden`}>
       <EgyptianBackground />
@@ -64,11 +71,12 @@ export default function DashboardPage() {
         {activeSection === "dashboard" && <DashboardHome themeName={themeName} />}
         {activeSection === "addTrip" && <AddTrip themeName={themeName} />}
         {activeSection === "trips" && <TripsList themeName={themeName} />}
-        {activeSection === "editTrip" && <EditTrip themeName={themeName} />} {/* ✅ سكشن تعديل الرحلات */}
+        {activeSection === "editTrip" && <EditTrip themeName={themeName} />}
         {activeSection === "users" && <UsersSection themeName={themeName} />}
         {activeSection === "bookings" && <BookingsList themeName={themeName} />}
         {activeSection === "reports" && <Reports themeName={themeName} />}
         {activeSection === "messages" && <MessagesList themeName={themeName} />}
+        {activeSection === "currency" && <CurrencyRates themeName={themeName} />}
       </section>
     </main>
   );

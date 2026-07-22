@@ -32,15 +32,15 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
   const handleClick = () => {
     const queryObj = {
       city: selectedCities.length
-        ? selectedCities.map((c) => c.name.en)
+        ? selectedCities.map((c) => c.name)
         : ["all"],
       category: selectedCategories.length
         ? selectedCategories.map((c) => c.name)
         : ["all"],
-      price: "All",
+      group_price: "All",
       popular: false,
     };
-
+    console.log("SelectedCities:", selectedCities);
     // ✅ اطبع القيم علشان نعرف السبب
     console.log("Query object:", queryObj);
     const encoded = encodeData(queryObj);
@@ -54,7 +54,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
 
     updateValue("city", queryObj.city);
     updateValue("category", queryObj.category);
-    updateValue("price", queryObj.price);
+    updateValue("group_price", queryObj.group_price);
     updateValue("popular", queryObj.popular);
 
     router.push(`/trips?data=${encoded}`);

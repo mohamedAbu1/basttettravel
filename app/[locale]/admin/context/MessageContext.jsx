@@ -1,56 +1,84 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
-import { supabase } from "@/lib/supabaseClient";
+
 const MessageContext = createContext();
 
 export function MessageProvider({ children }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { userData } = useAuth();
 
   // ✅ جلب رسائل المستخدم الحالي
   const fetchMessages = async (userId) => {
-    const res = await fetch(`/api/messages?userId=${userId}`);
-    const data = await res.json();
-    setMessages(Array.isArray(data) ? data : []);
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/messages?userId=${userId}`);
+      const data = await res.json();
+      setMessages(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("❌ Error fetching messages:", err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+console.log("3object",userData?.image)
 
-  // ✅ إرسال رسالة جديدة
-  const sendMessage = async ({
+// ✅ إرسال رسالة جديدة
+const sendMessage = async ({
+  user_id,
+  content,
+  sender_type,
+  status = "sent",
+  reply_to = null,
+  admin_id = null,
+}) => {
+  // 1️⃣ بناء الـ payload
+  const payload = {
     user_id,
+    user_name: userData?.name || "Unknown User",
+    user_image: userData?.image || "/default-avatar.png",
     content,
     sender_type,
-    status = "sent",
-  }) => {
-    const payload = {
-      user_id,
-      user_name: user?.user_metadata?.name || "Unknown User",
-      user_image:
-        user?.user_metadata?.avatar ||
-        "https://dxpbyrcbklqrjlytmkum.supabase.co/storage/v1/object/public/avatars/technical-writer-digital-avatar-generative-ai_934475-9098.webp",
-      content,
-      sender_type,
-      status,
-    };
-
-    const res = await fetch("/api/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-
-    if (!data.error) {
-      setMessages((prev) => [...prev, data]);
-    } else {
-      console.error("❌ Error sending message:", data.error);
-    }
-
-    return data;
+    status,
+    reply_to: reply_to ?? null,
+    admin_id,
   };
+
+  console.log("📤 Step 1: Sending payload:", payload);
+
+  // 2️⃣ إرسال الطلب للـ API
+  const res = await fetch("/api/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload), // ✅ هنا نرسل البيانات الصحيحة
+  });
+
+  console.log("📥 Step 2: Raw response object:", res);
+
+  // 3️⃣ التحقق من نجاح الطلب
+  if (!res.ok) {
+    const text = await res.text();
+    console.error("❌ Step 3: Server error response:", text);
+    return { error: text };
+  }
+
+  // 4️⃣ قراءة الرد كـ JSON
+  const data = await res.json();
+  console.log("📥 Step 4: Parsed response data:", data);
+
+  // 5️⃣ تحديث الـ state بالرسالة الجديدة
+  if (!data.error) {
+    setMessages((prev) => [...prev, data]);
+    console.log("✅ Step 5: Message added to state:", data);
+  } else {
+    console.error("❌ Step 5: Error sending message:", data.error);
+  }
+
+  return data;
+};
+
+
 
   // ✅ تحديث حالة الرسالة إلى "seen"
   const markMessageSeen = async (messageId) => {
@@ -65,8 +93,8 @@ export function MessageProvider({ children }) {
     if (!data.error) {
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === messageId ? { ...msg, status: "seen" } : msg,
-        ),
+          msg.id === messageId ? { ...msg, status: "seen" } : msg
+        )
       );
     } else {
       console.error("❌ Error marking message seen:", data.error);
@@ -77,37 +105,10 @@ export function MessageProvider({ children }) {
 
   // ✅ يجلب الرسائل مرة واحدة عند تحميل المستخدم
   useEffect(() => {
-    if (user?.id) {
-      fetchMessages(user.id);
+    if (userData?.id) {
+      fetchMessages(userData.id);
     }
-  }, [user?.id]);
-
-useEffect(() => {
-  const channel = supabase
-    .channel("messages-channel")
-    .on(
-      "postgres_changes",
-      { event: "INSERT", schema: "public", table: "messages" },
-      (payload) => {
-        setMessages((prev) => [...prev, payload.new]);
-      }
-    )
-    .on(
-      "postgres_changes",
-      { event: "UPDATE", schema: "public", table: "messages" },
-      (payload) => {
-        setMessages((prev) =>
-          prev.map((msg) => (msg.id === payload.new.id ? payload.new : msg))
-        );
-      }
-    )
-    .subscribe();
-
-  return () => {
-    supabase.removeChannel(channel);
-  };
-}, []);
-
+  }, [userData?.id]);
 
   return (
     <MessageContext.Provider

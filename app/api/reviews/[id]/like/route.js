@@ -1,105 +1,70 @@
+// src/app/api/reviews/[id]/likes/route.js
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { connectDB } from "@/lib/db";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-);
-
+// ✅ إضافة لايك
 export async function POST(req, { params }) {
-  console.log("➡️ API POST called with params:", params);
+  try {
+    const body = await req.json();
+    const { user_id } = body; // ⚠️ هنا لازم تجيب user_id من نظام الـ Auth عندك
+    const reviewId = params.id;
 
-  const authHeader = req.headers.get("authorization");
-  console.log("📥 Authorization header:", authHeader);
+    if (!user_id) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
 
-  const token = authHeader?.split(" ")[1];
-  console.log("📥 Extracted token:", token);
+    const db = await connectDB();
+    await db.query(
+      `INSERT INTO review_likes (review_id, user_id, created_at) VALUES (?, ?, NOW())`,
+      [reviewId, user_id]
+    );
 
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-  console.log("📥 Supabase getUser result:", user, error);
-
-  if (!user) {
-    console.log("⚠️ Unauthorized like attempt");
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ ok: true, message: "Like added successfully" }, { status: 201 });
+  } catch (err) {
+    return NextResponse.json({ ok: false, error: err.message }, { status: 400 });
   }
-
-  const reviewId = params.id;
-  console.log("📥 Review ID:", reviewId);
-
-  if (!reviewId) {
-    console.log("⚠️ Missing reviewId");
-    return NextResponse.json({ ok: false, error: "Missing reviewId" }, { status: 400 });
-  }
-
-  const { error: insertError } = await supabase
-    .from("review_likes")
-    .insert([{ review_id: reviewId, user_id: user.id }]);
-
-  if (insertError) {
-    console.error("❌ Supabase error (POST):", insertError.message);
-    return NextResponse.json({ ok: false, error: insertError.message }, { status: 400 });
-  }
-
-  console.log("✅ Like added successfully by user:", user.id);
-  return NextResponse.json({ ok: true, message: "Like added successfully" });
 }
 
-// 🔴 إزالة لايك
+// ✅ إزالة لايك
 export async function DELETE(req, { params }) {
-  console.log("➡️ API DELETE called with params:", params);
+  try {
+    const body = await req.json();
+    const { user_id } = body; // ⚠️ نفس الشيء: لازم تجيب user_id من الـ Auth
+    const reviewId = params.id;
 
-  const authHeader = req.headers.get("authorization");
-  console.log("📥 Authorization header:", authHeader);
+    if (!user_id) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
 
-  const token = authHeader?.split(" ")[1];
-  console.log("📥 Extracted token:", token);
+    const db = await connectDB();
+    await db.query(
+      `DELETE FROM review_likes WHERE review_id = ? AND user_id = ?`,
+      [reviewId, user_id]
+    );
 
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-  console.log("📥 Supabase getUser result:", user, error);
-
-  if (!user) {
-    console.log("⚠️ Unauthorized unlike attempt");
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ ok: true, message: "Like removed successfully" }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ ok: false, error: err.message }, { status: 400 });
   }
-
-  const reviewId = params.id;
-  console.log("📥 Review ID:", reviewId);
-
-  const { error: deleteError } = await supabase
-    .from("review_likes")
-    .delete()
-    .eq("review_id", reviewId)
-    .eq("user_id", user.id);
-
-  if (deleteError) {
-    console.error("❌ Supabase error (DELETE):", deleteError.message);
-    return NextResponse.json({ ok: false, error: deleteError.message }, { status: 400 });
-  }
-
-  console.log("✅ Like removed successfully by user:", user.id);
-  return NextResponse.json({ ok: true, message: "Like removed successfully" });
 }
 
-
-// 📊 جلب عدد اللايكات
+// ✅ جلب عدد اللايكات
 export async function GET(req, { params }) {
-  const reviewId = params.id;
-  if (!reviewId) {
-    return NextResponse.json({ ok: false, error: "Missing reviewId" }, { status: 400 });
+  try {
+    const reviewId = params.id;
+    const db = await connectDB();
+
+    const [rows] = await db.query(
+      `SELECT user_id FROM review_likes WHERE review_id = ?`,
+      [reviewId]
+    );
+
+    return NextResponse.json({
+      ok: true,
+      count: rows.length,
+      users: rows.map((r) => r.user_id),
+    });
+  } catch (err) {
+    return NextResponse.json({ ok: false, error: err.message }, { status: 400 });
   }
-
-  const { data, error } = await supabase
-    .from("review_likes")
-    .select("user_id")
-    .eq("review_id", reviewId);
-
-  if (error) {
-    return NextResponse.json({ ok: false, error: error.message }, { status: 400 });
-  }
-
-  return NextResponse.json({
-    ok: true,
-    count: data?.length || 0,
-    users: data?.map((d) => d.user_id) || [],
-  });
 }

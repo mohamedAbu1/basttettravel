@@ -3,6 +3,7 @@ import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import { useTripID } from "../../context/TripIDContext";
+import { v4 as uuidv4 } from "uuid";
 
 const EditTripIncludes = () => {
   const { themeName } = useTheme();
@@ -24,24 +25,25 @@ const EditTripIncludes = () => {
     updateTripField("includes", updatedIncludes); // ✅ الحقل الصحيح
   };
 
-  // ✅ إضافة include جديد
-  const addInclude = () => {
-    const updatedIncludes = [
-      ...(tripData?.includes || []),
-      {
-        id: Date.now().toString(),
-        include_translations: {
-          en: "",
-          es: "",
-          fr: "",
-          de: "",
-          it: "",
-          zh: "",
-        },
+// ✅ إضافة include جديد مع UUID صالح
+const addInclude = () => {
+  const updatedIncludes = [
+    ...(tripData?.includes || []),
+    {
+      id: uuidv4(), // ✅ توليد UUID صحيح
+      include_translations: {
+        en: "",
+        es: "",
+        fr: "",
+        de: "",
+        it: "",
+        zh: "",
       },
-    ];
-    updateTripField("includes", updatedIncludes); // ✅ الحقل الصحيح
-  };
+    },
+  ];
+  updateTripField("includes", updatedIncludes);
+};
+
 
   return (
     <div>

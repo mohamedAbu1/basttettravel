@@ -5,8 +5,17 @@ const nextConfig = {
     domains: [
       "zxpcoubskncdsruearze.supabase.co",
       "lkwlrezhuxercfvtjiiw.supabase.co",
+      "basttettravel.com",
+    ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "basttettravel.com",
+        pathname: "/images/**",
+      },
     ],
   },
+  
 };
 
-module.exports = nextConfig;
+export default nextConfig;

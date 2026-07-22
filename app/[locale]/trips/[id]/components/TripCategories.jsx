@@ -21,12 +21,37 @@ export default function TripCategories({ trip, lang }) {
   // لو اللغة مش موجودة، نرجع للإنجليزية
   const t = translations[lang] || translations.en;
 
-  // دالة ترجمة النصوص من jsonb
+  // ✅ دالة ترجمة النصوص من JSON أو object
   const getLocalizedText = (obj) => {
     if (!obj) return "Unknown";
-    if (typeof obj === "string") return obj;
-    return obj?.[lang] || obj?.en || "Unknown";
+    if (typeof obj === "string") {
+      try {
+        const parsed = JSON.parse(obj);
+        return parsed?.[lang] || parsed?.en || Object.values(parsed)[0];
+      } catch {
+        return obj;
+      }
+    }
+    if (typeof obj === "object") {
+      return obj?.[lang] || obj?.en || Object.values(obj)[0];
+    }
+    return "Unknown";
   };
+
+  // ✅ تأكد إن التصنيفات Array حتى لو جاية كـ string أو object
+  let categories = [];
+  try {
+    if (Array.isArray(trip.categories)) {
+      categories = trip.categories;
+    } else if (typeof trip.categories === "string") {
+      const parsed = JSON.parse(trip.categories);
+      categories = Array.isArray(parsed) ? parsed : [parsed];
+    } else if (typeof trip.categories === "object" && trip.categories !== null) {
+      categories = [trip.categories];
+    }
+  } catch {
+    categories = [];
+  }
 
   return (
     <motion.section
@@ -48,21 +73,20 @@ export default function TripCategories({ trip, lang }) {
         {t.title}
       </motion.h2>
 
-      {/* الكاتجريز */}
+      {/* التصنيفات */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {trip.trip_categories?.map((cat, idx) => {
-          const catObj = allCategories.find(
-            (category) => category.id === cat.category_id
-          );
+        {categories.filter(Boolean).map((cat, idx) => {
+          const catId = cat?.id || cat?.category_id || idx;
+          const catObj = allCategories.find((c) => c.id === catId);
 
           const categoryName =
             getLocalizedText(catObj?.name) ||
-            getLocalizedText(cat.categories?.name) ||
+            getLocalizedText(cat?.name) ||
             "Unknown";
 
           return (
             <motion.div
-              key={cat.category_id}
+              key={catId}
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true }}

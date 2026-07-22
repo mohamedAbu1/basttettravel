@@ -25,6 +25,23 @@ export default function TripItinerary({ trip, lang }) {
   const { theme } = useTheme();
   const t = translations[lang] || translations.en;
 
+  // ✅ دالة ترجمة النصوص من JSON أو object
+  const getLocalizedText = (obj) => {
+    if (!obj) return "Unknown";
+    if (typeof obj === "string") {
+      try {
+        const parsed = JSON.parse(obj);
+        return parsed?.[lang] || parsed?.en || Object.values(parsed)[0];
+      } catch {
+        return obj;
+      }
+    }
+    if (typeof obj === "object") {
+      return obj?.[lang] || obj?.en || Object.values(obj)[0];
+    }
+    return "Unknown";
+  };
+
   // ✅ تقسيم الأيام إلى مجموعات كل مجموعة فيها يومين
   const chunkDays = (days, size = 2) => {
     const result = [];
@@ -34,7 +51,20 @@ export default function TripItinerary({ trip, lang }) {
     return result;
   };
 
-  const dayGroups = chunkDays(trip.trip_days || []);
+  // ✅ تأكد إن الأيام Array حتى لو جاية كـ string
+  let tripDays = [];
+  try {
+    if (Array.isArray(trip.days)) {
+      tripDays = trip.days;
+    } else if (typeof trip.days === "string") {
+      const parsed = JSON.parse(trip.days);
+      tripDays = Array.isArray(parsed) ? parsed : [parsed];
+    }
+  } catch {
+    tripDays = [];
+  }
+
+  const dayGroups = chunkDays(tripDays || []);
   const [currentPage, setCurrentPage] = useState(0);
 
   return (
@@ -72,7 +102,7 @@ export default function TripItinerary({ trip, lang }) {
       >
         {dayGroups[currentPage]?.map((day, dayIdx) => (
           <motion.div
-            key={day.id}
+            key={day.id || dayIdx}
             initial={{ opacity: 0, scale: 0.9, y: 30 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
@@ -83,9 +113,9 @@ export default function TripItinerary({ trip, lang }) {
               Day {day.day_number}
             </h3>
             <ul className="space-y-3">
-              {day.day_activities?.map((act, actIdx) => (
+              {day.activities?.map((act, actIdx) => (
                 <motion.li
-                  key={act.id}
+                  key={act.id || actIdx}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -101,8 +131,7 @@ export default function TripItinerary({ trip, lang }) {
                     <span>{formatTime(act.time)}</span>
                   </motion.div>
                   <span>
-                    {act.activity_translations?.[lang] ||
-                      act.activity_translations?.en}
+                    {getLocalizedText(act.activity_translations)}
                   </span>
                 </motion.li>
               ))}
