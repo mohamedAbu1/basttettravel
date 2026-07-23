@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import HeaderComponent from "./components/HeaderComponent";
 import FormComponent from "./components/FormComponent";
 import ActionsComponent from "./components/ActionsComponent";
+import DividerWithIcon from "@/components/layout/DividerWithIcon";
 
 export default function SignUpModal() {
   const { handleLoginOpen, signUpOpen, handleSignUpClose } = useData();
@@ -52,6 +53,7 @@ export default function SignUpModal() {
       >
         {/* Header */}
         <HeaderComponent theme={theme} />
+        <DividerWithIcon />
 
         {/* Content */}
         <DialogContent className="flex flex-col gap-5 p-8">
@@ -67,6 +69,7 @@ export default function SignUpModal() {
             setGender={setGender}
             theme={theme} // ✅ تمرير الثيم للفورم
           />
+        <DividerWithIcon />
 
           <ActionsComponent
             t={t}

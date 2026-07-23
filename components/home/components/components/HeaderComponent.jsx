@@ -1,21 +1,16 @@
 import React from "react";
 
-export default function HeaderComponent({ isDark }) {
+export default function HeaderComponent({ theme }) {
   return (
-    <div style={{ textAlign: "center", padding: "32px 0 20px" }}>
+    <div className="text-center py-8">
       <h1
+        className="text-4xl font-extrabold tracking-wide text-center"
         style={{
-          fontFamily: "Cinzel, serif",
-          fontSize: "46px",
-          fontWeight: "700",
-          letterSpacing: "4px",
-          textTransform: "uppercase",
-          background: "linear-gradient(to right, #c9a34a, #b9972f)",
+          background: "linear-gradient(to right, #c9a34a, #b9972f)", // ✅ مباشرة
           WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
         }}
       >
-        WasetTravel
+        Basttet Travel
       </h1>
     </div>
   );

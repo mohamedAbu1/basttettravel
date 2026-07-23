@@ -26,17 +26,28 @@ export function AuthProvider({ children }) {
   const { updateValue, getEncodedQuery } = useQueryFilters();
 
   // ✅ جلب بيانات المستخدم من السيرفر
-  const fetchUserFromServer = async () => {
+const fetchUserFromServer = async () => {
+  try {
+    const res = await axios.get("/api/auth/me", { withCredentials: true });
+    setUserToken(res.data.user);
+    setIsLoggedIn(true);
+    console.log("📌 User from server:", res.data.user);
+  } catch (err) {
+    console.warn("⚠️ Token expired or invalid, trying refresh...");
     try {
-      const res = await axios.get("/api/auth/me", { withCredentials: true });
-      setUserToken(res.data.user);
+      await axios.post("/api/auth/refresh", {}, { withCredentials: true });
+      const retry = await axios.get("/api/auth/me", { withCredentials: true });
+      setUserToken(retry.data.user);
       setIsLoggedIn(true);
-      console.log("📌 User from server:", res.data.user);
-    } catch (err) {
+      console.log("🔄 Token refreshed, user:", retry.data.user);
+    } catch (refreshErr) {
+      console.error("💥 Refresh failed:", refreshErr.message);
       setUserToken(null);
       setIsLoggedIn(false);
     }
-  };
+  }
+};
+
 
   // ✅ استدعاء عند تحميل الصفحة
   useEffect(() => {
@@ -68,39 +79,59 @@ export function AuthProvider({ children }) {
   };
 
   // ✅ تسجيل الدخول يدويًا
-  const login = async (email, password, onSuccess) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.post(
-        "/api/auth/login",
-        { email, password },
-        { withCredentials: true },
-      );
-      const data = res.data;
-      if (res.status !== 200) throw new Error(data.error || "Login failed");
+const login = async (email, password, onSuccess) => {
+  setLoading(true);
+  setError(null);
+  try {
+    console.log("🚀 محاولة تسجيل الدخول بدأت", { email, password });
 
-      const user = data.user;
-      setUser(user);
+    const res = await axios.post(
+      "/api/auth/login",
+      { email, password },
+      { withCredentials: true },
+    );
+    console.log("📩 الرد من السيرفر:", res);
 
-      // ✅ جلب بيانات المستخدم من السيرفر بعد تسجيل الدخول
-      await fetchUserFromServer();
+    const data = res.data;
+    console.log("📦 البيانات المستلمة:", data);
 
-      setIsLoggedIn(true);
-
-      if (onSuccess) onSuccess();
-      const encodedQuery = getEncodedQuery();
-      router.push(`/?data=${encodedQuery}`);
-
-      toast.success("✅ Logged in successfully!");
-      return user;
-    } catch (err) {
-      setError(err.message);
-      toast.error("❌ Error: " + err.message);
-    } finally {
-      setLoading(false);
+    if (res.status !== 200) {
+      console.error("❌ فشل تسجيل الدخول:", data.error);
+      throw new Error(data.error || "Login failed");
     }
-  };
+
+    const user = data.user;
+    console.log("👤 المستخدم بعد تسجيل الدخول:", user);
+
+    setUser(user);
+
+    // ✅ جلب بيانات المستخدم من السيرفر بعد تسجيل الدخول
+    console.log("🔄 استدعاء fetchUserFromServer...");
+    await fetchUserFromServer();
+
+    setIsLoggedIn(true);
+    console.log("✅ حالة تسجيل الدخول: true");
+
+    if (onSuccess) {
+      console.log("🎯 تنفيذ دالة onSuccess");
+      onSuccess();
+    }
+
+    const encodedQuery = getEncodedQuery();
+    console.log("🔗 إعادة التوجيه مع البيانات:", encodedQuery);
+    router.push(`/?data=${encodedQuery}`);
+
+    toast.success("✅ Logged in successfully!");
+    return user;
+  } catch (err) {
+    console.error("💥 خطأ أثناء تسجيل الدخول:", err.message);
+    setError(err.message);
+    toast.error("❌ Error: " + err.message);
+  } finally {
+    setLoading(false);
+    console.log("⏹️ انتهت عملية تسجيل الدخول");
+  }
+};
 
   // ✅ تسجيل الدخول بجوجل
   const loginWithGoogle = async () => {

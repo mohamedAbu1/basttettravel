@@ -1,13 +1,13 @@
 "use client";
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Divider from '@mui/material/Divider';
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Divider from "@mui/material/Divider";
 import { MdEmail, MdLock } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { useData } from "@/context/DataContext";
@@ -16,6 +16,7 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { useSecurity } from "@/context/SecurityContext";
 import { useTranslation } from "react-i18next";
+import DividerWithIcon from "@/components/layout/DividerWithIcon";
 
 export default function LoginModal() {
   const { loginOpen, handleLoginClose, handleSignUpOpen } = useData();
@@ -57,11 +58,18 @@ export default function LoginModal() {
       >
         {/* Header */}
         <div className="text-center py-6">
-          <h2 className={`${theme.title} text-4xl`}>
+          <h2
+            className="text-4xl font-extrabold tracking-wide text-center"
+            style={{
+              background: "var(--text-gradient)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
             {t("Login")}
           </h2>
         </div>
-
+        <DividerWithIcon />
         {/* Content */}
         <DialogContent className="flex flex-col gap-5 p-8">
           <TextField
@@ -94,15 +102,13 @@ export default function LoginModal() {
             }}
           />
 
-          <Divider className={`${theme.border} my-4`}>
-            {t("orcontinuewith")}
-          </Divider>
+        <DividerWithIcon />
 
           {/* Social Buttons */}
           <div className="flex justify-center mt-4">
             <IconButton
               onClick={loginWithGoogle}
-              style={{borderRadius:"5px"}}
+              style={{ borderRadius: "15px" }}
               className="w-[280px] h-[56px] bg-gradient-to-r from-[#4285F4] via-[#34A853] via-[#FBBC05] to-[#EA4335] text-white font-bold shadow-md hover:shadow-lg flex items-center gap-3 transition-all"
             >
               <FcGoogle size={28} />

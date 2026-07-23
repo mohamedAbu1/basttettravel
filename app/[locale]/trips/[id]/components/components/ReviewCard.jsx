@@ -22,7 +22,7 @@ export default function ReviewCard({
   user,
 }) {
   const isOwner = user && String(user.id) === String(rev.users?.id);
-  const isAdmin = user && user?.user_metadata?.role === "ADMIN";
+  const isAdmin = user && user?.role === "ADMIN";
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedComment, setEditedComment] = useState(rev.comment);
@@ -114,7 +114,7 @@ export default function ReviewCard({
         <motion.button
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.1 }}
-          onClick={() => addLike(rev.id)}
+          onClick={() => addLike(rev.id, user?.id)}
           className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm ${theme.buttonSecondary}`}
         >
           <FaThumbsUp /> {likes[rev.id]?.count || 0}

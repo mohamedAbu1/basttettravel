@@ -65,14 +65,15 @@ export default function TripReviews({ trip, lang }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!comment.trim() || rating === 0 || !user) return;
+    if (!comment.trim() || rating === 0 || !userData) return;
 
     await addReview({
       trip_id: trip.id,
+      user_id: userData.id,
       rating,
       comment,
-      name: user?.user_metadata?.name || user.email,
-      avatar_url: user?.user_metadata?.avatar || null,
+      name: userData?.name || userData.email,
+      avatar_url: userData?.avatar_url || userData?.image,
       time: new Date().toLocaleTimeString(),
     });
 
@@ -136,7 +137,7 @@ export default function TripReviews({ trip, lang }) {
             key={rev.id || idx}
             rev={rev}
             idx={idx}
-            user={user}
+            user={userData}
             deleteReview={deleteReview}
             updateReview={updateReview}
             theme={theme}

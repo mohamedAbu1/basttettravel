@@ -1,23 +1,28 @@
-// // src/api/auth/refresh/route.ts
-// import { NextResponse } from "next/server";
-// import { cookies } from "next/headers";
-// import { refresh } from "@/services/auth.service";
-// import { setSessionCookies } from "@/lib/Cookies";
-// import { signAppJwt } from "@/lib/AppJWT";
+// file: app/api/auth/refresh/route.js
+import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
-// export async function POST() {
-//   try {
-//     const rt = cookies().get("sb_refresh")?.value;
-//     if (!rt) return NextResponse.json({ ok: false }, { status: 401 });
+export async function POST(request) {
+  const refreshToken = request.cookies.get("refresh-token")?.value;
+  if (!refreshToken) {
+    return NextResponse.json({ error: "No refresh token" }, { status: 401 });
+  }
 
-//     const { session, user } = await refresh(rt);
-//     setSessionCookies(session.access_token, session.refresh_token);
+  try {
+    const payload = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    const newAccessToken = jwt.sign({ id: payload.id }, process.env.JWT_SECRET, { expiresIn: "15m" });
 
-//     const appJwt = signAppJwt({ sub: user.id, email: user.email, name: user.user_metadata?.name });
-//     const res = NextResponse.json({ ok: true });
-//     res.cookies.set("app_jwt", appJwt, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 60 * 15 });
-//     return res;
-//   } catch {
-//     return NextResponse.json({ ok: false }, { status: 401 });
-//   }
-// }
+    const response = NextResponse.json({ message: "Token refreshed" });
+    response.cookies.set("access-token", newAccessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 15,
+    });
+
+    return response;
+  } catch {
+    return NextResponse.json({ error: "Invalid refresh token" }, { status: 401 });
+  }
+}

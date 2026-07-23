@@ -5,28 +5,28 @@ import bcrypt from "bcryptjs";
 
 // ✅ روابط الصور المخزنة على هوستنجر
 const maleAvatars = [
-  "https://wasettravel.com/avatars/male/3d-avatar-cartoon-character_113255-93687.webp",
-  "https://wasettravel.com/avatars/male/blds.webp",
-  "https://wasettravel.com/avatars/male/kbj.webp",
-  "https://wasettravel.com/avatars/male/klhasd.webp",
-  "https://wasettravel.com/avatars/male/memoji-happy-man-white-background-emoji_826801-6839.webp",
-  "https://wasettravel.com/avatars/male/nss.webp",
-  "https://wasettravel.com/avatars/male/technical-writer-digital-avatar-generative-ai_934475-9098.webp",
-  "https://wasettravel.com/avatars/male/3d-avatar-cartoon-character_113255-92170.webp",
-  "https://wasettravel.com/avatars/male/usa.webp",
+  "https://basttettravel.com/iamges/3d-avatar-cartoon-character_113255-93687.webp",
+  "https://basttettravel.com/iamges/blds.webp",
+  "https://basttettravel.com/iamges/kbj.webp",
+  "https://basttettravel.com/iamges/klhasd.webp",
+  "https://basttettravel.com/iamges/memoji-happy-man-white-background-emoji_826801-6839.webp",
+  "https://basttettravel.com/iamges/nss.webp",
+  "https://basttettravel.com/iamges/technical-writer-digital-avatar-generative-ai_934475-9098.webp",
+  "https://basttettravel.com/iamges/3d-avatar-cartoon-character_113255-92170.webp",
+  "https://basttettravel.com/iamges/usa.webp",
 ];
 
 const femaleAvatars = [
-  "https://wasettravel.com/avatars/female/3d-rendered-photo-woman-wearing-glasses-smiles-camera_1103059-4106.webp",
-  "https://wasettravel.com/avatars/female/3d-rendered-photo-woman-wearing-glasses-smiles-camera_1103059-4231.webp",
-  "https://wasettravel.com/avatars/female/3d-rendered-photo-woman-wearing-glasses-smiles-camera_1103059-4319.webp",
-  "https://wasettravel.com/avatars/female/3d-rendered-photo-woman-wearing-glasses-smiles-camera_1103059-4400.webp",
-  "https://wasettravel.com/avatars/female/bjlsd.webp",
-  "https://wasettravel.com/avatars/female/business-woman-3d-cartoon-avatar-portrait_839035-196331.webp",
-  "https://wasettravel.com/avatars/female/klnsd.webp",
-  "https://wasettravel.com/avatars/female/woman-human-head-illustration_862994-10854.webp",
-  "https://wasettravel.com/avatars/female/young-business-woman-with-nerd-glasses-grey-background-3d-rendering_1026950-41027.webp",
-  "https://wasettravel.com/avatars/female/young-smiling-woman-mia-avatar-3d-vector-people-character-illustration-cartoon-minimal-style_1029476-291545.webp",
+  "https://basttettravel.com/iamges/3d-rendered-photo-woman-wearing-glasses-smiles-camera_1103059-4106.webp",
+  "https://basttettravel.com/iamges/3d-rendered-photo-woman-wearing-glasses-smiles-camera_1103059-4231.webp",
+  "https://basttettravel.com/iamges/3d-rendered-photo-woman-wearing-glasses-smiles-camera_1103059-4319.webp",
+  "https://basttettravel.com/iamges/3d-rendered-photo-woman-wearing-glasses-smiles-camera_1103059-4400.webp",
+  "https://basttettravel.com/iamges/bjlsd.webp",
+  "https://basttettravel.com/iamges/business-woman-3d-cartoon-avatar-portrait_839035-196331.webp",
+  "https://basttettravel.com/iamges/klnsd.webp",
+  "https://basttettravel.com/iamges/woman-human-head-illustration_862994-10854.webp",
+  "https://basttettravel.com/iamges/young-business-woman-with-nerd-glasses-grey-background-3d-rendering_1026950-41027.webp",
+  "https://basttettravel.com/iamges/young-smiling-woman-mia-avatar-3d-vector-people-character-illustration-cartoon-minimal-style_1029476-291545.webp",
 ];
 
 // ✅ دالة لاختيار صورة عشوائية حسب الجنس
@@ -36,7 +36,7 @@ function getAvatarByGender(gender) {
   } else if (gender?.toLowerCase() === "female") {
     return femaleAvatars[Math.floor(Math.random() * femaleAvatars.length)];
   }
-  return "https://wasettravel.com/avatars/default/default.webp";
+  return "https://basttettravel.com/avatars/default/default.webp";
 }
 
 export async function POST(request) {

@@ -30,24 +30,46 @@ export async function GET(req) {
 // ✅ إضافة تعليق جديد
 export async function POST(req) {
   try {
+    console.log("📩 Request received at /api/reviews");
+
     const body = await req.json();
+    console.log("📌 Parsed body:", body);
+
     const { trip_id, user_id, rating, comment, name, avatar_url, time } = body;
+    console.log("✅ Extracted values:", {
+      trip_id,
+      user_id,
+      rating,
+      comment,
+      name,
+      avatar_url,
+      time,
+    });
 
     const db = await connectDB();
-    const reviewId = uuidv4(); // ✅ توليد ID فريد للتعليق
+    console.log("🔗 Connected to DB successfully");
 
-    await db.query(
-      `INSERT INTO reviews 
-       (id, trip_id, user_id, rating, comment, name, avatar_url, time, created_at) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-      [reviewId, trip_id, user_id, rating, comment, name, avatar_url, time]
-    );
+    const reviewId = uuidv4();
+    console.log("🆔 Generated reviewId:", reviewId);
+
+    const query = `
+      INSERT INTO reviews 
+      (id, trip_id, user_id, rating, comment, name, avatar_url, time, created_at) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    `;
+    const params = [reviewId, trip_id, user_id, rating, comment, name, avatar_url, time];
+    console.log("📝 Executing query:", query);
+    console.log("📊 With params:", params);
+
+    await db.query(query, params);
+    console.log("✅ Insert successful");
 
     return NextResponse.json(
       { success: true, review: { id: reviewId, ...body } },
       { status: 201 }
     );
   } catch (err) {
+    console.error("💥 Error in POST /api/reviews:", err.message);
     return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }

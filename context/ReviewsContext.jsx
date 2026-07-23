@@ -11,7 +11,6 @@ export function ReviewsProvider({ children }) {
   const [allReviews, setAllReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [likes, setLikes] = useState({});
-console.log("userData", userData);
   // ✅ جلب التعليقات الخاصة برحلة معينة
   const fetchReviewsByTrip = async (tripId) => {
     if (!tripId) return;
@@ -109,8 +108,8 @@ console.log("userData", userData);
   };
 
   // ✅ إضافة لايك
-  const addLike = async (reviewId) => {
-    if (!reviewId || !userData?.id) return;
+ const addLike = async (reviewId, userId) => {
+  if (!reviewId || !userId) return;
 
     try {
       const res = await axios.post(`/api/reviews/${reviewId}/like`, {
