@@ -10,7 +10,7 @@ export const theme = {
   buttonPrimary:
     "rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold shadow-lg hover:shadow-xl transition-all",
   buttonSecondary:
-    "rounded-xl border border-yellow-500 text-yellow-600 font-semibold hover:bg-yellow-50 transition-all",
+    "rounded-lg border border-yellow-500 text-yellow-600 font-semibold hover:bg-yellow-50 transition-all",
   buttonGoogle:
     "bg-gradient-to-r from-[#4285F4] via-[#34A853] via-[#FBBC05] to-[#EA4335] text-white font-bold shadow-md hover:shadow-lg transition-all",
 };
