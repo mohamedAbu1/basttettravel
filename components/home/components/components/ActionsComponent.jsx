@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 // مثال على ثيم جاهز
 export const theme = {
   buttonPrimary:
-    "rounded-xl bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold shadow-lg hover:shadow-xl transition-all",
+    "rounded-lg bg-gradient-to-r from-yellow-500 to-yellow-600 text-white font-bold shadow-lg hover:shadow-xl transition-all",
   buttonSecondary:
     "rounded-lg border border-yellow-500 text-yellow-600 font-semibold hover:bg-yellow-50 transition-all",
   buttonGoogle:
