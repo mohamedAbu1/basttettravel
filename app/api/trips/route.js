@@ -125,8 +125,7 @@ export async function GET() {
              JOIN cities c ON tc.city_id = c.id 
              WHERE tc.trip_id = t.id)
           AS CHAR
-          ),
-          '[]'
+        ), '[]'
         ) AS cities,
         COALESCE(
           CAST(
@@ -135,16 +134,14 @@ export async function GET() {
              JOIN categories cat ON tc.category_id = cat.id 
              WHERE tc.trip_id = t.id)
           AS CHAR
-          ),
-          '[]'
+        ), '[]'
         ) AS categories,
         COALESCE(
           CAST(
             (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', inc.id, 'include_translations', inc.include_translations)) 
              FROM includes inc WHERE inc.trip_id = t.id)
           AS CHAR
-          ),
-          '[]'
+        ), '[]'
         ) AS includes,
         COALESCE(
           CAST(
@@ -166,9 +163,25 @@ export async function GET() {
              ) 
              FROM trip_days td WHERE td.trip_id = t.id)
           AS CHAR
-          ),
-          '[]'
-        ) AS days
+        ), '[]'
+        ) AS days,
+        COALESCE(
+          CAST(
+            (SELECT JSON_ARRAYAGG(
+              JSON_OBJECT(
+                'id', r.id,
+                'user_id', r.user_id,
+                'name', r.name,
+                'comment', r.comment,
+                'rating', r.rating,
+                'avatar_url', r.avatar_url,
+                'created_at', r.created_at
+              )
+            )
+            FROM reviews r WHERE r.trip_id = t.id)
+          AS CHAR
+        ), '[]'
+        ) AS reviews
       FROM trips t
     `);
 
@@ -196,9 +209,8 @@ export async function GET() {
       categories: safeParse(trip.categories),
       includes: safeParse(trip.includes),
       itinerary: safeParse(trip.days),
+      reviews: safeParse(trip.reviews), // ✅ التعليقات الآن موجودة
     }));
-
-    console.log("object", parsedTrips);
 
     return new Response(JSON.stringify({ success: true, trips: parsedTrips }), {
       status: 200,
@@ -212,3 +224,4 @@ export async function GET() {
     );
   }
 }
+

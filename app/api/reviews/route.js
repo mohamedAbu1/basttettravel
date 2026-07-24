@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
-import { v4 as uuidv4 } from "uuid"; // ✅ استدعاء مكتبة uuid
+import { v4 as uuidv4 } from "uuid"; 
 
 // ✅ جلب التعليقات
 export async function GET(req) {
