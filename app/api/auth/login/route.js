@@ -44,31 +44,23 @@ export async function POST(request) {
       expiresIn: "30d",
     });
 
-    // ✅ تجهيز الرد
-    const response = NextResponse.json(
-      { message: "تم تسجيل الدخول بنجاح", user },
+    // ✅ تجهيز الرد بصيغة JSON واضحة للتطبيق
+    return NextResponse.json(
+      {
+        message: "تم تسجيل الدخول بنجاح",
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          gender: user.gender,
+          avatar_url: user.avatar_url,
+        },
+        accessToken,
+        refreshToken,
+      },
       { status: 200 }
     );
-
-    // ✅ تخزين الكوكيز بشكل صحيح
-    response.cookies.set("access-token", accessToken, {
-      httpOnly: true,
-     secure: process.env.NODE_ENV === "production", 
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 يوم
-    });
-
-    response.cookies.set("refresh-token", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", 
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 30, // 30 يوم
-    });
-
-    console.log("✅ Login successful, returning response");
-    return response;
   } catch (e) {
     console.error("💥 Internal error", e);
     return NextResponse.json({ error: "خطأ داخلي" }, { status: 500 });

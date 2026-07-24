@@ -109,23 +109,63 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
                 {trip.title?.[lang] || trip.title?.en || "Untitled"}
               </h4>
               <p className={`${theme.subText} text-sm`}>
-                {trip.trip_cities
-                  ?.map(
-                    (c) =>
-                      c.cities?.name?.[lang] ||
-                      c.cities?.name?.en ||
-                      c.city_name,
-                  )
-                  .join(", ") || t("NoCity")}
+                {Array.isArray(trip.cities) && trip.cities.length > 0
+                  ? trip.cities
+                      .filter(Boolean)
+                      .map((c) => {
+                        let cityName = "Unknown City";
+
+                        try {
+                          // ✅ لو الاسم عبارة عن JSON string → نحوله لكائن
+                          const parsed = JSON.parse(c.name);
+
+                          // ✅ نعرض حسب اللغة الحالية أو الإنجليزية أو أول قيمة
+                          cityName =
+                            parsed?.[lang] ||
+                            parsed?.["en"] ||
+                            Object.values(parsed)[0] ||
+                            "Unknown City";
+                        } catch {
+                          // ✅ لو الاسم مش JSON → نعرضه مباشرة
+                          cityName = c.name || "Unknown City";
+                        }
+
+                        return cityName;
+                      })
+                      .join(", ")
+                  : "Unknown City"}
               </p>
+
               <p className={`${theme.subText} text-sm`}>
-                {trip.trip_categories
-                  ?.map(
-                    (cat) =>
-                      cat.categories?.name?.[lang] || cat.categories?.name?.en,
-                  )
-                  .join(", ") || t("NoCategory")}
+                {Array.isArray(trip.trip_categories) &&
+                trip.trip_categories.length > 0
+                  ? trip.trip_categories
+                      .filter(Boolean)
+                      .map((cat) => {
+                        let categoryName = "Unknown Category";
+
+                        try {
+                          // ✅ نحاول تحويل الاسم من JSON string إلى كائن
+                          const parsed = JSON.parse(cat.categories?.name);
+
+                          // ✅ نعرض حسب اللغة الحالية أو الإنجليزية أو أول قيمة
+                          categoryName =
+                            parsed?.[lang] ||
+                            parsed?.["en"] ||
+                            Object.values(parsed)[0] ||
+                            "Unknown Category";
+                        } catch {
+                          // ✅ لو الاسم مش JSON نعرضه مباشرة
+                          categoryName =
+                            cat.categories?.name || "Unknown Category";
+                        }
+
+                        return categoryName;
+                      })
+                      .join(", ")
+                  : t("NoCategory")}
               </p>
+
               <p className="text-md font-semibold flex items-center gap-2">
                 <span
                   className={`px-3 py-2 rounded-lg flex items-center gap-2 
@@ -169,7 +209,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               text-[#C2A878] hover:bg-[#C2A878]/20 hover:text-white 
               shadow-md`}
                 >
-                 {hasPurchased ? t("Tripdetails") : t("btn")}
+                  {hasPurchased ? t("Tripdetails") : t("btn")}
                 </button>
               )}
             </div>

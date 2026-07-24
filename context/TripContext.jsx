@@ -94,6 +94,7 @@ export function TripProvider({ children }) {
         },
       });
       const result = await res.json();
+
       if (result.success) {
         setTrips(result.trips);
         localStorage.setItem("trips", JSON.stringify(result.trips));

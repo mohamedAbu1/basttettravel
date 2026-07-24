@@ -184,7 +184,6 @@ export async function GET() {
         ) AS reviews
       FROM trips t
     `);
-
     const safeParse = (value) => {
       try {
         return value ? JSON.parse(value) : [];
