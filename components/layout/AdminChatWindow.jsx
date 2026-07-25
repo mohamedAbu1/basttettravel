@@ -10,9 +10,15 @@ import { FaTimes } from "react-icons/fa";
 export default function AdminChatWindow({ user, admin, messages, onClose }) {
   const { theme, themeName } = useTheme();
   const [text, setText] = useState("");
-  const { setMessages, sendMessage } = useMessages(); // ✅ استدعاء setMessages من الـ context
+  const { setMessages, sendMessage, setActiveChatUserId } = useMessages(); // ✅ استدعاء setMessages من الـ context
   // ✅ الرسائل اللي جاية من الـ props مباشرة
+  useEffect(() => {
+    // عند فتح نافذة الشات لمستخدم معين
+    setActiveChatUserId(user.id);
 
+    // عند إغلاق النافذة أو الانتقال لمستخدم آخر
+    return () => setActiveChatUserId(null);
+  }, [user.id]);
   const handleSend = async () => {
     if (text.trim() !== "") {
       await sendMessage({

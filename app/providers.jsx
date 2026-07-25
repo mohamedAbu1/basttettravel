@@ -32,9 +32,9 @@ export default function Providers({ children }) {
             <NotificationsProvider>
               <CurrencyProvider>
                 <QueryProvider>
-                  <AuthProvider>
-                    <UserProvider>
-                      <DataProvider>
+                  <DataProvider>
+                    <AuthProvider>
+                      <UserProvider>
                         <SecurityProvider>
                           <TripProvider>
                             <CitiesCategoriesProvider>
@@ -59,9 +59,9 @@ export default function Providers({ children }) {
                             </CitiesCategoriesProvider>
                           </TripProvider>
                         </SecurityProvider>
-                      </DataProvider>
-                    </UserProvider>
-                  </AuthProvider>
+                      </UserProvider>
+                    </AuthProvider>
+                  </DataProvider>
                 </QueryProvider>
               </CurrencyProvider>
             </NotificationsProvider>

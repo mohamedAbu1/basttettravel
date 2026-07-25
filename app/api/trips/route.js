@@ -77,28 +77,28 @@ export async function POST(req) {
     }
 
     // ✅ إدخال الأيام والأنشطة
-    if (body.trip_days?.length > 0) {
-      for (const [index, day] of body.trip_days.entries()) {
-        const dayId = uuidv4();
-        await db.execute(
-          "INSERT INTO trip_days (id, trip_id, day_number) VALUES (?, ?, ?)",
-          [dayId, tripId, day.day_number || index + 1]
-        );
+  if (body.itinerary?.length > 0) {
+  for (const [index, day] of body.itinerary.entries()) {
+    const dayId = uuidv4();
+    await db.execute(
+      "INSERT INTO trip_days (id, trip_id, day_number) VALUES (?, ?, ?)",
+      [dayId, tripId, day.day_number || index + 1]
+    );
 
-        if (day.activities?.length > 0) {
-          const activitiesData = day.activities.map((act) => [
-            uuidv4(),
-            dayId,
-            act.time,
-            safeStringify(act.activity_translations || act.activity),
-          ]);
-          await db.query(
-            "INSERT INTO day_activities (id, day_id, time, activity_translations) VALUES ?",
-            [activitiesData]
-          );
-        }
-      }
+    if (day.activities?.length > 0) {
+      const activitiesData = day.activities.map((act) => [
+        uuidv4(),
+        dayId,
+        act.time,
+        safeStringify(act.activity_translations || act.activity),
+      ]);
+      await db.query(
+        "INSERT INTO day_activities (id, day_id, time, activity_translations) VALUES ?",
+        [activitiesData]
+      );
     }
+  }
+}
 
     return new Response(JSON.stringify({ success: true, tripId }), {
       status: 201,

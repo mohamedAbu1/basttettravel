@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
+import { io } from "socket.io-client";
 
 const MessageContext = createContext();
 
@@ -9,19 +10,46 @@ export function MessageProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const { userData } = useAuth();
   const [open, setOpen] = useState(false);
+  const [socket, setSocket] = useState(null);
+
+  // ✅ تهيئة الـ socket مرة واحدة
+  const [activeChatUserId, setActiveChatUserId] = useState(null);
+
+  useEffect(() => {
+    const newSocket = io("/", { path: "/api/socket" });
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log("✅ Connected to WebSocket server");
+    });
+
+    newSocket.on("new_message", (msg) => {
+      console.log("📩 رسالة جديدة:", msg);
+
+      if (activeChatUserId && msg.user_id === activeChatUserId) {
+        // ✅ لو الشات مفتوح لنفس المستخدم → أضف الرسالة مباشرة
+        setMessages((prev) => [...prev, msg]);
+      } else {
+        // ✅ لو مش مفتوح → إشعار فقط
+        console.log("🔔 إشعار برسالة جديدة من مستخدم آخر");
+      }
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [activeChatUserId]);
 
   // ✅ جلب رسائل المستخدم الحالي
   const fetchMessages = async (userId) => {
     setLoading(true);
     try {
       const res = await fetch(`/api/messages?userId=${userId}`);
-
       if (!res.ok) {
         const text = await res.text();
         console.error("❌ Error fetching messages:", text);
         return;
       }
-
       const data = await res.json();
       setMessages(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -30,33 +58,27 @@ export function MessageProvider({ children }) {
       setLoading(false);
     }
   };
-const fetchUserMessagesById = async (id) => {
-  try {
-    console.log("📡 بدء جلب الرسائل للمستخدم:", id);
-
-    const res = await fetch(`/api/messages?id=${id}`);
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("❌ خطأ في الاتصال بالسيرفر:", text);
+  const fetchUserMessagesById = async (id) => {
+    try {
+      console.log("📡 بدء جلب الرسائل للمستخدم:", id);
+      const res = await fetch(`/api/messages?id=${id}`);
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("❌ خطأ في الاتصال بالسيرفر:", text);
+        return [];
+      }
+      const data = await res.json();
+      console.log("✅ البيانات المسترجعة من السيرفر:", data);
+      const filtered = Array.isArray(data)
+        ? data.filter((msg) => msg.user_id === id)
+        : [];
+      console.log("💾 الرسائل بعد الفلترة:", filtered);
+      return filtered;
+    } catch (err) {
+      console.error("❌ خطأ أثناء جلب الرسائل:", err.message);
       return [];
     }
-
-    const data = await res.json();
-    console.log("✅ البيانات المسترجعة من السيرفر:", data);
-
-    // فلترة الرسائل الخاصة بالمستخدم المحدد
-    const filtered = Array.isArray(data)
-      ? data.filter((msg) => msg.user_id === id) // ✅ استخدم id المرسل للدالة
-      : [];
-
-    console.log("💾 الرسائل بعد الفلترة:", filtered);
-    return filtered;
-  } catch (err) {
-    console.error("❌ خطأ أثناء جلب الرسائل:", err.message);
-    return [];
-  }
-};
-
+  };
 
   // ✅ إرسال رسالة جديدة
   const sendMessage = async ({
@@ -70,7 +92,7 @@ const fetchUserMessagesById = async (id) => {
     const payload = {
       user_id,
       user_name: userData?.name || "Unknown User",
-      user_image: userData?.avatar_url || userData?.image ,
+      user_image: userData?.avatar_url || userData?.image,
       content,
       sender_type,
       status,
@@ -81,10 +103,17 @@ const fetchUserMessagesById = async (id) => {
     // أضف الرسالة مباشرة للـ state علشان تظهر فورًا
     const tempMessage = {
       ...payload,
-      id: Date.now(), // ID مؤقت
+      id: Date.now(),
       status: "pending",
     };
     setMessages((prev) => [...prev, tempMessage]);
+
+    // ✅ إرسال عبر socket فورًا
+    if (socket?.emit) {
+      socket.emit("new_message", payload);
+    } else {
+      console.error("❌ Socket not ready");
+    }
 
     try {
       const res = await fetch("/api/messages", {
@@ -98,8 +127,8 @@ const fetchUserMessagesById = async (id) => {
         console.error("❌ Server error:", text);
         setMessages((prev) =>
           prev.map((msg) =>
-            msg.id === tempMessage.id ? { ...msg, status: "error" } : msg
-          )
+            msg.id === tempMessage.id ? { ...msg, status: "error" } : msg,
+          ),
         );
         return { error: text };
       }
@@ -110,14 +139,16 @@ const fetchUserMessagesById = async (id) => {
         console.error("❌ Error sending message:", data.error);
         setMessages((prev) =>
           prev.map((msg) =>
-            msg.id === tempMessage.id ? { ...msg, status: "error" } : msg
-          )
+            msg.id === tempMessage.id ? { ...msg, status: "error" } : msg,
+          ),
         );
       } else {
         setMessages((prev) =>
           prev.map((msg) =>
-            msg.id === tempMessage.id ? { ...msg, ...data, status: "sent" } : msg
-          )
+            msg.id === tempMessage.id
+              ? { ...msg, ...data, status: "sent" }
+              : msg,
+          ),
         );
       }
 
@@ -148,8 +179,8 @@ const fetchUserMessagesById = async (id) => {
       if (!data.error) {
         setMessages((prev) =>
           prev.map((msg) =>
-            msg.id === messageId ? { ...msg, status: "seen" } : msg
-          )
+            msg.id === messageId ? { ...msg, status: "seen" } : msg,
+          ),
         );
       } else {
         console.error("❌ Error marking message seen:", data.error);
@@ -166,13 +197,26 @@ const fetchUserMessagesById = async (id) => {
   useEffect(() => {
     if (userData?.id) {
       fetchMessages(userData.id);
-      fetchUserMessagesById(userData.id); // ✅ جلب الرسائل الخاصة بالمستخدم الحالي
+      const interval = setInterval(() => {
+        fetchMessages(userData.id);
+      }, 3000);
+      return () => clearInterval(interval);
     }
-  }, [userData?.id]);
+  }, [socket]);
 
   return (
     <MessageContext.Provider
-      value={{ messages, loading, fetchMessages, sendMessage, markMessageSeen ,fetchUserMessagesById,open,setOpen}}
+      value={{
+        messages,
+        loading,
+        fetchMessages,
+        sendMessage,
+        markMessageSeen,
+        fetchUserMessagesById,
+        setActiveChatUserId,
+        open,
+        setOpen,
+      }}
     >
       {children}
     </MessageContext.Provider>

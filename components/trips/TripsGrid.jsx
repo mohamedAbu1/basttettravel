@@ -137,16 +137,16 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               </p>
 
               <p className={`${theme.subText} text-sm`}>
-                {Array.isArray(trip.trip_categories) &&
-                trip.trip_categories.length > 0
-                  ? trip.trip_categories
+                {Array.isArray(trip.categories) &&
+                trip.categories.length > 0
+                  ? trip.categories
                       .filter(Boolean)
                       .map((cat) => {
                         let categoryName = "Unknown Category";
 
                         try {
                           // ✅ نحاول تحويل الاسم من JSON string إلى كائن
-                          const parsed = JSON.parse(cat.categories?.name);
+                          const parsed = JSON.parse(cat.name);
 
                           // ✅ نعرض حسب اللغة الحالية أو الإنجليزية أو أول قيمة
                           categoryName =
@@ -157,7 +157,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
                         } catch {
                           // ✅ لو الاسم مش JSON نعرضه مباشرة
                           categoryName =
-                            cat.categories?.name || "Unknown Category";
+                            cat.name || "Unknown Category";
                         }
 
                         return categoryName;

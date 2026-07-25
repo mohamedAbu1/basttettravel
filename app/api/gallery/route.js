@@ -20,7 +20,7 @@ export async function POST(req) {
           fs.writeFileSync(uploadPath, Buffer.from(await file.arrayBuffer()));
         }
 
-        const fileUrl = `https://wasettravel.com/${folder}/${originalName}`;
+        const fileUrl = `https://basttettravel.com/${folder}/${originalName}`;
 
         // ✅ استقبل أسماء اللغات من الـ formData
         const nameTranslations = {

@@ -76,7 +76,6 @@ const uploadGallery = async () => {
 };
 
 
-// ✅ حفظ الرحلة بعد التعديل
 const saveTrip = async () => {
   try {
     setError(null);
