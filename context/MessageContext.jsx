@@ -9,9 +9,7 @@ export function MessageProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const { userData } = useAuth();
   const [open, setOpen] = useState(false);
-  const [socket, setSocket] = useState(null);
 
-  // ✅ تهيئة الـ socket مرة واحدة
   const [activeChatUserId, setActiveChatUserId] = useState(null);
 
 
@@ -83,12 +81,7 @@ export function MessageProvider({ children }) {
     };
     setMessages((prev) => [...prev, tempMessage]);
 
-    // ✅ إرسال عبر socket فورًا
-    if (socket?.emit) {
-      socket.emit("new_message", payload);
-    } else {
-      console.error("❌ Socket not ready");
-    }
+   
 
     try {
       const res = await fetch("/api/messages", {
