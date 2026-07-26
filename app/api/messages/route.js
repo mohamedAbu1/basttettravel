@@ -60,7 +60,6 @@ export async function POST(req) {
         created_at: new Date(),
       };
 
-      // 🔥 إرسال الرسالة عبر WebSocket
 
       return NextResponse.json(newMessage, { status: 201 });
     }
