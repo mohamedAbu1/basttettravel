@@ -1,7 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
-import { io } from "socket.io-client";
 
 const MessageContext = createContext();
 
@@ -15,30 +14,6 @@ export function MessageProvider({ children }) {
   // ✅ تهيئة الـ socket مرة واحدة
   const [activeChatUserId, setActiveChatUserId] = useState(null);
 
-  useEffect(() => {
-    const newSocket = io("/", { path: "/api/socket" });
-    setSocket(newSocket);
-
-    newSocket.on("connect", () => {
-      console.log("✅ Connected to WebSocket server");
-    });
-
-    newSocket.on("new_message", (msg) => {
-      console.log("📩 رسالة جديدة:", msg);
-
-      if (activeChatUserId && msg.user_id === activeChatUserId) {
-        // ✅ لو الشات مفتوح لنفس المستخدم → أضف الرسالة مباشرة
-        setMessages((prev) => [...prev, msg]);
-      } else {
-        // ✅ لو مش مفتوح → إشعار فقط
-        console.log("🔔 إشعار برسالة جديدة من مستخدم آخر");
-      }
-    });
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [activeChatUserId]);
 
   // ✅ جلب رسائل المستخدم الحالي
   const fetchMessages = async (userId) => {
