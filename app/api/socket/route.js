@@ -1,24 +1,27 @@
-// pages/api/socket.js
 import { Server } from "socket.io";
 
 let io;
 
-export default function handler(req, res) {
+export async function GET(req) {
   if (!io) {
-    io = new Server(res.socket.server, {
-      path: "/api/socketio",
+    io = new Server(globalThis.server, {
+      path: "/api/socket",
       cors: { origin: "*" },
     });
 
     io.on("connection", (socket) => {
       console.log("✅ Client connected:", socket.id);
 
+      socket.on("new_message", (msg) => {
+        console.log("📩 رسالة جديدة:", msg);
+        io.emit("new_message", msg); // يبعت الرسالة لكل الكلاينتس
+      });
+
       socket.on("disconnect", () => {
         console.log("❌ Client disconnected:", socket.id);
       });
     });
   }
-  res.end();
-}
 
-export { io };
+  return new Response("Socket initialized", { status: 200 });
+}
