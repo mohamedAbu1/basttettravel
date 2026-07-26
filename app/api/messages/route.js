@@ -3,7 +3,6 @@ import { connectDB } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import path from "path";
-import { io } from "../socket/route"; // استدعاء السيرفر
 
 export async function POST(req) {
   try {
@@ -62,7 +61,6 @@ export async function POST(req) {
       };
 
       // 🔥 إرسال الرسالة عبر WebSocket
-      io.emit("new_message", newMessage);
 
       return NextResponse.json(newMessage, { status: 201 });
     }
@@ -97,8 +95,6 @@ export async function POST(req) {
       created_at: new Date(),
     };
 
-    // 🔥 إرسال الرسالة عبر WebSocket
-    io.emit("new_message", newMessage);
 
     return NextResponse.json(newMessage, { status: 201 });
   } catch (err) {
