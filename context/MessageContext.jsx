@@ -193,16 +193,16 @@ export function MessageProvider({ children }) {
     }
   };
 
-  // ✅ يجلب الرسائل مرة واحدة عند تحميل المستخدم
-  useEffect(() => {
-    if (userData?.id) {
+useEffect(() => {
+  if (userData?.id) {
+    fetchMessages(userData.id);
+    const interval = setInterval(() => {
       fetchMessages(userData.id);
-      const interval = setInterval(() => {
-        fetchMessages(userData.id);
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [socket]);
+    }, 3000);
+    return () => clearInterval(interval);
+  }
+}, [userData?.id]);
+
 
   return (
     <MessageContext.Provider
