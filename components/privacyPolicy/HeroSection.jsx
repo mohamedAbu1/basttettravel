@@ -9,8 +9,8 @@ export default function HeroSection({ themeName, theme }) {
       <Image
         src={
           themeName === "dark"
-            ? "/HomePageImage/ChatGPT Image Jul 28, 2026, 10_24_30 PM.png"
-            : "/HomePageImage/ChatGPT Image Jul 28, 2026, 10_24_30 PM.png"
+            ? "/HomePageImage/asdasdas.webp"
+            : "/HomePageImage/asdasdas.webp"
         }
         alt="Great Sphinx of Giza"
         fill

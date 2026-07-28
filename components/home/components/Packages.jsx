@@ -18,7 +18,7 @@ export default function Packages({ showTrips }) {
     lightModeTrips: [
       { id: "8601c884-3c35-469f-a2b7-b8bb897b90fe", title: { en: "Nile Cruise Luxor-Aswan" }, price: 547, currency: "USD", cover_image: "/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp", category_id: 1 },
       { id: "4ba2c69e-9c76-41f4-80b8-60ae230e1a28", title: { en: "Luxury Nile Cruise" }, price: 447, currency: "USD", cover_image: "/Nile_Cruise/5116-900x600.webp", category_id: 1 },
-      { id: "8ddb3cd5-5292-4c78-a6e1-33409fc59d6d", title: { en: "Budget Nile Cruise" }, price: 397, currency: "USD", cover_image: "/Nile_Cruise/peter-hansen-MeGmdPNe36w-unsplash.webp", category_id: 2 }
+      { id: "8ddb3cd5-5292-4c78-a6e1-33409fc59d6d", title: { en: "Budget Nile Cruise" }, price: 397, currency: "USD", cover_image: "/HomePageImage/pexels-yigithan02-5572494.webp", category_id: 2 }
     ],
     darkModeTrips: [
       { id: "f25b340a-1edf-4667-a8cc-da215ff9c309", title: { en: "Cairo One Day Tour" }, price: 87, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044045.webp", category_id: 3 },
