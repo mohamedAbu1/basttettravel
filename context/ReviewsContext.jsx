@@ -170,6 +170,42 @@ export function ReviewsProvider({ children }) {
       users: likes[review.id]?.users || [],
     }));
   };
+// ✅ حذف تعليق
+const deleteReview = async (reviewId) => {
+  if (!reviewId) {
+    return { success: false, error: "Missing reviewId or tripId" };
+  }
+
+  try {
+    const res = await axios.delete(`/api/reviews/${reviewId}`, {
+      data: { user_id: userData.id }, // للتأكد أن المستخدم هو صاحب التعليق أو عندك صلاحيات
+    });
+
+    const data = res.data;
+    if (data.success) {
+      // تحديث التعليقات الخاصة بالرحلة
+      setReviewsByTrip((prev) => ({
+        ...prev,
+        [tripId]: (prev[tripId] || []).filter((review) => review.id !== reviewId),
+      }));
+
+      // تحديث جميع التعليقات
+      setAllReviews((prev) => prev.filter((review) => review.id !== reviewId));
+
+      // إزالة اللايكات الخاصة بالتعليق المحذوف
+      setLikes((prev) => {
+        const updated = { ...prev };
+        delete updated[reviewId];
+        return updated;
+      });
+    }
+
+    return data;
+  } catch (err) {
+    console.error("❌ Error deleting review:", err);
+    return { success: false, error: err.message };
+  }
+};
 
   return (
     <ReviewsContext.Provider
@@ -186,6 +222,7 @@ export function ReviewsProvider({ children }) {
         addLike,
         removeLike,
         getUserLikes,
+        deleteReview,
       }}
     >
       {children}

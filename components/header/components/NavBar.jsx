@@ -16,7 +16,7 @@ export default function NavBar({ scrolled }) {
   const pathname = usePathname();
   const { t } = useTranslation("header");
 
-  const navItems = ["home", "trips", "about", "contact"];
+  const navItems = ["home", "trips", "about", "contact", "privacyPolicy"];
 
   const segments = pathname.split("/").filter(Boolean);
   const langPrefix = segments[0];
@@ -50,7 +50,12 @@ export default function NavBar({ scrolled }) {
 
         const isActive =
           (item === "home" && normalizedPath === "/") ||
-          (item !== "home" && normalizedPath.startsWith(`/${item}`));
+          (item === "privacyPolicy" &&
+            (normalizedPath.startsWith("/privacyPolicy") ||
+              normalizedPath.startsWith("/cancellationPolicy"))) ||
+          (item !== "home" &&
+            item !== "privacyPolicy" &&
+            normalizedPath.startsWith(`/${item}`));
 
         return (
           <motion.div
@@ -66,10 +71,10 @@ export default function NavBar({ scrolled }) {
                 isActive
                   ? `bg-gradient-to-r from-[${theme.logoGradientFrom}] to-[${theme.logoGradientTo}] text-white font-bold shadow-md scale-105 border-b-4 border-[${theme.logoBorder}]`
                   : themeName === "dark"
-                  ? `${theme.text} hover:${theme.icon}`
-                  : scrolled
-                  ? `${theme.text} hover:${theme.heading}`
-                  : `${theme.subText} hover:${theme.iconHover}`
+                    ? `${theme.text} hover:${theme.icon}`
+                    : scrolled
+                      ? `${theme.text} hover:${theme.heading}`
+                      : `${theme.subText} hover:${theme.iconHover}`
               }`}
             >
               <span>{t(item)}</span>

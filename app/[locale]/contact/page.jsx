@@ -16,6 +16,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { contactMetadata } from "@/lib/metadata/contact";
 import DividerWithIcon from "@/components/layout/DividerWithIcon";
 import Image from "next/image";
+import AdminChatWindow from "@/components/layout/AdminChatWindow";
 
 const symbols = [
   "𓂀",
@@ -38,7 +39,7 @@ const symbols = [
 
 export default function ContactPage() {
   const { theme, themeName } = useTheme();
-  const { user } = useAuth(); // ✅ جلب المستخدم الحالي
+  const { userData, chatUser, setChatUser } = useAuth(); // ✅ جلب المستخدم الحالي
   const { lang } = useLanguage();
   const meta = contactMetadata[lang] || contactMetadata.en;
   const [formData, setFormData] = useState({
@@ -64,8 +65,8 @@ export default function ContactPage() {
         body: JSON.stringify({
           ...formData,
           // لو فيه بيانات من المستخدم، نرسلها بدل القيم المدخلة
-          name: user?.name || formData.name,
-          email: user?.email || formData.email,
+          name: userData?.name || formData.name,
+          email: userData?.email || formData.email,
         }),
       });
 
@@ -203,11 +204,11 @@ export default function ContactPage() {
                 <input
                   type="text"
                   name="name"
-                  value={user?.user_metadata?.name || formData.name}
+                  value={userData?.name || formData.name}
                   onChange={handleChange}
-                  readOnly={!!user?.user_metadata?.name}
+                  readOnly={!!userData?.name}
                   className={`input-theme ${
-                    user?.user_metadata?.name
+                    userData?.name
                       ? "bg-gray-100 text-gray-600 cursor-not-allowed capitalize"
                       : themeName === "dark"
                         ? "input-dark"
@@ -253,11 +254,11 @@ export default function ContactPage() {
                 <input
                   type="email"
                   name="email"
-                  value={user?.email || formData.email}
+                  value={userData?.email || formData.email}
                   onChange={handleChange}
-                  readOnly={!!user?.email}
+                  readOnly={!!userData?.email}
                   className={`input-theme ${
-                    user?.email
+                    userData?.email
                       ? "bg-gray-100 text-gray-600 cursor-not-allowed"
                       : themeName === "dark"
                         ? "input-dark"
@@ -290,7 +291,10 @@ export default function ContactPage() {
               </div>
 
               {/* زر الإرسال */}
-              <button type="submit" className="btn-gradient w-full p-4 rounded-2xl cursor-pointer">
+              <button
+                type="submit"
+                className="btn-gradient w-full p-4 rounded-2xl cursor-pointer"
+              >
                 {t("btn")}
               </button>
             </motion.form>
@@ -299,7 +303,15 @@ export default function ContactPage() {
         <Footer />
         <SignUpButton />
         <LoginModal />
-        {user && <ChatWidget />}
+        {userData && <ChatWidget />}
+        {chatUser && (
+          <AdminChatWindow
+            user={chatUser}
+            admin={userData}
+            messages={messages}
+            onClose={() => setChatUser(null)}
+          />
+        )}
       </main>
     </>
   );

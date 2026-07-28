@@ -20,6 +20,7 @@ import { useQueryFilters } from "@/context/QueryContext";
 import { useRouter } from "next/navigation";
 import CurrencySelector from "../../../components/layout/CurrencySelector";
 import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
+import AdminChatWindow from "@/components/layout/AdminChatWindow";
 
 export default function TripsPage() {
   const { trips, fetchTrips, loadingTrips } = useTrip();
@@ -30,7 +31,7 @@ export default function TripsPage() {
   } = useCitiesCategories();
   const { lang } = useLanguage();
   const meta = tripsMetadata[lang] || tripsMetadata.en;
-  const { user } = useAuth();
+  const { userData, chatUser, setChatUser } = useAuth();
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -225,8 +226,16 @@ export default function TripsPage() {
         <Footer />
         <SignUpButton />
         <LoginModal />
-        {user && <ChatWidget />}
-        {user && <AdminDashboardButton />}
+        {userData && <ChatWidget />}
+        {userData && <AdminDashboardButton />}
+        {chatUser && (
+          <AdminChatWindow
+            user={chatUser}
+            admin={userData}
+            messages={messages}
+            onClose={() => setChatUser(null)}
+          />
+        )}
         <CurrencySelector />
       </main>
     </>

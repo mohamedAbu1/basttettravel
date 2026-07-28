@@ -23,13 +23,15 @@ import CancelButton from "./components/CancelButton";
 import TripVideo from "./components/TripVideo";
 import { usePurchase } from "@/context/PurchaseContext";
 import AccessibilityInfo from "./components/components/AccessibilityInfo";
+import AdminChatWindow from "@/components/layout/AdminChatWindow";
+import Link from "next/link";
 
 export default function TripPage({ params }) {
   const { id } = use(params);
   const { trips, fetchTrips, getTripById, loadingTrips } = useTrip();
   const { lang } = useLanguage();
   const { theme, themeName } = useTheme();
-  const { userData } = useAuth();
+  const { userData, chatUser, setChatUser } = useAuth();
   const { purchases } = usePurchase();
 
   useEffect(() => {
@@ -49,49 +51,49 @@ export default function TripPage({ params }) {
       p.user_id === userData?.id &&
       p.status !== "Cancelled",
   );
-  
-const localizedTrip = {
-  ...trip,
-  title: trip.title?.[lang] || trip.title?.en,
-  description: trip.description?.[lang] || trip.description?.en,
 
-  // ✅ المدن
-  cities: Array.isArray(trip.cities)
-    ? trip.cities.map(c =>
-        typeof c?.name === "object"
-          ? c.name[lang] || c.name.en || Object.values(c.name)[0]
-          : c?.name || c
-      )
-    : trip.cities,
+  const localizedTrip = {
+    ...trip,
+    title: trip.title?.[lang] || trip.title?.en,
+    description: trip.description?.[lang] || trip.description?.en,
 
-  // ✅ التصنيفات
-  categories: Array.isArray(trip.categories)
-    ? trip.categories.map(cat =>
-        typeof cat?.name === "object"
-          ? cat.name[lang] || cat.name.en || Object.values(cat.name)[0]
-          : cat?.name || cat
-      )
-    : trip.categories,
+    // ✅ المدن
+    cities: Array.isArray(trip.cities)
+      ? trip.cities.map((c) =>
+          typeof c?.name === "object"
+            ? c.name[lang] || c.name.en || Object.values(c.name)[0]
+            : c?.name || c,
+        )
+      : trip.cities,
 
-  // ✅ الباقي زي ما هو
-  includes: Array.isArray(trip.includes)
-    ? trip.includes.map(i =>
-        typeof i === "object" ? i?.[lang] || i?.en : i
-      )
-    : trip.includes,
+    // ✅ التصنيفات
+    categories: Array.isArray(trip.categories)
+      ? trip.categories.map((cat) =>
+          typeof cat?.name === "object"
+            ? cat.name[lang] || cat.name.en || Object.values(cat.name)[0]
+            : cat?.name || cat,
+        )
+      : trip.categories,
 
-  itinerary: Array.isArray(trip.itinerary)
-    ? trip.itinerary.map((day) => ({
-        ...day,
-        activities: Array.isArray(day.activities)
-          ? day.activities.map((act) =>
-              typeof act === "object" ? act?.[lang] || act?.en : act
-            )
-          : day.activities,
-      }))
-    : trip.itinerary,
-};
-console.log(localizedTrip)
+    // ✅ الباقي زي ما هو
+    includes: Array.isArray(trip.includes)
+      ? trip.includes.map((i) =>
+          typeof i === "object" ? i?.[lang] || i?.en : i,
+        )
+      : trip.includes,
+
+    itinerary: Array.isArray(trip.itinerary)
+      ? trip.itinerary.map((day) => ({
+          ...day,
+          activities: Array.isArray(day.activities)
+            ? day.activities.map((act) =>
+                typeof act === "object" ? act?.[lang] || act?.en : act,
+              )
+            : day.activities,
+        }))
+      : trip.itinerary,
+  };
+  console.log(localizedTrip);
   return (
     <main className={`min-h-screen relative  ${theme.text}`}>
       <Header />
@@ -133,13 +135,24 @@ console.log(localizedTrip)
         {/* ✅ المراجعات + الأزرار */}
         <div className="col-span-1 lg:col-span-3">
           <TripReviews trip={trip} lang={lang} theme={theme} />
-          {userData && userData?.role !== "ADMIN" && (
-            hasActivePurchase ? (
+          {userData &&
+            userData?.role !== "ADMIN" &&
+            (hasActivePurchase ? (
               <CancelButton trip={trip} theme={theme} />
             ) : (
-              <PurchaseButton trip={trip} theme={theme} />
-            )
-          )}
+              <>
+                <PurchaseButton trip={trip} theme={theme} />
+                <Link
+                  href="/privacyPolicy"
+                  className="fixed bottom-21 left-6 flex-row rounded-[8px] px-6 py-3 bg-transparent backdrop-blur-md 
+                   border border-[#C2A878] text-[#C2A878] font-semibold tracking-wide 
+                   hover:bg-[#C2A878]/20 hover:text-white transition-all duration-300 
+                   shadow-lg cursor-pointer"
+                >
+                  Privacy Policy
+                </Link>
+              </>
+            ))}
         </div>
       </div>
 
@@ -147,6 +160,14 @@ console.log(localizedTrip)
       <SignUpButton />
       <LoginModal />
       {userData && <ChatWidget />}
+      {chatUser && (
+        <AdminChatWindow
+          user={chatUser}
+          admin={userData}
+          messages={messages}
+          onClose={() => setChatUser(null)}
+        />
+      )}
     </main>
   );
 }

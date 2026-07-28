@@ -165,7 +165,6 @@ export function MessageProvider({ children }) {
   useEffect(() => {
     if (userData?.id) {
       fetchMessages(userData.id);
-      fetchMessages(userData.id);
     }
   }, [userData?.id]);
 

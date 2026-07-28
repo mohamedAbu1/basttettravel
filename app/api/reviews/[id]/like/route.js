@@ -4,8 +4,7 @@ import { connectDB } from "@/lib/db";
 // ✅ جلب اللايكات
 export async function GET(req, context) {
   try {
-    const { params } = await context; // ✅ لازم await
-    const reviewId = params.id;
+        const reviewId = params.id;
 
     const db = await connectDB();
     const [rows] = await db.query(
@@ -26,7 +25,6 @@ export async function GET(req, context) {
 // ✅ إضافة لايك
 export async function POST(req, context) {
   try {
-    const { params } = await context; // ✅ لازم await
     const reviewId = params.id;
 
     const body = await req.json();

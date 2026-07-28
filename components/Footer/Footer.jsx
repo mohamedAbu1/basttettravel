@@ -101,7 +101,7 @@ const Footer = () => {
         variants={fadeUp}
         className="flex gap-6 mt-6 text-sm font-medium relative z-10"
       >
-        {["Home", "AboutUs", "Tours", "Contact"].map((link) => (
+        {["Home", "AboutUs", "Tours", "Contact","PrivacyPolicy"].map((link) => (
           <Link
             key={link}
             href={`/${link === "Home" ? "" : link.toLowerCase()}`}

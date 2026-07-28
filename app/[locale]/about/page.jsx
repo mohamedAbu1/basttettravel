@@ -18,11 +18,11 @@ import { useAuth } from "@/context/AuthContext";
 import Head from "next/head";
 import { useLanguage } from "@/context/LanguageContext";
 import { aboutMetadata } from "@/lib/metadata/about";
-
+import AdminChatWindow from "@/components/layout/AdminChatWindow";
 
 export default function AboutPage() {
   const { theme } = useTheme();
-  const { user } = useAuth(); // ✅ جلب المستخدم الحالي
+  const { userData, chatUser, setChatUser } = useAuth(); // ✅ جلب المستخدم الحالي
   const { lang } = useLanguage();
   const meta = aboutMetadata[lang] || aboutMetadata.en;
   return (
@@ -32,9 +32,7 @@ export default function AboutPage() {
         <meta name="description" content={meta.description} />
         <meta name="keywords" content={meta.keywords} />
       </Head>
-      <main
-       className="relative flex flex-col min-h-screen justify-center items-center "
-      >
+      <main className="relative flex flex-col min-h-screen justify-center items-center ">
         <Header />
         <EgyptianBackground />
 
@@ -48,7 +46,15 @@ export default function AboutPage() {
         <Footer />
         <SignUpButton />
         <LoginModal />
-        {user && <ChatWidget />}
+        {userData && <ChatWidget />}
+        {chatUser && (
+          <AdminChatWindow
+            user={chatUser}
+            admin={userData}
+            messages={messages}
+            onClose={() => setChatUser(null)}
+          />
+        )}
       </main>
     </>
   );
