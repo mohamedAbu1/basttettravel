@@ -31,9 +31,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
 
   const handleClick = () => {
     const queryObj = {
-      city: selectedCities.length
-        ? selectedCities.map((c) => c.name)
-        : ["all"],
+      city: selectedCities.length ? selectedCities.map((c) => c.name) : ["all"],
       category: selectedCategories.length
         ? selectedCategories.map((c) => c.name)
         : ["all"],
@@ -75,6 +73,11 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
         : [...prev, cat],
     );
   };
+  const isFormValid =
+    selectedCities.length > 0 &&
+    selectedCategories.length > 0 &&
+    arrival &&
+    departure;
 
   const CustomInput = ({ value, onClick }) => (
     <div
@@ -168,11 +171,13 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
       </div>
 
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={isFormValid ? { scale: 1.05 } : {}}
+        whileTap={isFormValid ? { scale: 0.95 } : {}}
         onClick={handleClick}
+        disabled={!isFormValid} // ✅ تعطيل الزر لو الفورم ناقص
         className={`w-full rounded-[6px] px-6 py-3 font-semibold tracking-wide cursor-pointer 
-              transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
+    transition-all duration-300 shadow-lg 
+    ${isFormValid ? theme.buttonPrimary : "bg-gray-400 cursor-not-allowed"}`}
         style={{
           color: `${theme.subText}`,
           border: `2px solid ${theme.logoBorder}`,

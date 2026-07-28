@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { usePathname, useRouter } from "next/navigation";
 import { useNotifications } from "@/context/NotificationsContext";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import MailIcon from "@mui/icons-material/Mail"; // ✅ أيقونة الرسائل
+import MailIcon from "@mui/icons-material/Mail";
 import Badge from "@mui/material/Badge";
 import { useState } from "react";
 import { useMessages } from "@/context/MessageContext";
@@ -15,31 +15,57 @@ import NotificationsDrawer from "./components/NotificationsDrawer";
 import MessagesDrawer from "./components/MessagesDrawer";
 
 export default function RightBar({ scrolled }) {
-  const { userData, setChatUser, setChatMessages } = useAuth();
+  const { userData, setChatUser } = useAuth();
   const { themeName, theme } = useTheme();
   const { t } = useTranslation("header");
-  const { notifications, markAsRead, deleteNotification } = useNotifications();
-  const { fetchUserMessagesById } = useMessages();
+  const { notifications, markAsRead } = useNotifications();
+  const { fetchUserMessagesById, setMessages } = useMessages();
   const router = useRouter();
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
+
+  const now = Date.now();
+  const twelveHours = 12 * 60 * 60 * 1000;
+  const twoDays = 2 * 24 * 60 * 60 * 1000;
+
   const isHome =
     segments.length === 0 ||
     (segments.length === 1 &&
       ["en", "fr", "de", "it", "es", "pt"].includes(segments[0]));
 
-  // ✅ إشعارات عامة
-  const unreadCount = notifications.filter(
-    (n) => n.is_read === 0 && n.event_type !== "message",
+  // ✅ إشعارات عامة (فلترة + ترتيب)
+  const filteredNotifications = notifications
+    .filter((n) => {
+      const createdTime = new Date(n.created_at).getTime();
+      return now - createdTime < twoDays; // إشعار أقل من يومين
+    })
+    .sort((a, b) => {
+      if (a.is_read === 0 && b.is_read !== 0) return -1;
+      if (a.is_read !== 0 && b.is_read === 0) return 1;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+  const unreadCount = filteredNotifications.filter(
+    (n) => n.is_read === 0 && n.event_type !== "message"
   ).length;
+
   const [open, setOpen] = useState(false);
-  // ✅ إشعارات الرسائل فقط
-  const messageNotifications = notifications.filter(
-    (n) => n.event_type === "message",
-  );
-  const unreadMessages = messageNotifications.filter(
-    (n) => n.is_read === 0,
-  ).length;
+
+  // ✅ إشعارات الرسائل (فلترة + ترتيب)
+  const messageNotifications = notifications
+    .filter((n) => n.event_type === "message")
+    .filter((n) => {
+      if (n.is_read === 0) return true; // غير مقروءة تبقى
+      const createdTime = new Date(n.created_at).getTime();
+      return now - createdTime < twelveHours; // مقروءة لكن أقل من 12 ساعة
+    })
+    .sort((a, b) => {
+      if (a.is_read === 0 && b.is_read !== 0) return -1;
+      if (a.is_read !== 0 && b.is_read === 0) return 1;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+  const unreadMessages = messageNotifications.filter((n) => n.is_read === 0).length;
   const [openMessages, setOpenMessages] = useState(false);
 
   const handleNotificationClick = (notification) => {
@@ -50,40 +76,26 @@ export default function RightBar({ scrolled }) {
     }
 
     if (notification.event_type === "review" && notification.trip_id) {
-      router.push(
-        `/trips/${notification.trip_id}?highlightReview=${notification.review_id}`,
-      );
+      router.push(`/trips/${notification.trip_id}?highlightReview=${notification.review_id}`);
     }
 
     if (notification.event_type === "review_like" && notification.trip_id) {
-      router.push(
-        `/trips/${notification.trip_id}?highlightReview=${notification.review_id}`,
-      );
+      router.push(`/trips/${notification.trip_id}?highlightReview=${notification.review_id}`);
     }
   };
 
- const handleMessageClick = async (notification) => {
-  console.log("🔔 تم الضغط على إشعار المستخدم:", notification);
+  const handleMessageClick = async (notification) => {
+    await markAsRead(notification.id);
 
-  // ✅ تحديث حالة الإشعار إلى مقروء
-  await markAsRead(notification.id);
+    setChatUser({
+      id: notification.user_id,
+      name: notification.user_name,
+      image: notification.user_image,
+    });
 
-  // ✅ تعيين المستخدم الحالي
-  setChatUser({
-    id: notification.user_id,
-    name: notification.user_name,
-    image: notification.user_image,
-  });
-  console.log("👤 المستخدم المحدد id:", notification.user_id);
-
-  // ✅ جلب الرسائل
-  const messages = await fetchUserMessagesById(notification.user_id);
-  console.log("✅ الرسائل المسترجعة:", messages);
-
-  setChatMessages(messages);
-  console.log("💾 تم تخزين الرسائل في chatMessages:", messages);
-};
-
+    const messages = await fetchUserMessagesById(notification.user_id);
+    setMessages(messages);
+  };
 
   return (
     <div className="flex items-center gap-4">
@@ -100,16 +112,16 @@ export default function RightBar({ scrolled }) {
                 themeName === "dark"
                   ? "#fff"
                   : !isHome
-                    ? "#333"
-                    : scrolled
-                      ? "#333"
-                      : "#fff",
+                  ? "#333"
+                  : scrolled
+                  ? "#333"
+                  : "#fff",
             }}
           />
         </Badge>
       )}
 
-      {/* ✅ أيقونة الرسائل تظهر فقط لو فيه رسائل */}
+      {/* ✅ أيقونة الرسائل */}
       {userData?.role === "ADMIN" && messageNotifications.length > 0 && (
         <Badge badgeContent={unreadMessages} color="error">
           <MailIcon
@@ -120,32 +132,30 @@ export default function RightBar({ scrolled }) {
                 themeName === "dark"
                   ? "#fff"
                   : !isHome
-                    ? "#333"
-                    : scrolled
-                      ? "#333"
-                      : "#fff",
+                  ? "#333"
+                  : scrolled
+                  ? "#333"
+                  : "#fff",
             }}
           />
         </Badge>
       )}
 
-      {/* Drawer للإشعارات العامة */}
-
+      {/* Drawers */}
       <NotificationsDrawer
         open={open}
         onClose={() => setOpen(false)}
         themeName={themeName}
         theme={theme}
         handleNotificationClick={handleNotificationClick}
+        notifications={filteredNotifications}
       />
-
-      {/* Drawer للرسائل */}
 
       <MessagesDrawer
         open={openMessages}
         onClose={() => setOpenMessages(false)}
         themeName={themeName}
-                theme={theme}
+        theme={theme}
         messageNotifications={messageNotifications}
         handleMessageClick={handleMessageClick}
       />
@@ -154,9 +164,7 @@ export default function RightBar({ scrolled }) {
         <div className="hidden lg:flex items-center gap-2">
           <img
             alt={userData?.name || "User Avatar"}
-            src={
-              userData?.avatar_url || userData?.image || "/default-avatar.png"
-            }
+            src={userData?.avatar_url || userData?.image || "/default-avatar.png"}
             width={40}
             height={40}
             style={{ border: "2px solid #d4af37", borderRadius: "50%" }}
@@ -170,10 +178,10 @@ export default function RightBar({ scrolled }) {
                 themeName === "dark"
                   ? "#fff"
                   : !isHome
-                    ? "#333"
-                    : scrolled
-                      ? "#333"
-                      : "#fff",
+                  ? "#333"
+                  : scrolled
+                  ? "#333"
+                  : "#fff",
             }}
           >
             {userData?.name}

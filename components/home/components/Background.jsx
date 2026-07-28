@@ -16,11 +16,11 @@ export default function Background() {
   ];
 
   // ✅ صور خاصة بالـ Dark Mode للشاشات الصغيرة والمتوسطة
-  const darkImagesSmall = [
-    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-insid__39338.webp",
-    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-inspi__39335.webp",
-    "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-insid__39337.webp",
-  ];
+  // const darkImagesSmall = [
+  //   "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-insid__39338.webp",
+  //   "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-inspi__39335.webp",
+  //   "/HomePageImage/magnific__create-an-ultrarealistic-8k-background-image-insid__39337.webp",
+  // ];
 
   // ✅ صور خاصة بالـ Light Mode
   const lightImages = [
@@ -32,12 +32,7 @@ export default function Background() {
   ];
 
   // ✅ تحديد الصور حسب الثيم وحجم الشاشة
-  const images =
-    themeName === "dark"
-      ? isLargeScreen
-        ? darkImagesLarge
-        : darkImagesSmall
-      : lightImages;
+  const images = themeName === "dark" ? darkImagesLarge : lightImages;
 
   useEffect(() => {
     const handleResize = () => {

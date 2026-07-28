@@ -18,7 +18,7 @@ export default function ChatInput({
 
   return (
     <div className={`p-3 border-t flex gap-2 items-center ${theme.border}`}>
-      <label className="cursor-pointer">
+      {/* <label className="cursor-pointer">
         <FaImage size={20} className={theme.icon} />
         <input
           type="file"
@@ -26,7 +26,7 @@ export default function ChatInput({
           onChange={(e) => { const file = e.target.files[0]; if (file) { handleSendImage(file); } }}
           className="hidden"
         />
-      </label>
+      </label> */}
       <input
         type="text"
         placeholder="Type your message..."

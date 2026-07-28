@@ -7,65 +7,81 @@ import AdminChatInput from "./components/AdminChatInput";
 import EgyptianBackground from "./EgyptianBackground";
 import { useMessages } from "@/context/MessageContext";
 import { FaTimes } from "react-icons/fa";
+import { useChat } from "@/context/ChatContext";
+
 export default function AdminChatWindow({ user, admin, messages, onClose }) {
   const { theme, themeName } = useTheme();
   const [text, setText] = useState("");
-  const { setMessages, sendMessage, setActiveChatUserId } = useMessages(); // ✅ استدعاء setMessages من الـ context
-  // ✅ الرسائل اللي جاية من الـ props مباشرة
-  useEffect(() => {
-    // عند فتح نافذة الشات لمستخدم معين
-    setActiveChatUserId(user.id);
+  const [adminTyping, setAdminTyping] = useState(false);
 
-    // عند إغلاق النافذة أو الانتقال لمستخدم آخر
+  const { setMessages, setActiveChatUserId } = useMessages();
+
+  // ✅ تحديد المستخدم النشط
+  useEffect(() => {
+    setActiveChatUserId(user.id);
     return () => setActiveChatUserId(null);
   }, [user.id]);
+
+  // ✅ استعلام حالة الكتابة للأدمن
+  useEffect(() => {
+    if (!user?.id) return;
+    const interval = setInterval(async () => {
+      const res = await fetch(`/api/typing?userId=${user.id}`);
+      const data = await res.json();
+      setAdminTyping(data.adminTyping || false);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [user?.id]);
+
+  // ✅ إرسال رسالة نصية
   const handleSend = async () => {
     if (text.trim() !== "") {
-      await sendMessage({
-        user_id: user.id,
-        user_name: "Basttet Travel",
-        user_image: admin?.avatar_url || admin?.image || "/default-avatar.png",
-        content: text,
-        sender_type: "admin",
-        status: "sent",
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user.id,
+          user_name: "Basttet Travel",
+          user_image:
+            admin?.avatar_url || admin?.image || "/default-avatar.png",
+          content: text,
+          sender_type: "admin",
+          status: "sent",
+          admin_id: admin?.id || "SYSTEM", // ✅ قيمة افتراضية
+        }),
       });
+
+      const data = await res.json();
+      setMessages((prev) => [...prev, data]); // ✅ أضف الرسالة مباشرة
+      setText("");
+
       setText("");
     }
   };
 
+  // ✅ إرسال صورة
   const handleSendImage = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-
-    // ✅ لازم تبعت بيانات المستخدم مع الصورة
-    formData.append("user_id", userData?.id);
-    formData.append("user_name", userData?.name || "Unknown User");
+    formData.append("user_id", user.id);
+    formData.append("user_name", "Basttet Travel");
     formData.append(
       "user_image",
-      userData?.avatar_url || userData?.image || "/default-avatar.png",
+      admin?.avatar_url || admin?.image || "/default-avatar.png",
     );
-    formData.append("sender_type", "user");
-    formData.append("admin_id", "SYSTEM"); // أو أي قيمة مناسبة
+    formData.append("sender_type", "admin");
+    formData.append("admin_id", admin?.id || "SYSTEM");
 
     const res = await fetch("/api/messages", {
       method: "POST",
       body: formData,
     });
-
     const data = await res.json();
-    if (!data.url) return;
 
-    // ✅ الرسالة الجديدة تدخل في الـ context
-    await sendMessage({
-      user_id: userData?.id,
-      user_name: userData?.name,
-      user_image:
-        userData?.avatar_url || userData?.image || "/default-avatar.png",
-      content: data.url, // الرابط النهائي للصورة
-      sender_type: "user",
-      status: "sent",
-    });
+    if (!data.content) return;
+    setMessages((prev) => [...prev, data]); // ✅ إضافة الرسالة محليًا
   };
+
   return (
     <AnimatePresence>
       {user && (
@@ -100,10 +116,9 @@ export default function AdminChatWindow({ user, admin, messages, onClose }) {
           </div>
 
           <AdminChatMessages
-            messages={messages.filter((msg) =>
-              messages.filter((msg) => msg.user_id === user.id),
-            )}
+            messages={messages.filter((msg) => msg.user_id === user.id)}
             themeName={themeName}
+            adminTyping={adminTyping}
           />
 
           <AdminChatInput

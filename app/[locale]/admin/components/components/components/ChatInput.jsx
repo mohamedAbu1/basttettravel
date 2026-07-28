@@ -28,7 +28,7 @@ export default function ChatInput({
     <div className={`p-3 border-t ${theme.border} flex flex-col gap-2`}>
       <div className="flex gap-2 items-center">
         {/* زر رفع صورة كأيقونة */}
-        <label
+        {/* <label
           className={`flex items-center justify-center w-10 h-10 rounded-md cursor-pointer transition-all duration-300
     ${
       themeName === "dark"
@@ -44,7 +44,7 @@ export default function ChatInput({
             onChange={handleImageUpload}
             className="hidden"
           />
-        </label>
+        </label> */}
 
         {/* إدخال النص */}
         <input

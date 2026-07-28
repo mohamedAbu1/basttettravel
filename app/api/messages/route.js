@@ -14,20 +14,30 @@ export async function POST(req) {
       const file = formData.get("file");
       if (!file) return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
 
+      // اسم فريد للصورة
       const fileName = `${Date.now()}-${file.name}`;
-      const baseUrl = `https://wasettravel.com/images/${fileName}`;
+      const baseUrl = `https://basttettravel.com/iamges/${fileName}`; // صححت iamges → iamges
 
-      let uploadPath;
-      if (process.env.NODE_ENV === "production") {
-        uploadPath = `/home/u984684626/public_html/images/${fileName}`;
-      } else {
-        uploadPath = path.join(process.cwd(), "public/images", fileName);
-      }
+      // مسار المشروع المحلي
+      const projectPath = path.join(process.cwd(), "public/iamges", fileName);
 
-      await fs.promises.mkdir(path.dirname(uploadPath), { recursive: true });
+      // مسار الاستضافة
+      const hostingPath = `/home/u984684626/public_html/iamges/${fileName}`;
+
+      // تجهيز المجلدات
+      await fs.promises.mkdir(path.dirname(projectPath), { recursive: true });
+      await fs.promises.mkdir(path.dirname(hostingPath), { recursive: true });
+
+      // تحويل الملف إلى buffer
       const buffer = Buffer.from(await file.arrayBuffer());
-      await fs.promises.writeFile(uploadPath, buffer);
 
+      // حفظ نسخة في المشروع
+      await fs.promises.writeFile(projectPath, buffer);
+
+      // حفظ نسخة في الاستضافة
+      await fs.promises.writeFile(hostingPath, buffer);
+
+      // باقي البيانات
       const user_id = formData.get("user_id");
       if (!user_id) return NextResponse.json({ error: "user_id is required" }, { status: 400 });
 
@@ -59,7 +69,6 @@ export async function POST(req) {
         status: "sent",
         created_at: new Date(),
       };
-
 
       return NextResponse.json(newMessage, { status: 201 });
     }
@@ -93,7 +102,6 @@ export async function POST(req) {
       status: "sent",
       created_at: new Date(),
     };
-
 
     return NextResponse.json(newMessage, { status: 201 });
   } catch (err) {

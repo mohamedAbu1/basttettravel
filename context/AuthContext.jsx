@@ -26,7 +26,6 @@ export function AuthProvider({ children }) {
   const { handleSignUpClose } = useData();
   const { updateValue, getEncodedQuery } = useQueryFilters();
 
-  // ✅ جلب بيانات المستخدم من السيرفر
   const fetchUserFromServer = async () => {
     try {
       const res = await axios.get("/api/auth/me", { withCredentials: true });
@@ -36,10 +35,11 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.warn("⚠️ Token expired or invalid, trying refresh...");
       try {
-        await axios.post("/api/auth/refresh", {}, { withCredentials: true });
-        const retry = await axios.get("/api/auth/me", {
-          withCredentials: true,
-        });
+        const retry = await axios.post(
+          "/api/auth/refresh",
+          {},
+          { withCredentials: true },
+        );
         setUserToken(retry.data.user);
         setIsLoggedIn(true);
         console.log("🔄 Token refreshed, user:", retry.data.user);
@@ -183,7 +183,7 @@ export function AuthProvider({ children }) {
   };
 
   const userData = user || session?.user;
-
+  console.log("object", userData);
   return (
     <AuthContext.Provider
       value={{

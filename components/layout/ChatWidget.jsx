@@ -28,6 +28,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     setBookingMode,
     setMessageses,
   } = useChat();
+  const [hasNewAdminMessage, setHasNewAdminMessage] = useState(false);
 
   // ✅ جلب رسائل المستخدم
   useEffect(() => {
@@ -42,6 +43,8 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
       messages.forEach((msg) => {
         if (msg.sender_type === "admin" && msg.status === "sent") {
           markMessageSeen(msg.id);
+          setHasNewAdminMessage(true);
+          setOpen(true); // ✅ فتح الدردشة تلقائيًا
         }
       });
     }
@@ -95,7 +98,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     });
 
     const data = await res.json();
-    if (!data.url) return;
+    if (!data.content) return;
 
     // ✅ الرسالة الجديدة تدخل في الـ context
     await sendMessage({
@@ -103,7 +106,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
       user_name: userData?.name,
       user_image:
         userData?.avatar_url || userData?.image || "/default-avatar.png",
-      content: data.url, // الرابط النهائي للصورة
+      content: data.content, // الرابط النهائي للصورة
       sender_type: "user",
       status: "sent",
     });
@@ -114,10 +117,13 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
       {!isAdmin && (
         <motion.button
           style={{ cursor: "pointer" }}
-          onClick={() => setOpen(!open)}
+          onClick={() => {
+            setOpen(!open);
+            setHasNewAdminMessage(false); // ✅ إلغاء التنبيه عند الفتح اليدوي
+          }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg flex items-center justify-center ${theme.buttonPrimary}`}
+          className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg flex items-center justify-center  ${hasNewAdminMessage ? "bg-red-500" : `${theme.buttonPrimary}`}`}
         >
           <FaComments size={22} color="#fff" />
         </motion.button>

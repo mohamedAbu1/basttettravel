@@ -23,6 +23,24 @@ export default function NotificationsDrawer({
 }) {
   const { notifications, deleteNotification } = useNotifications();
 
+  const now = Date.now();
+  const twoDays = 2 * 24 * 60 * 60 * 1000; // يومين بالمللي ثانية
+
+  // ✅ فلترة وترتيب الإشعارات
+  const filteredNotifications = notifications
+    .filter((n) => n.event_type !== "message")
+    .filter((n) => {
+      const createdTime = new Date(n.created_at).getTime();
+      return now - createdTime < twoDays; // احتفظ فقط بالإشعارات الأقل من يومين
+    })
+    .sort((a, b) => {
+      // غير مقروءة أولاً
+      if (a.is_read === 0 && b.is_read !== 0) return -1;
+      if (a.is_read !== 0 && b.is_read === 0) return 1;
+      // لو الاتنين نفس الحالة، رتب حسب التاريخ (الأحدث أولاً)
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
   return (
     <Drawer
       anchor="right"
@@ -45,128 +63,120 @@ export default function NotificationsDrawer({
         </Typography>
         <Divider sx={{ mb: 2 }} />
         <List>
-          {notifications
-            .filter((n) => n.event_type !== "message")
-            .map((n) => (
-              <Fade in={true} timeout={500} key={n.id}>
-                <Box sx={{ mb: 3 }}>
-                  {/* Divider فوق الكارد */}
-                  <DividerWithIcon />
+          {filteredNotifications.map((n) => (
+            <Fade in={true} timeout={500} key={n.id}>
+              <Box sx={{ mb: 3 }}>
+                <DividerWithIcon />
 
-                  <ListItem
-                    button
-                    onClick={() => handleNotificationClick(n)}
-                    sx={{
-                      alignItems: "flex-start",
+                <ListItem
+                  button
+                  onClick={() => handleNotificationClick(n)}
+                  sx={{
+                    alignItems: "flex-start",
+                    backgroundColor:
+                      n.is_read === 1
+                        ? "transparent"
+                        : themeName === "dark"
+                        ? "rgba(255,255,255,0.08)"
+                        : "rgba(0,0,0,0.05)",
+                    borderRadius: "12px",
+                    padding: "12px",
+                    boxShadow: n.is_read
+                      ? "none"
+                      : "0 2px 6px rgba(0,0,0,0.15)",
+                    transition: "0.3s",
+                    "&:hover": {
                       backgroundColor:
-                        n.is_read === 1
-                          ? "transparent"
-                          : themeName === "dark"
-                            ? "rgba(255,255,255,0.08)"
-                            : "rgba(0,0,0,0.05)",
-                      borderRadius: "12px",
-                      padding: "12px",
-                      boxShadow: n.is_read
-                        ? "none"
-                        : "0 2px 6px rgba(0,0,0,0.15)",
-                      transition: "0.3s",
-                      "&:hover": {
-                        backgroundColor:
-                          themeName === "dark" ? "#333" : "#eaeaea",
-                      },
-                    }}
-                  >
-                    {/* صورة المستخدم */}
-                    <Avatar
-                      src={n.user_image}
-                      alt={n.user_name}
-                      sx={{ width: 48, height: 48, mr: 2 }}
-                    />
+                        themeName === "dark" ? "#333" : "#eaeaea",
+                    },
+                  }}
+                >
+                  {/* صورة المستخدم */}
+                  <Avatar
+                    src={n.user_image}
+                    alt={n.user_name}
+                    sx={{ width: 48, height: 48, mr: 2 }}
+                  />
 
-                    {/* النصوص */}
-                    <Box sx={{ flex: 1 }}>
-                      <ListItemText
-                        primary={
+                  {/* النصوص */}
+                  <Box sx={{ flex: 1 }}>
+                    <ListItemText
+                      primary={
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            fontWeight: n.is_read ? "normal" : "bold",
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {n.user_name}
+                        </Typography>
+                      }
+                      secondary={
+                        <>
                           <Typography
-                            variant="subtitle1"
+                            variant="body2"
+                            className="text-gradient"
                             sx={{
-                              fontWeight: n.is_read ? "normal" : "bold",
-                              textTransform: "capitalize",
-                              fontWidth: 700,
+                              fontStyle: "italic",
+                              fontWeight: 500,
+                              filter: `drop-shadow(0 0 4px ${theme.logoBorder || "#C2A878"})`,
                             }}
                           >
-                            {n.user_name}
+                            {n.user_email}
                           </Typography>
-                        }
-                        secondary={
-                          <>
-                            {/* البريد الإلكتروني */}
-                            <Typography
-                              variant="body2"
-                              className="text-gradient"
-                              sx={{
-                                fontStyle: "italic",
-                                fontWeight: 500,
-                                filter: `drop-shadow(0 0 4px ${theme.logoBorder || "#C2A878"})`,
-                              }}
-                            >
-                              {n.user_email}
-                            </Typography>
 
-                            {/* الرسالة */}
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                mt: 0.5,
-                                fontWeight: "bold",
-                                letterSpacing: "0.5px",
-                                background: "var(--text-gradient)",
-                                WebkitBackgroundClip: "text",
-                                WebkitTextFillColor: "transparent",
-                                filter: `drop-shadow(0 0 6px ${theme.logoBorder || "#C2A878"})`,
-                              }}
-                            >
-                              {n.message}
-                            </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              mt: 0.5,
+                              fontWeight: "bold",
+                              letterSpacing: "0.5px",
+                              background: "var(--text-gradient)",
+                              WebkitBackgroundClip: "text",
+                              WebkitTextFillColor: "transparent",
+                              filter: `drop-shadow(0 0 6px ${theme.logoBorder || "#C2A878"})`,
+                            }}
+                          >
+                            {n.message}
+                          </Typography>
 
-                            {/* التاريخ */}
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                mt: 0.5,
-                                fontWeight: 400,
-                                opacity: 0.8,
-                                background: "var(--text-gradient)",
-                                WebkitBackgroundClip: "text",
-                                WebkitTextFillColor: "transparent",
-                                filter: `drop-shadow(0 0 3px ${theme.logoBorder || "#C2A878"})`,
-                              }}
-                            >
-                              {new Date(n.created_at).toLocaleString("en-GB", {
-                                timeZone: "Africa/Cairo",
-                              })}
-                            </Typography>
-                          </>
-                        }
-                      />
-                    </Box>
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              mt: 0.5,
+                              fontWeight: 400,
+                              opacity: 0.8,
+                              background: "var(--text-gradient)",
+                              WebkitBackgroundClip: "text",
+                              WebkitTextFillColor: "transparent",
+                              filter: `drop-shadow(0 0 3px ${theme.logoBorder || "#C2A878"})`,
+                            }}
+                          >
+                            {new Date(n.created_at).toLocaleString("en-GB", {
+                              timeZone: "Africa/Cairo",
+                            })}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </Box>
 
-                    {/* زر الحذف */}
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => deleteNotification(n.id)}
-                      sx={{ color: "red", ml: 1 }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItem>
+                  {/* زر الحذف */}
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => deleteNotification(n.id)}
+                    sx={{ color: "red", ml: 1 }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItem>
 
-                  {/* Divider تحت الكارد */}
-                  <DividerWithIcon />
-                </Box>
-              </Fade>
-            ))}
+                <DividerWithIcon />
+              </Box>
+            </Fade>
+          ))}
         </List>
       </div>
     </Drawer>

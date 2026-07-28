@@ -12,7 +12,6 @@ export function MessageProvider({ children }) {
 
   const [activeChatUserId, setActiveChatUserId] = useState(null);
 
-
   // ✅ جلب رسائل المستخدم الحالي
   const fetchMessages = async (userId) => {
     setLoading(true);
@@ -24,7 +23,11 @@ export function MessageProvider({ children }) {
         return;
       }
       const data = await res.json();
-      setMessages(Array.isArray(data) ? data : []);
+      setMessages((prev) => {
+        const ids = new Set(prev.map((m) => m.id));
+        const merged = [...prev, ...data.filter((m) => !ids.has(m.id))];
+        return merged;
+      });
     } catch (err) {
       console.error("❌ Error fetching messages:", err.message);
     } finally {
@@ -80,8 +83,6 @@ export function MessageProvider({ children }) {
       status: "pending",
     };
     setMessages((prev) => [...prev, tempMessage]);
-
-   
 
     try {
       const res = await fetch("/api/messages", {
@@ -161,16 +162,12 @@ export function MessageProvider({ children }) {
     }
   };
 
-useEffect(() => {
-  if (userData?.id) {
-    fetchMessages(userData.id);
-    const interval = setInterval(() => {
+  useEffect(() => {
+    if (userData?.id) {
       fetchMessages(userData.id);
-    }, 3000);
-    return () => clearInterval(interval);
-  }
-}, [userData?.id]);
-
+      fetchMessages(userData.id);
+    }
+  }, [userData?.id]);
 
   return (
     <MessageContext.Provider
@@ -178,6 +175,7 @@ useEffect(() => {
         messages,
         loading,
         fetchMessages,
+        setMessages,
         sendMessage,
         markMessageSeen,
         fetchUserMessagesById,

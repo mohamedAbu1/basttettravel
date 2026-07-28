@@ -20,15 +20,16 @@ import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
 import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
 // import { useQueryFilters } from "@/context/QueryContext";
-
+import { useMessages } from "@/context/MessageContext";
 export default function Home() {
-  const { userData,chatUser ,setChatUser, chatMessages } = useAuth(); // ✅ جلب المستخدم الحالي
+  const { messages, fetchUserMessagesById, sendMessage } = useMessages();
+  const { userData, chatUser, setChatUser } = useAuth();
   const { lang } = useLanguage();
   const meta = homeMetadata[lang] || homeMetadata.en;
 
   return (
     <>
-      <Head >
+      <Head>
         <title>{meta.title}</title>
         <meta name="description" content={meta.description} />
         <meta name="keywords" content={meta.keywords} />
@@ -76,8 +77,13 @@ export default function Home() {
         {userData && <AdminDashboardButton />}
 
         <CurrencySelector />
-         {chatUser && (
-          <AdminChatWindow user={chatUser} admin={userData} messages={chatMessages} onClose={() => setChatUser(null)} />
+        {chatUser && (
+          <AdminChatWindow
+            user={chatUser}
+            admin={userData}
+            messages={messages}
+            onClose={() => setChatUser(null)}
+          />
         )}
         <ScrollToTopButton />
       </main>
