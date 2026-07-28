@@ -15,6 +15,7 @@ const DarkTheme = {
 
   // العناوين الثانوية (بني حجري فاتح)
   heading: "text-[#A68B5B] font-semibold", 
+  pictext: "text-[#FFFFFF] font-semibold", 
 
   // الكروت الزجاجية الداكنة
   card: "bg-[rgba(35,35,35,0.85)] backdrop-blur-[14px] rounded-[18px] border border-[#C2A878]",

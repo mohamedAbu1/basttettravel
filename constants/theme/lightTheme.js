@@ -15,6 +15,8 @@ const LightTheme = {
   text: "text-[#1A4D5C]",
   // العناوين الثانوية
   heading: "text-[#1A4D5C] font-semibold", // أزرق محايد أنيق
+    pictext: "text-[#FFFFFF] font-semibold", 
+
 
   // الكروت الزجاجية
   card: "bg-[rgba(255,255,255,0.15)] backdrop-blur-[16px] rounded-[16px] border border-[#C2A878]/60 shadow-lg",

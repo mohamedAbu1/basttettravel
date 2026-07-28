@@ -29,7 +29,7 @@ export default function HeroSection({ themeName, theme }) {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.2 }}
-          className={`${theme.heading} mt-4 text-4xl md:text-4xl`}
+          className={`${theme.pictext} mt-4 text-4xl md:text-4xl`}
         >
          Payment And Cancellation Policy
         </motion.h2>
