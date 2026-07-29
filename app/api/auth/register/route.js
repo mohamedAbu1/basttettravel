@@ -2,6 +2,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 // ✅ روابط الصور المخزنة على هوستنجر
 const maleAvatars = [
