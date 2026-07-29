@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// ✅ روابط الصور المخزنة على هوستنجر
+// ✅ روابط الصور المخزنة على هوستنجر (iamges)
 const maleAvatars = [
   "https://basttettravel.com/iamges/3d-avatar-cartoon-character_113255-93687.webp",
   "https://basttettravel.com/iamges/blds.webp",
@@ -42,31 +42,44 @@ function getAvatarByGender(gender) {
 
 export async function POST(request) {
   try {
+    console.log("🔵 [API REGISTER] استلام طلب جديد");
+
     const db = await connectDB();
+    console.log("🔵 [API REGISTER] الاتصال بقاعدة البيانات ناجح");
+
     const body = await request.json();
+    console.log("🔵 [API REGISTER] البيانات المستلمة:", body);
+
     const { name, email, password, gender } = body;
 
     // ✅ تحقق من البريد إذا كان موجود مسبقًا
     const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    console.log("🔵 [API REGISTER] نتيجة البحث عن البريد:", existing);
+
     if (existing.length > 0) {
+      console.warn("⚠️ [API REGISTER] البريد مستخدم بالفعل");
       return NextResponse.json({ error: "البريد مستخدم بالفعل" }, { status: 400 });
     }
 
     // ✅ تشفير كلمة المرور
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("🔵 [API REGISTER] كلمة المرور مشفرة");
 
     // ✅ اختيار صورة عشوائية
     const avatarUrl = getAvatarByGender(gender);
+    console.log("🔵 [API REGISTER] الصورة المختارة:", avatarUrl);
 
     // ✅ إدخال المستخدم في قاعدة البيانات
     await db.query(
       "INSERT INTO users (id, name, email, password, gender, role, avatar_url, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, NOW())",
       [name, email, hashedPassword, gender, "USER", avatarUrl],
     );
+    console.log("✅ [API REGISTER] المستخدم أُضيف لقاعدة البيانات");
 
     // ✅ جلب بيانات المستخدم الجديد
     const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
     const newUser = rows[0];
+    console.log("🔵 [API REGISTER] المستخدم الجديد:", newUser);
 
     // ✅ إنشاء JWT token
     const accessToken = jwt.sign(
@@ -74,6 +87,7 @@ export async function POST(request) {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
+    console.log("🔵 [API REGISTER] التوكين تم إنشاؤه");
 
     return NextResponse.json(
       {
@@ -91,7 +105,7 @@ export async function POST(request) {
       { status: 201 }
     );
   } catch (e) {
-    console.error(e);
+    console.error("❌ [API REGISTER] خطأ داخلي:", e);
     return NextResponse.json({ error: "خطأ داخلي" }, { status: 500 });
   }
 }

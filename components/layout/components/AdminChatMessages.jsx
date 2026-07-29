@@ -5,7 +5,11 @@ import { FaClock, FaDownload, FaExpand, FaComments } from "react-icons/fa";
 
 
 export default function AdminChatMessages({ messages, themeName }) {
-
+ useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-3">
       {messages.map((msg) => (
@@ -45,7 +49,7 @@ export default function AdminChatMessages({ messages, themeName }) {
                 }`}
               >
                 <p className="text-sm font-semibold mb-1 capitalize">
-                  {msg.sender_type === "admin" ? "👑 Basttet Travel" : msg.user_name || "Basttet Travel"}
+                  {msg.sender_type === "admin" ? "👑 Basttet Travel 👑" : msg.user_name || "Basttet Travel"}
                 </p>
 
                 {msg.content.startsWith("https") ? (

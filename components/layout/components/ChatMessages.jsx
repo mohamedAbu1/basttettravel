@@ -1,9 +1,16 @@
+"use client"
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { saveAs } from "file-saver";
 import { FaClock, FaDownload, FaExpand, FaComments } from "react-icons/fa";
+import { useEffect } from "react";
 
 export default function ChatMessages({ messages, adminTyping, themeName }) {
+   useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
   const handleDownload = async (url, id) => {
     const response = await fetch(url);
     const blob = await response.blob();
@@ -67,7 +74,7 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
                 }`}
               >
                 <p className="text-sm font-semibold mb-1 capitalize">
-                  {msg.sender_type === "admin" ? "👑 Basttet Travel" : msg.user_name} 
+                  {msg.sender_type === "admin" ? "👑 Basttet Travel 👑" : msg.user_name} 
                 </p>
 
                 {msg.content.startsWith("http") &&
