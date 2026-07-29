@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { saveAs } from "file-saver";
 import { FaClock, FaDownload, FaExpand, FaComments } from "react-icons/fa";
-import { useEffect } from "react";
+import { useEffect ,useRef} from "react";
 
 export default function ChatMessages({ messages, adminTyping, themeName }) {
+    const messagesEndRef = useRef(null);
    useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
