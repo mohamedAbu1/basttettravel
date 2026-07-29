@@ -60,30 +60,47 @@ export function QueryProvider({ children }) {
   }, [pathname, searchParams]);
 
   const filterTrips = (trips, allCategories, lang) => {
-    return trips.filter((trip) => {
+    let filtered = trips.filter((trip) => {
       if (queryState.city !== "all" && Array.isArray(queryState.city)) {
-        const tripCities = trip.trip_cities?.map(
-          (c) => c.cities?.name?.[lang] || c.city?.name?.[lang] || c.city_name
-        ) || [];
+        const tripCities =
+          trip.trip_cities?.map(
+            (c) =>
+              c.cities?.name?.[lang] || c.city?.name?.[lang] || c.city_name,
+          ) || [];
         if (!tripCities.some((c) => queryState.city.includes(c))) return false;
       }
 
       if (queryState.category !== "all" && Array.isArray(queryState.category)) {
-        const tripCategories = trip.trip_categories?.map((cat) => {
-          const catObj = allCategories.find((c) => c.id === cat.category_id);
-          return catObj?.name?.[lang] || catObj?.name?.en || catObj?.name;
-        }) || [];
-        if (!tripCategories.some((c) => queryState.category.includes(c))) return false;
+        const tripCategories =
+          trip.trip_categories?.map((cat) => {
+            const catObj = allCategories.find((c) => c.id === cat.category_id);
+            return catObj?.name?.[lang] || catObj?.name?.en || catObj?.name;
+          }) || [];
+        if (!tripCategories.some((c) => queryState.category.includes(c)))
+          return false;
       }
 
-      if (queryState.group_price === "Economy" && !(trip.group_price <= 199)) return false;
-      if (queryState.group_price === "Standard" && !(trip.group_price > 199 && trip.group_price <= 599)) return false;
-      if (queryState.group_price === "Luxury" && !(trip.group_price > 600)) return false;
-
-      if (queryState.popular === true && !trip.isPopular) return false;
+      if (queryState.group_price === "Economy" && !(trip.group_price <= 199))
+        return false;
+      if (
+        queryState.group_price === "Standard" &&
+        !(trip.group_price > 199 && trip.group_price <= 599)
+      )
+        return false;
+      if (queryState.group_price === "Luxury" && !(trip.group_price > 600))
+        return false;
 
       return true;
     });
+
+    // ✅ فلترة على الرحلات نفسها
+    if (queryState.popular === true) {
+      filtered = filtered
+        .sort((a, b) => (b.purchase_count || 0) - (a.purchase_count || 0))
+        .slice(0, 9);
+    }
+
+    return filtered;
   };
 
   return (

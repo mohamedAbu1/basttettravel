@@ -42,19 +42,13 @@ function getAvatarByGender(gender) {
 export async function POST(request) {
   try {
     const db = await connectDB();
-
     const body = await request.json();
     const { name, email, password, gender } = body;
 
     // ✅ تحقق من البريد إذا كان موجود مسبقًا
-    const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
+    const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
     if (existing.length > 0) {
-      return NextResponse.json(
-        { error: "البريد مستخدم بالفعل" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "البريد مستخدم بالفعل" }, { status: 400 });
     }
 
     // ✅ تشفير كلمة المرور
@@ -69,9 +63,31 @@ export async function POST(request) {
       [name, email, hashedPassword, gender, "USER", avatarUrl],
     );
 
+    // ✅ جلب بيانات المستخدم الجديد
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const newUser = rows[0];
+
+    // ✅ إنشاء JWT token
+    const accessToken = jwt.sign(
+      { id: newUser.id, email: newUser.email, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
     return NextResponse.json(
-      { message: "تم إنشاء الحساب بنجاح" },
-      { status: 201 },
+      {
+        user: {
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          gender: newUser.gender,
+          avatar_url: newUser.avatar_url,
+          role: newUser.role,
+          status: newUser.status,
+        },
+        accessToken,
+      },
+      { status: 201 }
     );
   } catch (e) {
     console.error(e);

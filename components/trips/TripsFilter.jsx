@@ -20,7 +20,8 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
   const { themeName } = useTheme();
   const { currency } = usePurchase();
 
-  const { city, category, group_price, popular, updateValue } = useQueryFilters();
+  const { city, category, group_price, popular, updateValue } =
+    useQueryFilters();
 
   if (loading)
     return <p className="text-center text-gray-500">{t("Loading")}</p>;
@@ -163,17 +164,18 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
         <Divider fadeUp={fadeUp} themeName={themeName} />
 
         {/* الأكثر طلباً */}
-        <div>
-          <label className="filter-label cursor-pointer">
-            <FaFire /> {t("MostPopular")}
-            <input
-              type="checkbox"
-              className="ml-2 filter-input"
-              checked={popular === true}
-              onChange={(e) => updateValue("popular", e.target.checked)}
-            />
-          </label>
-        </div>
+<div>
+  <label className="filter-label cursor-pointer">
+    <FaFire /> {t("MostPopular")}
+    <input
+      type="checkbox"
+      className="ml-2 filter-input"
+      checked={popular === true}
+      onChange={(e) => updateValue("popular", e.target.checked)}
+    />
+  </label>
+</div>
+
       </div>
     </motion.aside>
   );

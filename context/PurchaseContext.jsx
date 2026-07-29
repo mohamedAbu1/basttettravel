@@ -51,6 +51,13 @@ export function PurchaseProvider({ children }) {
     }
   };
 
+  // ✅ فلتر خاص لأكثر 9 رحلات شراء
+  const getTopPurchasedTrips = () => {
+    return [...purchases]
+      .sort((a, b) => (b.purchase_count || 0) - (a.purchase_count || 0))
+      .slice(0, 9);
+  };
+
   // ✅ تحميل العملة من localStorage
   useEffect(() => {
     const savedCurrency = localStorage.getItem("currency");
@@ -76,10 +83,11 @@ export function PurchaseProvider({ children }) {
         purchases,
         loading,
         purchaseTrip,
-        cancelTrip,   // ✅ أضفناها هنا
+        cancelTrip,
         fetchPurchases,
         currency,
         setCurrency,
+        getTopPurchasedTrips, // ✅ أضفناها هنا
       }}
     >
       {children}
