@@ -114,7 +114,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
                 )}
                 {trip.discountPercent === 20 && (
                   <Image
-                    src="/HomePageImage/off20.png"
+                    src="/HomePageImage/off120.png"
                     alt="20% Discount"
                     width={50}
                     height={50}

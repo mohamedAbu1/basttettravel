@@ -36,7 +36,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
         ? selectedCategories.map((c) => c.name)
         : ["all"],
       group_price: "All",
-      popular: false,
+      popular: true,
     };
     console.log("SelectedCities:", selectedCities);
     // ✅ اطبع القيم علشان نعرف السبب

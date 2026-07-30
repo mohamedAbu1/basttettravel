@@ -41,7 +41,7 @@ export default function NavBar({ scrolled }) {
             city: "all",
             category: "all",
             group_price: "All",
-            popular: false,
+            popular: true,
           });
           path = `/trips?data=${encoded}`;
         } else {

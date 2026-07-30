@@ -64,7 +64,7 @@ useEffect(() => {
         sender_type: "admin", // مهم جداً لتظهر الرسالة بلون الأدمن
         status: "sent",
       });
-    }, 60000); // دقيقه
+    }, 30000); //  نص دقيقه 
 
     return () => clearTimeout(timer);
   }
