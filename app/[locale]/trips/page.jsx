@@ -33,7 +33,7 @@ export default function TripsPage() {
   const meta = tripsMetadata[lang] || tripsMetadata.en;
   const { userData, chatUser, setChatUser } = useAuth();
   const router = useRouter();
-  const { getTopPurchasedTrips } = usePurchase(); // ✅ استدعاء الدالة
+  const { purchases } = usePurchase(); // ✅ استدعاء الدالة
   const [currentPage, setCurrentPage] = useState(1);
   const [cardStyle, setCardStyle] = useState("vertical");
   const tripsPerPage = cardStyle === "vertical" ? 9 : 8;
@@ -135,26 +135,27 @@ const filteredTrips = trips.filter((trip) => {
   );
 });
 
-// ✅ لو popular مفعّل → اربط المشتريات بالرحلات
+// ✅ لو popular مفعّل → اربط المشتريات بالرحلات بدون تكرار
+// نفترض إن عندك purchases = [ { trip_id: "...", ... }, { trip_id: "...", ... } ]
+
 let finalTrips;
 if (popular) {
-  const topPurchases = getTopPurchasedTrips(); // بيرجع [{ tripId, purchase_count }]
-  finalTrips = topPurchases
-    .map((p) => {
-      const trip = trips.find((t) => t.id === p.trip_id); // نجيب بيانات الرحلة الأصلية
-      if (trip) {
-        return {
-          ...trip, // كل بيانات الرحلة (title, description, cover_image...)
-          purchase_count: p.purchase_count, // نضيف عدد المشتريات
-        };
-      }
-      return null;
-    })
-    .filter(Boolean); // نشيل أي null لو الرحلة مش موجودة
+  // نجمع عدد المشتريات لكل trip_id
+  const purchaseMap = new Map();
+  purchases.forEach((p) => {
+    const currentCount = purchaseMap.get(p.trip_id) || 0;
+    purchaseMap.set(p.trip_id, currentCount + 1);
+  });
+
+  // نربط الرحلات بالمشتريات مرة واحدة فقط
+  finalTrips = trips.map((trip) => {
+    const count = purchaseMap.get(trip.id) || 0;
+    return { ...trip, purchase_count: count };
+  });
 } else {
   finalTrips = filteredTrips;
 }
-  
+
 // تقسيم الصفحات
 const indexOfLastTrip = currentPage * tripsPerPage;
 const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;

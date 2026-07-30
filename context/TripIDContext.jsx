@@ -120,6 +120,7 @@ export function TripIDProvider({ children }) {
       gallery_images: tripData.gallery_images,
       solo_price: tripData.solo_price,
       group_price: tripData.group_price,
+      discountPercent: tripData.discountPercent
     };
 
     try {

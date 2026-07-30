@@ -4,7 +4,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useTrip } from "../../context/TripContext";
 
 export default function BasicInfo() {
-  const { themeName } = useTheme();
+  const { theme,themeName } = useTheme();
   const { tripData, updateTripField } = useTrip();
 
   const languages = ["en", "es", "fr", "de", "it", "zh"];
@@ -62,7 +62,6 @@ export default function BasicInfo() {
 
       {/* Price + Duration */}
       <div className="flex flex-row gap-3">
-        {/* السعر */}
         {/* السعر للفرد الخاص */}
         <div className="relative w-[30%]">
           <input
@@ -71,9 +70,9 @@ export default function BasicInfo() {
             value={tripData?.solo_price ?? ""}
             onChange={(e) => updateTripField("solo_price", e.target.value)}
             className={`${inputClass} pr-12
-      [appearance:textfield] 
-      [&::-webkit-outer-spin-button]:appearance-none 
-      [&::-webkit-inner-spin-button]:appearance-none`}
+        [appearance:textfield] 
+        [&::-webkit-outer-spin-button]:appearance-none 
+        [&::-webkit-inner-spin-button]:appearance-none`}
           />
           <div className="absolute inset-y-0 right-3 flex items-center gap-2">
             {tripData?.currency === "USD" ? (
@@ -98,9 +97,9 @@ export default function BasicInfo() {
             value={tripData?.group_price ?? ""}
             onChange={(e) => updateTripField("group_price", e.target.value)}
             className={`${inputClass} pr-12
-      [appearance:textfield] 
-      [&::-webkit-outer-spin-button]:appearance-none 
-      [&::-webkit-inner-spin-button]:appearance-none`}
+        [appearance:textfield] 
+        [&::-webkit-outer-spin-button]:appearance-none 
+        [&::-webkit-inner-spin-button]:appearance-none`}
           />
           <div className="absolute inset-y-0 right-3 flex items-center gap-2">
             {tripData?.currency === "USD" ? (
@@ -118,16 +117,16 @@ export default function BasicInfo() {
         </div>
 
         {/* المدة */}
-        <div className="relative w-[40%]">
+        <div className="relative w-[20%]">
           <input
             type="number"
             placeholder="Duration"
             value={tripData.duration ?? ""}
             onChange={(e) => updateTripField("duration", e.target.value)}
             className={`${inputClass} pr-20
-              [appearance:textfield] 
-              [&::-webkit-outer-spin-button]:appearance-none 
-              [&::-webkit-inner-spin-button]:appearance-none`}
+        [appearance:textfield] 
+        [&::-webkit-outer-spin-button]:appearance-none 
+        [&::-webkit-inner-spin-button]:appearance-none`}
           />
           <div className="absolute inset-y-0 right-2 flex items-center">
             <select
@@ -141,6 +140,33 @@ export default function BasicInfo() {
             </select>
           </div>
         </div>
+
+        {/* التخفيض */}
+      <div className="relative w-[20%]">
+  <label className={`block mb-1 text-sm font-semibold ${theme.subText}`}>
+    Discount
+  </label>
+  <select
+    value={tripData.discountPercent ?? 0}
+    onChange={(e) =>
+      updateTripField("discountPercent", parseInt(e.target.value))
+    }
+    className={`w-full px-3 py-2 rounded-lg font-bold cursor-pointer
+      backdrop-blur-md border border-[#C2A878]/40 shadow-sm
+      bg-white/10 dark:bg-black/20
+      text-[#C2A878] hover:bg-[#C2A878]/20 hover:text-white
+      transition duration-300 ease-in-out
+      ${selectClass}`}
+  >
+    <option value={0}>0%</option>
+    <option value={10}>10%</option>
+    <option value={20}>20%</option>
+    <option value={30}>30%</option>
+    <option value={40}>40%</option>
+    <option value={50}>50%</option>
+  </select>
+</div>
+
       </div>
     </div>
   );

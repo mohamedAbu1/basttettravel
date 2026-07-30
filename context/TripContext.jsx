@@ -20,6 +20,7 @@ const emptyTrip = {
   itinerary: [],
   solo_price: 0,
   group_price: 0,
+  discountPercent:0,
 };
 
 export function TripProvider({ children }) {
@@ -111,7 +112,6 @@ export function TripProvider({ children }) {
   const getTripById = (id) => {
     return trips.find((trip) => String(trip.id) === String(id));
   };
-
   return (
     <TripContext.Provider
       value={{

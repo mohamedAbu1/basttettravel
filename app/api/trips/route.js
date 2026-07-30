@@ -17,25 +17,27 @@ export async function POST(req) {
 
     const db = await connectDB();
 
-    // ✅ إدخال الرحلة
-    await db.execute(
-      `INSERT INTO trips 
-      (id, title, description, currency, duration, duration_unit, cover_image, gallery_images, priceLevel, group_price, solo_price)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        tripId,
-        safeStringify(body.title),
-        safeStringify(body.description),
-        body.currency,
-        body.duration,
-        body.duration_unit,
-        body.cover_image,
-        safeStringify(body.gallery_images),
-        body.priceLevel,
-        body.group_price,
-        body.solo_price,
-      ]
-    );
+   await db.execute(
+  `INSERT INTO trips 
+   (id, title, description, currency, duration, duration_unit, cover_image, gallery_images, priceLevel, group_price, solo_price, discount_percent)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    tripId,
+    JSON.stringify(body.title),
+    JSON.stringify(body.description),
+    body.currency,
+    body.duration,
+    body.duration_unit,
+    body.cover_image,
+    JSON.stringify(body.gallery_images),
+    body.priceLevel,
+    body.group_price,
+    body.solo_price,
+    String(body.discountPercent ?? '0'), // ✅ تحويل القيمة إلى نص
+  ]
+);
+
+
 
     // ✅ إدخال includes
     if (body.includes?.length > 0) {
@@ -209,6 +211,7 @@ export async function GET() {
       includes: safeParse(trip.includes),
       itinerary: safeParse(trip.days),
       reviews: safeParse(trip.reviews), // ✅ التعليقات الآن موجودة
+      discountPercent: safeParse(trip.discount_percent)
     }));
 
     return new Response(JSON.stringify({ success: true, trips: parsedTrips }), {

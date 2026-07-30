@@ -8,9 +8,14 @@ export async function GET(req, context) {
     const { id } = await context.params;
     const db = await connectDB();
 
-    const [rows] = await db.query(`SELECT * FROM trips WHERE id = ? LIMIT 1`, [id]);
+    const [rows] = await db.query(`SELECT * FROM trips WHERE id = ? LIMIT 1`, [
+      id,
+    ]);
     if (!rows.length) {
-      return NextResponse.json({ success: false, error: "Trip not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, error: "Trip not found" },
+        { status: 404 },
+      );
     }
     const trip = rows[0];
 
@@ -22,7 +27,7 @@ export async function GET(req, context) {
        WHERE tc.trip_id = ?`,
       [id],
     );
-    const parsedCities = cities.map(c => ({
+    const parsedCities = cities.map((c) => ({
       ...c,
       name: typeof c.name === "string" ? JSON.parse(c.name) : c.name,
     }));
@@ -35,7 +40,7 @@ export async function GET(req, context) {
        WHERE tc.trip_id = ?`,
       [id],
     );
-    const parsedCategories = categories.map(cat => ({
+    const parsedCategories = categories.map((cat) => ({
       ...cat,
       name: typeof cat.name === "string" ? JSON.parse(cat.name) : cat.name,
     }));
@@ -46,7 +51,7 @@ export async function GET(req, context) {
        FROM includes WHERE trip_id = ?`,
       [id],
     );
-    const parsedIncludes = includes.map(inc => ({
+    const parsedIncludes = includes.map((inc) => ({
       ...inc,
       include_translations:
         typeof inc.include_translations === "string"
@@ -66,7 +71,7 @@ export async function GET(req, context) {
          FROM day_activities WHERE day_id = ?`,
         [day.id],
       );
-      day.activities = activities.map(act => ({
+      day.activities = activities.map((act) => ({
         ...act,
         activity_translations:
           typeof act.activity_translations === "string"
@@ -90,7 +95,10 @@ export async function GET(req, context) {
     );
   } catch (err) {
     console.error("❌ [GET] Exception:", err.message);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 },
+    );
   }
 }
 
@@ -103,22 +111,24 @@ export async function PUT(req, context) {
 
     // ✅ تحديث بيانات الرحلة الأساسية
     await db.query(
-      `UPDATE trips SET 
-        title = ?, description = ?, solo_price = ?, group_price = ?, 
-        duration = ?, priceLevel = ?, cover_image = ?, gallery_images = ?
-       WHERE id = ?`,
-      [
-        JSON.stringify(body.title),
-        JSON.stringify(body.description),
-        Number(body.solo_price),
-        Number(body.group_price),
-        body.duration,
-        body.priceLevel,
-        body.cover_image,
-        JSON.stringify(body.gallery_images),
-        id,
-      ],
-    );
+  `UPDATE trips SET 
+    title = ?, description = ?, solo_price = ?, group_price = ?, 
+    duration = ?, priceLevel = ?, cover_image = ?, gallery_images = ?, discount_percent = ?
+   WHERE id = ?`,
+  [
+    JSON.stringify(body.title),
+    JSON.stringify(body.description),
+    Number(body.solo_price),
+    Number(body.group_price),
+    body.duration,
+    body.priceLevel,
+    body.cover_image,
+    JSON.stringify(body.gallery_images),
+    String(body.discountPercent ?? '0'), // ✅ تحويل القيمة لنص لو العمود ENUM
+    id,
+  ],
+);
+
 
     // ✅ تحديث الفئات
     if (Array.isArray(body.categories)) {
@@ -144,11 +154,16 @@ export async function PUT(req, context) {
 
     // ✅ تحديث الـ includes باستخدام UUID
     if (Array.isArray(body.includes)) {
-      const [existingIncludes] = await db.query("SELECT id FROM includes WHERE trip_id = ?", [id]);
-      const existingIds = existingIncludes.map(inc => inc.id);
-      const incomingIds = body.includes.map(inc => inc.id).filter(Boolean);
+      const [existingIncludes] = await db.query(
+        "SELECT id FROM includes WHERE trip_id = ?",
+        [id],
+      );
+      const existingIds = existingIncludes.map((inc) => inc.id);
+      const incomingIds = body.includes.map((inc) => inc.id).filter(Boolean);
 
-      const toDelete = existingIds.filter(dbId => !incomingIds.includes(dbId));
+      const toDelete = existingIds.filter(
+        (dbId) => !incomingIds.includes(dbId),
+      );
       if (toDelete.length > 0) {
         await db.query("DELETE FROM includes WHERE id IN (?)", [toDelete]);
       }
@@ -191,13 +206,23 @@ export async function PUT(req, context) {
             if (act.id) {
               await db.query(
                 "UPDATE day_activities SET time = ?, activity_translations = ? WHERE id = ? AND day_id = ?",
-                [act.time, JSON.stringify(act.activity_translations), act.id, day.id],
+                [
+                  act.time,
+                  JSON.stringify(act.activity_translations),
+                  act.id,
+                  day.id,
+                ],
               );
             } else {
               const newActId = uuidv4();
               await db.query(
                 "INSERT INTO day_activities (id, day_id, time, activity_translations) VALUES (?, ?, ?, ?)",
-                [newActId, day.id, act.time, JSON.stringify(act.activity_translations)],
+                [
+                  newActId,
+                  day.id,
+                  act.time,
+                  JSON.stringify(act.activity_translations),
+                ],
               );
             }
           }
@@ -208,7 +233,10 @@ export async function PUT(req, context) {
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err) {
     console.error("❌ [PUT] Exception:", err.message);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 },
+    );
   }
 }
 
@@ -218,7 +246,10 @@ export async function DELETE(req, context) {
     const { id } = await context.params;
     const db = await connectDB();
 
-    const [days] = await db.query("SELECT id FROM trip_days WHERE trip_id = ?", [id]);
+    const [days] = await db.query(
+      "SELECT id FROM trip_days WHERE trip_id = ?",
+      [id],
+    );
     for (const day of days) {
       await db.query("DELETE FROM day_activities WHERE day_id = ?", [day.id]);
     }
@@ -229,9 +260,15 @@ export async function DELETE(req, context) {
     await db.query("DELETE FROM trip_days WHERE trip_id = ?", [id]);
     await db.query("DELETE FROM trips WHERE id = ?", [id]);
 
-    return NextResponse.json({ success: true, message: "Trip deleted successfully" }, { status: 200 });
+    return NextResponse.json(
+      { success: true, message: "Trip deleted successfully" },
+      { status: 200 },
+    );
   } catch (err) {
     console.error("❌ [DELETE] Exception:", err.message);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: 500 },
+    );
   }
 }

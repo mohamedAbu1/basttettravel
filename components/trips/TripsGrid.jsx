@@ -101,6 +101,64 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               className="object-cover w-full h-full rounded-lg"
               priority
             />
+            {/* 🟢 استيكر الخصم في الأعلى يسار */}
+            {trip.discountPercent > 0 && (
+              <div className="absolute top-2 left-2">
+                {trip.discountPercent === 10 && (
+                  <Image
+                    src="/HomePageImage/off10.png"
+                    alt="10% Discount"
+                    width={50}
+                    height={50}
+                  />
+                )}
+                {trip.discountPercent === 20 && (
+                  <Image
+                    src="/HomePageImage/off20.png"
+                    alt="20% Discount"
+                    width={50}
+                    height={50}
+                  />
+                )}
+                {trip.discountPercent === 30 && (
+                  <Image
+                    src="/HomePageImage/off30.png"
+                    alt="30% Discount"
+                    width={50}
+                    height={50}
+                  />
+                )}
+                {trip.discountPercent === 40 && (
+                  <Image
+                    src="/HomePageImage/off40.png"
+                    alt="40% Discount"
+                    width={50}
+                    height={50}
+                  />
+                )}
+                {trip.discountPercent === 50 && (
+                  <Image
+                    src="/HomePageImage/50-percent.png"
+                    alt="50% Discount"
+                    width={50}
+                    height={50}
+                  />
+                )}
+              </div>
+            )}
+
+            {/* 🔴 استيكر عدد المبيعات في الأعلى يمين */}
+            {trip.purchase_count > 0 && (
+              <div className="absolute top-2 right-2 flex items-center gap-1">
+                <Image
+                  src="/HomePageImage/BESTSELLER.png" // ضع هنا مسار الصورة داخل public/icons
+                  alt="Purchases"
+                  width={50}
+                  height={50}
+                  className="drop-shadow-lg"
+                />
+              </div>
+            )}
 
             <div
               className={`absolute bottom-0 p-4 w-full flex flex-col gap-2 ${theme.overlay} text-white`}
@@ -137,8 +195,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               </p>
 
               <p className={`${theme.subText} text-sm`}>
-                {Array.isArray(trip.categories) &&
-                trip.categories.length > 0
+                {Array.isArray(trip.categories) && trip.categories.length > 0
                   ? trip.categories
                       .filter(Boolean)
                       .map((cat) => {
@@ -156,8 +213,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
                             "Unknown Category";
                         } catch {
                           // ✅ لو الاسم مش JSON نعرضه مباشرة
-                          categoryName =
-                            cat.name || "Unknown Category";
+                          categoryName = cat.name || "Unknown Category";
                         }
 
                         return categoryName;

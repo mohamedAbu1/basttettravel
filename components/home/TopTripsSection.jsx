@@ -154,6 +154,51 @@ const TopTripsSection = () => {
                   className="object-cover group-hover:scale-110 transition duration-700 rounded-lg"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                {/* 🟢 استيكر الخصم في الأعلى يسار */}
+                {trip.discountPercent > 0 && (
+                  <div className="absolute top-2 left-2">
+                    {trip.discountPercent === 10 && (
+                      <Image
+                        src="/HomePageImage/off10.png"
+                        alt="10% Discount"
+                        width={50}
+                        height={50}
+                      />
+                    )}
+                    {trip.discountPercent === 20 && (
+                      <Image
+                        src="/HomePageImage/off20.png"
+                        alt="20% Discount"
+                        width={50}
+                        height={50}
+                      />
+                    )}
+                    {trip.discountPercent === 30 && (
+                      <Image
+                        src="/HomePageImage/off30.png"
+                        alt="30% Discount"
+                        width={50}
+                        height={50}
+                      />
+                    )}
+                    {trip.discountPercent === 40 && (
+                      <Image
+                        src="/HomePageImage/off40.png"
+                        alt="40% Discount"
+                        width={50}
+                        height={50}
+                      />
+                    )}
+                    {trip.discountPercent === 50 && (
+                      <Image
+                        src="/HomePageImage/50-percent.png"
+                        alt="50% Discount"
+                        width={50}
+                        height={50}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="absolute inset-0 flex flex-col justify-end p-6">
