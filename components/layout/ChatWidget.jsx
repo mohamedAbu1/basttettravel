@@ -47,28 +47,28 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     }
   }, [userData, messages]);
   // ✅ فتح الدردشة بعد دقيقتين من تسجيل الدخول
-  
-useEffect(() => {
-  if (userData?.id) {
-    const timer = setTimeout(async () => {
-      setOpen(true); // يفتح نافذة الدردشة
 
-      // ✅ إرسال الرسالة باسم الأدمن وليس المستخدم
-      await sendMessage({
-        user_id: "c7674367-18c9-4d2a-b94c-eb80ac716005", // أو ID الأدمن الحقيقي
-                  user_name: "👑 Basttet Travel 👑",
+  useEffect(() => {
+    if (userData?.id) {
+      const timer = setTimeout(async () => {
+        setOpen(true); // يفتح نافذة الدردشة
 
-       user_image: "/HomePageImage/Copilot_20260613_134423.webp",
-        content:
-          "👋 Hello and welcome! The Basttet Travel team is excited to help you plan your next unforgettable journey. How can we assist you today?",
-        sender_type: "admin", // مهم جداً لتظهر الرسالة بلون الأدمن
-        status: "sent",
-      });
-    }, 30000); //  نص دقيقه 
+        // ✅ إرسال الرسالة باسم الأدمن وليس المستخدم
+        await sendMessage({
+          user_id: "c7674367-18c9-4d2a-b94c-eb80ac716005", // أو ID الأدمن الحقيقي
+          user_name: "👑 Basttet Travel 👑",
 
-    return () => clearTimeout(timer);
-  }
-}, [userData]);
+          user_image: "/HomePageImage/Copilot_20260613_134423.webp",
+          content:
+            "👋 Hello and welcome! The Basttet Travel team is excited to help you plan your next unforgettable journey. How can we assist you today?",
+          sender_type: "admin", // مهم جداً لتظهر الرسالة بلون الأدمن
+          status: "sent",
+        });
+      }, 30000); //  نص دقيقه
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   // ✅ استعلام حالة الكتابة للأدمن
   useEffect(() => {

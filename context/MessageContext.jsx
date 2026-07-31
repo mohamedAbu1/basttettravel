@@ -166,7 +166,7 @@ export function MessageProvider({ children }) {
     if (userData?.id) {
       fetchMessages(userData.id);
     }
-  }, [userData?.id]);
+  }, [userData?.id,open]);
 
   return (
     <MessageContext.Provider
