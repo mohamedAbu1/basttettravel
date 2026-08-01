@@ -10,7 +10,7 @@ export const metadata = {
     title: "Basttet Travel | Luxury Egypt Tours",
     description: "Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys.",
     url: "https://basttettravel.com/",
-    images: ["https://basttettravel.com/iamges/Dahabeya-program-SOBEK-900x600.webp"],
+    images: ["https://basttettravel.com/iamges/Dahabeya-program-SOBEK-900x600.png"],
   },
   twitter: {
     card: "summary_large_image",
@@ -30,14 +30,14 @@ export default function RootLayout({ children }) {
         {/* ✅ Open Graph */}
         <meta property="og:title" content="Basttet Travel | Luxury Egypt Tours" />
         <meta property="og:description" content="Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys." />
-        <meta property="og:image" content="https://basttettravel.com/iamges/Dahabeya-program-SOBEK-900x600.webp" />
+        <meta property="og:image" content="https://basttettravel.com/iamges/Dahabeya-program-SOBEK-900x600.png" />
         <meta property="og:url" content="https://basttettravel.com/" />
 
         {/* ✅ Twitter Cards */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Basttet Travel | Luxury Egypt Tours" />
         <meta name="twitter:description" content="Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys." />
-        <meta name="twitter:image" content="https://basttettravel.com/iamges/Copilot_20260613_134550.webp" />
+        <meta name="twitter:image" content="https://basttettravel.com/iamges/Copilot_20260613_134550.png" />
 
         {/* ✅ Structured Data */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{
@@ -46,7 +46,7 @@ export default function RootLayout({ children }) {
             "@type": "TravelAgency",
             "name": "Basttet Travel",
             "url": "https://basttettravel.com",
-            "logo": "https://basttettravel.com/iamges/Copilot_20260613_134550.webp",
+            "logo": "https://basttettravel.com/iamges/Copilot_20260613_134550.png",
             "image": [
               "https://basttettravel.com/iamges/pexels-axp-photography-500641970-18991592.webp",
               "https://basttettravel.com/iamges/Dahabeya-program-SOBEK-900x600.webp"
