@@ -10,6 +10,7 @@ import LeftSocialIcons from "./components/LeftSocialIcons";
 
 export default function HeroSection() {
   const [showTrips, setShowTrips] = useState(false);
+  
   return (
     <section className="relative min-h-screen w-full overflow-hidden flex flex-col ">
       {/* الخلفية */}

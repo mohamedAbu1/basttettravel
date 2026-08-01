@@ -55,112 +55,107 @@ export default function TripsPage() {
 
   if (loadingTrips)
     return <p className="text-center text-gray-500">Loading trips...</p>;
-// فلترة الرحلات
-const filteredTrips = trips.filter((trip) => {
-  const lowerSearch = search.trim().toLowerCase();
+  // فلترة الرحلات
+  const filteredTrips = trips.filter((trip) => {
+    const lowerSearch = search.trim().toLowerCase();
 
-  const matchesSearch =
-    !lowerSearch ||
-    (trip.title?.[lang] &&
-      trip.title[lang].toLowerCase().includes(lowerSearch));
+    const matchesSearch =
+      !lowerSearch ||
+      (trip.title?.[lang] &&
+        trip.title[lang].toLowerCase().includes(lowerSearch));
 
-  const tripCities =
-    trip.cities
-      ?.map((c) => {
-        let nameObj;
-        try {
-          nameObj =
-            typeof c?.name === "string" ? JSON.parse(c.name) : c?.name;
-        } catch {
-          nameObj = {};
-        }
-        return typeof nameObj === "object" ? nameObj.en || "" : "";
-      })
-      .filter((n) => n !== "") || [];
+    const tripCities =
+      trip.cities
+        ?.map((c) => {
+          let nameObj;
+          try {
+            nameObj =
+              typeof c?.name === "string" ? JSON.parse(c.name) : c?.name;
+          } catch {
+            nameObj = {};
+          }
+          return typeof nameObj === "object" ? nameObj.en || "" : "";
+        })
+        .filter((n) => n !== "") || [];
 
-  const matchesCity =
-    !city || city === "all"
-      ? true
-      : Array.isArray(city)
-        ? tripCities.some((c) =>
-            city.some((x) => c.toLowerCase() === x.toLowerCase()),
-          )
-        : tripCities.some((c) => c.toLowerCase() === city.toLowerCase());
+    const matchesCity =
+      !city || city === "all"
+        ? true
+        : Array.isArray(city)
+          ? tripCities.some((c) =>
+              city.some((x) => c.toLowerCase() === x.toLowerCase()),
+            )
+          : tripCities.some((c) => c.toLowerCase() === city.toLowerCase());
 
-  const tripCategories =
-    trip.categories
-      ?.map((cat) => {
-        let nameObj;
-        try {
-          nameObj =
-            typeof cat?.name === "string" ? JSON.parse(cat.name) : cat?.name;
-        } catch {
-          nameObj = {};
-        }
-        return typeof nameObj === "object" ? nameObj.en || "" : "";
-      })
-      .filter((n) => n !== "") || [];
+    const tripCategories =
+      trip.categories
+        ?.map((cat) => {
+          let nameObj;
+          try {
+            nameObj =
+              typeof cat?.name === "string" ? JSON.parse(cat.name) : cat?.name;
+          } catch {
+            nameObj = {};
+          }
+          return typeof nameObj === "object" ? nameObj.en || "" : "";
+        })
+        .filter((n) => n !== "") || [];
 
-  const matchesCategory =
-    !category || category === "all"
-      ? true
-      : Array.isArray(category)
-        ? tripCategories.some((c) =>
-            category.some((x) => c.toLowerCase() === x.toLowerCase()),
-          )
-        : tripCategories.some(
-            (c) => c.toLowerCase() === category.toLowerCase(),
-          );
+    const matchesCategory =
+      !category || category === "all"
+        ? true
+        : Array.isArray(category)
+          ? tripCategories.some((c) =>
+              category.some((x) => c.toLowerCase() === x.toLowerCase()),
+            )
+          : tripCategories.some(
+              (c) => c.toLowerCase() === category.toLowerCase(),
+            );
 
-  const ranges = {
-    Economy: { min: 0, max: 199 },
-    Standard: { min: 200, max: 599 },
-    Luxury: { min: 600, max: Infinity },
-  };
-  const selectedRange = ranges[group_price];
+    const ranges = {
+      Economy: { min: 0, max: 199 },
+      Standard: { min: 200, max: 599 },
+      Luxury: { min: 600, max: Infinity },
+    };
+    const selectedRange = ranges[group_price];
 
-  const matchesPrice =
-    group_price === "All" || !group_price
-      ? true
-      : selectedRange
-        ? trip.group_price >= selectedRange.min &&
-          trip.group_price <= selectedRange.max
-        : true;
+    const matchesPrice =
+      group_price === "All" || !group_price
+        ? true
+        : selectedRange
+          ? trip.group_price >= selectedRange.min &&
+            trip.group_price <= selectedRange.max
+          : true;
 
-  return (
-    matchesSearch &&
-    matchesCity &&
-    matchesCategory &&
-    matchesPrice
-  );
-});
-
-// ✅ لو popular مفعّل → اربط المشتريات بالرحلات بدون تكرار
-// نفترض إن عندك purchases = [ { trip_id: "...", ... }, { trip_id: "...", ... } ]
-
-let finalTrips;
-if (popular) {
-  // نجمع عدد المشتريات لكل trip_id
-  const purchaseMap = new Map();
-  purchases.forEach((p) => {
-    const currentCount = purchaseMap.get(p.trip_id) || 0;
-    purchaseMap.set(p.trip_id, currentCount + 1);
+    return matchesSearch && matchesCity && matchesCategory && matchesPrice;
   });
 
-  // نربط الرحلات بالمشتريات مرة واحدة فقط
-  finalTrips = trips.map((trip) => {
-    const count = purchaseMap.get(trip.id) || 0;
-    return { ...trip, purchase_count: count };
-  });
-} else {
-  finalTrips = filteredTrips;
-}
+  // ✅ لو popular مفعّل → اربط المشتريات بالرحلات بدون تكرار
+  // نفترض إن عندك purchases = [ { trip_id: "...", ... }, { trip_id: "...", ... } ]
 
-// تقسيم الصفحات
-const indexOfLastTrip = currentPage * tripsPerPage;
-const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
-const currentTrips = finalTrips.slice(indexOfFirstTrip, indexOfLastTrip);
-const totalPages = Math.ceil(finalTrips.length / tripsPerPage);
+  let finalTrips;
+  if (popular) {
+    // نجمع عدد المشتريات لكل trip_id
+    const purchaseMap = new Map();
+    purchases.forEach((p) => {
+      const currentCount = purchaseMap.get(p.trip_id) || 0;
+      purchaseMap.set(p.trip_id, currentCount + 1);
+    });
+
+    // نربط الرحلات بالمشتريات مرة واحدة فقط
+    finalTrips = trips.map((trip) => {
+      const count = purchaseMap.get(trip.id) || 0;
+      return { ...trip, purchase_count: count };
+    });
+  } else {
+    finalTrips = filteredTrips;
+  }
+
+  // تقسيم الصفحات
+  const indexOfLastTrip = currentPage * tripsPerPage;
+  const indexOfFirstTrip = indexOfLastTrip - tripsPerPage;
+  const currentTrips = finalTrips.slice(indexOfFirstTrip, indexOfLastTrip);
+  const totalPages = Math.ceil(finalTrips.length / tripsPerPage);
 
   return (
     <>
@@ -168,6 +163,11 @@ const totalPages = Math.ceil(finalTrips.length / tripsPerPage);
         <title>{meta.title}</title>
         <meta name="description" content={meta.description} />
         <meta name="keywords" content={meta.keywords} />
+        <link rel="canonical" href="https://basttettravel.com/" />
+        <img
+          src="/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp"
+          alt="Nile Cruise with Basttet Travel"
+        />
       </Head>
 
       <main className="relative flex flex-col min-h-screen justify-center items-center mt-7">

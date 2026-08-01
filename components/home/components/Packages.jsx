@@ -13,7 +13,6 @@ export default function Packages({ showTrips }) {
   const router = useRouter();
   const { t } = useTranslation("home");
 
-  if (showTrips === true) return null;
 
   // ✅ بيانات ستاتيك
   const staticTrips = {
@@ -52,6 +51,7 @@ export default function Packages({ showTrips }) {
     page * itemsPerPage,
     page * itemsPerPage + itemsPerPage,
   );
+  if (showTrips === true) return null;
 
   if (limitedTrips.length === 0)
     return <p className="text-center">لا توجد رحلات متاحة حالياً</p>;

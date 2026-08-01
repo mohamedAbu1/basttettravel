@@ -33,6 +33,11 @@ export default function Home() {
         <title>{meta.title}</title>
         <meta name="description" content={meta.description} />
         <meta name="keywords" content={meta.keywords} />
+        <link rel="canonical" href="https://basttettravel.com/" />
+        <img
+          src="/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp"
+          alt="Nile Cruise with Basttet Travel"
+        />
       </Head>
       <main
         className={`
