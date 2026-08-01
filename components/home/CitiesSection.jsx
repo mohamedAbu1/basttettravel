@@ -20,7 +20,7 @@ function CityCard({ city, themeName, theme, language, t }) {
       city: [cityName],
       category: "all",
       group_price: "All",
-      popular: true,
+      popular: false,
     };
     const encoded = encodeData(queryObj);
     router.push(`/trips?data=${encoded}`);

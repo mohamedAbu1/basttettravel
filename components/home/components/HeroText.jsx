@@ -1,9 +1,11 @@
 "use client";
 import { Typewriter } from "react-simple-typewriter";
 import { useTheme } from "@/context/ThemeContext";
+import { useTranslation } from "react-i18next";
 
 export default function HeroText() {
   const { theme } = useTheme();
+  const { t } = useTranslation("home");
 
   return (
     <h1
@@ -13,7 +15,7 @@ export default function HeroText() {
       }}
     >
       <Typewriter
-        words={["Welcome to", "𓂀 Basttet travel 𓂀", "Enjoy the Journey"]}
+        words={[t("welcome"), t("brand"), t("journey")]}
         loop={true}
         cursor
         cursorStyle="𓂀"

@@ -11,6 +11,7 @@ import { addDays } from "date-fns";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { useRouter } from "next/navigation";
 import { useQueryFilters } from "@/context/QueryContext";
+import { useTranslation } from "react-i18next";
 
 const encodeData = (obj) => btoa(JSON.stringify(obj));
 
@@ -21,6 +22,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
   const router = useRouter();
   const [showCities, setShowCities] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
+  const { t } = useTranslation("home");
 
   const [selectedCities, setSelectedCities] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -36,19 +38,12 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
         ? selectedCategories.map((c) => c.name)
         : ["all"],
       group_price: "All",
-      popular: true,
+      popular: false,
     };
-    console.log("SelectedCities:", selectedCities);
     // ✅ اطبع القيم علشان نعرف السبب
-    console.log("Query object:", queryObj);
     const encoded = encodeData(queryObj);
-    console.log("Encoded query:", encoded);
 
-    // ✅ اطبع القيم الحقيقية للرحلات
-    trips.forEach((trip) => {
-      console.log("Trip city:", trip.city);
-      console.log("Trip category:", trip.category);
-    });
+  
 
     updateValue("city", queryObj.city);
     updateValue("category", queryObj.category);
@@ -88,7 +83,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
     >
       <FaCalendarAlt className={`mr-3 text-xl ${theme.iconHover}`} />
       <span className={`flex-1 p-2 tracking-wide font-medium ${theme.text}`}>
-        {value || "Select Date"}
+        {value || t("SelectDate")}
       </span>
     </div>
   );
@@ -144,7 +139,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
             onCalendarOpen={() => setShowTrips(true)}
             onCalendarClose={() => setShowTrips(false)}
             dateFormat="dd/MM/yyyy"
-            placeholderText="Checkin"
+            placeholderText={t("checkin")}
             customInput={<CustomInput />}
             minDate={addDays(new Date(), 2)}
             dayClassName={(day) => {
@@ -164,7 +159,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
             onCalendarClose={() => setShowTrips(false)}
             minDate={startDate ? addDays(startDate, 7) : addDays(new Date(), 4)}
             dateFormat="dd/MM/yyyy"
-            placeholderText="Checkout"
+            placeholderText={t("checkout")}
             customInput={<CustomInput />}
           />
         </div>
@@ -183,7 +178,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
           border: `2px solid ${theme.logoBorder}`,
         }}
       >
-        EXPERIENCE THE LEGEND
+        {t("experience")}
       </motion.button>
     </motion.div>
   );

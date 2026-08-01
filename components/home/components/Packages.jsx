@@ -5,25 +5,27 @@ import { useTheme } from "@/context/ThemeContext";
 import LogoLetter from "@/components/LogoLetter";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export default function Packages({ showTrips }) {
   const { theme, themeName } = useTheme();
   const { lang } = useLanguage();
   const router = useRouter();
+  const { t } = useTranslation("home");
 
   if (showTrips === true) return null;
 
   // ✅ بيانات ستاتيك
   const staticTrips = {
     lightModeTrips: [
-      { id: "8601c884-3c35-469f-a2b7-b8bb897b90fe", title: { en: "Nile Cruise Luxor-Aswan" }, price: 547, currency: "USD", cover_image: "/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp", category_id: 1 },
-      { id: "4ba2c69e-9c76-41f4-80b8-60ae230e1a28", title: { en: "Luxury Nile Cruise" }, price: 447, currency: "USD", cover_image: "/Nile_Cruise/5116-900x600.webp", category_id: 1 },
-      { id: "8ddb3cd5-5292-4c78-a6e1-33409fc59d6d", title: { en: "Budget Nile Cruise" }, price: 397, currency: "USD", cover_image: "/HomePageImage/pexels-yigithan02-5572494.webp", category_id: 2 }
+      { id: "8601c884-3c35-469f-a2b7-b8bb897b90fe", title: { en:{ t: "trips.Nile Cruise Luxor-Aswan" } }, price: 547, currency: "USD", cover_image: "/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp", category_id: 1 },
+      { id: "4ba2c69e-9c76-41f4-80b8-60ae230e1a28", title: { en: { t: "Luxury Nile Cruise" } }, price: 447, currency: "USD", cover_image: "/Nile_Cruise/5116-900x600.webp", category_id: 1 },
+      { id: "8ddb3cd5-5292-4c78-a6e1-33409fc59d6d", title: { en: { t: "Budget Nile Cruise" } }, price: 397, currency: "USD", cover_image: "/HomePageImage/pexels-yigithan02-5572494.webp", category_id: 2 }
     ],
     darkModeTrips: [
-      { id: "f25b340a-1edf-4667-a8cc-da215ff9c309", title: { en: "Cairo One Day Tour" }, price: 87, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044045.webp", category_id: 3 },
-      { id: "07a9c24a-0fba-4725-80b3-96a0d4bce91e", title: { en: "Giza Pyramids Day Trip" }, price: 67, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044043.webp", category_id: 3 },
-      { id:"b45c448f-822f-4aa3-9e02-02ab08f81c62", title: { en: "Alexandria One Day Tour" }, price: 87, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-30468560.webp", category_id: 4 }
+      { id: "f25b340a-1edf-4667-a8cc-da215ff9c309", title: { en: { t: "Cairo One Day Tour" } }, price: 87, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044045.webp", category_id: 3 },
+      { id: "07a9c24a-0fba-4725-80b3-96a0d4bce91e", title: { en: { t: "Giza Pyramids Day Trip" } }, price: 67, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-32044043.webp", category_id: 3 },
+      { id:"b45c448f-822f-4aa3-9e02-02ab08f81c62", title: { en: { t: "Alexandria One Day Tour" } }, price: 87, currency: "USD", cover_image: "/Aswan/pexels-girlvsglobe86-300284270-30468560.webp", category_id: 4 }
     ]
   };
 
@@ -107,7 +109,7 @@ export default function Packages({ showTrips }) {
                     className={`hero-p font-semibold mt-2`}
                     style={{ color: theme.text }}
                   >
-                    From {trip.price} {trip.currency}
+                    {t("From")} {trip.price} {trip.currency}
                   </p>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -116,7 +118,7 @@ export default function Packages({ showTrips }) {
                     className={`w-full rounded-[9px] px-4 py-2 mt-4 font-semibold tracking-wide cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
                     style={{ border: `2px solid ${theme.logoBorder}` }}
                   >
-                    Book Now
+                   {t("BookNow")}
                   </motion.button>
                 </div>
               </motion.div>

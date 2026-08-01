@@ -8,9 +8,9 @@ import { useTranslation } from "react-i18next";
 
 const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => {
   const { theme } = useTheme();
-  const { i18n } = useTranslation();
-  const normalizedLang = i18n.language.split("-")[0];
-
+ const { i18n } = useTranslation();
+  const normalizedLang = i18n.language.split("-")[0]; // مثل en أو ar أو fr
+  const { t } = useTranslation("home");
   return (
     <div className="relative w-full">
       <Popover.Root>
@@ -23,7 +23,7 @@ const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => 
             <span className={`flex-1 text-left ${theme.text}`}>
               {(selectedCategories || [])
                 .map((c) => c.name?.[normalizedLang] || c.name?.["en"] || c.name)
-                .join(" - ") || "Select Category"}
+                .join(" - ") || t("SelectCategory")}
             </span>
           </button>
         </Popover.Trigger>
@@ -64,7 +64,7 @@ const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => 
                           cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
               style={{ border: `2px solid ${theme.logoBorder}` }}
             >
-              ✅ Confirm
+              {t("Confirm")}
             </Popover.Close>
           </Popover.Content>
         </Popover.Portal>

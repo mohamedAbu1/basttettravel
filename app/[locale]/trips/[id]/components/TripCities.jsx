@@ -63,7 +63,7 @@ export default function TripCities({ trip, lang }) {
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className={`text-2xl font-bold flex items-center gap-2 mb-4 border-b pb-2 ${theme.border}`}
+        className={`text-2xl font-bold flex items-center gap-2 mb-4 border-b p-2 ${theme.border}`}
       >
         <FaMapMarkerAlt className={theme.icon} />
         {t.title}

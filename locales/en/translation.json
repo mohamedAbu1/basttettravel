@@ -6,7 +6,8 @@
     "contact": "Contact",
     "admin": "Admin",
     "Logout": "Logout",
-    "SignUp": "Sign Up"
+    "SignUp": "Sign Up",
+    "privacyPolicy": "Privacy Policy"
   },
   "home": {
     "FullName": "Full Name",
@@ -16,7 +17,6 @@
     "female": "female",
     "orsignupwith": "or sign up with",
     "Creating": "Creating...",
-    "SignUp": "Sign Up",
     "Alreadyhaveanaccount": "Already have an account? Login",
     "Login": "Login",
     "orcontinuewith": "or continue with",
@@ -59,8 +59,31 @@
     "p6": "No 5-star reviews yet",
     "h6": "What Our Travelers Say",
     "Tripdetails": "Trip Details",
-    "reviews": "reviews"
-
+    "reviews": "reviews",
+    "welcome": "Welcome to",
+    "brand": "𓂀 Basttet travel 𓂀",
+    "journey": "Enjoy the Journey",
+    "experience": "EXPERIENCE THE LEGEND",
+    "checkin": "Checkin",
+    "checkout": "Checkout",
+    "confirm": "Confirm",
+    "selectCity": "Select City",
+    "selectCategory": "Select Category",
+    "SelectDate": "Select Date",
+    "From": "From",
+    "Logout": "Logout",
+    "SignUp": "Sign Up",
+    "LoginBookCar": "Please log in and book your car now ✨",
+    "Send": "Send",
+    "Support": "Support",  "welcomeMessage": "👋 Hello and welcome! The Basttet Travel team is excited to help you plan your next unforgettable journey. How can we assist you today?",
+    "trips": {
+      "nileCruise": "Nile Cruise Luxor-Aswan",
+      "luxuryCruise": "Luxury Nile Cruise",
+      "budgetCruise": "Budget Nile Cruise",
+      "cairoTour": "Cairo One Day Tour",
+      "gizaTrip": "Giza Pyramids Day Trip",
+      "alexandriaTour": "Alexandria One Day Tour"
+    }
   },
   "trips": {
     "Searchtrips": "Search trips...",
@@ -74,14 +97,19 @@
     "MostPopular": "Most Popular",
     "reviews": "reviews",
     "btn": "Book Now",
-    "Tripdetails": "Trip Details"
+    "Tripdetails": "Trip Details",
+    "Cancelling": "Cancelling...",
+    "CancelBooking": "❌ Cancel Booking",
+    "BuyTrip": "Buy Trip"
   },
   "footer": {
     "p": "© 2025 — Explore Egypt with Comfort & Luxury",
     "Home": "Home",
     "AboutUs": "About Us",
     "Tours": "Tours",
-    "Contact": "Contact"
+    "Contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "Footer": "© 2026 Basttet travel. All rights reserved. Owner: Ismail Haroun — Phone: +20 1100507802"
   },
   "about": {
     "AboutWasetTravel": "About Basttet travel",
@@ -122,6 +150,96 @@
   },
   "tripsId": {
     "submitReview": "Submit Review",
-    "average":"Average"
+    "average": "Average"
+  },
+
+  "privacyPolicy": {
+    "title": "Privacy Policy",
+    "effectiveDate": "Effective date: July 1, 2026",
+    "intro": "This page informs you of our policies regarding the collection, use, and disclosure of personal data.",
+    "dataUsage": "We use your data to provide and improve the Service.",
+    "consent": "By using the Service, you agree to the collection and use of information in accordance with this policy.",
+    "informationCollection": "Information Collection And Use",
+    "informationCollectionText": "We collect several different types of information for various purposes to provide and improve our Service.",
+    "typesOfData": "Types of Data Collected",
+    "personalData": "Personal Data",
+    "emailAddress": "Email address",
+    "fullName": "First name and last name",
+    "phoneNumber": "Phone number",
+    "address": "Address, State, Province, ZIP/Postal code, City",
+    "cookiesUsage": "Cookies and Usage Data",
+    "usageData": "Usage Data",
+    "usageDataText": "We may also collect information on how the Service is accessed and used...",
+    "cookiesData": "Tracking & Cookies Data",
+    "cookiesDataText": "We use cookies and similar tracking technologies to track activity and improve our Service.",
+    "useOfData": "Use of Data",
+    "provideService": "To provide and maintain the Service",
+    "notifyChanges": "To notify you about changes",
+    "interactiveFeatures": "To allow interactive features",
+    "customerCare": "To provide customer care",
+    "monitorUsage": "To monitor usage",
+    "preventIssues": "To detect and prevent issues",
+    "contactUs": "Contact Us",
+    "ownerLabel": "Owner:",
+    "owner": "Ismail Haroun",
+    "emailLabel": "Email:",
+    "email": "BasttetTravel@outlook.com",
+    "phoneLabel": "Phone:",
+    "phone": "+20 1100507802"
+  },
+
+  "cancellationPolicy": {
+    "title": "Payment and Cancellation Policy",
+    "effectiveDate": "Effective date: July 1, 2026",
+    "cancellationPolicy": "Cancellation Policy",
+    "cancellationText": "Cancellation requests must be sent in writing via email to provide BasttetTravel with official confirmation.",
+    "cancellationRules": [
+      "150 – 120 days prior: 25% charged",
+      "120 – 90 days prior: 50% charged",
+      "90 – 60 days prior: 75% charged",
+      "Less than 60 days: 100% charged",
+      "No Show: Full amount charged"
+    ],
+    "note": "Note: For any cancellation, a 6% bank transaction fee will be charged on the deposit paid.",
+    "refunds": "Refunds",
+    "refundsText": "Refunds will be processed using the same payment method within 14 working days. No refunds for no-shows.",
+    "accommodation": "Accommodation",
+    "accommodationText": "Prices are based on twin sharing. Single rooms available with supplementary rate. Hotels may be substituted with similar quality.",
+    "responsibility": "Responsibility & Liability",
+    "responsibilityText": "BasttetTravel acts only as an agent. We assume no liability for injury, illness, damage, loss, accident, delay, or irregularity caused by:",
+    "responsibilityList": [
+      "Weather, acts of God, force majeure",
+      "Wars, riots, theft, breakdowns, quarantines",
+      "Delays or cancellations by hotels, carriers, restaurants"
+    ],
+    "specialRequests": "Special Requests",
+    "specialRequestsText": "Requests must be made at booking. We try to satisfy but cannot guarantee fulfillment. Bookings cannot be conditional on requests.",
+    "childrenPolicy": "Children Policy",
+    "packages": "Packages, Nile Cruises, Hotels",
+    "packagesList": [
+      "Under 2 years: Free",
+      "Under 6 years: 25% charged",
+      "Under 12 years: 50% charged",
+      "12+ years: Full rate"
+    ],
+    "tours": "Sightseeing Tours & Excursions",
+    "toursList": [
+      "Under 6 years: Free",
+      "Under 12 years: 50% charged",
+      "12+ years: Full rate"
+    ],
+    "tipping": "Tipping",
+    "tippingText": "Tipping is customary to express satisfaction. Entirely at your discretion.",
+    "complaints": "Complaints & Dispute Resolution",
+    "complaintsText": "Notify BasttetTravel immediately for issues. If unresolved, contact Egyptian Travel Agent Association or Ministry of Tourism.",
+    "acceptance": "Acceptance of Agreement",
+    "acceptanceText": "Payment of deposit/final payment indicates acceptance of all terms and conditions.",
+    "contact": "Contact Information",
+    "ownerLabel": "Owner:",
+    "owner": "Ismail Haroun",
+    "emailLabel": "Email:",
+    "email": "BasttetTravel@outlook.com",
+    "phoneLabel": "Phone:",
+    "phone": "+20 1100507802"
   }
 }

@@ -2,8 +2,11 @@
 import { motion } from "framer-motion";
 import DividerWithIcon from "../layout/DividerWithIcon";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 export default function PrivacyContent({ theme }) {
+  const { t } = useTranslation("privacyPolicy");
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 100 }}
@@ -14,89 +17,70 @@ export default function PrivacyContent({ theme }) {
       <article
         className={`prose max-w-none prose-lg leading-relaxed ${theme.text} flex flex-col gap-3`}
       >
-        <h1 className={`${theme.title} text-3xl pt-5`}>Privacy Policy</h1>
+        <h1 className={`${theme.title} text-3xl pt-5`}>
+          {t("title")}
+        </h1>
         <DividerWithIcon />
+
         <p>
-          <strong className="capitalize">Effective date:</strong> July 1, 2026
+          <strong className="capitalize">{t("effectiveDate", { defaultValue: "Effective date:" })}</strong> {t("effectiveDate")}
         </p>
-        <p>
-          BasttetTravel (“us”, “we”, or “our”) operates the BasttetTravel
-          website (the “Service”). This page informs you of our policies
-          regarding the collection, use, and disclosure of personal data.
-        </p>
-        <p>
-          We use your data to provide and improve the Service. By using the
-          Service, you agree to the collection and use of information in
-          accordance with this policy. Unless otherwise defined in this Privacy
-          Policy, terms used in this Privacy Policy have the same meanings as in
-          our Terms and Conditions, accessible from{" "}
-          <Link href={"/cancellationPolicy"} className="pb-1.5 border-b-2 border-amber-300"> <strong className="capitalize"> payment and cancellation policy </strong> </Link> .
-        </p>
+        <p>{t("intro")}</p>
+        <>
+          {t("dataUsage")}{" "}
+          {t("consent")}{" "}
+          <Link href="/cancellationPolicy" className="text-blue-500 underline">
+            Cancellation Policy
+          </Link>
+        </>
+        <DividerWithIcon />
         <DividerWithIcon />
 
         <h2 className={theme.heading}>
-          <strong className="capitalize">
-            {" "}
-            Information Collection And Use
-          </strong>
+          <strong className="capitalize">{t("informationCollection")}</strong>
         </h2>
-        <p>
-          We collect several different types of information for various purposes
-          to provide and improve our Service.
-        </p>
+        <p>{t("informationCollectionText")}</p>
         <DividerWithIcon />
 
         <h3 className={theme.heading}>
-          <strong className="capitalize">Types of Data Collected</strong>
+          <strong className="capitalize">{t("typesOfData")}</strong>
         </h3>
-        <h4 className={theme.subText}>Personal Data</h4>
+        <h4 className={theme.subText}>{t("personalData")}</h4>
         <ul>
-          <li>Email address</li>
-          <li>First name and last name</li>
-          <li>Phone number</li>
-          <li>Address, State, Province, ZIP/Postal code, City</li>
-          <li>Cookies and Usage Data</li>
+          <li>{t("emailAddress")}</li>
+          <li>{t("fullName")}</li>
+          <li>{t("phoneNumber")}</li>
+          <li>{t("address")}</li>
+          <li>{t("cookiesUsage")}</li>
         </ul>
 
-        <h4 className={theme.subText}>Usage Data</h4>
-        <p>
-          We may also collect information on how the Service is accessed and
-          used...
-        </p>
+        <h4 className={theme.subText}>{t("usageData")}</h4>
+        <p>{t("usageDataText")}</p>
 
-        <h4 className={theme.subText}>Tracking & Cookies Data</h4>
-        <p>
-          We use cookies and similar tracking technologies to track activity and
-          improve our Service.
-        </p>
+        <h4 className={theme.subText}>{t("cookiesData")}</h4>
+        <p>{t("cookiesDataText")}</p>
         <DividerWithIcon />
 
         <h2 className={theme.heading}>
-          <strong className="capitalize">Use of Data</strong>
+          <strong className="capitalize">{t("useOfData")}</strong>
         </h2>
         <ul>
-          <li>To provide and maintain the Service</li>
-          <li>To notify you about changes</li>
-          <li>To allow interactive features</li>
-          <li>To provide customer care</li>
-          <li>To monitor usage</li>
-          <li>To detect and prevent issues</li>
+          <li>{t("provideService")}</li>
+          <li>{t("notifyChanges")}</li>
+          <li>{t("interactiveFeatures")}</li>
+          <li>{t("customerCare")}</li>
+          <li>{t("monitorUsage")}</li>
+          <li>{t("preventIssues")}</li>
         </ul>
         <DividerWithIcon />
 
         <h2 className={theme.heading}>
-          <strong className="capitalize">Contact Us</strong>
+          <strong className="capitalize">{t("contactUs")}</strong>
         </h2>
         <ul>
-          <li>
-            <strong>Owner:</strong> Ismail Haroun
-          </li>
-          <li>
-            <strong>Email:</strong> BasttetTravel@outlook.com
-          </li>
-          <li>
-            <strong>Phone:</strong> +20 1100507802
-          </li>
+          <li><strong>{t("ownerLabel")}</strong> {t("owner")}</li>
+          <li><strong>{t("emailLabel")}</strong> {t("email")}</li>
+          <li><strong>{t("phoneLabel")}</strong> {t("phone")}</li>
         </ul>
       </article>
     </motion.div>

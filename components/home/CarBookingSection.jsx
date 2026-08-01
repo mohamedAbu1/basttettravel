@@ -166,7 +166,7 @@ const CarBookingSection = () => {
                     : "2px 2px 6px rgba(255,255,255,0.3)",
               }}
             >
-              Please log in and book your car now ✨
+             {t("LoginBookCar")}
             </motion.p>
           )}
         </motion.div>

@@ -2,10 +2,12 @@
 import { FaShoppingCart } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import { useRouter } from "next/navigation"; // ✅ استدعاء الرواتر
+import { useTranslation } from "react-i18next";
 
 export default function PurchaseButton({ trip }) {
   const { themeName } = useTheme();
   const router = useRouter();
+  const { t } = useTranslation("trips");
 
   const handleClick = () => {
     // ✅ تحويل المستخدم لصفحة شراء الرحلات مع تمرير الـ trip.id
@@ -22,7 +24,7 @@ export default function PurchaseButton({ trip }) {
                    shadow-lg cursor-pointer"
       >
         <FaShoppingCart className="w-5 h-5 animate-bounce" />
-        Buy Trip
+        {t("BuyTrip")}
       </button>
     </>
   );

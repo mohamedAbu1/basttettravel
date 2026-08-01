@@ -6,7 +6,8 @@
     "contact": "联系我们",
     "admin": "管理员",
     "Logout": "注销",
-    "SignUp": "报名"
+    "SignUp": "报名",
+    "privacyPolicy": "隐私政策"
   },
   "home": {
     "FullName": "全名",
@@ -16,7 +17,6 @@
     "female": "女",
     "orsignupwith": "或注册方式",
     "Creating": "创建中...",
-    "SignUp": "注册",
     "Alreadyhaveanaccount": "已有账户？登录",
     "Login": "登录",
     "orcontinuewith": "或继续使用",
@@ -59,7 +59,32 @@
     "p6": "还没有五星评价",
     "h6": "我们的旅客怎么说",
     "Tripdetails": "行程详情",
-    "reviews": "评论"
+    "reviews": "评论",
+    "welcome": "欢迎来到",
+    "brand": "𓂀 巴斯特旅游 𓂀",
+    "journey": "享受旅程",
+    "experience": "体验传奇",
+    "checkin": "入住",
+    "checkout": "退房",
+    "confirm": "确认",
+    "selectCity": "选择城市",
+    "selectCategory": "选择类别",
+    "SelectDate": "选择日期",
+    "From": "从",
+    "Logout": "退出登录",
+    "SignUp": "注册",
+    "LoginBookCar": "请登录并立即预订您的汽车 ✨",
+    "Send": "发送",
+    "Support": "支持",
+      "welcomeMessage": "👋 您好，欢迎光临！Basttet Travel 团队很高兴帮助您规划下一次难忘的旅程。今天我们能为您做些什么？",
+    "trips": {
+      "nileCruise": "卢克索-阿斯旺尼罗河游轮",
+      "luxuryCruise": "豪华尼罗河游轮",
+      "budgetCruise": "经济尼罗河游轮",
+      "cairoTour": "开罗一日游",
+      "gizaTrip": "吉萨金字塔一日游",
+      "alexandriaTour": "亚历山大一日游"
+    }
   },
   "trips": {
     "Searchtrips": "搜索旅行...",
@@ -73,7 +98,10 @@
     "MostPopular": "最受欢迎",
     "reviews": "评论",
     "btn": "立即预订",
-    "Tripdetails": "行程详情"
+    "Tripdetails": "行程详情",
+    "Cancelling": "正在取消...",
+    "CancelBooking": "❌ 取消预订",
+    "BuyTrip": "购买行程"
   },
 
   "about": {
@@ -118,10 +146,96 @@
     "Home": "首页",
     "AboutUs": "关于我们",
     "Tours": "旅游",
-    "Contact": "联系我们"
+    "Contact": "联系我们",
+    "privacyPolicy": "隐私政策",
+    "Footer": "© 2026 Basttet travel. 版权所有。所有权人: Ismail Haroun — 电话: +20 1100507802"
   },
   "tripsId": {
     "submitReview": "提交评价",
     "average": "平均"
+  },
+  "privacyPolicy": {
+    "title": "隐私政策",
+    "effectiveDate": "生效日期: 2026年7月1日",
+    "intro": "本页面告知您我们关于收集、使用和披露个人数据的政策。",
+    "dataUsage": "我们使用您的数据来提供和改进服务。",
+    "consent": "使用本服务即表示您同意按照本政策收集和使用信息。",
+    "informationCollection": "信息收集与使用",
+    "informationCollectionText": "我们收集不同类型的信息以提供和改进我们的服务。",
+    "typesOfData": "收集的数据类型",
+    "personalData": "个人数据",
+    "emailAddress": "电子邮件地址",
+    "fullName": "名字和姓氏",
+    "phoneNumber": "电话号码",
+    "address": "地址、省份、邮政编码、城市",
+    "cookiesUsage": "Cookies 和使用数据",
+    "usageData": "使用数据",
+    "usageDataText": "我们可能还会收集有关如何访问和使用服务的信息...",
+    "cookiesData": "跟踪与 Cookies 数据",
+    "cookiesDataText": "我们使用 cookies 和类似的跟踪技术来跟踪活动并改进我们的服务。",
+    "useOfData": "数据的使用",
+    "provideService": "提供和维护服务",
+    "notifyChanges": "通知您更改",
+    "interactiveFeatures": "允许交互功能",
+    "customerCare": "提供客户服务",
+    "monitorUsage": "监控使用情况",
+    "preventIssues": "检测和防止问题",
+    "contactUs": "联系我们",
+    "ownerLabel": "所有者:",
+    "owner": "Ismail Haroun",
+    "emailLabel": "电子邮件:",
+    "email": "BasttetTravel@outlook.com",
+    "phoneLabel": "电话:",
+    "phone": "+20 1100507802"
+  },
+  "cancellationPolicy": {
+    "title": "付款和取消政策",
+    "effectiveDate": "生效日期: 2026年7月1日",
+    "cancellationPolicy": "取消政策",
+    "cancellationText": "取消请求必须通过电子邮件书面发送，以向 BasttetTravel 提供正式确认。",
+    "cancellationRules": [
+      "150 – 120 天前: 收取 25%",
+      "120 – 90 天前: 收取 50%",
+      "90 – 60 天前: 收取 75%",
+      "少于 60 天: 收取 100%",
+      "未出现: 收取全额"
+    ],
+    "note": "注意: 任何取消将收取已支付定金的 6% 银行手续费。",
+    "refunds": "退款",
+    "refundsText": "退款将在 14 个工作日内使用相同的付款方式处理。未出现不予退款。",
+    "accommodation": "住宿",
+    "accommodationText": "价格基于双人共享。单人房需支付附加费。酒店可能会替换为同等质量。",
+    "responsibility": "责任与义务",
+    "responsibilityText": "BasttetTravel 仅作为代理。我们不承担因以下原因造成的任何责任:",
+    "responsibilityList": [
+      "天气、不可抗力",
+      "战争、骚乱、盗窃、隔离",
+      "酒店、承运人、餐厅的延误或取消"
+    ],
+    "specialRequests": "特殊要求",
+    "specialRequestsText": "要求必须在预订时提出。我们尽力满足但不能保证。预订不能以要求为条件。",
+    "childrenPolicy": "儿童政策",
+    "packages": "套餐、尼罗河游轮、酒店",
+    "packagesList": [
+      "2 岁以下: 免费",
+      "6 岁以下: 收取 25%",
+      "12 岁以下: 收取 50%",
+      "12 岁以上: 全额"
+    ],
+    "tours": "观光旅游与短途旅行",
+    "toursList": ["6 岁以下: 免费", "12 岁以下: 收取 50%", "12 岁以上: 全额"],
+    "tipping": "小费",
+    "tippingText": "小费是表达满意的习惯。完全由您自行决定。",
+    "complaints": "投诉与争议解决",
+    "complaintsText": "如有问题请立即通知 BasttetTravel。如未解决，请联系埃及旅行社协会或旅游部。",
+    "acceptance": "协议接受",
+    "acceptanceText": "支付定金/尾款表示接受所有条款和条件。",
+    "contact": "联系信息",
+    "ownerLabel": "所有者:",
+    "owner": "Ismail Haroun",
+    "emailLabel": "电子邮件:",
+    "email": "BasttetTravel@outlook.com",
+    "phoneLabel": "电话:",
+    "phone": "+20 1100507802"
   }
 }

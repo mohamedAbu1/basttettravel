@@ -6,12 +6,60 @@ import { motion } from "framer-motion";
 import { useCurrency } from "@/context/CurrencyContext"; // ✅ استدعاء الكونتكست
 
 const translations = {
-  en: { title: "Trip Info", Adult: "Adult", Child:"Child", duration: "Duration" },
-  de: { title: "Reiseinformationen", Adult: "Erwachsene", Child:"Kind", duration: "Dauer" },
-  it: { title: "Informazioni sul viaggio", Adult: "Adulto", Child:"Bambino", duration: "Durata" },
-  es: { title: "Información del viaje", Adult: "Adulto", Child:"Niño", duration: "Duración" },
-  zh: { title: "行程信息", Adult: "成人", Child:"孩子", duration: "持续时间" },
-  fr: { title: "Informations sur le voyage", Adult: "Adulte", Child:"Enfant", duration: "Durée" },
+  en: {
+    title: "Trip Info",
+    AdultPrivate: "Adult Private",
+    AdultGroup: "Adult In Group",
+    Child: "Child",
+    ChildrenUnder6: "Children under 6 years old",
+    Free: "Free",
+    duration: "Duration"
+  },
+  de: {
+    title: "Reiseinformationen",
+    AdultPrivate: "Erwachsene Privat",
+    AdultGroup: "Erwachsene in Gruppe",
+    Child: "Kind",
+    ChildrenUnder6: "Kinder unter 6 Jahren",
+    Free: "Kostenlos",
+    duration: "Dauer"
+  },
+  it: {
+    title: "Informazioni sul viaggio",
+    AdultPrivate: "Adulto Privato",
+    AdultGroup: "Adulto in gruppo",
+    Child: "Bambino",
+    ChildrenUnder6: "Bambini sotto i 6 anni",
+    Free: "Gratis",
+    duration: "Durata"
+  },
+  es: {
+    title: "Información del viaje",
+    AdultPrivate: "Adulto Privado",
+    AdultGroup: "Adulto en grupo",
+    Child: "Niño",
+    ChildrenUnder6: "Niños menores de 6 años",
+    Free: "Gratis",
+    duration: "Duración"
+  },
+  zh: {
+    title: "行程信息",
+    AdultPrivate: "成人私人",
+    AdultGroup: "成人团体",
+    Child: "孩子",
+    ChildrenUnder6: "6岁以下儿童",
+    Free: "免费",
+    duration: "持续时间"
+  },
+  fr: {
+    title: "Informations sur le voyage",
+    AdultPrivate: "Adulte Privé",
+    AdultGroup: "Adulte en groupe",
+    Child: "Enfant",
+    ChildrenUnder6: "Enfants de moins de 6 ans",
+    Free: "Gratuit",
+    duration: "Durée"
+  }
 };
 
 export default function TripInfo({ trip, lang }) {
@@ -62,10 +110,10 @@ export default function TripInfo({ trip, lang }) {
       </motion.h2>
 
       <div className="space-y-3">
-        <PriceRow label={`${t.Adult} Private`} value={displayedSolo} currency={currency} theme={theme} />
-        <PriceRow label={`${t.Adult} In Group`} value={displayedGroup} currency={currency} theme={theme} />
+        <PriceRow label={`${t.AdultPrivate}`} value={displayedSolo} currency={currency} theme={theme} />
+        <PriceRow label={`${t.AdultGroup}`} value={displayedGroup} currency={currency} theme={theme} />
         <PriceRow label={t.Child} value={displayedChild} currency={currency} theme={theme} />
-        <PriceRow label={`Children under 6 years old`} value={"Free"} currency={currency} theme={theme} />
+        <PriceRow label={t.ChildrenUnder6} value={t.Free} currency={currency} theme={theme} />
         
         <motion.div className="flex items-center gap-2">
           <FaClock className={theme.icon} />

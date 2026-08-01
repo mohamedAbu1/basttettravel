@@ -103,7 +103,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
             />
             {/* 🟢 استيكر الخصم في الأعلى يسار */}
             {trip.discountPercent > 0 && (
-              <div className="absolute top-2 left-2">
+              <div className="absolute top-2 left-2 z-50">
                 {trip.discountPercent === 10 && (
                   <Image
                     src="/HomePageImage/off10.png"

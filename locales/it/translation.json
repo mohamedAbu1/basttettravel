@@ -4,7 +4,8 @@
     "trips": "Viaggi",
     "about": "Chi siamo",
     "contact": "Contatto",
-    "admin": "Admin"
+    "admin": "Admin",
+    "privacyPolicy": "Informativa sulla privacy"
   },
   "home": {
     "FullName": "Nome completo",
@@ -14,7 +15,6 @@
     "female": "donna",
     "orsignupwith": "oppure registrati con",
     "Creating": "Creazione...",
-    "SignUp": "Registrati",
     "Alreadyhaveanaccount": "Hai già un account? Accedi",
     "Login": "Accedi",
     "orcontinuewith": "oppure continua con",
@@ -57,7 +57,32 @@
     "p6": "Nessuna recensione a 5 stelle ancora",
     "h6": "Cosa dicono i nostri viaggiatori",
     "Tripdetails": "Dettagli del viaggio",
-        "reviews": "Recensioni"
+    "reviews": "Recensioni",
+    "welcome": "Benvenuto a",
+    "brand": "𓂀 Basttet travel 𓂀",
+    "journey": "Goditi il viaggio",
+    "experience": "VIVI LA LEGGENDA",
+    "checkin": "Check-in",
+    "checkout": "Check-out",
+    "confirm": "Conferma",
+    "selectCity": "Seleziona città",
+    "selectCategory": "Seleziona categoria",
+    "SelectDate": "Seleziona data",
+    "From": "Da",
+    "Logout": "Disconnettersi",
+    "LoginBookCar": "Accedi e prenota subito la tua auto ✨",
+    "SignUp": "Iscriviti",
+    "Send": "Invia",
+    "Support": "Supporto",
+      "welcomeMessage": "👋 Ciao e benvenuto! Il team di Basttet Travel è entusiasta di aiutarti a pianificare il tuo prossimo viaggio indimenticabile. Come possiamo assisterti oggi?",
+    "trips": {
+      "nileCruise": "Crociera sul Nilo Luxor-Aswan",
+      "luxuryCruise": "Crociera di lusso sul Nilo",
+      "budgetCruise": "Crociera economica sul Nilo",
+      "cairoTour": "Tour di un giorno al Cairo",
+      "gizaTrip": "Gita di un giorno alle Piramidi di Giza",
+      "alexandriaTour": "Tour di un giorno ad Alessandria"
+    }
   },
   "trips": {
     "Searchtrips": "Cerca viaggi...",
@@ -71,7 +96,10 @@
     "MostPopular": "I più popolari",
     "reviews": "Recensioni",
     "btn": "Prenota ora",
-    "Tripdetails": "Dettagli del viaggio"
+    "Tripdetails": "Dettagli del viaggio",
+    "Cancelling": "Annullamento...",
+    "CancelBooking": "❌ Annulla prenotazione",
+    "BuyTrip": "Acquista viaggio"
   },
   "about": {
     "AboutWasetTravel": "Informazioni su Basttet travel",
@@ -115,10 +143,110 @@
     "Home": "Home",
     "AboutUs": "Chi siamo",
     "Tours": "Tour",
-    "Contact": "Contatto"
+    "Contact": "Contatto",
+    "privacyPolicy": "Informativa sulla privacy",
+    "Footer": "© 2026 Basttet travel. Tutti i diritti riservati. Proprietario: Ismail Haroun — Telefono: +20 1100507802"
   },
-   "tripsId": {
-     "submitReview": "Invia recensione",
-  "Average": "Media"
+  "tripsId": {
+    "submitReview": "Invia recensione",
+    "Average": "Media"
+  },
+  "privacyPolicy": {
+    "title": "Informativa sulla privacy",
+    "effectiveDate": "Data di entrata in vigore: 1 luglio 2026",
+    "intro": "Questa pagina informa sulle nostre politiche riguardanti la raccolta, l'uso e la divulgazione dei dati personali.",
+    "dataUsage": "Utilizziamo i tuoi dati per fornire e migliorare il Servizio.",
+    "consent": "Utilizzando il Servizio, accetti la raccolta e l'uso delle informazioni in conformità con questa politica.",
+    "informationCollection": "Raccolta e utilizzo delle informazioni",
+    "informationCollectionText": "Raccogliamo diversi tipi di informazioni per vari scopi al fine di fornire e migliorare il nostro Servizio.",
+    "typesOfData": "Tipi di dati raccolti",
+    "personalData": "Dati personali",
+    "emailAddress": "Indirizzo email",
+    "fullName": "Nome e cognome",
+    "phoneNumber": "Numero di telefono",
+    "address": "Indirizzo, Stato, Provincia, CAP, Città",
+    "cookiesUsage": "Cookie e dati di utilizzo",
+    "usageData": "Dati di utilizzo",
+    "usageDataText": "Potremmo anche raccogliere informazioni su come il Servizio viene accesso e utilizzato...",
+    "cookiesData": "Dati di tracciamento e cookie",
+    "cookiesDataText": "Utilizziamo cookie e tecnologie simili per tracciare l'attività e migliorare il nostro Servizio.",
+    "useOfData": "Uso dei dati",
+    "provideService": "Fornire e mantenere il Servizio",
+    "notifyChanges": "Notificare modifiche",
+    "interactiveFeatures": "Consentire funzionalità interattive",
+    "customerCare": "Fornire assistenza clienti",
+    "monitorUsage": "Monitorare l'utilizzo",
+    "preventIssues": "Rilevare e prevenire problemi",
+    "contactUs": "Contattaci",
+    "ownerLabel": "Proprietario:",
+    "owner": "Ismail Haroun",
+    "emailLabel": "Email:",
+    "email": "BasttetTravel@outlook.com",
+    "phoneLabel": "Telefono:",
+    "phone": "+20 1100507802"
+  },
+  "cancellationPolicy": {
+    "title": "Politica di pagamento e cancellazione",
+    "effectiveDate": "Data di entrata in vigore: 1 luglio 2026",
+
+    "cancellationPolicy": "Politica di cancellazione",
+    "cancellationText": "Le richieste di cancellazione devono essere inviate per iscritto via e-mail per fornire a BasttetTravel una conferma ufficiale.",
+    "cancellationRules": [
+      "150 – 120 giorni prima: 25% addebitato",
+      "120 – 90 giorni prima: 50% addebitato",
+      "90 – 60 giorni prima: 75% addebitato",
+      "Meno di 60 giorni: 100% addebitato",
+      "No Show: importo totale addebitato"
+    ],
+    "note": "Nota: Per qualsiasi cancellazione verrà addebitata una commissione bancaria del 6% sull'acconto versato.",
+
+    "refunds": "Rimborsi",
+    "refundsText": "I rimborsi saranno elaborati utilizzando lo stesso metodo di pagamento entro 14 giorni lavorativi. Nessun rimborso per i no-show.",
+
+    "accommodation": "Alloggio",
+    "accommodationText": "I prezzi si basano su una condivisione doppia. Camere singole disponibili con supplemento. Gli hotel possono essere sostituiti con qualità simile.",
+
+    "responsibility": "Responsabilità",
+    "responsibilityText": "BasttetTravel agisce solo come agente. Non ci assumiamo alcuna responsabilità per lesioni, malattie, danni, perdite, incidenti, ritardi o irregolarità causati da:",
+    "responsibilityList": [
+      "Condizioni meteorologiche, forza maggiore",
+      "Guerre, rivolte, furti, quarantene",
+      "Ritardi o cancellazioni da parte di hotel, vettori, ristoranti"
+    ],
+
+    "specialRequests": "Richieste speciali",
+    "specialRequestsText": "Le richieste devono essere fatte al momento della prenotazione. Cerchiamo di soddisfarle ma non possiamo garantirne l'adempimento. Le prenotazioni non possono essere condizionate alle richieste.",
+
+    "childrenPolicy": "Politica bambini",
+    "packages": "Pacchetti, Crociere sul Nilo, Hotel",
+    "packagesList": [
+      "Sotto i 2 anni: Gratis",
+      "Sotto i 6 anni: 25% addebitato",
+      "Sotto i 12 anni: 50% addebitato",
+      "12+ anni: Tariffa completa"
+    ],
+    "tours": "Tour e escursioni",
+    "toursList": [
+      "Sotto i 6 anni: Gratis",
+      "Sotto i 12 anni: 50% addebitato",
+      "12+ anni: Tariffa completa"
+    ],
+
+    "tipping": "Mance",
+    "tippingText": "La mancia è consuetudine per esprimere soddisfazione. Interamente a tua discrezione.",
+
+    "complaints": "Reclami e risoluzione delle controversie",
+    "complaintsText": "Notifica immediatamente BasttetTravel in caso di problemi. Se non risolto, contatta l'Associazione degli agenti di viaggio egiziani o il Ministero del Turismo.",
+
+    "acceptance": "Accettazione dell'accordo",
+    "acceptanceText": "Il pagamento dell'acconto o del saldo finale indica l'accettazione di tutti i termini e condizioni.",
+
+    "contact": "Informazioni di contatto",
+    "ownerLabel": "Proprietario:",
+    "owner": "Ismail Haroun",
+    "emailLabel": "Email:",
+    "email": "BasttetTravel@outlook.com",
+    "phoneLabel": "Telefono:",
+    "phone": "+20 1100507802"
   }
 }

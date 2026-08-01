@@ -3,12 +3,14 @@ import React, { useState } from "react";
 import { usePurchase } from "@/context/PurchaseContext";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 export default function CancelButton({ trip }) {
   const { cancelTrip } = usePurchase();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { userData } = useAuth(); // ✅ جلب المستخدم الحالي
+  const { t } = useTranslation("trips");
 
   const cancelBooking = async () => {
     setLoading(true);
@@ -36,7 +38,7 @@ export default function CancelButton({ trip }) {
                    hover:bg-[#C2A878]/20 hover:text-white transition-all duration-300 
                    shadow-lg cursor-pointer"
       >
-        {loading ? "Cancelling..." : "❌ Cancel Booking"}
+        {loading ? t("Cancelling") : t("CancelBooking")}
       </button>
       {error && <p className="text-red-500 mt-2">Error: {error}</p>}
     </div>

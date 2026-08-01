@@ -1,9 +1,14 @@
+"use client";
+import { useTranslation } from "react-i18next";
+
 export default function ChatHeader({ onClose, theme }) {
+    const { t } = useTranslation("home");
+  
   return (
     <div
       className={`font-bold p-3 rounded-t-xl flex justify-between items-center text-white ${theme.buttonPrimary}`}
     >
-      <span className="capitalize">Basttet Travel Support</span>
+      <span className="capitalize">Basttet Travel {t("Support")}</span>
       <button
         onClick={onClose}
         style={{ cursor: "pointer" }}

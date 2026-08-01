@@ -25,6 +25,7 @@ import { usePurchase } from "@/context/PurchaseContext";
 import AccessibilityInfo from "./components/components/AccessibilityInfo";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 export default function TripPage({ params }) {
   const { id } = use(params);
@@ -33,6 +34,7 @@ export default function TripPage({ params }) {
   const { theme, themeName } = useTheme();
   const { userData, chatUser, setChatUser } = useAuth();
   const { purchases } = usePurchase();
+  const { t } = useTranslation("header");
 
   useEffect(() => {
     if (!trips.length) {
@@ -149,7 +151,7 @@ export default function TripPage({ params }) {
                    hover:bg-[#C2A878]/20 hover:text-white transition-all duration-300 
                    shadow-lg cursor-pointer"
                 >
-                  Privacy Policy
+                  {t("PrivacyPolicy")}
                 </Link>
               </>
             ))}

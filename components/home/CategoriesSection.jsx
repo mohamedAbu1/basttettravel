@@ -41,7 +41,7 @@ function CategoryCard({ cat, theme, language }) {
       city: "all",
       category: [displayName],
       group_price: luxuryNames.includes(displayName) ? "Luxury" : "All",
-      popular: true,
+      popular: false,
     };
     const encoded = encodeData(queryObj);
     router.push(`/trips?data=${encoded}`);

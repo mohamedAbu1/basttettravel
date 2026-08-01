@@ -97,7 +97,7 @@ export default function TripReviews({ trip, lang }) {
       {/* العنوان + المتوسط */}
       <ReviewsHeader
         title={tr.title}
-        t={t}
+        average={tr.average}
         averageRating={averageRating}
         reviewsCount={tripReviews.length}
         theme={theme}

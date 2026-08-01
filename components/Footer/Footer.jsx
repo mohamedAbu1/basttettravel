@@ -101,19 +101,21 @@ const Footer = () => {
         variants={fadeUp}
         className="flex gap-6 mt-6 text-sm font-medium relative z-10"
       >
-        {["Home", "AboutUs", "Tours", "Contact","PrivacyPolicy"].map((link) => (
-          <Link
-            key={link}
-            href={`/${link === "Home" ? "" : link.toLowerCase()}`}
-            className={`hover:underline transition ${
-              themeName === "dark"
-                ? "text-white/80 hover:text-[var(--logoBorder)]"
-                : "text-[#3a2c0a]/80 hover:text-[#222]"
-            }`}
-          >
-            {t(link)}
-          </Link>
-        ))}
+        {["Home", "AboutUs", "Tours", "Contact", "PrivacyPolicy"].map(
+          (link) => (
+            <Link
+              key={link}
+              href={`/${link === "Home" ? "" : link.toLowerCase()}`}
+              className={`hover:underline transition ${
+                themeName === "dark"
+                  ? "text-white/80 hover:text-[var(--logoBorder)]"
+                  : "text-[#3a2c0a]/80 hover:text-[#222]"
+              }`}
+            >
+              {t(link)}
+            </Link>
+          ),
+        )}
       </motion.div>
 
       {/* Divider متدرج */}
@@ -136,7 +138,10 @@ const Footer = () => {
           { Icon: FaWhatsapp, url: "https://wa.me/201100507802" },
           { Icon: MdEmail, url: "https://mail.google.com/mail/u/3/#inbox" },
           { Icon: FaGlobe, url: "https://www.viator.com/" }, // ✅ Viator
-          { Icon: FaTripadvisor, url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html" }, // ✅ Tripadvisor
+          {
+            Icon: FaTripadvisor,
+            url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html",
+          }, // ✅ Tripadvisor
         ].map(({ Icon, url }, i) => (
           <motion.a
             key={i}
@@ -177,8 +182,7 @@ const Footer = () => {
         variants={fadeUp}
         className="mt-8 text-sm text-2xl opacity-70 relative z-10"
       >
-        © 2026 Basttet travel. All rights reserved. <br />
-        Owner: Ismail Haroun — Phone: +20 1100507802
+       {t("Footer")}
       </motion.p>
     </motion.footer>
   );

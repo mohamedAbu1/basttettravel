@@ -10,12 +10,14 @@ import { useAuth } from "@/context/AuthContext";
 import { FaSignOutAlt, FaUserPlus } from "react-icons/fa";
 import { useData } from "@/context/DataContext";
 import { signOut, signIn } from "next-auth/react"; // ✅ إضافة
+import { useTranslation } from "react-i18next";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { theme } = useTheme();
   const { userData, isLoggedIn, logout, handleOpen } = useAuth();
   const { handleLoginOpen } = useData();
+  const { t } = useTranslation("home");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -55,12 +57,12 @@ export default function Header() {
             {userData ? (
               <>
                 <FaSignOutAlt size={20} />
-                <span>Logout</span>
+                <span>{t("Logout")}</span>
               </>
             ) : (
               <>
                 <FaUserPlus size={20} />
-                <span>Sign Up</span>
+                <span>{t("SignUp")}</span>
               </>
             )}
           </Button>

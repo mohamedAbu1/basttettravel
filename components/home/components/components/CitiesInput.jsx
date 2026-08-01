@@ -10,6 +10,7 @@ const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
   const { theme } = useTheme();
   const { i18n } = useTranslation();
   const normalizedLang = i18n.language.split("-")[0]; // مثل en أو ar أو fr
+  const { t } = useTranslation("home");
 
   return (
     <Popover.Root>
@@ -22,7 +23,7 @@ const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
           <span className={`flex-1 text-left ${theme.text}`}>
             {(selectedCities || [])
               .map((c) => c.name?.[normalizedLang] || c.name?.["en"] || c.name)
-              .join(" - ") || "Select City"}
+              .join(" - ") || t("SelectCity")}
           </span>
         </button>
       </Popover.Trigger>
@@ -57,7 +58,7 @@ const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
                         cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
             style={{ border: `2px solid ${theme.logoBorder}` }}
           >
-            ✅ Confirm
+            {t("Confirm")}
           </Popover.Close>
         </Popover.Content>
       </Popover.Portal>

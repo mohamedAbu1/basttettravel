@@ -10,6 +10,7 @@ import ChatHeader from "./components/ChatHeader";
 import ChatMessages from "./components/ChatMessages";
 import ChatInput from "./components/ChatInput";
 import { useChat } from "@/context/ChatContext";
+import { useTranslation } from "react-i18next";
 export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
   const { theme, themeName } = useTheme();
   const { messages, sendMessage, fetchMessages, markMessageSeen } =
@@ -28,6 +29,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     setBookingMode,
     setMessageses,
   } = useChat();
+    const { t } = useTranslation("home");
 
   // ✅ جلب رسائل المستخدم
   useEffect(() => {
@@ -60,7 +62,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
 
           user_image: "/HomePageImage/Copilot_20260613_134423.webp",
           content:
-            "👋 Hello and welcome! The Basttet Travel team is excited to help you plan your next unforgettable journey. How can we assist you today?",
+           t("welcomeMessage", { defaultValue: "👋 Hello and welcome! The Basttet Travel team is excited to help you plan your next unforgettable journey. How can we assist you today?" }),
           sender_type: "admin", // مهم جداً لتظهر الرسالة بلون الأدمن
           status: "sent",
         });
