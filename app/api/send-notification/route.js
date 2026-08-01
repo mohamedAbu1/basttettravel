@@ -13,7 +13,7 @@ export async function POST(req) {
       data: { screen: "chat" },
     };
 
-    await fetch("https://exp.host/--/api/v2/push/send", {
+    const response = await fetch("https://exp.host/--/api/v2/push/send", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -21,9 +21,14 @@ export async function POST(req) {
       },
       body: JSON.stringify(message),
     });
+    const result = await response.json();
+    console.log("Expo Response:", result);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 },
+    );
   }
 }
