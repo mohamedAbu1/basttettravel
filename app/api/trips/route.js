@@ -17,27 +17,26 @@ export async function POST(req) {
 
     const db = await connectDB();
 
-   await db.execute(
-  `INSERT INTO trips 
-   (id, title, description, currency, duration, duration_unit, cover_image, gallery_images, priceLevel, group_price, solo_price, discount_percent)
-   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  [
-    tripId,
-    JSON.stringify(body.title),
-    JSON.stringify(body.description),
-    body.currency,
-    body.duration,
-    body.duration_unit,
-    body.cover_image,
-    JSON.stringify(body.gallery_images),
-    body.priceLevel,
-    body.group_price,
-    body.solo_price,
-    String(body.discountPercent ?? '0'), // ✅ تحويل القيمة إلى نص
-  ]
-);
-
-
+    // ✅ إدخال بيانات الرحلة الأساسية
+    await db.execute(
+      `INSERT INTO trips 
+       (id, title, description, currency, duration, duration_unit, cover_image, gallery_images, priceLevel, group_price, solo_price, discount_percent)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        tripId,
+        JSON.stringify(body.title),
+        JSON.stringify(body.description),
+        body.currency,
+        body.duration,
+        body.duration_unit,
+        body.cover_image,
+        JSON.stringify(body.gallery_images),
+        body.priceLevel,
+        body.group_price,
+        body.solo_price,
+        String(body.discountPercent ?? "0"),
+      ]
+    );
 
     // ✅ إدخال includes
     if (body.includes?.length > 0) {
@@ -49,6 +48,19 @@ export async function POST(req) {
       await db.query(
         "INSERT INTO includes (id, trip_id, include_translations) VALUES ?",
         [includesData]
+      );
+    }
+
+    // ✅ إدخال exclusions
+    if (body.exclusions?.length > 0) {
+      const exclusionsData = body.exclusions.map((exc) => [
+        uuidv4(),
+        tripId,
+        safeStringify(exc),
+      ]);
+      await db.query(
+        "INSERT INTO exclusions (id, trip_id, exclusions_translations) VALUES ?",
+        [exclusionsData]
       );
     }
 
@@ -79,28 +91,28 @@ export async function POST(req) {
     }
 
     // ✅ إدخال الأيام والأنشطة
-  if (body.itinerary?.length > 0) {
-  for (const [index, day] of body.itinerary.entries()) {
-    const dayId = uuidv4();
-    await db.execute(
-      "INSERT INTO trip_days (id, trip_id, day_number) VALUES (?, ?, ?)",
-      [dayId, tripId, day.day_number || index + 1]
-    );
+    if (body.itinerary?.length > 0) {
+      for (const [index, day] of body.itinerary.entries()) {
+        const dayId = uuidv4();
+        await db.execute(
+          "INSERT INTO trip_days (id, trip_id, day_number) VALUES (?, ?, ?)",
+          [dayId, tripId, day.day_number || index + 1]
+        );
 
-    if (day.activities?.length > 0) {
-      const activitiesData = day.activities.map((act) => [
-        uuidv4(),
-        dayId,
-        act.time,
-        safeStringify(act.activity_translations || act.activity),
-      ]);
-      await db.query(
-        "INSERT INTO day_activities (id, day_id, time, activity_translations) VALUES ?",
-        [activitiesData]
-      );
+        if (day.activities?.length > 0) {
+          const activitiesData = day.activities.map((act) => [
+            uuidv4(),
+            dayId,
+            act.time,
+            safeStringify(act.activity_translations || act.activity),
+          ]);
+          await db.query(
+            "INSERT INTO day_activities (id, day_id, time, activity_translations) VALUES ?",
+            [activitiesData]
+          );
+        }
+      }
     }
-  }
-}
 
     return new Response(JSON.stringify({ success: true, tripId }), {
       status: 201,
@@ -147,6 +159,13 @@ export async function GET() {
         ) AS includes,
         COALESCE(
           CAST(
+            (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', exc.id, 'exclusions_translations', exc.exclusions_translations)) 
+             FROM exclusions exc WHERE exc.trip_id = t.id)
+          AS CHAR
+        ), '[]'
+        ) AS exclusions,
+        COALESCE(
+          CAST(
             (SELECT JSON_ARRAYAGG(
                 JSON_OBJECT(
                   'id', td.id, 
@@ -186,6 +205,7 @@ export async function GET() {
         ) AS reviews
       FROM trips t
     `);
+
     const safeParse = (value) => {
       try {
         return value ? JSON.parse(value) : [];
@@ -209,9 +229,10 @@ export async function GET() {
       cities: safeParse(trip.cities),
       categories: safeParse(trip.categories),
       includes: safeParse(trip.includes),
+      exclusions: safeParse(trip.exclusions),
       itinerary: safeParse(trip.days),
-      reviews: safeParse(trip.reviews), // ✅ التعليقات الآن موجودة
-      discountPercent: safeParse(trip.discount_percent)
+      reviews: safeParse(trip.reviews),
+      discountPercent: safeParse(trip.discount_percent),
     }));
 
     return new Response(JSON.stringify({ success: true, trips: parsedTrips }), {
@@ -226,4 +247,3 @@ export async function GET() {
     );
   }
 }
-

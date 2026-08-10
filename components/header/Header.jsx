@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { theme } = useTheme();
-  const { userData, isLoggedIn, logout, handleOpen } = useAuth();
+  const { userData, } = useAuth();
   const { handleLoginOpen } = useData();
   const { t } = useTranslation("home");
 

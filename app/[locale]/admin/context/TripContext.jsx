@@ -19,6 +19,7 @@ const emptyTrip = {
   cities: [],
   categories: [],
   includes: [],
+  exclusions: [],
   itinerary: [],
   solo_price: 0,
   group_price: 0,
@@ -95,6 +96,7 @@ export function TripProvider({ children }) {
         ...tripData,
         cover_image: coverUrl,
         gallery_images: galleryData,
+        exclusions: tripData.exclusions,
       };
 
       // ✅ تتبع قبل الإرسال

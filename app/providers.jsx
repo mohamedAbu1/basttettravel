@@ -17,6 +17,7 @@ import { MessageProvider } from "@/context/MessageContext";
 import { UserProvider } from "@/context/UserContext";
 import { NotificationsProvider } from "@/context/NotificationsContext";
 import { CurrencyProvider } from "@/context/CurrencyContext";
+import { AppProvider } from "@/context/AppContext";
 import { ChatProvider } from "@/context/ChatContext";
 import { CitiesCategoriesProvider } from "@/context/CitiesCategoriesContext";
 import { ToastContainer } from "react-toastify";
@@ -44,12 +45,14 @@ export default function Providers({ children }) {
                                     <TripIDProvider>
                                       <ChatProvider>
                                         <PurchaseProvider>
-                                          <ToastContainer
-                                            position="top-right"
-                                            autoClose={3000}
-                                            theme="colored"
-                                          />
-                                          {children}
+                                          <AppProvider>
+                                            <ToastContainer
+                                              position="top-right"
+                                              autoClose={3000}
+                                              theme="colored"
+                                            />
+                                            {children}
+                                          </AppProvider>
                                         </PurchaseProvider>
                                       </ChatProvider>
                                     </TripIDProvider>

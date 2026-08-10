@@ -1,1 +1,21 @@
       // secure: process.env.NODE_ENV === "production", // في التطوير خليه false
+ <div className="col-span-3 flex flex-row gap-8">
+          <div className="col-span-3 flex flex-col gap-2.5">
+            <TripInfo trip={trip} lang={lang} theme={theme} />
+            <TripCities trip={trip} lang={lang} theme={theme} />
+            <TripCategories trip={trip} lang={lang} theme={theme} />
+          </div>
+          <TripVideo trip={trip} lang={lang} theme={theme} />
+          <AccessibilityInfo theme={themeName} />
+        </div>
+
+        {/* ✅ المميزات */}
+        <div className="col-span-3 flex flex-row gap-8">
+          <TripIncludes trip={trip} lang={lang} theme={theme} />
+        </div>
+
+        {/* ✅ الجدول */}
+        <div className="col-span-1 lg:col-span-3">
+          <TripItinerary trip={trip} lang={lang} theme={theme} />
+        </div>
+       

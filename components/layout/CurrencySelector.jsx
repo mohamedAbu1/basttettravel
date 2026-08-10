@@ -1,19 +1,40 @@
 "use client";
-import React from "react";
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+import React, { useEffect } from "react";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import { usePurchase } from "@/context/PurchaseContext";
 import { useTheme } from "@/context/ThemeContext";
+import { useApp } from "@/context/AppContext";
 import { motion } from "framer-motion";
 
 export default function CurrencySelector() {
   const { currency, setCurrency } = usePurchase();
   const { theme } = useTheme();
+  const { country } = useApp();
 
   // 🎨 ألوان مخصصة من الثيم مع fallback
-  const usdColor = theme.stone || "#C2A878";       // ذهبي
-  const eurColor = theme.sandIvory || "#E6E6E6";   // عاج رملي
-  const egpColor = theme.pharaohGold || "#B8860B"; // لون مميز للجنيه المصري
+  const usdColor = theme.stone || "#C2A878";
+  const eurColor = theme.sandIvory || "#E6E6E6";
+  const egpColor = theme.pharaohGold || "#B8860B";
+
+  // 🧩 تحديد العملة الافتراضية بناءً على الدولة
+  useEffect(() => {
+    if (!country) return;
+
+    const euCountries = [
+      "Germany", "France", "Italy", "Spain", "Netherlands", "Belgium",
+      "Austria", "Portugal", "Greece", "Finland", "Ireland", "Luxembourg",
+      "Slovakia", "Slovenia", "Estonia", "Latvia", "Lithuania", "Cyprus", "Malta"
+    ];
+
+    if (country === "Egypt") {
+      setCurrency("EGP");
+    } else if (euCountries.includes(country)) {
+      setCurrency("EUR");
+    } else {
+      setCurrency("USD");
+    }
+  }, [country, setCurrency]);
 
   return (
     <motion.div
@@ -35,18 +56,12 @@ export default function CurrencySelector() {
           backdropFilter: "blur(12px)",
           border: `2px solid ${theme.logoBorder}`,
           boxShadow: theme.shadow,
-          "& .MuiSelect-select": {
-            color: theme.inputText,
-          },
-          "& .MuiSelect-icon": {
-            color: theme.iconInactive || "#999",
-          },
-          "& .MuiOutlinedInput-notchedOutline": {
-            border: "none",
-          },
+          "& .MuiSelect-select": { color: theme.inputText },
+          "& .MuiSelect-icon": { color: theme.iconInactive || "#999" },
+          "& .MuiOutlinedInput-notchedOutline": { border: "none" },
           "&:hover": {
             background: theme.inputHoverBg,
-            boxShadow: "0 0 12px rgba(194,168,120,0.6)", // Glow ذهبي
+            boxShadow: "0 0 12px rgba(194,168,120,0.6)",
           },
         }}
       >
@@ -56,7 +71,7 @@ export default function CurrencySelector() {
         <MenuItem value="EUR" sx={{ color: eurColor, fontWeight: "600" }}>
           €
         </MenuItem>
-        <MenuItem value="EGP" sx={{ color: egpColor, fontWeight: "600" }}>
+          <MenuItem value="EGP" sx={{ color: egpColor, fontWeight: "600" }}>
           £
         </MenuItem>
       </Select>

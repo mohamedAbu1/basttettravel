@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid"; // ✅ استدعاء مكتبة UUID
 
 const TripIDContext = createContext();
 
@@ -49,62 +50,108 @@ export function TripIDProvider({ children }) {
   };
 
   // ✅ استدعاء رحلة واحدة بالـ ID مع Cache-Control
- const fetchTripById = async (id) => {
-  if (!id) {
-    setError("No trip ID provided");
-    return;
-  }
-
-  setLoading(true);
-  setError(null);
-
-  try {
-    const res = await fetch(`/api/trips/${id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-      },
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      setTripData({
-        ...data.trip,
-        title:
-          typeof data.trip.title === "object"
-            ? data.trip.title
-            : { en: data.trip.title },
-        description:
-          typeof data.trip.description === "object"
-            ? data.trip.description
-            : { en: data.trip.description },
-        gallery_images: Array.isArray(data.trip.gallery_images)
-          ? data.trip.gallery_images
-          : JSON.parse(data.trip.gallery_images || "[]"),
-        // ✅ تحويل المدن والفئات إلى Array جاهز للعرض
-        cities: Array.isArray(data.trip.cities)
-          ? data.trip.cities
-          : JSON.parse(data.trip.cities || "[]"),
-        categories: Array.isArray(data.trip.categories)
-          ? data.trip.categories
-          : JSON.parse(data.trip.categories || "[]"),
-      });
-    } else {
-      setError(data.error || "Failed to fetch trip");
+  const fetchTripById = async (id) => {
+    if (!id) {
+      setError("No trip ID provided");
+      return;
     }
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
 
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/trips/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        },
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setTripData({
+          ...data.trip,
+          discountPercent: data.trip.discount_percent, // ✅ تحويل الاسم
+          title:
+            typeof data.trip.title === "string"
+              ? JSON.parse(data.trip.title)
+              : data.trip.title,
+          description:
+            typeof data.trip.description === "string"
+              ? JSON.parse(data.trip.description)
+              : data.trip.description,
+          gallery_images: Array.isArray(data.trip.gallery_images)
+            ? data.trip.gallery_images
+            : JSON.parse(data.trip.gallery_images || "[]"),
+          includes: Array.isArray(data.trip.includes)
+            ? data.trip.includes.map((inc) => ({
+                id: inc.id, // ✅ لازم نحافظ على الـ id القادم من الـ backend
+                include_translations:
+                  typeof inc.include_translations === "string"
+                    ? JSON.parse(inc.include_translations)
+                    : inc.include_translations,
+              }))
+            : [],
+          exclusions: Array.isArray(data.trip.exclusions)
+            ? data.trip.exclusions.map((exc) => ({
+                id: exc.id,
+                exclusions_translations:
+                  typeof exc.exclusions_translations === "string"
+                    ? JSON.parse(exc.exclusions_translations)
+                    : exc.exclusions_translations,
+              }))
+            : [],
+        });
+      } else {
+        setError(data.error || "Failed to fetch trip");
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteTrip = async (id) => {
+    try {
+      const res = await fetch(`/api/trips/${id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setTripsList((prev) => prev.filter((trip) => trip.id !== id));
+        localStorage.setItem(
+          "tripsList",
+          JSON.stringify(tripsList.filter((trip) => trip.id !== id)),
+        );
+      }
+
+      return data;
+    } catch (err) {
+      return { success: false, error: err.message };
+    }
+  };
 
   const updateTripField = (field, value) => {
     setTripData((prev) => ({
       ...prev,
       [field]: value,
+    }));
+  };
+
+  // ✅ إضافة include جديد مع UUID
+  const addInclude = (translationObj) => {
+    setTripData((prev) => ({
+      ...prev,
+      includes: [
+        ...(prev.includes || []),
+        {
+          id: uuidv4(), // توليد UUID صالح
+          include_translations: translationObj,
+        },
+      ],
     }));
   };
 
@@ -120,7 +167,27 @@ export function TripIDProvider({ children }) {
       gallery_images: tripData.gallery_images,
       solo_price: tripData.solo_price,
       group_price: tripData.group_price,
-      discountPercent: tripData.discountPercent
+      discountPercent: tripData.discountPercent,
+
+      categories: (tripData.categories || [])
+        .map((c) => (typeof c === "string" ? c : c?.category_id || c?.id))
+        .filter(Boolean),
+
+      cities: (tripData.cities || [])
+        .map((c) => (typeof c === "string" ? c : c?.city_id || c?.id))
+        .filter(Boolean),
+
+      // ✅ إرسال includes مع UUID
+      includes: (tripData.includes || []).map((inc) => ({
+        id: inc.id,
+        include_translations: inc.include_translations,
+      })),
+      exclusions: (tripData.exclusions || []).map((exc) => ({
+        id: exc.id,
+        exclusions_translations: exc.exclusions_translations,
+      })),
+
+      itinerary: tripData.itinerary || [],
     };
 
     try {
@@ -144,7 +211,6 @@ export function TripIDProvider({ children }) {
   useEffect(() => {
     fetchAllTrips();
   }, []);
-
   return (
     <TripIDContext.Provider
       value={{
@@ -154,7 +220,9 @@ export function TripIDProvider({ children }) {
         fetchTripById,
         fetchAllTrips,
         updateTripField,
+        addInclude, // ✅ متاح للاستخدام في أي كومبوننت
         saveTrip,
+        deleteTrip,
         loading,
         error,
       }}

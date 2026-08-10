@@ -26,6 +26,7 @@ import AccessibilityInfo from "./components/components/AccessibilityInfo";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import TripExclusions from "./components/TripExclusions";
 
 export default function TripPage({ params }) {
   const { id } = use(params);
@@ -127,6 +128,7 @@ export default function TripPage({ params }) {
         {/* ✅ المميزات */}
         <div className="col-span-3 flex flex-row gap-8">
           <TripIncludes trip={trip} lang={lang} theme={theme} />
+          <TripExclusions  trip={trip} lang={lang} theme={theme}/>
         </div>
 
         {/* ✅ الجدول */}

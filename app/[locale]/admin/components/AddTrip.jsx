@@ -13,6 +13,7 @@ import DailyItinerary from "./components/DailyItinerary";
 import SaveButton from "./components/SaveButton";
 import TripClassification from "./components/TripClassification";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
+import TripExclusions from "./components/TripExclusions"
 
 export default function AddTrip() {
   const { themeName } = useTheme();
@@ -77,7 +78,7 @@ export default function AddTrip() {
 
       {/* ما تحتوي عليه الرحلة */}
       <TripIncludes />
-
+      <TripExclusions />
       {/* البرنامج اليومي */}
       <DailyItinerary />
 

@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "e01ae9c2-5200-4f5c-876c-a3c3fad13f48"
+      }
+    },
+    "android": {
+      "package": "com.mohamed_abu_1997.basttettravel"
+    }
+  }
+}
