@@ -96,7 +96,7 @@ const TopTripsSection = () => {
         style={{ border: `2px solid ${theme.logoBorder}` }}
       >
         {/* صورة الرحلة */}
-        <div className="relative w-full h-72">
+        <div className="relative w-72 h-72">
           <Image
             src={trip?.cover_image || "/default.jpg"}
             alt={trip?.title?.[normalizedLang] || "Trip image"}
