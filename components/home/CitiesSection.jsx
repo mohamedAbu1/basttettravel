@@ -151,7 +151,20 @@ const CitiesSection = () => {
       </div>
 
       {/* عنوان */}
-      <div className="max-w-2xl mx-auto mb-10 sm:mb-16 w-full relative z-10">
+     
+   <div className="max-w-7xl mx-auto mb-10 text-start relative z-10 flex flex-row items-center gap-14">
+          {/* ✅ صورة قبل العنوان حسب الثيم */}
+          <img
+            src={
+              themeName === "dark"
+                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
+                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
+            }
+            alt="Decor before title"
+            className="w-34 h-34 object-contain"
+          />
+
+        <div className="max-w-2xl mx-auto mb-10 sm:mb-16 w-full relative z-10">
         <h2 className="sc-title-first text-3xl sm:text-5xl font-extrabold tracking-wide drop-shadow-md text-center text-gradient">
           <span className="inline-block transform scale-x-[-1] mr-2 sm:mr-4">𓅓</span>
           {t("ExploreCities")}
@@ -159,7 +172,17 @@ const CitiesSection = () => {
         </h2>
         <DividerWithIcon />
       </div>
-
+          {/* ✅ صورة بعد العنوان حسب الثيم */}
+          <img
+            src={
+              themeName === "dark"
+                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
+                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
+            }
+            alt="Decor after title"
+            className="w-34 h-34 object-contain"
+          />
+        </div>
       {/* ✅ Marquee Animation */}
       <div className="relative overflow-hidden w-full max-w-7xl mx-auto h-[350px] z-10">
         <motion.div

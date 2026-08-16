@@ -99,7 +99,7 @@ const Footer = () => {
       {/* روابط سريعة */}
       <motion.div
         variants={fadeUp}
-        className="flex gap-6 mt-6 text-sm font-medium relative z-10"
+        className="flex gap-6 mt-6 text-sm font-medium relative z-10 flex-wrap"
       >
         {[
           "home",
@@ -111,7 +111,7 @@ const Footer = () => {
         ].map((link) => (
           <Link
             key={link}
-            href={`/${link === "Home" ? "" : link}`}
+            href={`/${link === "home" ? "/" : link}`}
             className={`hover:underline transition capitalize ${
               themeName === "dark"
                 ? "text-white/80 hover:text-[var(--logoBorder)]"

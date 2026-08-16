@@ -43,7 +43,7 @@ export default function ReviewCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6, delay: idx * 0.1 }}
-      className={`w-[48%] p-5 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text} ${theme.border}`}
+      className={`w-[99%] lg:w-[48%] p-5 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text} ${theme.border}`}
     >
       {/* رأس البطاقة */}
       <div className="flex items-center gap-4 mb-3">

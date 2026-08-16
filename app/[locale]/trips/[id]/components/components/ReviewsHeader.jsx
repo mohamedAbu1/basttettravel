@@ -3,7 +3,7 @@ import { FaStar } from "react-icons/fa";
 
 export default function ReviewsHeader({ title, averageRating,average, reviewsCount, theme, t }) {
   return (
-    <div className={`flex items-center justify-between mb-6 border-b p-2 ${theme.border}`}>
+    <div className={`flex flex-col lg:flex-row items-center justify-between mb-6 border-b p-2 ${theme.border}`}>
       <h2 className={`text-2xl font-bold flex items-center gap-2 ${theme.title}`}>
         {title}
       </h2>

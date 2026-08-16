@@ -95,7 +95,7 @@ const TopTripsSection = () => {
         className={`${theme.card} relative rounded-2xl overflow-hidden group transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl`}
         style={{ border: `2px solid ${theme.logoBorder}` }}
       >
-        <div className="relative w-72 h-72">
+        <div className="relative w-full h-72">
           <Image
             src={trip?.cover_image || "/default.jpg"}
             alt={trip?.title?.[normalizedLang] || "Trip image"}

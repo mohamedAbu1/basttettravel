@@ -107,7 +107,7 @@ export default function TripHeader({ trip, lang }) {
         {trip.gallery_images.map((img, index) => (
           <div
             key={index}
-            className={`relative w-[150px] h-[100px] rounded-lg cursor-pointer border-2 ${theme.border}`}
+            className={`relative w-[140px] lg:w-[150px] h-[100px] rounded-lg cursor-pointer border-2 ${theme.border}`}
             style={{
               borderColor: index === activeIndex ? theme.logoBorder : "transparent",
             }}

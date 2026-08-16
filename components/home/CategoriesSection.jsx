@@ -67,8 +67,8 @@ function CategoryCard({ cat, theme, language }) {
               cat.images?.[imgIndex]?.startsWith("/")
                 ? cat.images[imgIndex]
                 : cat.images?.[imgIndex]?.startsWith("http")
-                ? cat.images[imgIndex]
-                : "/fallback.jpg"
+                  ? cat.images[imgIndex]
+                  : "/fallback.jpg"
             }
             alt={displayName}
             fill
@@ -100,7 +100,7 @@ const MobileCategories = ({ categories, theme, language }) => {
     }, 3000);
     return () => clearInterval(interval);
   }, [categories.length]);
-console.log("object",categories)
+  console.log("object", categories);
   return (
     <div className="flex flex-col items-center gap-6 w-full">
       <div key={index} className="w-[90%] max-w-sm">
@@ -113,7 +113,6 @@ console.log("object",categories)
     </div>
   );
 };
-
 
 const CategoriesSection = () => {
   const { theme, themeName } = useTheme();
@@ -148,15 +147,31 @@ const CategoriesSection = () => {
   }
 
   const symbols = [
-    "𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽",
-    "𓃾","𓅓","𓈇","𓉐","𓊹","𓌙","𓍿","𓎟",
+    "𓂀",
+    "𓋹",
+    "𓆣",
+    "𓇼",
+    "𓇯",
+    "𓏏",
+    "𓎛",
+    "𓊽",
+    "𓃾",
+    "𓅓",
+    "𓈇",
+    "𓉐",
+    "𓊹",
+    "𓌙",
+    "𓍿",
+    "𓎟",
   ];
 
   return (
     <>
       {/* نسخة الموبايل */}
-      <section className={`flex lg:hidden py-12 px-4 flex-col w-full mx-auto ${theme.background}`}>
-          <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
+      <section
+        className={`flex lg:hidden py-12 px-4 flex-col w-full mx-auto ${theme.background}`}
+      >
+        <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
           {symbols.map((sym, i) => (
             <motion.span
               key={i}
@@ -175,7 +190,9 @@ const CategoriesSection = () => {
         {/* العنوان */}
         <div className="max-w-7xl mx-auto mb-10 text-start relative z-10">
           <h2 className="sc-title-first text-2xl font-extrabold tracking-wide drop-shadow-md text-gradient">
-            <span className="inline-block transform scale-x-[-1] text-gradient mr-4">𓅓</span>
+            <span className="inline-block transform scale-x-[-1] text-gradient mr-4">
+              𓅓
+            </span>
             {t("ExploreCategories")}
             <span className="inline-block ml-4 text-gradient">𓅓</span>
           </h2>
@@ -184,8 +201,12 @@ const CategoriesSection = () => {
           </p>
           <DividerWithIcon />
         </div>
-        
-        <MobileCategories categories={categories} theme={theme} language={normalizedLang} />
+
+        <MobileCategories
+          categories={categories}
+          theme={theme}
+          language={normalizedLang}
+        />
       </section>
 
       {/* نسخة الديسكتوب */}
@@ -210,16 +231,41 @@ const CategoriesSection = () => {
         <EgyptianBackground />
 
         {/* العنوان */}
-        <div className="max-w-7xl mx-auto mb-10 text-start relative z-10">
-          <h2 className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-gradient">
-            <span className="inline-block transform scale-x-[-1] text-gradient mr-4">𓅓</span>
-            {t("ExploreCategories")}
-            <span className="inline-block ml-4 text-gradient">𓅓</span>
-          </h2>
-          <p className="sc-p-first mt-4 text-lg opacity-80 text-start text-gradient">
-            {t("Discover")}
-          </p>
-          <DividerWithIcon />
+        <div className="max-w-7xl mx-auto mb-10 text-start relative z-10 flex flex-row items-center gap-14">
+          {/* ✅ صورة قبل العنوان حسب الثيم */}
+          <img
+            src={
+              themeName === "dark"
+                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
+                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
+            }
+            alt="Decor before title"
+            className="w-34 h-34 object-contain"
+          />
+
+          <div className="flex flex-col items-center justify-center gap-2">
+            <h2 className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-gradient">
+              <span className="inline-block transform scale-x-[-1] text-gradient mr-4">
+                𓅓
+              </span>
+              {t("ExploreCategories")}
+              <span className="inline-block ml-4 text-gradient">𓅓</span>
+            </h2>
+            <p className="sc-p-first mt-4 text-lg opacity-80 text-start text-gradient">
+              {t("Discover")}
+            </p>
+            <DividerWithIcon />
+          </div>
+          {/* ✅ صورة بعد العنوان حسب الثيم */}
+          <img
+            src={
+              themeName === "dark"
+                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
+                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
+            }
+            alt="Decor after title"
+            className="w-34 h-34 object-contain"
+          />
         </div>
 
         {/* الكروت */}

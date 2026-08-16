@@ -19,6 +19,7 @@ export default function TopReviewsSection() {
 
   const safeReviews = Array.isArray(allReviews) ? allReviews : [];
 
+  // ✅ حساب التعليقات الأكثر إعجابًا
   const topLikedReviews = safeReviews
     .map((rev) => ({
       ...rev,
@@ -27,6 +28,18 @@ export default function TopReviewsSection() {
     .filter((rev) => rev.likesCount > 0)
     .sort((a, b) => b.likesCount - a.likesCount)
     .slice(0, 5);
+
+  // ✅ لو ما فيش تعليقات عليها إعجابات → نعرض آخر 6 تعليقات
+  const fallbackReviews =
+    topLikedReviews.length > 0
+      ? topLikedReviews
+      : safeReviews
+          .sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime()
+          )
+          .slice(0, 6);
 
   const [expandedIds, setExpandedIds] = useState([]);
   const toggleExpand = (id) => {
@@ -73,18 +86,18 @@ export default function TopReviewsSection() {
 
       <DividerWithIcon />
 
-      {topLikedReviews.length > 0 ? (
+      {fallbackReviews.length > 0 ? (
         isLargeScreen ? (
           // ✅ عرض Slider في الشاشات الكبيرة
           <div className="max-w-7xl mx-auto">
             <Slider {...settings} className="w-full flex gap-2">
-              {topLikedReviews.map((rev, idx) => renderCard(rev, idx))}
+              {fallbackReviews.map((rev, idx) => renderCard(rev, idx))}
             </Slider>
           </div>
         ) : (
           // ✅ عرض Grid في الشاشات الصغيرة
           <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
-            {topLikedReviews.map((rev, idx) => renderCard(rev, idx))}
+            {fallbackReviews.map((rev, idx) => renderCard(rev, idx))}
           </div>
         )
       ) : (
@@ -108,7 +121,7 @@ export default function TopReviewsSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className={`flex flex-col justify-between gap-4 p-4 md:p-6 rounded-2xl min-h-[260px] ${theme.card}`}
+        className={`flex flex-col justify-between gap-4 ml-3 p-4 md:p-6 rounded-2xl min-h-[260px] ${theme.card}`}
         style={{
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",

@@ -52,19 +52,29 @@ export default function TripItinerary({ trip, lang }) {
   };
 
   // ✅ تأكد إن الأيام Array حتى لو جاية كـ string
-  let tripDays = [];
-  try {
-    if (Array.isArray(trip.days)) {
-      tripDays = trip.days;
-    } else if (typeof trip.days === "string") {
-      const parsed = JSON.parse(trip.days);
-      tripDays = Array.isArray(parsed) ? parsed : [parsed];
-    }
-  } catch {
-    tripDays = [];
+ // ✅ تأكد إن الأيام Array حتى لو جاية كـ string
+let tripDays = [];
+try {
+  if (Array.isArray(trip.days)) {
+    tripDays = trip.days;
+  } else if (typeof trip.days === "string") {
+    const parsed = JSON.parse(trip.days);
+    tripDays = Array.isArray(parsed) ? parsed : [parsed];
   }
+} catch {
+  tripDays = [];
+}
 
-  const dayGroups = chunkDays(tripDays || []);
+// ✅ ترتيب الأيام حسب رقم اليوم
+tripDays.sort((a, b) => {
+  const dayA = Number(a.day_number) || 0;
+  const dayB = Number(b.day_number) || 0;
+  return dayA - dayB;
+});
+
+const dayGroups = chunkDays(tripDays || []);
+
+
   const [currentPage, setCurrentPage] = useState(0);
 
   return (

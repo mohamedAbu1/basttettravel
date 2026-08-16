@@ -6,12 +6,12 @@ import darkTheme from "@/constants/theme/darkTheme";
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [themeName, setThemeName] = useState("light");
+  const [themeName, setThemeName] = useState("dark");
   const [theme, setTheme] = useState(lightTheme);
 
   // ✅ تحميل الثيم المحفوظ
   useEffect(() => {
-    const saved = localStorage.getItem("theme") || "light";
+    const saved = localStorage.getItem("theme") || "dark";
     applyTheme(saved);
   }, []);
 
