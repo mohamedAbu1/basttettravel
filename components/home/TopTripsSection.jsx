@@ -92,11 +92,11 @@ const TopTripsSection = () => {
           transition: { duration: 0.8 },
           viewport: { once: true },
         })}
-        className={`${theme.card} relative rounded-2xl w-72 h-72 overflow-hidden group transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl`}
+        className={`${theme.card} relative rounded-2xl w-82 h-72 overflow-hidden group transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl`}
         style={{ border: `2px solid ${theme.logoBorder}` }}
       >
         {/* صورة الرحلة */}
-        <div className="relative w-full h-3/4">
+        <div className="relative w-full h-3/5">
           <Image
             src={trip?.cover_image || "/default.jpg"}
             alt={trip?.title?.[normalizedLang] || "Trip image"}
