@@ -87,7 +87,10 @@ const OurSection = () => {
 
           <DividerWithIcon />
 
-          <p className="text-sm mb-6 leading-relaxed" style={{ color: theme.text }}>
+          <p
+            className="text-sm mb-6 leading-relaxed"
+            style={{ color: theme.text }}
+          >
             {t("At")}{" "}
             <span style={{ color: theme.logoBorder, fontWeight: 600 }}>
               Basttet Travel{" "}
@@ -188,7 +191,10 @@ const OurSection = () => {
 
             <DividerWithIcon />
 
-            <p className="text-base mb-6 leading-relaxed" style={{ color: theme.text }}>
+            <p
+              className="text-base mb-6 leading-relaxed"
+              style={{ color: theme.text }}
+            >
               {t("At")}{" "}
               <span style={{ color: theme.logoBorder, fontWeight: 600 }}>
                 Basttet Travel{" "}
@@ -213,7 +219,7 @@ const OurSection = () => {
               {t("LearnMoreAboutUs")}
             </motion.button>
           </motion.div>
-                    <motion.div
+          <motion.div
             initial={{ opacity: 0, x: -100 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.2 }}

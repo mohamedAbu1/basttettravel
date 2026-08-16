@@ -103,7 +103,7 @@ export default function RightBar({ scrolled }) {
 
       {/* ✅ أيقونة الإشعارات العامة */}
       {userData?.role === "ADMIN" && (
-        <Badge badgeContent={unreadCount} color="error">
+        <Badge badgeContent={unreadCount} color="error" className="hidden lg:flex">
           <NotificationsIcon
             onClick={() => setOpen(true)}
             sx={{
@@ -123,7 +123,7 @@ export default function RightBar({ scrolled }) {
 
       {/* ✅ أيقونة الرسائل */}
       {userData?.role === "ADMIN" && messageNotifications.length > 0 && (
-        <Badge badgeContent={unreadMessages} color="error">
+        <Badge badgeContent={unreadMessages} color="error" className="hidden lg:flex">
           <MailIcon
             onClick={() => setOpenMessages(true)}
             sx={{
