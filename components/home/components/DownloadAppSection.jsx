@@ -1,12 +1,16 @@
 "use client";
 import { FaGooglePlay, FaApple, FaGlobe, FaMapMarkedAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
+import LogoLetter from "../../LogoLetter";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function DownloadAppSection() {
     const { t } = useTranslation("home");
-  
+    const { theme } = useTheme();
+
   return (
-    <section className="w-full flex lg:hidden flex-col items-center justify-center gap-6 py-12 backdrop-blur-[2px] rounded-xl shadow-lg">
+    <section className="w-full flex lg:hidden flex-col items-center justify-center gap-6 pt-22 backdrop-blur-[2px] rounded-xl shadow-lg">
       {/* Title */}
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 tracking-wide">
         {t("DownloadOurAppNow")}
@@ -61,6 +65,26 @@ export default function DownloadAppSection() {
           <span>{t("Tripadvisor")}</span>
         </a>
       </div>
+        {/* Logo */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          style={{  borderRadius: "6px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2 },
+            },
+          }}
+          className="flex flex-wrap gap-4 justify-center font-[Cinzel] text-[18px] lg:text-[34px] xl:text-[60px]"
+        >
+          {["B", "A", "S", "T", "T","E","T","𓂀", "T", "R", "A", "V", "E", "L"].map(
+            (char, i) => (
+              <LogoLetter key={i} char={char} theme={theme} />
+            ),
+          )}
+        </motion.div>
     </section>
   );
 }

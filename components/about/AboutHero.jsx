@@ -70,7 +70,7 @@ export default function AboutHero() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative w-full h-80 lg:h-[460px] rounded-2xl overflow-hidden shadow-2xl"
+          className=" hidden lg:flex relative w-full h-80 lg:h-[460px] rounded-2xl overflow-hidden shadow-2xl"
         >
           <Image
             src={

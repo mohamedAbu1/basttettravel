@@ -104,7 +104,6 @@ const CitiesSection = () => {
   const { cities, loading } = useCitiesCategories();
   const normalizedLang = i18n.language.split("-")[0];
 
-  // ✅ hooks لازم تكون فوق
   const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -122,29 +121,13 @@ const CitiesSection = () => {
 
   const looped = [...cities, ...cities];
 
-  // ✅ الرموز الفرعونية للديكور
   const symbols = [
-    "𓂀",
-    "𓋹",
-    "𓆣",
-    "𓇼",
-    "𓇯",
-    "𓏏",
-    "𓎛",
-    "𓊽",
-    "𓃾",
-    "𓅓",
-    "𓈇",
-    "𓉐",
-    "𓊹",
-    "𓌙",
-    "𓍿",
-    "𓎟",
+    "𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽","𓃾","𓅓","𓈇","𓉐","𓊹","𓌙","𓍿","𓎟",
   ];
 
   return (
     <section
-      className={`hidden lg:flex py-12 px-6 flex-col w-full mx-auto relative ${theme.background}`}
+      className={`flex py-8 sm:py-12 px-4 sm:px-6 md:px-8 flex-col w-full mx-auto relative ${theme.background}`}
     >
       {/* خلفية الرموز */}
       <div className="absolute inset-0 pointer-events-none">
@@ -154,7 +137,7 @@ const CitiesSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 0.15, y: 0 }}
             transition={{ duration: 1.2, delay: i * 0.1 }}
-            className="absolute text-6xl"
+            className="absolute text-4xl sm:text-6xl"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
@@ -167,62 +150,21 @@ const CitiesSection = () => {
         ))}
       </div>
 
-      {/* صورة SVG ديكور جانبية */}
-      <div
-        className="absolute opacity-40 pointer-events-none"
-        style={{
-          right: screenSize.width * 0.05, // 10% من عرض الشاشة
-          bottom: screenSize.height * 0.49, // 20% من ارتفاع الشاشة
-          width: "250px",
-          height: "200px",
-        }}
-      >
-        <Image
-          src={
-              themeName === "dark"
-                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
-                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
-            }
-          alt="Decorative Style"
-          fill
-          className="object-contain"
-        />
-      </div>
-
-      <div className="max-w-2xl mx-auto mb-16 w-full relative z-10">
-        <h2 className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-center text-gradient">
-          <span className="inline-block transform scale-x-[-1] mr-4">𓅓</span>
+      {/* عنوان */}
+      <div className="max-w-2xl mx-auto mb-10 sm:mb-16 w-full relative z-10">
+        <h2 className="sc-title-first text-3xl sm:text-5xl font-extrabold tracking-wide drop-shadow-md text-center text-gradient">
+          <span className="inline-block transform scale-x-[-1] mr-2 sm:mr-4">𓅓</span>
           {t("ExploreCities")}
-          <span className="inline-block ml-4">𓅓</span>
+          <span className="inline-block ml-2 sm:ml-4">𓅓</span>
         </h2>
         <DividerWithIcon />
       </div>
 
-      <div
-        className="absolute scale-x-[-1] opacity-40 pointer-events-none"
-        style={{
-          left: screenSize.width * 0.05, // 10% من عرض الشاشة
-          bottom: screenSize.height * 0.49, // 20% من ارتفاع الشاشة
-          width: "250px",
-          height: "200px",
-        }}
-      >
-        <Image
-          src={
-              themeName === "dark"
-                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
-                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
-            }
-          alt="Decorative Style"
-          fill
-          className="object-contain"
-        />
-      </div>
       {/* ✅ Marquee Animation */}
-      <div className="relative overflow-hidden w-full max-w-7xl mx-auto h-[410px] z-10">
+      <div className="relative overflow-hidden w-full max-w-7xl mx-auto h-[350px] z-10">
         <motion.div
-          className="flex h-full"
-          animate={{ x: ["0%", "-100%"] }}
+          className="flex flex-col sm:flex-row h-full"
+          animate={screenSize.width < 640 ? { y: ["0%", "-100%"] } : { x: ["0%", "-100%"] }}
           transition={{
             duration: 20,
             ease: "linear",

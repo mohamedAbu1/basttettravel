@@ -27,7 +27,7 @@ const LeftSocialIcons = () => {
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 1, delay: 0.7 }}
-      className="absolute left-30 lg:left-10 top-200 lg:top-[55%] -translate-y-1/2 flex flex-row lg:flex-col gap-6 z-30 "
+      className="absolute left-[30px] top-170 lg:top-[55%] -translate-y-1/2 flex flex-row lg:flex-col gap-6 z-30"
     >
       {socialLinks.map(({ Icon, url }, i) => (
         <motion.a

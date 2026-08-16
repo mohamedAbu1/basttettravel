@@ -101,21 +101,26 @@ const Footer = () => {
         variants={fadeUp}
         className="flex gap-6 mt-6 text-sm font-medium relative z-10"
       >
-        {["Home", "AboutUs", "Tours", "Contact", "PrivacyPolicy"].map(
-          (link) => (
-            <Link
-              key={link}
-              href={`/${link === "Home" ? "" : link.toLowerCase()}`}
-              className={`hover:underline transition ${
-                themeName === "dark"
-                  ? "text-white/80 hover:text-[var(--logoBorder)]"
-                  : "text-[#3a2c0a]/80 hover:text-[#222]"
-              }`}
-            >
-              {t(link)}
-            </Link>
-          ),
-        )}
+        {[
+          "home",
+          "about",
+          "trips",
+          "contact",
+          "privacyPolicy",
+          "cancellationPolicy",
+        ].map((link) => (
+          <Link
+            key={link}
+            href={`/${link === "Home" ? "" : link}`}
+            className={`hover:underline transition capitalize ${
+              themeName === "dark"
+                ? "text-white/80 hover:text-[var(--logoBorder)]"
+                : "text-[#3a2c0a]/80 hover:text-[#222]"
+            }`}
+          >
+            {t(link)}
+          </Link>
+        ))}
       </motion.div>
 
       {/* Divider متدرج */}
@@ -182,7 +187,7 @@ const Footer = () => {
         variants={fadeUp}
         className="mt-8 text-sm text-2xl opacity-70 relative z-10"
       >
-       {t("Footer")}
+        {t("Footer")}
       </motion.p>
     </motion.footer>
   );

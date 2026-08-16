@@ -174,29 +174,12 @@ export default function TripsPage() {
         <EgyptianBackground />
         <Header />
 
-        {isSmallScreen ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, rotateY: 90 }}
-            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="flex flex-col items-center justify-center h-[70vh] text-center gap-6"
-          >
-            <h2 className="text-4xl font-extrabold text-[var(--primary-color)] drop-shadow-lg">
-              🚫 This page is not available on phones.
-            </h2>
-            <p className="text-lg text-gray-600">
-              You should go to the homepage to follow your trips
-            </p>
-            <button onClick={() => router.push("/")} className="btn-theme">
-              Return to home page
-            </button>
-          </motion.div>
-        ) : (
+       
           <motion.section
             style={{ marginTop: "105px", paddingBottom: "20px" }}
             className="container flex flex-1 gap-6 px-6 relative z-10"
           >
-            <div className="w-1/4 max-h-fit bg-[url('/HomePageImage/427421070_8ee61396-b440-41b5-af8d-619e23dd51b5.svg')] bg-cover bg-center rounded-2xl">
+            <div className=" hidden lg:flex w-1/4 max-h-fit bg-[url('/HomePageImage/427421070_8ee61396-b440-41b5-af8d-619e23dd51b5.svg')] bg-cover bg-center rounded-2xl">
               <TripsFilter
                 allCities={allCities}
                 allCategories={allCategories}
@@ -235,7 +218,6 @@ export default function TripsPage() {
               )}
             </div>
           </motion.section>
-        )}
 
         <Footer />
         <SignUpButton />

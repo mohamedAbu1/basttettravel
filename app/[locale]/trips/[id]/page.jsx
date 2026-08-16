@@ -35,7 +35,7 @@ export default function TripPage({ params }) {
   const { theme, themeName } = useTheme();
   const { userData, chatUser, setChatUser } = useAuth();
   const { purchases } = usePurchase();
-  const { t } = useTranslation("header");
+  const { t } = useTranslation("header","cancellationPolicy");
 
   useEffect(() => {
     if (!trips.length) {
@@ -147,13 +147,13 @@ export default function TripPage({ params }) {
               <>
                 <PurchaseButton trip={trip} theme={theme} />
                 <Link
-                  href="/privacyPolicy"
+                  href="/cancellationPolicy"
                   className="fixed bottom-29 left-6 flex-row rounded-[8px] px-6 py-3 bg-transparent backdrop-blur-md 
                    border border-[#C2A878] text-[#C2A878] font-semibold tracking-wide 
                    hover:bg-[#C2A878]/20 hover:text-white transition-all duration-300 
                    shadow-lg cursor-pointer"
                 >
-                  {t("PrivacyPolicy")}
+                  {t("cancellationPolicy")}
                 </Link>
               </>
             ))}

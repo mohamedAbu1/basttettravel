@@ -130,7 +130,7 @@ export default function ContactPage() {
               }`}
             >
               {/* ✅ صورة SVG خلفية */}
-              <div className="absolute top-80 left-0 w-full h-[450px] opacity-50 pointer-events-none">
+              <div className=" hidden lg:flex absolute top-80 left-0 w-full h-[450px] opacity-50 pointer-events-none">
                 <Image
                   src={
                     themeName === "dark"

@@ -20,7 +20,7 @@ function CategoryCard({ cat, theme, language }) {
       setImgIndex((prev) => (prev + 1) % (cat.images?.length || 1));
     }, 4000);
     return () => clearInterval(interval);
-  }, [cat.images]);
+  }, [cat?.images]);
 
   const displayName =
     typeof cat.name === "object"
@@ -67,8 +67,8 @@ function CategoryCard({ cat, theme, language }) {
               cat.images?.[imgIndex]?.startsWith("/")
                 ? cat.images[imgIndex]
                 : cat.images?.[imgIndex]?.startsWith("http")
-                  ? cat.images[imgIndex]
-                  : "/fallback.jpg"
+                ? cat.images[imgIndex]
+                : "/fallback.jpg"
             }
             alt={displayName}
             fill
@@ -90,6 +90,31 @@ function CategoryCard({ cat, theme, language }) {
   );
 }
 
+// نسخة الموبايل مع سلايدر تلقائي
+const MobileCategories = ({ categories, theme, language }) => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % categories.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [categories.length]);
+console.log("object",categories)
+  return (
+    <div className="flex flex-col items-center gap-6 w-full">
+      <div key={index} className="w-[90%] max-w-sm">
+        <CategoryCard
+          cat={categories[index]}
+          theme={theme}
+          language={language}
+        />
+      </div>
+    </div>
+  );
+};
+
+
 const CategoriesSection = () => {
   const { theme, themeName } = useTheme();
   const { t, i18n } = useTranslation("home");
@@ -106,7 +131,7 @@ const CategoriesSection = () => {
       setScreenSize({ width: window.innerWidth, height: window.innerHeight });
     };
 
-    handleResize(); // أول مرة
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -122,131 +147,108 @@ const CategoriesSection = () => {
     return <p className="text-center">Loading categories...</p>;
   }
 
-  // ✅ الرموز الفرعونية للديكور
   const symbols = [
-    "𓂀",
-    "𓋹",
-    "𓆣",
-    "𓇼",
-    "𓇯",
-    "𓏏",
-    "𓎛",
-    "𓊽",
-    "𓃾",
-    "𓅓",
-    "𓈇",
-    "𓉐",
-    "𓊹",
-    "𓌙",
-    "𓍿",
-    "𓎟",
+    "𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽",
+    "𓃾","𓅓","𓈇","𓉐","𓊹","𓌙","𓍿","𓎟",
   ];
 
   return (
-    <section
-      className={`hidden lg:flex flex-col py-24 px-6 w-full mx-auto relative transition-colors duration-500 ${theme.background} `}
-    >
-      {/* خلفية الرموز */}
-      <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
-        {symbols.map((sym, i) => (
-          <motion.span
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 0.3, y: 0 }}
-            transition={{ duration: 1, delay: i * 0.1 }}
-            className="text-6xl m-6"
-            style={{
-              color: theme.icon,
-            }}
-          >
-            {sym}
-          </motion.span>
-        ))}
-      </div>
-      <EgyptianBackground />
-      {/* العنوان */}
-      <div
-        className="absolute opacity-40 pointer-events-none"
-        style={{
-          right: screenSize.width * 0.05, // 10% من عرض الشاشة
-          bottom: screenSize.height * 0.49, // 20% من ارتفاع الشاشة
-          width: "240px",
-          height: "200px",
-        }}
-      >
-        <Image
-         src={
-              themeName === "dark"
-                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
-                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
-            }
-          alt="Decorative Style"
-          fill
-          className="object-contain"
-        />
-      </div>
-
-      <div className="max-w-7xl mx-auto mb-10 text-start relative z-10">
-        <h2 className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-gradient">
-          <span className="inline-block transform scale-x-[-1] text-gradient mr-4">
-            𓅓
-          </span>
-          {t("ExploreCategories")}
-          <span className="inline-block ml-4 text-gradient">𓅓</span>
-        </h2>
-
-        <p className="sc-p-first mt-4 text-lg opacity-80 text-start text-gradient">
-          {t("Discover")}
-        </p>
-
-        <DividerWithIcon />
-      </div>
-      <div
-        className="absolute scale-x-[-1] opacity-40 pointer-events-none"
-        style={{
-          left: screenSize.width * 0.05, // 10% من عرض الشاشة
-          bottom: screenSize.height * 0.49, // 20% من ارتفاع الشاشة
-          width: "240px",
-          height: "200px",
-        }}
-      >
-        <Image
-          src={
-              themeName === "dark"
-                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
-                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
-            }
-          alt="Decorative Style"
-          fill
-          className="object-contain"
-        />
-      </div>
-      {/* الكروت */}
-      <div className="relative overflow-hidden w-full max-w-7xl mx-auto z-10">
-        <motion.div
-          className="flex h-full"
-          drag="x"
-          dragConstraints={{ left: -looped.length * cardWidth, right: 0 }}
-          whileTap={{ cursor: "grabbing" }}
-          animate={{ x: -index * cardWidth }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-        >
-          {looped.map((cat, i) => (
-            <div
+    <>
+      {/* نسخة الموبايل */}
+      <section className={`flex lg:hidden py-12 px-4 flex-col w-full mx-auto ${theme.background}`}>
+          <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
+          {symbols.map((sym, i) => (
+            <motion.span
               key={i}
-              className="min-w-[100%] sm:min-w-[50%] md:min-w-[33.33%] lg:min-w-[20%] p-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 0.3, y: 0 }}
+              transition={{ duration: 1, delay: i * 0.1 }}
+              className="text-6xl m-6"
+              style={{ color: theme.icon }}
             >
-              <CategoryCard
-                cat={cat}
-                theme={theme}
-                themeName={themeName}
-                language={normalizedLang}
-              />
-            </div>
+              {sym}
+            </motion.span>
           ))}
-        </motion.div>
-      </div>
-    </section>
+        </div>
+        <EgyptianBackground />
+
+        {/* العنوان */}
+        <div className="max-w-7xl mx-auto mb-10 text-start relative z-10">
+          <h2 className="sc-title-first text-2xl font-extrabold tracking-wide drop-shadow-md text-gradient">
+            <span className="inline-block transform scale-x-[-1] text-gradient mr-4">𓅓</span>
+            {t("ExploreCategories")}
+            <span className="inline-block ml-4 text-gradient">𓅓</span>
+          </h2>
+          <p className="sc-p-first mt-4 text-lg opacity-80 text-start text-gradient">
+            {t("Discover")}
+          </p>
+          <DividerWithIcon />
+        </div>
+        
+        <MobileCategories categories={categories} theme={theme} language={normalizedLang} />
+      </section>
+
+      {/* نسخة الديسكتوب */}
+      <section
+        className={`hidden lg:flex flex-col py-24 px-6 w-full mx-auto relative transition-colors duration-500 ${theme.background}`}
+      >
+        {/* خلفية الرموز */}
+        <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
+          {symbols.map((sym, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 0.3, y: 0 }}
+              transition={{ duration: 1, delay: i * 0.1 }}
+              className="text-6xl m-6"
+              style={{ color: theme.icon }}
+            >
+              {sym}
+            </motion.span>
+          ))}
+        </div>
+        <EgyptianBackground />
+
+        {/* العنوان */}
+        <div className="max-w-7xl mx-auto mb-10 text-start relative z-10">
+          <h2 className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-gradient">
+            <span className="inline-block transform scale-x-[-1] text-gradient mr-4">𓅓</span>
+            {t("ExploreCategories")}
+            <span className="inline-block ml-4 text-gradient">𓅓</span>
+          </h2>
+          <p className="sc-p-first mt-4 text-lg opacity-80 text-start text-gradient">
+            {t("Discover")}
+          </p>
+          <DividerWithIcon />
+        </div>
+
+        {/* الكروت */}
+        <div className="relative overflow-hidden w-full max-w-7xl mx-auto z-10">
+          <motion.div
+            className="flex h-full"
+            drag="x"
+            dragConstraints={{ left: -looped.length * cardWidth, right: 0 }}
+            whileTap={{ cursor: "grabbing" }}
+            animate={{ x: -index * cardWidth }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          >
+            {looped.map((cat, i) => (
+              <div
+                key={i}
+                className="min-w-[100%] sm:min-w-[50%] md:min-w-[33.33%] lg:min-w-[20%] p-3"
+              >
+                <CategoryCard
+                  cat={cat}
+                  theme={theme}
+                  themeName={themeName}
+                  language={normalizedLang}
+                />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+    </>
   );
 };
 

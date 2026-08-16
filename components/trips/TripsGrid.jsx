@@ -24,7 +24,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
   // 🟢 دالة التحويل باستخدام CurrencyContext
 
 
-
+console.log("888",trips)
   if (loading)
     return <p className="text-center">⏳ Loading currency rates...</p>;
   if (error) return <p className="text-center text-red-500">❌ {error}</p>;
