@@ -176,7 +176,7 @@ const CitiesSection = () => {
               : "/HomePageImage/johnny_automatic_ocean_liner.svg"
           }
           alt="Decor before title"
-          className="w-34 h-34 hidden lg:flex object-contain"
+          className="w-34 h-34 hidden lg:flex object-contain scale-x-[-1]"
         />
 
         <div className="max-w-2xl mx-auto mb-10 sm:mb-16 w-full relative z-10">

@@ -240,7 +240,7 @@ const CategoriesSection = () => {
                 : "/HomePageImage/johnny_automatic_ocean_liner.svg"
             }
             alt="Decor before title"
-            className="w-34 h-34 object-contain"
+            className="w-34 h-34 object-contain scale-x-[-1]"
           />
 
           <div className="flex flex-col items-center justify-center gap-2">

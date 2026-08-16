@@ -95,6 +95,7 @@ const TopTripsSection = () => {
         className={`${theme.card} relative rounded-2xl overflow-hidden group transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl`}
         style={{ border: `2px solid ${theme.logoBorder}` }}
       >
+        {/* صورة الرحلة */}
         <div className="relative w-full h-72">
           <Image
             src={trip?.cover_image || "/default.jpg"}
@@ -105,7 +106,8 @@ const TopTripsSection = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
         </div>
 
-        <div className="absolute inset-0 flex flex-col justify-end p-6">
+        {/* النصوص تحت الصورة بدل absolute */}
+        <div className="flex flex-col justify-between p-6">
           <h3 className={`trips-text text-xl font-bold mb-1 ${theme.title}`}>
             {trip?.title?.[normalizedLang] || "Untitled Trip"}
           </h3>
