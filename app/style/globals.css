@@ -118,7 +118,7 @@
 .trips-text {
   font-size: 1.3rem;
   text-align: left;
-  -webkit-text-stroke: 1px var(--title);
+  -webkit-text-stroke: 1px var(--titleTrpis);
 }
 .text-gradient {
   background: var(--text-gradient);

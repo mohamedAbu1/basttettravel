@@ -19,6 +19,7 @@
 
   /* العناوين */
   --title: #fff;
+  --titleTrpis: #0A2E36;
   --heading: #fff;
 
   /* الكروت */
@@ -81,6 +82,7 @@
   --sub-text: #B3A58C;
 
   --title: #C2A878;
+  --titleTrpis: #C2A878;
   --heading: #A68B5B;
 
   --card-bg: rgba(35, 35, 35, 0.85);

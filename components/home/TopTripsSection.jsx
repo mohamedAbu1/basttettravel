@@ -92,7 +92,7 @@ const TopTripsSection = () => {
           transition: { duration: 0.8 },
           viewport: { once: true },
         })}
-        className={`${theme.card} relative rounded-2xl w-82 h-72 overflow-hidden group transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl`}
+        className={`${theme.card} relative rounded-2xl w-74 h-125 overflow-hidden group transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl`}
         style={{ border: `2px solid ${theme.logoBorder}` }}
       >
         {/* صورة الرحلة */}
@@ -108,9 +108,12 @@ const TopTripsSection = () => {
 
         {/* النصوص تحت الصورة بدل absolute */}
         <div className="flex flex-col justify-between p-6">
-          <h3 className={`trips-text text-xl font-bold mb-1 ${theme.title}`}>
+          <h3
+            className={`trips-text text-xl font-bold mb-1 ${theme.title} line-clamp-2`}
+          >
             {trip?.title?.[normalizedLang] || "Untitled Trip"}
           </h3>
+
           <div className="flex items-center gap-2 mb-2">
             <span className="text-yellow-400 text-lg font-semibold">
               ⭐ {trip?.rating || "4.5"}
