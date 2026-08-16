@@ -46,7 +46,7 @@ export default function RightBar({ scrolled }) {
     });
 
   const unreadCount = filteredNotifications.filter(
-    (n) => n.is_read === 0 && n.event_type !== "message"
+    (n) => n.is_read === 0 && n.event_type !== "message",
   ).length;
 
   const [open, setOpen] = useState(false);
@@ -65,7 +65,9 @@ export default function RightBar({ scrolled }) {
       return new Date(b.created_at) - new Date(a.created_at);
     });
 
-  const unreadMessages = messageNotifications.filter((n) => n.is_read === 0).length;
+  const unreadMessages = messageNotifications.filter(
+    (n) => n.is_read === 0,
+  ).length;
   const [openMessages, setOpenMessages] = useState(false);
 
   const handleNotificationClick = (notification) => {
@@ -76,11 +78,15 @@ export default function RightBar({ scrolled }) {
     }
 
     if (notification.event_type === "review" && notification.trip_id) {
-      router.push(`/trips/${notification.trip_id}?highlightReview=${notification.review_id}`);
+      router.push(
+        `/trips/${notification.trip_id}?highlightReview=${notification.review_id}`,
+      );
     }
 
     if (notification.event_type === "review_like" && notification.trip_id) {
-      router.push(`/trips/${notification.trip_id}?highlightReview=${notification.review_id}`);
+      router.push(
+        `/trips/${notification.trip_id}?highlightReview=${notification.review_id}`,
+      );
     }
   };
 
@@ -98,12 +104,14 @@ export default function RightBar({ scrolled }) {
   };
 
   return (
-    <div className="flex items-center gap-4">
-      <ThemeToggle scrolled={scrolled} />
-
+    <div className="hidden lg:flex items-center gap-4">
       {/* ✅ أيقونة الإشعارات العامة */}
       {userData?.role === "ADMIN" && (
-        <Badge badgeContent={unreadCount} color="error" className="hidden lg:flex">
+        <Badge
+          badgeContent={unreadCount}
+          color="error"
+          className="hidden lg:flex"
+        >
           <NotificationsIcon
             onClick={() => setOpen(true)}
             sx={{
@@ -112,10 +120,10 @@ export default function RightBar({ scrolled }) {
                 themeName === "dark"
                   ? "#fff"
                   : !isHome
-                  ? "#333"
-                  : scrolled
-                  ? "#333"
-                  : "#fff",
+                    ? "#333"
+                    : scrolled
+                      ? "#333"
+                      : "#fff",
             }}
           />
         </Badge>
@@ -123,7 +131,11 @@ export default function RightBar({ scrolled }) {
 
       {/* ✅ أيقونة الرسائل */}
       {userData?.role === "ADMIN" && messageNotifications.length > 0 && (
-        <Badge badgeContent={unreadMessages} color="error" className="hidden lg:flex">
+        <Badge
+          badgeContent={unreadMessages}
+          color="error"
+          className="hidden lg:flex"
+        >
           <MailIcon
             onClick={() => setOpenMessages(true)}
             sx={{
@@ -132,10 +144,10 @@ export default function RightBar({ scrolled }) {
                 themeName === "dark"
                   ? "#fff"
                   : !isHome
-                  ? "#333"
-                  : scrolled
-                  ? "#333"
-                  : "#fff",
+                    ? "#333"
+                    : scrolled
+                      ? "#333"
+                      : "#fff",
             }}
           />
         </Badge>
@@ -164,7 +176,9 @@ export default function RightBar({ scrolled }) {
         <div className="hidden lg:flex items-center gap-2">
           <img
             alt={userData?.name || "User Avatar"}
-            src={userData?.avatar_url || userData?.image || "/default-avatar.png"}
+            src={
+              userData?.avatar_url || userData?.image || "/default-avatar.png"
+            }
             width={40}
             height={40}
             style={{ border: "2px solid #d4af37", borderRadius: "50%" }}
@@ -178,10 +192,10 @@ export default function RightBar({ scrolled }) {
                 themeName === "dark"
                   ? "#fff"
                   : !isHome
-                  ? "#333"
-                  : scrolled
-                  ? "#333"
-                  : "#fff",
+                    ? "#333"
+                    : scrolled
+                      ? "#333"
+                      : "#fff",
             }}
           >
             {userData?.name}

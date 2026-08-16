@@ -5,18 +5,19 @@ import { useTheme } from "@/context/ThemeContext";
 import Logo from "./components/Logo";
 import NavBar from "./components/NavBar";
 import RightBar from "./components/RightBar";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import { useAuth } from "@/context/AuthContext";
 import { FaSignOutAlt, FaUserPlus } from "react-icons/fa";
 import { useData } from "@/context/DataContext";
 import { signOut, signIn } from "next-auth/react"; // ✅ إضافة
 import { useTranslation } from "react-i18next";
 import MobileHeaderAuth from "./components/MobileHeaderAuth";
+import ThemeToggle from "../ThemeToggle";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { theme } = useTheme();
-  const { userData, } = useAuth();
+  const { userData } = useAuth();
   const { handleLoginOpen } = useData();
   const { t } = useTranslation("home");
 
@@ -50,7 +51,7 @@ export default function Header() {
         {/* زر تسجيل الدخول/الخروج */}
         <motion.div whileHover={{ scale: 1.05 }} className="hidden lg:flex">
           <Button
-             onClick={userData ? () => signOut() : () => handleLoginOpen()}
+            onClick={userData ? () => signOut() : () => handleLoginOpen()}
             className={`transition-all font-semibold tracking-wide uppercase shadow-md flex items-center gap-2 px-6 py-3 rounded-xl ${
               userData ? theme.buttonSecondary : theme.buttonPrimary
             }`}
@@ -68,6 +69,8 @@ export default function Header() {
             )}
           </Button>
         </motion.div>
+        <ThemeToggle scrolled={scrolled} />
+
         <MobileHeaderAuth />
       </div>
     </motion.header>
