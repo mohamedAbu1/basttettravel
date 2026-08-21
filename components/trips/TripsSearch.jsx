@@ -11,13 +11,13 @@ export default function TripsSearch({ search, setSearch, cardStyle, setCardStyle
   return (
     <div className={`search-bar ${themeName === "dark" ? "card-dark" : "card-light"}`}>
       {/* أيقونة البحث + input */}
-      <FaSearch className=" hidden lg:fkex search-icon" />
+      <FaSearch className=" hidden lg:flex search-icon" />
       <input
         type="text"
         placeholder={t("Searchtrips")}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className={`hidden lg:fkex search-input ${themeName === "dark" ? "input-dark" : "input-light"}`}
+        className={`hidden lg:flex search-input ${themeName === "dark" ? "input-dark" : "input-light"}`}
       />
 
       {/* أزرار تغيير الاستايل */}

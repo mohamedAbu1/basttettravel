@@ -14,21 +14,23 @@ const handleGalleryImages = async (e) => {
 
   const uploadedImages = await Promise.all(
     files.map(async (file) => {
-      const { data, error } = await supabase.storage
-        .from("trip-gallery")
-        .upload(`images/${Date.now()}-${file.name}`, file);
+      const formData = new FormData();
+      formData.append("file", file);
 
-      if (error) {
-        console.error("Upload error:", error);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        console.error("Upload error:", data.error);
         return null;
       }
 
-      const publicUrl = supabase.storage
-        .from("trip-gallery")
-        .getPublicUrl(data.path).publicUrl;
-
       return {
-        url: publicUrl,
+        url: data.url, // رابط دائم من السيرفر
         name: {
           en: file.name,
           es: "",
@@ -48,7 +50,6 @@ const handleGalleryImages = async (e) => {
 };
 
 
-  // ✅ تحديث اسم صورة معينة بلغة محددة
   const updateImageName = (index, lang, newName) => {
     const updatedImages = [...(tripData?.gallery_images || [])];
     updatedImages[index] = {
@@ -58,7 +59,6 @@ const handleGalleryImages = async (e) => {
     updateTripField("gallery_images", updatedImages);
   };
 
-  // ✅ حذف صورة من المعرض
   const removeImage = (index) => {
     const updatedImages = (tripData?.gallery_images || []).filter(
       (_, i) => i !== index
@@ -76,7 +76,6 @@ const handleGalleryImages = async (e) => {
         Gallery Images
       </h3>
 
-      {/* زر إضافة الصور */}
       <label
         className={`flex items-center gap-3 cursor-pointer px-4 py-2 rounded-lg font-bold w-fit ${
           themeName === "dark"
@@ -94,13 +93,12 @@ const handleGalleryImages = async (e) => {
         />
       </label>
 
-      {/* عرض الصور */}
       {tripData?.gallery_images?.length > 0 && (
         <div className="grid grid-cols-4 gap-3 mt-3">
           {tripData.gallery_images.map((img, i) => (
             <div key={i} className="flex flex-col items-center">
               <Image
-                src={img.url}
+                src={img.preview || img.url} // ✅ عرض مؤقت أو دائم
                 alt={`Gallery ${i}`}
                 width={80}
                 height={80}
