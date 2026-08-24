@@ -1,4 +1,3 @@
-// BookingSummaryCard.jsx
 import React, { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
@@ -13,6 +12,7 @@ const BookingSummaryCard = ({
   checkIn,
   childrenCount,
   checkOut,
+  tripId, // ✅ أضفنا معرف الرحلة
 }) => {
   const { theme } = useTheme();
   const { userData } = useAuth();
@@ -80,7 +80,27 @@ const BookingSummaryCard = ({
       const orderId = `BOOK-${Date.now()}`;
       const amountInEgp = total.toFixed(2);
 
-      // 1. طلب الـ Hash من الـ API Route
+      // ✅ أولاً: إدخال بيانات الحجز في قاعدة البيانات
+      const bookingRes = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          trip_id: tripId,
+          participants,
+          childrenCount,
+          checkIn,
+          checkOut,
+          total: amountInEgp,
+          userEmail: userData?.email,
+        }),
+      });
+
+      const bookingData = await bookingRes.json();
+      if (!bookingRes.ok || !bookingData.success) {
+        throw new Error(bookingData.error || "Failed to save booking.");
+      }
+
+      // ✅ ثانياً: طلب الـ Hash من الـ API Route للدفع
       const res = await fetch("/api/kashier/hash", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -102,7 +122,7 @@ const BookingSummaryCard = ({
       const redirectUrl = `${baseUrl}/checkout/success`;
       const webhookUrl = `${baseUrl}/api/kashier/webhook`;
 
-      // 2. تشغيل الـ SDK وإرسال الحقل المطلوبة merchantRedirect
+      // ✅ تشغيل الـ SDK
       try {
         const KashierSDK = await loadKashierScript();
 
@@ -113,20 +133,20 @@ const BookingSummaryCard = ({
           currency: "EGP",
           orderId: orderId,
           hash: data.hash,
-          mode: "live", // حولها إلى "live" للإنتاج المباشر
+          mode: "live",
           merchantRedirect: redirectUrl,
           callbackUrl: redirectUrl,
           serverWebhook: webhookUrl,
           metaData: {
             tourName: tourName || "Cairo Tour",
             userEmail: userData?.email || "",
+            bookingId: bookingData.bookingId, // ✅ ربط الدفع بالحجز
           },
           failureRedirect: true,
         });
       } catch (sdkError) {
         console.warn("SDK load failed, using direct hosted redirection:", sdkError);
 
-        // التوجيه المباشر مع تضمين merchantRedirect في الرابط
         const mode = "live";
         const checkoutUrl = `https://checkout.kashier.io/?merchantId=${data.merchantId}&orderId=${orderId}&amount=${amountInEgp}&currency=EGP&hash=${data.hash}&mode=${mode}&apiKey=${apiKey}&merchantRedirect=${encodeURIComponent(redirectUrl)}&serverWebhook=${encodeURIComponent(webhookUrl)}`;
 
