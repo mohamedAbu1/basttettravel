@@ -127,7 +127,7 @@ const BookingSummaryCard = ({
         console.warn("SDK load failed, using direct hosted redirection:", sdkError);
 
         // التوجيه المباشر مع تضمين merchantRedirect في الرابط
-        const mode = "test";
+        const mode = "live";
         const checkoutUrl = `https://checkout.kashier.io/?merchantId=${data.merchantId}&orderId=${orderId}&amount=${amountInEgp}&currency=EGP&hash=${data.hash}&mode=${mode}&apiKey=${apiKey}&merchantRedirect=${encodeURIComponent(redirectUrl)}&serverWebhook=${encodeURIComponent(webhookUrl)}`;
 
         window.location.href = checkoutUrl;
