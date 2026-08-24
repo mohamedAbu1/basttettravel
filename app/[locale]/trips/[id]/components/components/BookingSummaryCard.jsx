@@ -26,36 +26,39 @@ const BookingSummaryCard = ({
     total = total * 0.6;
   }
 
-  // دالة تضمن تحميل السكريبت والتأكد من توفر window.Kashier فعلياً
-  const ensureKashierLoaded = () => {
+  // تحميل سكريبت Kashier SDK
+  const loadKashierScript = () => {
     return new Promise((resolve, reject) => {
-      // إذا كان كائن Kashier جاهزاً بالفعل
-      if (typeof window !== "undefined" && window.Kashier) {
-        return resolve(window.Kashier);
+      if (typeof window !== "undefined" && (window.Kashier || window.kashier)) {
+        return resolve(window.Kashier || window.kashier);
       }
 
-      // إضافة السكريبت إلى DOM إن لم يكن موجوداً
-      let script = document.getElementById("kashier-sdk");
-      if (!script) {
-        script = document.createElement("script");
-        script.id = "kashier-sdk";
-        script.src = "https://checkout.kashier.io/kashier-checkout.js";
-        script.async = true;
-        document.body.appendChild(script);
+      const existingScript = document.getElementById("kashier-sdk");
+      if (existingScript) {
+        existingScript.remove();
       }
 
-      // محاولة فحص window.Kashier كل 100 ملي ثانية (حتى 5 ثوانٍ كحد أقصى)
-      let attempts = 0;
-      const interval = setInterval(() => {
-        attempts++;
-        if (typeof window !== "undefined" && window.Kashier) {
-          clearInterval(interval);
-          resolve(window.Kashier);
-        } else if (attempts > 50) {
-          clearInterval(interval);
-          reject(new Error("Kashier SDK loading timed out. Please refresh."));
-        }
-      }, 100);
+      const script = document.createElement("script");
+      script.id = "kashier-sdk";
+      script.src = "https://checkout.kashier.io/kashier-checkout.js";
+      script.async = true;
+
+      script.onload = () => {
+        setTimeout(() => {
+          const kashierObj = window.Kashier || window.kashier;
+          if (kashierObj) {
+            resolve(kashierObj);
+          } else {
+            reject(new Error("Kashier SDK script loaded but object missing."));
+          }
+        }, 200);
+      };
+
+      script.onerror = () => {
+        reject(new Error("Failed to load Kashier SDK script."));
+      };
+
+      document.body.appendChild(script);
     });
   };
 
@@ -74,13 +77,10 @@ const BookingSummaryCard = ({
     setLoading(true);
 
     try {
-      // 1. التأكد التام من اكتمال تحميل كائن Kashier
-      const Kashier = await ensureKashierLoaded();
-
       const orderId = `BOOK-${Date.now()}`;
       const amountInEgp = total.toFixed(2);
 
-      // 2. طلب الـ Hash من الـ Backend Route
+      // 1. طلب الـ Hash من الـ API Route
       const res = await fetch("/api/kashier/hash", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -94,30 +94,47 @@ const BookingSummaryCard = ({
       const data = await res.json();
 
       if (!res.ok || !data.hash) {
-        throw new Error(data.error || "Failed to initialize payment hash");
+        throw new Error(data.error || "Failed to initialize payment hash.");
       }
 
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
+      const apiKey = process.env.NEXT_PUBLIC_KASHIER_API_KEY;
+      const redirectUrl = `${baseUrl}/checkout/success`;
+      const webhookUrl = `${baseUrl}/api/kashier/webhook`;
 
-      // 3. تهيئة الدفع عبر Kashier SDK
-      Kashier.init({
-        merchantId: data.merchantId,
-        apiKey: process.env.NEXT_PUBLIC_KASHIER_API_KEY,
-        amount: amountInEgp,
-        currency: "EGP",
-        orderId: orderId,
-        hash: data.hash,
-        mode: "test", // اضبطها على "live" في بيئة الإنتاج الفعلي
-        metaData: {
-          tourName: tourName || "Cairo Tour",
-          userEmail: userData?.email || "",
-        },
-        callbackUrl: `${baseUrl}/checkout/success`,
-        failureRedirect: true,
-      });
+      // 2. تشغيل الـ SDK وإرسال الحقل المطلوبة merchantRedirect
+      try {
+        const KashierSDK = await loadKashierScript();
+
+        KashierSDK.init({
+          merchantId: data.merchantId,
+          apiKey: apiKey,
+          amount: amountInEgp,
+          currency: "EGP",
+          orderId: orderId,
+          hash: data.hash,
+          mode: "test", // حولها إلى "live" للإنتاج المباشر
+          merchantRedirect: redirectUrl,
+          callbackUrl: redirectUrl,
+          serverWebhook: webhookUrl,
+          metaData: {
+            tourName: tourName || "Cairo Tour",
+            userEmail: userData?.email || "",
+          },
+          failureRedirect: true,
+        });
+      } catch (sdkError) {
+        console.warn("SDK load failed, using direct hosted redirection:", sdkError);
+
+        // التوجيه المباشر مع تضمين merchantRedirect في الرابط
+        const mode = "test";
+        const checkoutUrl = `https://checkout.kashier.io/?merchantId=${data.merchantId}&orderId=${orderId}&amount=${amountInEgp}&currency=EGP&hash=${data.hash}&mode=${mode}&apiKey=${apiKey}&merchantRedirect=${encodeURIComponent(redirectUrl)}&serverWebhook=${encodeURIComponent(webhookUrl)}`;
+
+        window.location.href = checkoutUrl;
+      }
 
     } catch (error) {
-      console.error("Booking Error:", error);
+      console.error("🔴 Booking Error:", error);
       toast.error(error.message || "An error occurred while launching payment.");
     } finally {
       setLoading(false);
