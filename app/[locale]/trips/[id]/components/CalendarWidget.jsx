@@ -5,7 +5,7 @@ import CalendarBooking from "./components/CalendarBooking";
 import BookingSummaryCard from "./components/BookingSummaryCard";
 import { useChat } from "@/context/ChatContext";
 
-const BookingCalendar = ({ trip }) => {
+const BookingCalendar = ({ trip,id }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const prise = trip.solo_price;
   const { theme } = useTheme();
@@ -109,6 +109,7 @@ const BookingCalendar = ({ trip }) => {
         childrenCount={childrenCount}
         checkOut={checkOut}
         checkIn={checkIn}
+        tripId={id}
       />
     </div>
   );

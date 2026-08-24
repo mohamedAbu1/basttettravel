@@ -86,7 +86,7 @@ export default function TripPage({ params }) {
             />
             <AccessibilityInfo theme={themeName} themeName={themeName} />
           </div>
-          <CalendarWidget trip={trip} />
+          <CalendarWidget trip={trip} id={id}/>
         </div>
 
         {/* المميزات */}
