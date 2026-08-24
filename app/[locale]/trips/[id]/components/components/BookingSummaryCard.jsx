@@ -113,7 +113,7 @@ const BookingSummaryCard = ({
           currency: "EGP",
           orderId: orderId,
           hash: data.hash,
-          mode: "test", // حولها إلى "live" للإنتاج المباشر
+          mode: "live", // حولها إلى "live" للإنتاج المباشر
           merchantRedirect: redirectUrl,
           callbackUrl: redirectUrl,
           serverWebhook: webhookUrl,
