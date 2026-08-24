@@ -10,7 +10,7 @@ export async function POST(req) {
     const bookingId = uuidv4();
 
     await db.query(
-      `INSERT INTO booking (id, trip_id, persons, children, check_in, check_out, status, platform) 
+      `INSERT INTO booking (id, trip_id, participants, childrenCount, check_in, check_out, status, platform) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         bookingId,
