@@ -37,11 +37,11 @@ const DarkTheme = {
 
   // الأزرار الأساسية (ذهبي حجري)
   buttonPrimary:
-    "bg-[#C2A878] text-black font-semibold rounded-xl px-6 py-3 hover:bg-[#A68B5B] transition-all shadow-md hover:shadow-lg",
+    "bg-[#C2A878] text-black font-semibold rounded-xl px-4 py-2 hover:bg-[#A68B5B] transition-all shadow-md hover:shadow-lg",
 
   // الأزرار الثانوية (حجر داكن مع حدود ذهبية)
   buttonSecondary:
-    "bg-[#2A2A2A] text-[#E6DCCF] font-medium rounded-xl px-6 py-3 hover:bg-[#3A3A3A] transition-all border border-[#C2A878]",
+    "bg-[#2A2A2A] text-[#E6DCCF] font-medium rounded-xl px-4 py-2 hover:bg-[#3A3A3A] transition-all border border-[#C2A878]",
 
   // الأيقونات
   icon: "text-[#C2A878]",

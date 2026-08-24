@@ -14,7 +14,7 @@ export default function AccessibilityInfo() {
 
   return (
     <div
-      className={`flex w-[30%] flex-col gap-6 p-8 rounded-2xl transition ${theme.card} ${theme.shadow} ${theme.text}`}
+      className={`flex flex-col gap-6 p-8 rounded-2xl transition ${theme.card} ${theme.shadow} ${theme.text}`}
     >
       <EgyptianBackground />
 

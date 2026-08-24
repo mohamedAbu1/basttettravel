@@ -1,0 +1,155 @@
+:root {
+  --light-bg: #fff;
+  --light-text: #333;
+  --light-border: #ddd;
+  --dark-bg: linear-gradient(to right, #1f2937, #111827);
+  --dark-text: #f9fafb;
+  --dark-border: #374151;
+  --primary: #2563eb;
+  --accent: #facc15;
+}
+
+/* الكارد الأساسي */
+.booking-card {
+  max-width: 400px;
+  margin: auto;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: 0.3s;
+}
+
+.booking-card.light {
+  background: var(--light-bg);
+  color: var(--light-text);
+  border: 1px solid var(--light-border);
+}
+
+.booking-card.dark {
+  background: var(--dark-bg);
+  color: var(--dark-text);
+  border: 1px solid var(--dark-border);
+}
+
+/* العنوان */
+.booking-header {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--primary);
+}
+
+.ticket {
+  position: relative;
+  width: var(--ticket-width);
+  height: var(--ticket-height);
+  display: flex;
+  flex-direction: row;
+  background: var(--ticket-bg);
+  border: 1px solid var(--ticket-border);
+  border-radius: var(--ticket-radius);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* الدوائر المقصوصة */
+.ticket::before,
+.ticket::after {
+  content: "";
+  position: absolute;
+  width: var(--cut-size);
+  height: var(--cut-size);
+  background: var(--cut-bg);
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 0 0 1px var(--cut-border) inset;
+}
+
+.ticket::before {
+  left: calc(var(--cut-size) / -2);
+}
+
+.ticket::after {
+  right: calc(var(--cut-size) / -2);
+}
+
+.ticket-left {
+  width: 65%;
+  padding: 16px;
+}
+
+.ticket-right {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ticket-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 60%;
+  border-left: 1px dashed var(--light-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticket-line span {
+  font-size: 10px;
+  color: #999;
+  transform: rotate(90deg);
+}
+
+/* النصوص */
+.tour-name {
+  font-weight: 600;
+}
+
+.participants {
+  font-size: 14px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.total {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* زر */
+.footer {
+  margin-top: 20px;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  transition: 0.3s;
+}
+
+.btn.light {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn.light:hover {
+  background: #eab308;
+}
+
+.btn.dark {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn.dark:hover {
+  background: #1d4ed8;
+}

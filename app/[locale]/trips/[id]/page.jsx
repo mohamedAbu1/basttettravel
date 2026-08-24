@@ -19,13 +19,13 @@ import ChatWidget from "@/components/layout/ChatWidget";
 import { useAuth } from "@/context/AuthContext";
 import PurchaseButton from "./components/PurchaseButton";
 import CancelButton from "./components/CancelButton";
-import TripVideo from "./components/TripVideo";
 import { usePurchase } from "@/context/PurchaseContext";
 import AccessibilityInfo from "./components/components/AccessibilityInfo";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import TripExclusions from "./components/TripExclusions";
+import CalendarWidget from "./components/CalendarWidget";
 
 export default function TripPage({ params }) {
   const { id } = params;
@@ -72,23 +72,47 @@ export default function TripPage({ params }) {
         {/* معلومات الرحلة */}
         <div className="col-span-3 flex flex-row gap-8">
           <div className="col-span-3 flex flex-col gap-2.5">
-            <TripInfo trip={trip} lang={lang} theme={theme} themeName={themeName} />
-            <TripCities trip={trip} lang={lang} theme={theme} themeName={themeName} />
-            <TripCategories trip={trip} lang={lang} theme={theme} themeName={themeName} />
+            <TripCities
+              trip={trip}
+              lang={lang}
+              theme={theme}
+              themeName={themeName}
+            />
+            <TripCategories
+              trip={trip}
+              lang={lang}
+              theme={theme}
+              themeName={themeName}
+            />
+            <AccessibilityInfo theme={themeName} themeName={themeName} />
           </div>
-          <TripVideo trip={trip} lang={lang} theme={theme} />
-          <AccessibilityInfo theme={themeName} themeName={themeName} />
+          <CalendarWidget trip={trip} />
         </div>
 
         {/* المميزات */}
         <div className="col-span-4 flex flex-row gap-8">
-          <TripIncludes trip={trip} lang={lang} theme={theme} themeName={themeName} />
-          <TripExclusions trip={trip} lang={lang} theme={theme} themeName={themeName} />
+          <TripIncludes
+            trip={trip}
+            lang={lang}
+            theme={theme}
+            themeName={themeName}
+          />
+          <TripExclusions
+            trip={trip}
+            lang={lang}
+            theme={theme}
+            themeName={themeName}
+          />
         </div>
 
         {/* الجدول */}
         <div className="col-span-1 lg:col-span-3">
-          <TripItinerary trip={trip} lang={lang} theme={theme} themeName={themeName} />
+          <TripItinerary
+            trip={trip}
+            lang={lang}
+            theme={theme}
+            themeName={themeName}
+          />
         </div>
 
         {/* المراجعات + الأزرار */}
@@ -100,7 +124,6 @@ export default function TripPage({ params }) {
               <CancelButton trip={trip} theme={theme} />
             ) : (
               <>
-                <PurchaseButton trip={trip} theme={theme} />
                 <Link
                   href="/privacyPolicy"
                   className="fixed bottom-29 left-6 flex-row rounded-[8px] px-6 py-3 bg-transparent backdrop-blur-md 
@@ -118,12 +141,36 @@ export default function TripPage({ params }) {
       {/* ✅ تصميم احترافي للموبايل */}
       <div className="block lg:hidden p-4 pt-29 space-y-6">
         <TripHeader trip={trip} lang={lang} theme={theme} />
-        <TripInfo trip={trip} lang={lang} theme={theme} themeName={themeName} />
-        <TripCities trip={trip} lang={lang} theme={theme} themeName={themeName} />
-        <TripCategories trip={trip} lang={lang} theme={theme} themeName={themeName} />
-        <TripIncludes trip={trip} lang={lang} theme={theme} themeName={themeName} />
-        <TripExclusions trip={trip} lang={lang} theme={theme} themeName={themeName} />
-        <TripItinerary trip={trip} lang={lang} theme={theme} themeName={themeName} />
+        <TripCities
+          trip={trip}
+          lang={lang}
+          theme={theme}
+          themeName={themeName}
+        />
+        <TripCategories
+          trip={trip}
+          lang={lang}
+          theme={theme}
+          themeName={themeName}
+        />
+        <TripIncludes
+          trip={trip}
+          lang={lang}
+          theme={theme}
+          themeName={themeName}
+        />
+        <TripExclusions
+          trip={trip}
+          lang={lang}
+          theme={theme}
+          themeName={themeName}
+        />
+        <TripItinerary
+          trip={trip}
+          lang={lang}
+          theme={theme}
+          themeName={themeName}
+        />
         <TripReviews trip={trip} lang={lang} theme={theme} />
 
         {/* أزرار واضحة وكبيرة */}

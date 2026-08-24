@@ -70,7 +70,10 @@ export default function RootLayout({ children }) {
             ]
           })
         }} />
-
+<Script 
+          src="https://checkout.kashier.io/kashier-checkout.js" 
+          strategy="beforeInteractive" 
+        />
         {/* ✅ Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-GXM9KRNJHH"

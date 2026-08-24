@@ -10,6 +10,12 @@ export function ChatProvider({ children }) {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
+    // ✅ القيم الخاصة بالحجز
+  const [participants, setParticipants] = useState(0);
+  const [childrenCount, setChildrenCount] = useState(0);
+  const [checkInPrice, setCheckInPrice] = useState(null);
+  const [checkIn, setCheckIn] = useState(null);
+  const [checkOut, setCheckOut] = useState(null);
   const openChatWithCarBooking = () => {
     setOpen(true);
     setBookingMode(true);
@@ -35,6 +41,16 @@ export function ChatProvider({ children }) {
         to,
         setTo,
         openChatWithCarBooking,
+        participants,
+        setParticipants,
+        childrenCount,
+        setChildrenCount,
+        checkInPrice,
+        setCheckInPrice,
+        checkIn,
+        setCheckIn,
+        checkOut,
+        setCheckOut,
       }}
     >
       {children}

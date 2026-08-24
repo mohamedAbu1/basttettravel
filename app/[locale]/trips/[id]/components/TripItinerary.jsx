@@ -132,14 +132,6 @@ const dayGroups = chunkDays(tripDays || []);
                   transition={{ duration: 0.5, delay: actIdx * 0.1 }}
                   className={`flex items-center gap-3 text-sm md:text-base ${theme.subText}`}
                 >
-                  <motion.div
-                    whileHover={{ scale: 1.2, rotate: 15 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    className="flex items-center gap-2 font-bold"
-                  >
-                    <FaClock className={theme.icon} />
-                    <span>{formatTime(act.time)}</span>
-                  </motion.div>
                   <span>
                     {getLocalizedText(act.activity_translations)}
                   </span>
