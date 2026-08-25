@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/purity */
 "use client";
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import Header from "@/components/header/Header";
 import Footer from "@/components/Footer/Footer";
 import { useTranslation } from "react-i18next";
@@ -17,6 +15,9 @@ import { contactMetadata } from "@/lib/metadata/contact";
 import DividerWithIcon from "@/components/layout/DividerWithIcon";
 import Image from "next/image";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
+import ContactInfoCard from "@/components/contact/ContactInfoCard";
+import ContactForm from "@/components/contact/ContactForm";
+import { toast } from "react-toastify";
 
 const symbols = [
   "𓂀",
@@ -53,33 +54,22 @@ export default function ContactPage() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  try {
+    // ✅ هنا مش هنبعت لأي API
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          // لو فيه بيانات من المستخدم، نرسلها بدل القيم المدخلة
-          name: userData?.name || formData.name,
-          email: userData?.email || formData.email,
-        }),
-      });
+    // عرض رسالة نجاح في Toast
+    toast.success("✅ The message was sent successfully");
 
-      const data = await res.json();
-
-      if (data.success) {
-        alert("✅ تم إرسال الرسالة بنجاح!");
-      } else {
-        alert("❌ حدث خطأ أثناء الإرسال: " + data.error);
-      }
-    } catch (err) {
-      console.error("❌ Error submitting form:", err);
-    }
-  };
+    // 🧹 مسح الحقول بعد الإرسال
+    setFormData({ name: "", phone: "", email: "", message: "" });
+  } catch (err) {
+    console.error("❌ خطأ:", err);
+    toast.error("❌ حدث خطأ أثناء الإرسال");
+  }
+};
 
   return (
     <>
@@ -117,190 +107,16 @@ export default function ContactPage() {
         {/* المحتوى */}
         <section className="relative z-10 pt-20 px-6 mt-6">
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            {/* معلومات التواصل */}
-            <motion.div
-              initial={{ opacity: 0, x: -60 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className={`card-theme relative rounded-2xl p-8 shadow-xl ${
-                themeName === "dark" ? "card-dark" : "card-light"
-              }`}
-            >
-              {/* ✅ صورة SVG خلفية */}
-              <div className=" hidden lg:flex absolute top-80 left-0 w-full h-[450px] opacity-50 pointer-events-none">
-                <Image
-                  src={
-                    themeName === "dark"
-                      ? "/HomePageImage/egyptian-pyramids-sphinx-pop-up-book.webp"
-                      : "/HomePageImage/1547933741.svg"
-                  }
-                  alt="Decorative Background"
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <h2
-                className={`contact-p text-3xl font-bold mb-6 text-gradient ${
-                  themeName === "dark"
-                    ? "text-stroke-dark"
-                    : "text-stroke-light"
-                }`}
-              >
-                {t("h1")}
-              </h2>
+            <ContactInfoCard themeName={themeName} t={t} />
 
-              <DividerWithIcon />
-
-              <p className="mb-6 opacity-80">{t("p1")}</p>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <FaPhoneAlt className="icon-theme" />
-                  <span>+201100507802</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FaEnvelope className="icon-theme" />
-                  <span>BasttetTravel@outlook.com</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <FaMapMarkerAlt className="icon-theme" />
-                  <span>{t("sp")}</span>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* فورم التواصل */}
-            <motion.form
-              onSubmit={handleSubmit}
-              initial={{ opacity: 0, x: 60 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className={`card-theme rounded-2xl p-8 shadow-xl space-y-6 ${
-                themeName === "dark" ? "card-dark" : "card-light"
-              }`}
-            >
-              <h2
-                className={`contact-p text-3xl font-bold mb-6 text-gradient ${
-                  themeName === "dark"
-                    ? "text-stroke-dark"
-                    : "text-stroke-light"
-                }`}
-              >
-                {t("h2")}
-              </h2>
-
-              <DividerWithIcon />
-
-              {/* الاسم */}
-              <div>
-                <label
-                  className={`contact-text block mb-2 font-semibold ${
-                    themeName === "dark"
-                      ? "text-stroke-dark"
-                      : "text-stroke-light"
-                  }`}
-                >
-                  {t("lb")}
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={userData?.name || formData.name}
-                  onChange={handleChange}
-                  readOnly={!!userData?.name}
-                  className={`input-theme ${
-                    userData?.name
-                      ? "bg-gray-100 text-gray-600 cursor-not-allowed capitalize"
-                      : themeName === "dark"
-                        ? "input-dark"
-                        : "input-light"
-                  }`}
-                  placeholder={t("inp")}
-                />
-              </div>
-
-              {/* الهاتف */}
-              <div>
-                <label
-                  className={`contact-text block mb-2 font-semibold ${
-                    themeName === "dark"
-                      ? "text-stroke-dark"
-                      : "text-stroke-light"
-                  }`}
-                >
-                  {t("lb2")}
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  className={`input-theme ${themeName === "dark" ? "input-dark" : "input-light"}`}
-                  placeholder={t("inp2")}
-                />
-              </div>
-
-              {/* البريد */}
-              <div>
-                <label
-                  className={`contact-text block mb-2 font-semibold ${
-                    themeName === "dark"
-                      ? "text-stroke-dark"
-                      : "text-stroke-light"
-                  }`}
-                >
-                  {t("lb3")}
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={userData?.email || formData.email}
-                  onChange={handleChange}
-                  readOnly={!!userData?.email}
-                  className={`input-theme ${
-                    userData?.email
-                      ? "bg-gray-100 text-gray-600 cursor-not-allowed"
-                      : themeName === "dark"
-                        ? "input-dark"
-                        : "input-light"
-                  }`}
-                  placeholder={t("inp3")}
-                />
-              </div>
-
-              {/* الرسالة */}
-              <div>
-                <label
-                  className={`contact-text block mb-2 font-semibold ${
-                    themeName === "dark"
-                      ? "text-stroke-dark"
-                      : "text-stroke-light"
-                  }`}
-                >
-                  {t("lb4")}
-                </label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows="5"
-                  className={`input-theme ${themeName === "dark" ? "input-dark" : "input-light"}`}
-                  placeholder={t("inp4")}
-                ></textarea>
-              </div>
-
-              {/* زر الإرسال */}
-              <button
-                type="submit"
-                className="btn-gradient w-full p-4 rounded-2xl cursor-pointer"
-              >
-                {t("btn")}
-              </button>
-            </motion.form>
+            <ContactForm
+              themeName={themeName}
+              t={t}
+              userData={userData}
+              formData={formData}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+            />
           </div>
         </section>
         <Footer />
