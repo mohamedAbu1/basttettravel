@@ -27,18 +27,18 @@ const BookingCalendar = ({ trip,id }) => {
   };
 
   return (
-    <div className={`${theme.card} w-1/2 h-fit p-6 shadow-lg font-sans`}>
+    <div className={`${theme.card} w-full lg:w-1/2 h-fit p-6 shadow-lg font-sans`}>
       {/* Participants Section */}
       <h2 className={`${theme.title} mb-4`}>Participants</h2>
 
-      <div className="flex justify-between mb-6">
+      <div className="flex flex-col lg:flex-row gap-3 lg:gap-0 justify-between mb-6">
         {/* Adults */}
         <div className="flex items-center space-x-1">
           <div>
             <p className={theme.heading}>Adult</p>
             <p className={theme.subText}>Age 6 - 100</p>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center ml-3 lg:ml-0 space-x-2">
             <button
               onClick={() => setParticipants(Math.max(0, participants - 1))}
               className={`${theme.buttonSecondary}`}
@@ -62,7 +62,7 @@ const BookingCalendar = ({ trip,id }) => {
             <p className={theme.heading}>Child</p>
             <p className={theme.subText}>Age 6 - 12</p>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center ml-5 lg:ml-0 space-x-2">
             <button
               onClick={() => setChildrenCount(Math.max(0, childrenCount - 1))}
               className={`${theme.buttonSecondary}`}
@@ -100,6 +100,7 @@ const BookingCalendar = ({ trip,id }) => {
           checkOut={checkOut}
           checkIn={checkIn}
           setCheckIn={setCheckIn}
+          tripId={id}
         />
       )}
 

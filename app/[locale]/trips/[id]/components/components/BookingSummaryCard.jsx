@@ -25,7 +25,7 @@ const BookingSummaryCard = ({
   if (participants > 1) {
     total = total * 0.6;
   }
-
+let EGP = total * 49.85
   // تحميل سكريبت Kashier SDK
   const loadKashierScript = () => {
     return new Promise((resolve, reject) => {
@@ -78,7 +78,7 @@ const BookingSummaryCard = ({
 
     try {
       const orderId = `BOOK-${Date.now()}`;
-      const amountInEgp = total.toFixed(2);
+      const amountInEgp = EGP.toFixed(2);
 
       // ✅ أولاً: إدخال بيانات الحجز في قاعدة البيانات
       const bookingRes = await fetch("/api/booking", {
@@ -99,7 +99,6 @@ const BookingSummaryCard = ({
       if (!bookingRes.ok || !bookingData.success) {
         throw new Error(bookingData.error || "Failed to save booking.");
       }
-
       // ✅ ثانياً: طلب الـ Hash من الـ API Route للدفع
       const res = await fetch("/api/kashier/hash", {
         method: "POST",

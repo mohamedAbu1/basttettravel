@@ -67,8 +67,7 @@ setRates({
   // ✅ دالة التحويل بالشروط المحددة
   const convertPrice = (amount, fromCurrency, toCurrency) => {
     let converted = amount;
-console.log("USD_EGP:", rates.USD_EGP);
-console.log("EUR_EGP:", rates.EUR_EGP);
+
 
     // تحويل من دولار إلى يورو
     if (fromCurrency === "USD" && toCurrency === "EUR") {

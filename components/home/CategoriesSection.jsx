@@ -100,7 +100,6 @@ const MobileCategories = ({ categories, theme, language }) => {
     }, 3000);
     return () => clearInterval(interval);
   }, [categories.length]);
-  console.log("object", categories);
   return (
     <div className="flex flex-col items-center gap-6 w-full">
       <div key={index} className="w-[90%] max-w-sm">

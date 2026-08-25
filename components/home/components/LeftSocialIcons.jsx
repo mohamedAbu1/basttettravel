@@ -17,8 +17,7 @@ const LeftSocialIcons = () => {
     { Icon: FaFacebookF, url: "https://www.facebook.com/profile.php?id=61591222981163" },
     { Icon: FaInstagram, url: "https://www.instagram.com/ismailharoun225/" },
     { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
-    { Icon: MdEmail, url: "https://account.microsoft.com/profile/" }, // فتح البريد
-    { Icon: FaGlobe, url: "https://www.viator.com/" }, // ✅ Viator
+    { Icon: MdEmail, url: "mailto:BasttetTravel@outlook.com" }, // فتح البريد
     { Icon: FaTripadvisor, url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html" }, // ✅ Tripadvisor
   ];
 

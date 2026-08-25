@@ -23,9 +23,7 @@ export default function AddTrip() {
     <motion.form
       onSubmit={async (e) => {
         e.preventDefault();
-        console.log("➡️ Saving tripData:", tripData);
         const result = await saveTrip();
-        console.log("✅ Save result:", result);
       }}
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}

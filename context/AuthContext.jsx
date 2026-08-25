@@ -31,7 +31,6 @@ export function AuthProvider({ children }) {
       const res = await axios.get("/api/auth/me", { withCredentials: true });
       setUserToken(res.data.user);
       setIsLoggedIn(true);
-      console.log("📌 User from server:", res.data.user);
     } catch (err) {
       console.warn("⚠️ Token expired or invalid, trying refresh...");
       try {
@@ -42,7 +41,6 @@ export function AuthProvider({ children }) {
         );
         setUserToken(retry.data.user);
         setIsLoggedIn(true);
-        console.log("🔄 Token refreshed, user:", retry.data.user);
       } catch (refreshErr) {
         console.error("💥 Refresh failed:", refreshErr.message);
         setUserToken(null);
@@ -86,17 +84,14 @@ export function AuthProvider({ children }) {
     setLoading(true);
     setError(null);
     try {
-      console.log("🚀 محاولة تسجيل الدخول بدأت", { email, password });
 
       const res = await axios.post(
         "/api/auth/login",
         { email, password },
         { withCredentials: true },
       );
-      console.log("📩 الرد من السيرفر:", res);
 
       const data = res.data;
-      console.log("📦 البيانات المستلمة:", data);
 
       if (res.status !== 200) {
         console.error("❌ فشل تسجيل الدخول:", data.error);
@@ -104,24 +99,19 @@ export function AuthProvider({ children }) {
       }
 
       const user = data.user;
-      console.log("👤 المستخدم بعد تسجيل الدخول:", user);
 
       setUser(user);
 
       // ✅ جلب بيانات المستخدم من السيرفر بعد تسجيل الدخول
-      console.log("🔄 استدعاء fetchUserFromServer...");
       await fetchUserFromServer();
 
       setIsLoggedIn(true);
-      console.log("✅ حالة تسجيل الدخول: true");
 
       if (onSuccess) {
-        console.log("🎯 تنفيذ دالة onSuccess");
         onSuccess();
       }
 
       const encodedQuery = getEncodedQuery();
-      console.log("🔗 إعادة التوجيه مع البيانات:", encodedQuery);
       router.push(`/?data=${encodedQuery}`);
 
       toast.success("✅ Logged in successfully!");
@@ -132,7 +122,6 @@ export function AuthProvider({ children }) {
       toast.error("❌ Error: " + err.message);
     } finally {
       setLoading(false);
-      console.log("⏹️ انتهت عملية تسجيل الدخول");
     }
   };
 
@@ -183,7 +172,6 @@ export function AuthProvider({ children }) {
   };
 
   const userData = user || session?.user;
-  console.log("object", userData);
   return (
     <AuthContext.Provider
       value={{

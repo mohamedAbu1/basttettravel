@@ -52,7 +52,6 @@ const UsersSection = () => {
     if (data.error) {
       console.error("❌ Error updating role:", data.error);
     } else {
-      console.log(`✅ Role updated to ${data.role} for user ${user.id}`);
 
       // ✅ تحديث محلي سريع باستخدام العمود role مباشرة
       setUsers((prev) =>

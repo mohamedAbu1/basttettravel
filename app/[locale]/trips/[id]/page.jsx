@@ -86,7 +86,7 @@ export default function TripPage({ params }) {
             />
             <AccessibilityInfo theme={themeName} themeName={themeName} />
           </div>
-          <CalendarWidget trip={trip} id={id}/>
+          <CalendarWidget trip={trip} id={id} />
         </div>
 
         {/* المميزات */}
@@ -165,24 +165,21 @@ export default function TripPage({ params }) {
           theme={theme}
           themeName={themeName}
         />
+
         <TripItinerary
           trip={trip}
           lang={lang}
           theme={theme}
           themeName={themeName}
         />
+        <CalendarWidget trip={trip} id={id} />
+
         <TripReviews trip={trip} lang={lang} theme={theme} />
 
         {/* أزرار واضحة وكبيرة */}
         {userData &&
           userData?.role !== "ADMIN" &&
-          (hasActivePurchase ? (
-            <CancelButton trip={trip} theme={theme} />
-          ) : (
-            <button className="w-full py-4 bg-[#C2A878] text-white font-bold rounded-lg shadow-md">
-              شراء الرحلة
-            </button>
-          ))}
+          (hasActivePurchase ? <CancelButton trip={trip} theme={theme} /> : "")}
       </div>
 
       <Footer />

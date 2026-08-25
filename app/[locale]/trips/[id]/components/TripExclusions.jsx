@@ -57,7 +57,7 @@ export default function TripExclusions({ trip, lang }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`w-1/2 p-6 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text}`}
+      className={`w-full lg:w-1/2  p-6 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text}`}
     >
       {/* العنوان */}
       <motion.h2

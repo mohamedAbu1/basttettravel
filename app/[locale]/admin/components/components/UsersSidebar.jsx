@@ -7,7 +7,6 @@ const UsersSidebar = ({ users,userData, activeUser, setActiveUser, theme, themeN
   const nonAdminUsers = users.filter(
     (user) => user?.role?.toUpperCase() !== "ADMIN"
   );
-console.log(users)
   return (
     <aside
       style={{ marginRight: "5px" }}

@@ -12,14 +12,11 @@ export default function SaveButton() {
     setStatus(null);
 
     // ✅ تتبع قبل الحفظ
-    console.log("➡️ SaveButton clicked");
-    console.log("➡️ Current tripData:", tripData);
+  
 
     try {
       const res = await saveTrip();
 
-      // ✅ تتبع بعد استدعاء saveTrip
-      console.log("✅ API response:", res);
 
       if (res.success) {
         setStatus("success");

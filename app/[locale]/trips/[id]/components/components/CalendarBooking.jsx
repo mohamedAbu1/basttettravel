@@ -4,6 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 
 const CalendarBooking = ({
+  tripId,
   prise,
   setCheckInPrice,
   checkInPrice,
@@ -18,8 +19,18 @@ const CalendarBooking = ({
   const year = new Date().getFullYear();
 
   const months = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   const daysInMonth = new Date(year, currentMonth + 1, 0).getDate();
@@ -27,18 +38,20 @@ const CalendarBooking = ({
 
   const [prices, setPrices] = useState([]);
 
+  const [guests, setGuests] = useState(0); // ✅ عدد الأشخاص
+
   // توليد أسعار جديدة
+  // توليد أسعار جديدة مرتبطة بسعر الفرد ±6 دولار
   const generatePrices = () => {
-    return Array.from(
-      { length: daysInMonth },
-      () => Math.floor(Math.random() * prise) + 5
-    );
+    return Array.from({ length: daysInMonth }, () => {
+      const variation = Math.round((Math.random() - 0.5) * 6);
+      return prise + variation;
+    });
   };
 
-  // تحميل الأسعار من localStorage أو توليد جديدة لو مر 24 ساعة
   useEffect(() => {
-    const savedData = localStorage.getItem("calendarPrices");
-    const savedTime = localStorage.getItem("calendarPricesTime");
+    const savedData = localStorage.getItem(`calendarPrices_${tripId}`);
+    const savedTime = localStorage.getItem(`calendarPricesTime_${tripId}`);
 
     if (savedData && savedTime) {
       const lastUpdate = new Date(savedTime);
@@ -53,10 +66,12 @@ const CalendarBooking = ({
 
     const newPrices = generatePrices();
     setPrices(newPrices);
-    localStorage.setItem("calendarPrices", JSON.stringify(newPrices));
-    localStorage.setItem("calendarPricesTime", new Date().toISOString());
-  }, [currentMonth, prise]);
-
+    localStorage.setItem(`calendarPrices_${tripId}`, JSON.stringify(newPrices));
+    localStorage.setItem(
+      `calendarPricesTime_${tripId}`,
+      new Date().toISOString(),
+    );
+  }, [currentMonth, prise, tripId]);
   const handleDateClick = (day, price) => {
     const selectedDate = new Date(year, currentMonth, day);
     const today = new Date();
@@ -94,24 +109,34 @@ const CalendarBooking = ({
     setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1));
 
   return (
-    <div className={`${theme.card} max-w-2xl mx-auto p-6 shadow-lg font-sans mb-3`}>
+    <div
+      className={`${theme.card} max-w-2xl mx-auto p-6 shadow-lg font-sans mb-3`}
+    >
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <button className={`${theme.buttonSecondary} p-2 rounded-full`} onClick={prevMonth}>
+        <button
+          className={`${theme.buttonSecondary} p-2 rounded-full`}
+          onClick={prevMonth}
+        >
           <ChevronLeftIcon className={`${theme.icon} w-5 h-5`} />
         </button>
         <h2 className={`${theme.title} text-lg`}>
           {months[currentMonth]} {year}
         </h2>
-        <button className={`${theme.buttonSecondary} p-2 rounded-full`} onClick={nextMonth}>
+        <button
+          className={`${theme.buttonSecondary} p-2 rounded-full`}
+          onClick={nextMonth}
+        >
           <ChevronRightIcon className={`${theme.icon} w-5 h-5`} />
         </button>
       </div>
 
       {/* Days of Week */}
-      <div className="grid grid-cols-7 text-center text-sm mb-2">
-        {["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((day) => (
-          <div key={day} className={theme.subText}>{day}</div>
+      <div className="grid grid-cols-6 text-center flex-wrap gap-1 text-sm mb-2">
+        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
+          <div key={day} className={`${theme.subText} `}>
+            {day}
+          </div>
         ))}
       </div>
 
@@ -132,7 +157,8 @@ const CalendarBooking = ({
           if (checkIn && checkOut) {
             const checkInDate = new Date(checkIn);
             const checkOutDate = new Date(checkOut);
-            isBetween = selectedDate > checkInDate && selectedDate < checkOutDate;
+            isBetween =
+              selectedDate > checkInDate && selectedDate < checkOutDate;
           }
 
           let isInvalid = false;
@@ -143,7 +169,9 @@ const CalendarBooking = ({
           return (
             <div key={day} className="flex flex-col items-center">
               <motion.button
-                onClick={() => !isPast && !isInvalid && handleDateClick(day, price)}
+                onClick={() =>
+                  !isPast && !isInvalid && handleDateClick(day, price)
+                }
                 disabled={isPast || isInvalid}
                 whileHover={{ scale: isPast || isInvalid ? 1 : 1.1 }}
                 whileTap={{ scale: isPast || isInvalid ? 1 : 0.9 }}
@@ -179,7 +207,9 @@ const CalendarBooking = ({
             {checkIn ? checkIn : "Not Selected"}
           </p>
           {checkInPrice && (
-            <p className={`${theme.subText} mt-1 text-sm`}>Price: ${checkInPrice}</p>
+            <p className={`${theme.subText} mt-1 text-sm`}>
+              Price: ${checkInPrice}
+            </p>
           )}
         </div>
         <div className={`${theme.card} p-4`}>

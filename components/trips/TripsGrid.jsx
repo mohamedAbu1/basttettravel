@@ -17,18 +17,21 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
   const { t } = useTranslation("trips");
   const { lang } = useLanguage();
   const { theme } = useTheme();
-  const { convertPrice, loading, error } = useCurrency(); // ✅ جلب أسعار العملات
 
   const getRandomStars = () => Math.floor(Math.random() * 3) + 3;
-
-  // 🟢 دالة التحويل باستخدام CurrencyContext
-
-
-console.log("888",trips)
-  if (loading)
-    return <p className="text-center">⏳ Loading currency rates...</p>;
-  if (error) return <p className="text-center text-red-500">❌ {error}</p>;
-
+  const convertPrice = (group_price, tripCurrency) => {
+    let converted = group_price;
+    if (currency === "EUR" && tripCurrency === "USD") {
+      converted = (group_price * 0.85).toFixed(2);
+    } else if (currency === "USD" && tripCurrency === "EUR") {
+      converted = (group_price * 1.18).toFixed(2);
+    } else if (currency === "EGP" && tripCurrency === "USD") {
+      converted = (group_price * 49.1).toFixed(2);
+    } else if (currency === "USD" && tripCurrency === "EGP") {
+      converted = (group_price / 49.1).toFixed(2);
+    }
+    return converted;
+  };
   return (
     <div
       className={`flex-1 z-[0] ${

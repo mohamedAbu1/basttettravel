@@ -71,7 +71,6 @@ const ChatSection = ({ activeUser, theme, themeName }) => {
   }, [activeUser]);
 
 const handleSendImage = async (file) => {
-  console.log("📤 Step 1: Preparing FormData for image upload...");
   const formData = new FormData();
   formData.append("file", file);
 
@@ -82,14 +81,12 @@ const handleSendImage = async (file) => {
   formData.append("user_image", userData?.image || "/default-avatar.png");
   formData.append("admin_id", userData.id);
 
-  console.log("📤 Step 2: Sending image to /api/messages...");
   const res = await fetch("/api/messages", {
     method: "POST",
     body: formData,
   });
 
   const data = await res.json();
-  console.log("📥 Step 3: Response from API:", data);
 
   if (data.error) {
     console.error("❌ Error uploading image:", data.error);
@@ -97,7 +94,6 @@ const handleSendImage = async (file) => {
   }
 
   const uploadedUrl = data.url;
-  console.log("✅ Step 4: Image uploaded successfully, URL:", uploadedUrl);
 };
 
 

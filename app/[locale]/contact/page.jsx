@@ -56,7 +56,6 @@ export default function ContactPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("➡️ Submitting contact form:", formData);
 
     try {
       const res = await fetch("/api/contact", {
@@ -71,7 +70,6 @@ export default function ContactPage() {
       });
 
       const data = await res.json();
-      console.log("📥 Response from API:", data);
 
       if (data.success) {
         alert("✅ تم إرسال الرسالة بنجاح!");

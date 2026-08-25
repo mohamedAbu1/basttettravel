@@ -36,7 +36,6 @@ export function MessageProvider({ children }) {
   };
   const fetchUserMessagesById = async (id) => {
     try {
-      console.log("📡 بدء جلب الرسائل للمستخدم:", id);
       const res = await fetch(`/api/messages?id=${id}`);
       if (!res.ok) {
         const text = await res.text();
@@ -44,11 +43,9 @@ export function MessageProvider({ children }) {
         return [];
       }
       const data = await res.json();
-      console.log("✅ البيانات المسترجعة من السيرفر:", data);
       const filtered = Array.isArray(data)
         ? data.filter((msg) => msg.user_id === id)
         : [];
-      console.log("💾 الرسائل بعد الفلترة:", filtered);
       return filtered;
     } catch (err) {
       console.error("❌ خطأ أثناء جلب الرسائل:", err.message);

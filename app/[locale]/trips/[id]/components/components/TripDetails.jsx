@@ -16,12 +16,10 @@ export default function TripDetails({ trip, groupSize }) {
   } else if (currency === "USD" && trip.currency === "EUR") {
     pricePerPerson = (trip.group_price * 1.18).toFixed(2);
   }
-  console.log(pricePerPerson)
-  console.log(groupSize)
+
 
   // ✅ السعر النهائي = السعر للفرد × عدد الأشخاص
   const totalPrice = (pricePerPerson * groupSize).toFixed(2);
-  console.log(totalPrice)
 
   // ✅ اختيار العنوان حسب اللغة
   const tripTitle =

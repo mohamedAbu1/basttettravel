@@ -18,9 +18,7 @@ export default function DailyItinerary() {
       day_number: safeItinerary.length + 1,
       activities: []
     };
-    console.log("➡️ Adding new day:", newDay);
     updateTripField("itinerary", [...safeItinerary, newDay]);
-    console.log("✅ Itinerary after addDay:", [...safeItinerary, newDay]);
   };
 
   // ✅ إضافة نشاط جديد مع UUID
@@ -40,9 +38,7 @@ export default function DailyItinerary() {
           }
         : d
     );
-    console.log("➡️ Adding activity to day:", dayIndex, next[dayIndex].activities);
     updateTripField("itinerary", next);
-    console.log("✅ Itinerary after addActivity:", next);
   };
 
   // ✅ تحديث نشاط معين
@@ -62,9 +58,7 @@ export default function DailyItinerary() {
       });
       return { ...d, activities: updatedActs };
     });
-    console.log("➡️ Updating activity:", { dayIndex, actIndex, field, value, lang });
     updateTripField("itinerary", next);
-    console.log("✅ Itinerary after updateActivity:", next);
   };
 
   return (

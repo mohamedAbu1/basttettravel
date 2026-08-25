@@ -22,7 +22,6 @@ export function MessageProvider({ children }) {
       setLoading(false);
     }
   };
-console.log("3object",userData?.image)
 
 // ✅ إرسال رسالة جديدة
 const sendMessage = async ({
@@ -45,7 +44,6 @@ const sendMessage = async ({
     admin_id,
   };
 
-  console.log("📤 Step 1: Sending payload:", payload);
 
   // 2️⃣ إرسال الطلب للـ API
   const res = await fetch("/api/messages", {
@@ -54,7 +52,6 @@ const sendMessage = async ({
     body: JSON.stringify(payload), // ✅ هنا نرسل البيانات الصحيحة
   });
 
-  console.log("📥 Step 2: Raw response object:", res);
 
   // 3️⃣ التحقق من نجاح الطلب
   if (!res.ok) {
@@ -65,12 +62,10 @@ const sendMessage = async ({
 
   // 4️⃣ قراءة الرد كـ JSON
   const data = await res.json();
-  console.log("📥 Step 4: Parsed response data:", data);
 
   // 5️⃣ تحديث الـ state بالرسالة الجديدة
   if (!data.error) {
     setMessages((prev) => [...prev, data]);
-    console.log("✅ Step 5: Message added to state:", data);
   } else {
     console.error("❌ Step 5: Error sending message:", data.error);
   }

@@ -211,7 +211,6 @@ export function TripIDProvider({ children }) {
   useEffect(() => {
     fetchAllTrips();
   }, []);
-  console.log("123object123", tripData);
   return (
     <TripIDContext.Provider
       value={{

@@ -29,7 +29,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     setBookingMode,
     setMessageses,
   } = useChat();
-    const { t } = useTranslation("home");
+  const { t } = useTranslation("home");
 
   // ✅ جلب رسائل المستخدم
   useEffect(() => {
@@ -61,8 +61,10 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
           user_name: "👑 Basttet Travel 👑",
 
           user_image: "/HomePageImage/Copilot_20260613_134423.webp",
-          content:
-           t("welcomeMessage", { defaultValue: "👋 Hello and welcome! The Basttet Travel team is excited to help you plan your next unforgettable journey. How can we assist you today?" }),
+          content: t("welcomeMessage", {
+            defaultValue:
+              "👋 Hello and welcome! The Basttet Travel team is excited to help you plan your next unforgettable journey. How can we assist you today?",
+          }),
           sender_type: "admin", // مهم جداً لتظهر الرسالة بلون الأدمن
           status: "sent",
         });
@@ -154,7 +156,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className={`fixed overflow-x-hidden bottom-20 right-6 w-110 h-125 rounded-xl shadow-xl flex flex-col z-50 ${theme.card} ${theme.text}`}
+            className={`fixed overflow-x-hidden bottom-20 right-2 lg:right-6 w-90 lg:w-110 h-125 rounded-xl shadow-xl flex flex-col z-50 ${theme.card} ${theme.text}`}
           >
             <EgyptianBackground />
             <ChatHeader onClose={() => setOpen(false)} theme={theme} />

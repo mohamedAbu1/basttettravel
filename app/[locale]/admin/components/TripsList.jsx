@@ -96,7 +96,6 @@ export default function TripsList() {
                     ? trip.cities
                         .map((c) => {
                           // ✅ اطبع بيانات المدينة في الـ console
-                          console.log("City object:", c);
 
                           // ✅ استخرج الـ id
                           const cityId =

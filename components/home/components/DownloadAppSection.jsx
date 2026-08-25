@@ -43,20 +43,9 @@ export default function DownloadAppSection() {
           <span>{t("AppStore")}</span>
         </a>
 
-        {/* Viator Button */}
-        <a
-          href="https://www.viator.com/your_page_link"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center w-[280px] gap-2 px-6 py-3 bg-[#c9a34a] text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all"
-        >
-          <FaGlobe size={22} />
-          <span>{t("Viator")}</span>
-        </a>
-
         {/* Tripadvisor Button */}
         <a
-          href="https://www.tripadvisor.com/your_page_link"
+          href="https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center w-[280px] text-center gap-2 px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg shadow-md hover:bg-teal-700 transition-all"

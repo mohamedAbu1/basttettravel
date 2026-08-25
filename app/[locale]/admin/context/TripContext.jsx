@@ -100,8 +100,7 @@ export function TripProvider({ children }) {
       };
 
       // ✅ تتبع قبل الإرسال
-      console.log("➡️ Saving trip with payload:", payload);
-      console.log("➡️ Itinerary being sent:", payload.itinerary);
+
 
       const res = await fetch("/api/trips", {
         method: "POST",
@@ -143,7 +142,6 @@ export function TripProvider({ children }) {
   const getTripById = (id) => {
     return trips.find((trip) => String(trip.id) === String(id));
   };
-  console.log("object12346", tripData);
   return (
     <TripContext.Provider
       value={{
