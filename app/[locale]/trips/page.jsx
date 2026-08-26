@@ -36,7 +36,7 @@ export default function TripsPage() {
   const { purchases } = usePurchase(); // ✅ استدعاء الدالة
   const [currentPage, setCurrentPage] = useState(1);
   const [cardStyle, setCardStyle] = useState("vertical");
-  const tripsPerPage = cardStyle === "vertical" ? 9 : 8;
+  const tripsPerPage = cardStyle === "vertical" ? 8 : 8;
   const [search, setSearch] = useState("");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 

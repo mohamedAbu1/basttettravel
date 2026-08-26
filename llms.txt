@@ -1,0 +1,15 @@
+
+# llms.txt for Basttet Travel
+Site: Basttet Travel - Luxury Egypt Tours
+Description: Book Nile cruises, desert adventures, and Egypt tours.
+
+Sections:
+- /tours
+- /nile-cruise
+- /desert-adventures
+- /contact
+
+Important Links:
+- https://basttettravel.com/sitemap.xml
+- https://basttettravel.com/about
+- https://basttettravel.com/contact
