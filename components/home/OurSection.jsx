@@ -74,7 +74,6 @@ const OurSection = () => {
             width={200}
             height={200}
             className="mx-auto mb-4 object-contain select-none"
-            priority
           />
 
           <p className="sc-p text-xs uppercase mb-2 tracking-wide text-gradient">
@@ -177,7 +176,6 @@ const OurSection = () => {
                 width={330}
                 height={330}
                 className="object-contain select-none"
-                priority
               />
             </div>
 

@@ -1,21 +1,40 @@
 "use client";
+import dynamic from "next/dynamic";
 import Footer from "@/components/Footer/Footer";
 import Header from "@/components/header/Header";
 import CarBookingSection from "@/components/home/CarBookingSection";
 import CategoriesSection from "@/components/home/CategoriesSection";
 import CitiesSection from "@/components/home/CitiesSection";
 import HeroSection from "@/components/home/HeroSection";
-import OurSection from "@/components/home/OurSection";
+// Below-the-fold sections are loaded after the critical home content so the
+// first mobile render has less JavaScript to parse and execute.
+const OurSection = dynamic(() => import("@/components/home/OurSection"), {
+  ssr: false,
+});
 import TopTripsSection from "@/components/home/TopTripsSection";
 import LoginModal from "@/components/home/components/LoginModal";
 import SignUpButton from "@/components/home/components/SignUpButton";
-import TopReviewsSection from "@/components/home/components/TopReviewsSection";
-import ChatWidget from "@/components/layout/ChatWidget";
+const TopReviewsSection = dynamic(
+  () => import("@/components/home/components/TopReviewsSection"),
+  { ssr: false },
+);
+const ChatWidget = dynamic(() => import("@/components/layout/ChatWidget"), {
+  ssr: false,
+});
 import { useAuth } from "@/context/AuthContext"; // ✅ استدعاء الـ Auth
-import CurrencySelector from "@/components/layout/CurrencySelector";
+const CurrencySelector = dynamic(
+  () => import("@/components/layout/CurrencySelector"),
+  { ssr: false },
+);
 import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
-import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
-import AdminChatWindow from "@/components/layout/AdminChatWindow";
+const AdminDashboardButton = dynamic(
+  () => import("@/components/layout/AdminDashboardButton"),
+  { ssr: false },
+);
+const AdminChatWindow = dynamic(
+  () => import("@/components/layout/AdminChatWindow"),
+  { ssr: false },
+);
 
 // import { useQueryFilters } from "@/context/QueryContext";
 import { useMessages } from "@/context/MessageContext";
@@ -26,6 +45,7 @@ export default function Home() {
   return (
     <>
       <main
+        id="main-content"
         className={`
         w-full
         flex

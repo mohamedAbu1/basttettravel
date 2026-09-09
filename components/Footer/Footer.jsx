@@ -134,22 +134,35 @@ const Footer = () => {
         {[
           {
             Icon: FaFacebookF,
+            label: "Basttet Travel on Facebook",
             url: "https://www.facebook.com/profile.php?id=61591222981163",
           },
           {
             Icon: FaInstagram,
+            label: "Basttet Travel on Instagram",
             url: "https://www.instagram.com/ismailharoun225/",
           },
-          { Icon: FaWhatsapp, url: "https://wa.me/201100507802" },
-          { Icon: MdEmail, url: "mailto:BasttetTravel@outlook.com" },
+          {
+            Icon: FaWhatsapp,
+            label: "Contact Basttet Travel on WhatsApp",
+            url: "https://wa.me/201100507802",
+          },
+          {
+            Icon: MdEmail,
+            label: "Email Basttet Travel",
+            url: "mailto:BasttetTravel@outlook.com",
+          },
           {
             Icon: FaTripadvisor,
+            label: "Basttet Travel on Tripadvisor",
             url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html",
           }, // ✅ Tripadvisor
-        ].map(({ Icon, url }, i) => (
+        ].map(({ Icon, label, url }, i) => (
           <motion.a
             key={i}
             href={url}
+            aria-label={label}
+            title={label}
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.6, rotate: 5 }} // ✅ تكبير أفضل

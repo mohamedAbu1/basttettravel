@@ -10,6 +10,25 @@
 @import "./select.css";
 @import "./feedback.css";
 
+/* Keeps keyboard navigation visible without changing the visual layout. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 0.5rem;
+  padding: 0.7rem 1rem;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  font-weight: 700;
+  transition: transform 150ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 .hero-text {
   font-size: 5rem;
   font-weight: 800;

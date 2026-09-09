@@ -51,12 +51,14 @@ export default function Background() {
       >
         <Image
           src={images[index]}
-          alt="Egypt travel destination"
+          // This image is decorative; the meaningful hero copy is rendered separately.
+          alt=""
+          aria-hidden="true"
           fill
           sizes="100vw"
-          quality={70}
+          quality={60}
           className="object-cover"
-          priority
+          priority={index === 0}
         />
         <div className="absolute inset-0 bg-black/20"></div>
       </motion.div>

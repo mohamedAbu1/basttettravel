@@ -39,6 +39,9 @@ export default function Header() {
           : "bg-transparent"
       }`}
     >
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <div className="max-w-8xl container mx-auto px-6 py-4 flex items-center justify-between">
         {/* شعار الموقع */}
         <Logo scrolled={scrolled} />

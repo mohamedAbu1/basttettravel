@@ -19,7 +19,8 @@ export default function TripVideo() {
         width="100%"
         height="500"
         src={videoUrl}
-        title="YouTube video player"
+        title="Basttet Travel trip video"
+        loading="lazy"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen

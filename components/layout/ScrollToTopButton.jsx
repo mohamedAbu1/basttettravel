@@ -21,8 +21,11 @@ export default function ScrollToTopButton() {
   return (
     <>
       {isVisible && (
-        <motion.div
+        <motion.button
+          type="button"
           onClick={scrollToTop}
+          aria-label="Scroll to top"
+          title="Scroll to top"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           whileHover={{ scale: 1.15 }}
@@ -47,7 +50,7 @@ export default function ScrollToTopButton() {
               }}
             />
           </motion.div>
-        </motion.div>
+        </motion.button>
       )}
     </>
   );

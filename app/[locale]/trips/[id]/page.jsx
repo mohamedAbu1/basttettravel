@@ -1,9 +1,10 @@
 "use client";
+import dynamic from "next/dynamic";
 import { useTrip } from "@/context/TripContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useEffect } from "react";
-import Footer from "@/components/Footer/Footer";
+const Footer = dynamic(() => import("@/components/Footer/Footer"), { ssr: false });
 import Header from "@/components/header/Header";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import LoginModal from "@/components/home/components/LoginModal";
@@ -14,18 +15,21 @@ import TripCategories from "./components/TripCategories";
 import TripIncludes from "./components/TripIncludes";
 import TripItinerary from "./components/TripItinerary";
 import TripInfo from "./components/TripInfo";
-import TripReviews from "./components/TripReviews";
-import ChatWidget from "@/components/layout/ChatWidget";
+const TripReviews = dynamic(() => import("./components/TripReviews"), { ssr: false });
+const ChatWidget = dynamic(() => import("@/components/layout/ChatWidget"), { ssr: false });
 import { useAuth } from "@/context/AuthContext";
 import PurchaseButton from "./components/PurchaseButton";
 import CancelButton from "./components/CancelButton";
 import { usePurchase } from "@/context/PurchaseContext";
 import AccessibilityInfo from "./components/components/AccessibilityInfo";
-import AdminChatWindow from "@/components/layout/AdminChatWindow";
+const AdminChatWindow = dynamic(
+  () => import("@/components/layout/AdminChatWindow"),
+  { ssr: false },
+);
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import TripExclusions from "./components/TripExclusions";
-import CalendarWidget from "./components/CalendarWidget";
+const CalendarWidget = dynamic(() => import("./components/CalendarWidget"), { ssr: false });
 import { useMessages } from "@/context/MessageContext";
 
 export default function TripPage({ params }) {

@@ -1,24 +1,34 @@
 "use client";
+import dynamic from "next/dynamic";
 import React, { useState, useEffect } from "react";
 import TripsFilter from "@/components/trips/TripsFilter";
 import TripsSearch from "@/components/trips/TripsSearch";
 import TripsGrid from "@/components/trips/TripsGrid";
 import Header from "@/components/header/Header";
-import Footer from "@/components/Footer/Footer";
+const Footer = dynamic(() => import("@/components/Footer/Footer"), { ssr: false });
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import LoginModal from "@/components/home/components/LoginModal";
 import SignUpButton from "@/components/home/components/SignUpButton";
 import { motion } from "framer-motion";
-import ChatWidget from "@/components/layout/ChatWidget";
+const ChatWidget = dynamic(() => import("@/components/layout/ChatWidget"), { ssr: false });
 import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTrip } from "@/context/TripContext";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { useQueryFilters } from "@/context/QueryContext";
 import { useRouter } from "next/navigation";
-import CurrencySelector from "../../../components/layout/CurrencySelector";
-import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
-import AdminChatWindow from "@/components/layout/AdminChatWindow";
+const CurrencySelector = dynamic(
+  () => import("../../../components/layout/CurrencySelector"),
+  { ssr: false },
+);
+const AdminDashboardButton = dynamic(
+  () => import("@/components/layout/AdminDashboardButton"),
+  { ssr: false },
+);
+const AdminChatWindow = dynamic(
+  () => import("@/components/layout/AdminChatWindow"),
+  { ssr: false },
+);
 import { usePurchase } from "@/context/PurchaseContext";
 import { useMessages } from "@/context/MessageContext";
 import { useTranslation } from "react-i18next";

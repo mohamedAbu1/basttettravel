@@ -112,20 +112,26 @@ export default function RightBar({ scrolled }) {
           color="error"
           className="hidden lg:flex"
         >
-          <NotificationsIcon
+          <button
+            type="button"
+            aria-label="Open notifications"
+            title="Open notifications"
             onClick={() => setOpen(true)}
-            sx={{
-              cursor: "pointer",
-              color:
-                themeName === "dark"
-                  ? "#fff"
-                  : !isHome
-                    ? "#333"
-                    : scrolled
+            className="rounded-full p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <NotificationsIcon
+              sx={{
+                color:
+                  themeName === "dark"
+                    ? "#fff"
+                    : !isHome
                       ? "#333"
-                      : "#fff",
-            }}
-          />
+                      : scrolled
+                        ? "#333"
+                        : "#fff",
+              }}
+            />
+          </button>
         </Badge>
       )}
 
@@ -136,20 +142,26 @@ export default function RightBar({ scrolled }) {
           color="error"
           className="hidden lg:flex"
         >
-          <MailIcon
+          <button
+            type="button"
+            aria-label="Open messages"
+            title="Open messages"
             onClick={() => setOpenMessages(true)}
-            sx={{
-              cursor: "pointer",
-              color:
-                themeName === "dark"
-                  ? "#fff"
-                  : !isHome
-                    ? "#333"
-                    : scrolled
+            className="rounded-full p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            <MailIcon
+              sx={{
+                color:
+                  themeName === "dark"
+                    ? "#fff"
+                    : !isHome
                       ? "#333"
-                      : "#fff",
-            }}
-          />
+                      : scrolled
+                        ? "#333"
+                        : "#fff",
+              }}
+            />
+          </button>
         </Badge>
       )}
 
