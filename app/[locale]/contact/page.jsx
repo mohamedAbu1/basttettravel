@@ -9,12 +9,10 @@ import LoginModal from "@/components/home/components/LoginModal";
 import SignUpButton from "@/components/home/components/SignUpButton";
 import ChatWidget from "@/components/layout/ChatWidget";
 import { useAuth } from "@/context/AuthContext";
-import Head from "next/head";
-import { useLanguage } from "@/context/LanguageContext";
-import { contactMetadata } from "@/lib/metadata/contact";
 import DividerWithIcon from "@/components/layout/DividerWithIcon";
 import Image from "next/image";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
+import { useMessages } from "@/context/MessageContext";
 import ContactInfoCard from "@/components/contact/ContactInfoCard";
 import ContactForm from "@/components/contact/ContactForm";
 import { toast } from "react-toastify";
@@ -40,9 +38,8 @@ const symbols = [
 
 export default function ContactPage() {
   const { theme, themeName } = useTheme();
-  const { userData, chatUser, setChatUser } = useAuth(); // ✅ جلب المستخدم الحالي
-  const { lang } = useLanguage();
-  const meta = contactMetadata[lang] || contactMetadata.en;
+  const { userData, chatUser, setChatUser } = useAuth();
+  const { messages } = useMessages();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -73,16 +70,6 @@ export default function ContactPage() {
 
   return (
     <>
-      <Head>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-        <meta name="keywords" content={meta.keywords} />
-        <link rel="canonical" href="https://basttettravel.com/" />
-        <img
-          src="/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp"
-          alt="Nile Cruise with Basttet Travel"
-        />
-      </Head>
       <main className="relative flex flex-col min-h-screen justify-center items-center mt-7">
         <Header />
         {/* خلفية الرموز الفرعونية */}

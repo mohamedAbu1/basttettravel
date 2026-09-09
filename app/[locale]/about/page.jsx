@@ -15,25 +15,15 @@ import HeritageSection from "@/components/about/HeritageSection";
 import CTASection from "@/components/about/CTASection";
 import ChatWidget from "@/components/layout/ChatWidget";
 import { useAuth } from "@/context/AuthContext";
-import Head from "next/head";
-import { useLanguage } from "@/context/LanguageContext";
-import { aboutMetadata } from "@/lib/metadata/about";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
+import { useMessages } from "@/context/MessageContext";
 
 export default function AboutPage() {
   const { theme } = useTheme();
-  const { userData, chatUser, setChatUser } = useAuth(); // ✅ جلب المستخدم الحالي
-  const { lang } = useLanguage();
-  const meta = aboutMetadata[lang] || aboutMetadata.en;
+  const { userData, chatUser, setChatUser } = useAuth();
+  const { messages } = useMessages();
   return (
     <>
-      <Head>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-        <meta name="keywords" content={meta.keywords} />
-        <link rel="canonical" href="https://basttettravel.com/" />
-        <img src="/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp" alt="Nile Cruise with Basttet Travel" />
-      </Head>
       <main className="relative flex flex-col min-h-screen justify-center items-center ">
         <Header />
         <EgyptianBackground />

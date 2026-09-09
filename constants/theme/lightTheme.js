@@ -4,9 +4,6 @@ const LightTheme = {
   // خلفية زجاجية شفافة مع لمسة بحرية
   background: "bg-[rgba(255,255,255,0.25)] backdrop-blur-[20px]",
 
-  // النصوص الأساسية
-  buttonPrimary: "text-[#0A2E36]", // أزرق بحري داكن
-
   // النصوص الثانوية
   subText: "text-[#1A4D5C]", // أزرق رمادي فاتح
 

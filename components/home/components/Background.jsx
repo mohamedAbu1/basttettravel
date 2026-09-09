@@ -7,7 +7,6 @@ import { useTheme } from "@/context/ThemeContext";
 export default function Background() {
   const { themeName } = useTheme();
   const [index, setIndex] = useState(0);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
 
   // ✅ صور خاصة بالـ Dark Mode للشاشات الكبيرة
   const darkImagesLarge = [
@@ -35,16 +34,6 @@ export default function Background() {
   const images = themeName === "dark" ? darkImagesLarge : lightImages;
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsLargeScreen(window.innerWidth >= 1536); // Tailwind breakpoint 2xl = 1536px
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % images.length);
     }, 8000);
@@ -53,25 +42,24 @@ export default function Background() {
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {images.map((img, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: i === index ? 1 : 0 }}
-          transition={{ duration: 2 }}
-          className="absolute inset-0"
-        >
-          <Image
-            src={img}
-            alt="Background"
-            fill
-            className="object-cover"
-            priority={i === index}
-          />
-          {/* ✅ Overlay مختلف حسب الثيم */}
-          <div className="absolute inset-0 bg-black/20"></div>
-        </motion.div>
-      ))}
+      <motion.div
+        key={images[index]}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 2 }}
+        className="absolute inset-0"
+      >
+        <Image
+          src={images[index]}
+          alt="Egypt travel destination"
+          fill
+          sizes="100vw"
+          quality={70}
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/20"></div>
+      </motion.div>
     </div>
   );
 }

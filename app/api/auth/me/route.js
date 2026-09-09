@@ -13,7 +13,7 @@ export async function GET(request) {
     const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
 
     return NextResponse.json({ user: decoded }, { status: 200 });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 }

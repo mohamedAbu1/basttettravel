@@ -23,7 +23,7 @@ export function NotificationsProvider({ children }) {
       }
     }
     fetchNotifications();
-  }, [notifications]);
+  }, []);
 
   // تحديث حالة الإشعار إلى مقروء
 const markAsRead = async (id) => {

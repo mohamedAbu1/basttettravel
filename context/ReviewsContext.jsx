@@ -107,28 +107,28 @@ export function ReviewsProvider({ children }) {
     }
   };
 
-  // ✅ إضافة لايك
- const addLike = async (reviewId, userId) => {
+const addLike = async (reviewId, userId) => {
   if (!reviewId || !userId) return;
 
-    try {
-      const res = await axios.post(`/api/reviews/${reviewId}/like`, {
-        user_id: userData.id,
-      });
+  try {
+    const res = await axios.post(`/api/reviews/${reviewId}/like`, {
+      user_id: userId, // ✅ استخدم الباراميتر المرسل
+    });
 
-      if (!res.data?.error) {
-        setLikes((prev) => ({
-          ...prev,
-          [reviewId]: {
-            count: (prev[reviewId]?.count || 0) + 1,
-            users: [...(prev[reviewId]?.users || []), userData.id],
-          },
-        }));
-      }
-    } catch (err) {
-      console.error("❌ Error adding like:", err);
+    if (!res.data?.error) {
+      setLikes((prev) => ({
+        ...prev,
+        [reviewId]: {
+          count: (prev[reviewId]?.count || 0) + 1,
+          users: [...(prev[reviewId]?.users || []), userId],
+        },
+      }));
     }
-  };
+  } catch (err) {
+    console.error("❌ Error adding like:", err);
+  }
+};
+
 
   // ✅ إزالة لايك
   const removeLike = async (reviewId) => {

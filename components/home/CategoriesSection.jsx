@@ -24,8 +24,8 @@ function CategoryCard({ cat, theme, language }) {
 
   const displayName =
     typeof cat.name === "object"
-      ? cat.name?.[language] || cat.name?.en || cat.name
-      : cat.name;
+      ? cat?.name?.[language] || cat?.name?.en || cat?.name
+      : cat?.name;
 
   const luxuryNames = [
     "Luxusreisen",

@@ -26,6 +26,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import TripExclusions from "./components/TripExclusions";
 import CalendarWidget from "./components/CalendarWidget";
+import { useMessages } from "@/context/MessageContext";
 
 export default function TripPage({ params }) {
   const { id } = params;
@@ -35,6 +36,7 @@ export default function TripPage({ params }) {
   const { userData, chatUser, setChatUser } = useAuth();
   const { purchases } = usePurchase();
   const { t } = useTranslation("header");
+  const { messages  } = useMessages();
 
   useEffect(() => {
     if (!trips.length) {

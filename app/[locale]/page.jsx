@@ -12,33 +12,19 @@ import SignUpButton from "@/components/home/components/SignUpButton";
 import TopReviewsSection from "@/components/home/components/TopReviewsSection";
 import ChatWidget from "@/components/layout/ChatWidget";
 import { useAuth } from "@/context/AuthContext"; // ✅ استدعاء الـ Auth
-import Head from "next/head";
-import { useLanguage } from "@/context/LanguageContext";
-import { homeMetadata } from "@/lib/metadata/home";
 import CurrencySelector from "@/components/layout/CurrencySelector";
 import ScrollToTopButton from "@/components/layout/ScrollToTopButton";
 import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
+
 // import { useQueryFilters } from "@/context/QueryContext";
 import { useMessages } from "@/context/MessageContext";
 export default function Home() {
-  const { messages, fetchUserMessagesById, sendMessage } = useMessages();
+  const { messages } = useMessages();
   const { userData, chatUser, setChatUser } = useAuth();
-  const { lang } = useLanguage();
-  const meta = homeMetadata[lang] || homeMetadata.en;
 
   return (
     <>
-      <Head>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-        <meta name="keywords" content={meta.keywords} />
-        <link rel="canonical" href="https://basttettravel.com/" />
-        <img
-          src="/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp"
-          alt="Nile Cruise with Basttet Travel"
-        />
-      </Head>
       <main
         className={`
         w-full

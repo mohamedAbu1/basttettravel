@@ -2,16 +2,22 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: [
-      "zxpcoubskncdsruearze.supabase.co",
-      "lkwlrezhuxercfvtjiiw.supabase.co",
-      "basttettravel.com",
-    ],
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
         hostname: "basttettravel.com",
-        pathname: "/images/**",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "zxpcoubskncdsruearze.supabase.co",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lkwlrezhuxercfvtjiiw.supabase.co",
+        pathname: "/**",
       },
     ],
   },

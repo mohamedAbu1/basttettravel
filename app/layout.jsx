@@ -1,87 +1,26 @@
 import "./style/globals.css";
 import Providers from "./providers";
-import Script from "next/script";
+import { organizationSchema, siteConfig } from "@/lib/seo/site";
 
 export const metadata = {
-  title: "Basttet Travel | Luxury Egypt Tours",
-  description: "Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys.",
-  keywords: "Egypt tours, Luxor trips, Nile cruises, desert adventures",
-  openGraph: {
-    title: "Basttet Travel | Luxury Egypt Tours",
-    description: "Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys.",
-    url: "https://basttettravel.com/",
-    images: ["https://basttettravel.com/iamges/Dahabeya-program-SOBEK-900x600.png"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Basttet Travel | Luxury Egypt Tours",
-    description: "Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys.",
-    images: ["https://basttettravel.com/iamges/Copilot_20260613_134550.webp"],
-  },
+  metadataBase: new URL(siteConfig.url),
+  title: { default: "Basttet Travel | Luxury Egypt Tours", template: "%s | Basttet Travel" },
+  description: "Discover luxury Nile cruises, desert adventures and unforgettable Egypt tours with Basttet Travel.",
+  icons: { icon: "/favicon.ico" },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* ✅ Canonical */}
-        <link rel="canonical" href="https://basttettravel.com/" />
-
-        {/* ✅ Open Graph */}
-        <meta property="og:title" content="Basttet Travel | Luxury Egypt Tours" />
-        <meta property="og:description" content="Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys." />
-        <meta property="og:image" content="https://basttettravel.com/iamges/Dahabeya-program-SOBEK-900x600.png" />
-        <meta property="og:url" content="https://basttettravel.com/" />
-
-        {/* ✅ Twitter Cards */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Basttet Travel | Luxury Egypt Tours" />
-        <meta name="twitter:description" content="Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys." />
-        <meta name="twitter:image" content="https://basttettravel.com/iamges/Copilot_20260613_134550.png" />
-
-        {/* ✅ Structured Data */}
+        {/* Structured data is kept once at the root so every page describes the same agency. */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "TravelAgency",
-            "name": "Basttet Travel",
-            "url": "https://basttettravel.com",
-            "logo": "https://basttettravel.com/iamges/Copilot_20260613_134550.png",
-            "image": [
-              "https://basttettravel.com/iamges/pexels-axp-photography-500641970-18991592.webp",
-              "https://basttettravel.com/iamges/Dahabeya-program-SOBEK-900x600.webp"
-            ],
-            "description": "Luxury Egypt tours with Basttet Travel – Nile cruises, desert adventures, and curated journeys.",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "Luxor, Egypt",
-              "addressCountry": "EG"
-            },
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "telephone": "+20 1100507802",
-              "contactType": "customer service",
-              "areaServed": "EG"
-            },
-            "sameAs": [
-              "https://www.facebook.com/profile.php?id=61591222981163",
-              "https://www.instagram.com/ismailharoun225/",
-              "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html"
-            ]
-          })
+          __html: JSON.stringify(organizationSchema),
         }} />
-<Script 
-          src="https://checkout.kashier.io/kashier-checkout.js" 
-          strategy="beforeInteractive" 
-        />
-        {/* ✅ Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-GXM9KRNJHH"
-          strategy="afterInteractive"
-        />
-        <Script
+        {/* Google Analytics is loaded asynchronously after parsing. */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GXM9KRNJHH" />
+        <script
           id="google-analytics"
-          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];

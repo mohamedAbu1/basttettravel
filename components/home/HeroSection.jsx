@@ -1,6 +1,5 @@
 "use client";
 import Background from "./components/Background";
-import Header from "../header/Header";
 import HeroText from "./components/HeroText";
 import BookingForm from "./components/BookingForm";
 import Packages from "./components/Packages";
@@ -15,9 +14,6 @@ export default function HeroSection() {
     <section className="relative min-h-screen w-full overflow-hidden flex flex-col ">
       {/* الخلفية */}
       <Background />
-
-      {/* الهيدر */}
-      <Header />
 
       {/* المحتوى الرئيسي */}
       <div className="relative z-20 flex flex-col lg:flex-row items-center justify-between w-full h-full mx-auto px-6 lg:px-12 mt-24 lg:mt-32">

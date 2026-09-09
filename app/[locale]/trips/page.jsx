@@ -11,9 +11,7 @@ import SignUpButton from "@/components/home/components/SignUpButton";
 import { motion } from "framer-motion";
 import ChatWidget from "@/components/layout/ChatWidget";
 import { useAuth } from "@/context/AuthContext";
-import Head from "next/head";
 import { useLanguage } from "@/context/LanguageContext";
-import { tripsMetadata } from "@/lib/metadata/trips";
 import { useTrip } from "@/context/TripContext";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { useQueryFilters } from "@/context/QueryContext";
@@ -22,6 +20,7 @@ import CurrencySelector from "../../../components/layout/CurrencySelector";
 import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
 import { usePurchase } from "@/context/PurchaseContext";
+import { useMessages } from "@/context/MessageContext";
 export default function TripsPage() {
   const { trips, fetchTrips, loadingTrips } = useTrip();
   const {
@@ -30,15 +29,14 @@ export default function TripsPage() {
     loading,
   } = useCitiesCategories();
   const { lang } = useLanguage();
-  const meta = tripsMetadata[lang] || tripsMetadata.en;
   const { userData, chatUser, setChatUser } = useAuth();
-  const router = useRouter();
   const { purchases } = usePurchase(); // ✅ استدعاء الدالة
   const [currentPage, setCurrentPage] = useState(1);
   const [cardStyle, setCardStyle] = useState("vertical");
   const tripsPerPage = cardStyle === "vertical" ? 9 : 8;
   const [search, setSearch] = useState("");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const { messages  } = useMessages();
 
   const { city, category, group_price, popular } = useQueryFilters();
 
@@ -159,16 +157,6 @@ export default function TripsPage() {
 
   return (
     <>
-      <Head>
-        <title>{meta.title}</title>
-        <meta name="description" content={meta.description} />
-        <meta name="keywords" content={meta.keywords} />
-        <link rel="canonical" href="https://basttettravel.com/" />
-        <img
-          src="/Nile_Cruise/Dahabeya-program-SOBEK-900x600.webp"
-          alt="Nile Cruise with Basttet Travel"
-        />
-      </Head>
 
       <main className="relative flex flex-col min-h-screen justify-center items-center mt-7">
         <EgyptianBackground />

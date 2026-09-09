@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 // استورد هنا ملف اتصال قاعدة البيانات الخاص بك
 
 export async function POST(req) {
@@ -8,9 +7,6 @@ export async function POST(req) {
     const data = body.data;
 
     // 1. التحقق من التوقيع (Signature) لضمان أن الإشعار قادم فعلياً من Kashier
-    const kashierSignature = req.headers.get('x-kashier-signature');
-    const secretKey = process.env.KASHIER_SECRET_KEY;
-
     // (اختياري) يمكنك فحص التوقيع المشفّر بالأمر التالي
     // const calculatedSignature = crypto.createHmac('sha256', secretKey).update(JSON.stringify(body)).digest('hex');
 
@@ -22,7 +18,7 @@ export async function POST(req) {
       // TODO: قم بتحديث حالة الحجز في قاعدة البيانات (MySQL) إلى "PAID"
       // await db.query('UPDATE bookings SET status = ?, transaction_id = ? WHERE order_id = ?', ['SUCCESS', transactionId, orderId]);
 
-      console.log(`Payment successful for Order: ${orderId}`);
+      console.log(`Payment successful for Order: ${orderId}, transaction: ${transactionId}`);
     } else if (data?.status === 'FAILED') {
       const orderId = data.merchantOrderId;
       
