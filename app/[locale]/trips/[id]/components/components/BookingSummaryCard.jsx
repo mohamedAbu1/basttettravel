@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { useData } from "@/context/DataContext";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const BookingSummaryCard = ({
   tourName,
@@ -18,6 +19,7 @@ const BookingSummaryCard = ({
   const { userData } = useAuth();
   const { handleLoginOpen } = useData();
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation("common");
 
   const childrenPrice = (checkInPrice * childrenCount) / 2;
   let total = checkInPrice * participants + childrenPrice;
@@ -162,7 +164,7 @@ let EGP = total * 49.85
 
   return (
     <div className={`${theme.card} p-6`}>
-      <h2 className={`${theme.title} mb-4`}>Booking Summary</h2>
+      <h2 className={`${theme.title} mb-4`}>{t("bookingSummary")}</h2>
 
       <div className={`${theme.border} p-4 flex justify-between`}>
         <div>
@@ -175,7 +177,7 @@ let EGP = total * 49.85
         </div>
 
         <div>
-          <p className={theme.heading}>Total:</p>
+          <p className={theme.heading}>{t("totalLabel")}</p>
           <p className={`${theme.title} text-lg`}>
             {!isNaN(total) ? `$${total.toFixed(2)}` : "$0.00"}
           </p>

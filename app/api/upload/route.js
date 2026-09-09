@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { requireAdmin } from "@/lib/auth/admin";
+import { safeImageName, validateImageFile } from "@/lib/uploads";
 
 export async function POST(req) {
+  const authorizationError = requireAdmin(req);
+  if (authorizationError) return authorizationError;
+
   const formData = await req.formData();
   const file = formData.get("file");
+  const validationError = validateImageFile(file);
 
-  if (!file) {
-    return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+  if (validationError) {
+    return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -17,9 +23,11 @@ export async function POST(req) {
     fs.mkdirSync(uploadDir, { recursive: true });
   }
 
-  const fileName = file.name;
+  const fileName = safeImageName(file.name);
   const filePath = path.join(uploadDir, fileName);
-  fs.writeFileSync(filePath, buffer);
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, buffer);
+  }
 
   // رابط دائم على موقعك
   const publicUrl = `https://basttettravel.com/iamges/${fileName}`;

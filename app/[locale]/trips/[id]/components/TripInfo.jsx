@@ -4,6 +4,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { usePurchase } from "@/context/PurchaseContext"; 
 import { motion } from "framer-motion";
 import { useCurrency } from "@/context/CurrencyContext"; // ✅ استدعاء الكونتكست
+import { useTranslation } from "react-i18next";
 
 const translations = {
   en: {
@@ -66,9 +67,10 @@ export default function TripInfo({ trip, lang }) {
   const { themeName, theme } = useTheme();
   const { currency } = usePurchase();
   const { rates, loading, error } = useCurrency(); // ✅ جلب أسعار العملات
+  const { t: commonT } = useTranslation("common");
   const t = translations[lang] || translations.en;
 
-  if (loading) return <p className="text-center">⏳ Loading currency rates...</p>;
+  if (loading) return <p className="text-center">⏳ {commonT("loadingCurrencyRates")}</p>;
   if (error) return <p className="text-center text-red-500">❌ {error}</p>;
 
   // ✅ تحويل الأسعار باستخدام CurrencyContext

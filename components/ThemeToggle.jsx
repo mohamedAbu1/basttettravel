@@ -14,7 +14,7 @@ const ThemeToggle = ({ scrolled }) => {
   const isHome =
     segments.length === 0 ||
     (segments.length === 1 &&
-      ["en", "fr", "de", "it", "es", "pt"].includes(segments[0]));
+    ["en", "fr", "de", "it", "es", "zh"].includes(segments[0]));
 
   return (
     <motion.div whileHover={{ scale: 1.1 }}>

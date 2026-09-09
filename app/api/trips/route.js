@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
+import { requireAdmin } from "@/lib/auth/admin";
 
 // دالة آمنة لتحويل أي قيمة إلى JSON نصي
 const safeStringify = (value) => {
@@ -11,6 +12,9 @@ const safeStringify = (value) => {
 };
 
 export async function POST(req) {
+  const authorizationError = requireAdmin(req);
+  if (authorizationError) return authorizationError;
+
   try {
     const body = await req.json();
     const tripId = uuidv4();

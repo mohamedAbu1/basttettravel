@@ -13,6 +13,7 @@ import { signOut, signIn } from "next-auth/react"; // ✅ إضافة
 import { useTranslation } from "react-i18next";
 import MobileHeaderAuth from "./components/MobileHeaderAuth";
 import ThemeToggle from "../ThemeToggle";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -70,6 +71,7 @@ export default function Header() {
           </Button>
         </motion.div>
         <ThemeToggle scrolled={scrolled} />
+        <LanguageSwitcher />
 
         <MobileHeaderAuth />
       </div>

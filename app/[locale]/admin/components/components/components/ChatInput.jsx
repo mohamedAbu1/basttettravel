@@ -1,10 +1,8 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { FaPaperPlane, FaImage, FaSmile } from "react-icons/fa";
+import { FaPaperPlane, FaSmile } from "react-icons/fa";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { useState } from "react";
-
-<Picker onSelect={(emoji) => setNewMessage(newMessage + emoji.native)} />;
+import { useTranslation } from "react-i18next";
 
 export default function ChatInput({
   activeUser,
@@ -16,8 +14,10 @@ export default function ChatInput({
   themeName,
   handleSendImage,
 }) {
-  if (!activeUser) return null;
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const { t } = useTranslation("common");
+
+  if (!activeUser) return null;
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -49,7 +49,7 @@ export default function ChatInput({
         {/* إدخال النص */}
         <input
           type="text"
-          placeholder="Type a message..."
+          placeholder={t("typeMessage")}
           value={newMessage}
           onChange={(e) => {
             setNewMessage(e.target.value);

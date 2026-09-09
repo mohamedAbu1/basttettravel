@@ -2,12 +2,14 @@
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { useCurrency } from "@/context/CurrencyContext";
+import { useTranslation } from "react-i18next";
 
 export default function CurrencyRates() {
   const { themeName } = useTheme();
   const { rates, setRates, loading, saving, error, saveRates } = useCurrency();
+  const { t } = useTranslation("common");
 
-  if (loading) return <p className="text-center">⏳ Loading currency rates...</p>;
+  if (loading) return <p className="text-center">⏳ {t("loadingCurrencyRates")}</p>;
   if (error) return <p className="text-center text-red-500">❌ {error}</p>;
 
   return (
@@ -25,7 +27,7 @@ export default function CurrencyRates() {
             : "bg-gradient-to-r from-[#c9a34a] to-[#eab308] bg-clip-text text-transparent"
         }`}
       >
-        💱 Currency Rates
+        💱 {t("currencyRates")}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -81,7 +83,7 @@ export default function CurrencyRates() {
               : "bg-gradient-to-r from-[#c9a34a] to-[#eab308] text-white hover:scale-105"
           }`}
         >
-          {saving ? "⏳ Saving..." : "💾 Save Changes"}
+          {saving ? `⏳ ${t("savingChanges")}` : `💾 ${t("saveChanges")}`}
         </button>
       </div>
     </div>

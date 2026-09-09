@@ -21,6 +21,7 @@ import AdminDashboardButton from "@/components/layout/AdminDashboardButton";
 import AdminChatWindow from "@/components/layout/AdminChatWindow";
 import { usePurchase } from "@/context/PurchaseContext";
 import { useMessages } from "@/context/MessageContext";
+import { useTranslation } from "react-i18next";
 export default function TripsPage() {
   const { trips, fetchTrips, loadingTrips } = useTrip();
   const {
@@ -37,6 +38,7 @@ export default function TripsPage() {
   const [search, setSearch] = useState("");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const { messages  } = useMessages();
+  const { t: commonT } = useTranslation("common");
 
   const { city, category, group_price, popular } = useQueryFilters();
 
@@ -52,7 +54,7 @@ export default function TripsPage() {
   }, []);
 
   if (loadingTrips)
-    return <p className="text-center text-gray-500">Loading trips...</p>;
+    return <p className="text-center text-gray-500">{commonT("loadingTrips")}</p>;
   // فلترة الرحلات
   const filteredTrips = trips.filter((trip) => {
     const lowerSearch = search.trim().toLowerCase();

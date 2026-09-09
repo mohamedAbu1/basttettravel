@@ -104,7 +104,7 @@ const UsersSection = () => {
             className={`py-4 px-4 flex items-center gap-4`}
           >
             {/* ✅ صورة المستخدم */}
-            <im
+            <img
               src={user?.avatar_url || "/default-avatar.png"}
               alt={user?.name || "User"}
               className="w-12 h-12 rounded-full border"

@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { useTripID } from "../../context/TripIDContext";
+import { useTranslation } from "react-i18next";
 
 const EditTripSaveButton = () => {
   const { tripData, saveTrip, loading } = useTripID();
   const [status, setStatus] = useState(null);
+  const { t } = useTranslation("common");
 
   // ✅ حفظ التعديلات
   const handleSave = async () => {
@@ -30,16 +32,16 @@ const EditTripSaveButton = () => {
           }
         `}
       >
-        {loading ? "Saving..." : "Save Trip"}
+        {loading ? t("saving") : t("saveTrip")}
       </button>
 
       {status === "success" && (
         <p className="mt-2 text-green-600 font-semibold">
-          Trip saved successfully ✅
+          {t("tripSaved")}
         </p>
       )}
       {status === "error" && (
-        <p className="mt-2 text-red-600 font-semibold">Error saving trip ❌</p>
+        <p className="mt-2 text-red-600 font-semibold">{t("errorSavingTrip")}</p>
       )}
     </div>
   );

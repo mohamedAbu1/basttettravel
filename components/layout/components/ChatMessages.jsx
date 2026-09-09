@@ -4,8 +4,10 @@ import { formatDistanceToNow } from "date-fns";
 import { saveAs } from "file-saver";
 import { FaClock, FaDownload, FaExpand, FaComments } from "react-icons/fa";
 import { useEffect ,useRef} from "react";
+import { useTranslation } from "react-i18next";
 
 export default function ChatMessages({ messages, adminTyping, themeName }) {
+    const { t } = useTranslation("common");
     const messagesEndRef = useRef(null);
    useEffect(() => {
     if (messagesEndRef.current) {
@@ -134,14 +136,14 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-gray-500 opacity-80">
             <FaComments className="text-3xl mb-2 text-yellow-500" />
-            <p className="font-semibold">No messages yet</p>
-            <p className="text-sm">Start your conversation with us ✨🚘</p>
+            <p className="font-semibold">{t("noMessages")}</p>
+            <p className="text-sm">{t("carBookingPrompt")}</p>
           </div>
         )}
       </AnimatePresence>
 
       {adminTyping && (
-        <p className="text-xs italic opacity-70">Admin is typing...</p>
+        <p className="text-xs italic opacity-70">{t("adminTyping")}</p>
       )}
     </div>
   );

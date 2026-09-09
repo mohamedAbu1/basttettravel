@@ -1,8 +1,13 @@
 // api/gallery/route.js
 import fs from "fs";
 import path from "path";
+import { requireAdmin } from "@/lib/auth/admin";
+import { safeImageName, validateImageFile } from "@/lib/uploads";
 
 export async function POST(req) {
+  const authorizationError = requireAdmin(req);
+  if (authorizationError) return authorizationError;
+
   try {
     const formData = await req.formData();
     const galleryFiles = formData.getAll("gallery_images");
@@ -13,7 +18,13 @@ export async function POST(req) {
 
     if (galleryFiles?.length > 0) {
       for (const file of galleryFiles) {
-        const originalName = file.name;
+        const validationError = validateImageFile(file);
+        if (validationError) {
+          return new Response(JSON.stringify({ success: false, error: validationError }), { status: 400 });
+        }
+
+        const formFileName = file.name;
+        const originalName = safeImageName(formFileName);
         const uploadPath = path.join(uploadDir, originalName);
 
         if (!fs.existsSync(uploadPath)) {
@@ -24,13 +35,13 @@ export async function POST(req) {
 
         // ✅ استقبل أسماء اللغات من الـ formData
         const nameTranslations = {
-          en: formData.get(`name_en_${originalName}`) || originalName,
-          ar: formData.get(`name_ar_${originalName}`) || "",
-          fr: formData.get(`name_fr_${originalName}`) || "",
-          de: formData.get(`name_de_${originalName}`) || "",
-          it: formData.get(`name_it_${originalName}`) || "",
-          zh: formData.get(`name_zh_${originalName}`) || "",
-          es: formData.get(`name_es_${originalName}`) || "",
+          en: formData.get(`name_en_${formFileName}`) || originalName,
+          ar: formData.get(`name_ar_${formFileName}`) || "",
+          fr: formData.get(`name_fr_${formFileName}`) || "",
+          de: formData.get(`name_de_${formFileName}`) || "",
+          it: formData.get(`name_it_${formFileName}`) || "",
+          zh: formData.get(`name_zh_${formFileName}`) || "",
+          es: formData.get(`name_es_${formFileName}`) || "",
         };
 
         galleryImageObjects.push({

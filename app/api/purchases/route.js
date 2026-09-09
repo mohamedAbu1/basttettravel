@@ -1,9 +1,22 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db"; // ملف الاتصال بقاعدة البيانات MySQL
+import { getAuthenticatedUser } from "@/lib/auth/admin";
 
-export async function GET() {
+export async function GET(request) {
+  const user = getAuthenticatedUser(request);
+  if (!user) {
+    return NextResponse.json(
+      { success: false, error: "Authentication required" },
+      { status: 401 },
+    );
+  }
+
   try {
     const db = await connectDB();
+
+    const isAdmin = String(user.role).toUpperCase() === "ADMIN";
+    const ownershipFilter = isAdmin ? "" : "WHERE user_id = ?";
+    const ownershipParams = isAdmin ? [] : [user.id];
 
     // 1️⃣ جلب الحجوزات
     const [purchases] = await db.query(`
@@ -12,7 +25,8 @@ export async function GET() {
         num_children, num_persons, pet_type, platform, has_children, 
         has_guide, status, has_pets, user_id, trip_id
       FROM purchases
-    `);
+      ${ownershipFilter}
+    `, ownershipParams);
 
     // 2️⃣ جلب الرحلات المرتبطة
     const tripIds = purchases.map((p) => p.trip_id);

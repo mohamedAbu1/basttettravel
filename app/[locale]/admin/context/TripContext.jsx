@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useRef, useState, useCallback } from "react";
 
 const TripContext = createContext();
 
@@ -31,6 +31,8 @@ export function TripProvider({ children }) {
   const [trips, setTrips] = useState([]);
   const [loadingTrips, setLoadingTrips] = useState(false);
   const [error, setError] = useState(null);
+  const tripsRequestRef = useRef(null);
+  const lastTripsFetchRef = useRef(0);
 
   const updateTripField = (field, value) => {
     setTripData((prev) => ({ ...prev, [field]: value }));
@@ -57,7 +59,10 @@ export function TripProvider({ children }) {
     tripData.gallery_files.forEach((file, index) => {
       formData.append("gallery_images", file);
 
-      const names = tripData.gallery_images[index].name;
+      // Keep file and translation metadata aligned even if a user removes a
+      // file before saving the form.
+      const imageMetadata = tripData.gallery_images[index];
+      const names = imageMetadata?.name || {};
       formData.append(`name_en_${file.name}`, names.en);
       formData.append(`name_ar_${file.name}`, names.ar);
       formData.append(`name_fr_${file.name}`, names.fr);
@@ -122,21 +127,33 @@ export function TripProvider({ children }) {
   };
 
   // ✅ جلب الرحلات
-  const fetchTrips = useCallback(async () => {
+  const fetchTrips = useCallback(async ({ force = false } = {}) => {
+    const cacheIsFresh = Date.now() - lastTripsFetchRef.current < 30_000;
+    if (!force && (tripsRequestRef.current || cacheIsFresh)) {
+      return tripsRequestRef.current;
+    }
+
     setLoadingTrips(true);
     setError(null);
-    try {
+    const request = (async () => {
+      try {
       const res = await fetch("/api/trips");
       const result = await res.json();
       if (result.success) {
         setTrips(result.trips);
         localStorage.setItem("trips", JSON.stringify(result.trips));
+        lastTripsFetchRef.current = Date.now();
       }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoadingTrips(false);
-    }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoadingTrips(false);
+        tripsRequestRef.current = null;
+      }
+    })();
+
+    tripsRequestRef.current = request;
+    return request;
   }, []);
 
   const getTripById = (id) => {

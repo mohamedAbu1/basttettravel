@@ -20,6 +20,9 @@ export async function POST() {
       maxAge: 0,
     });
 
+    // Remove the legacy client-readable cookie created by older builds.
+    response.cookies.set("token", "", { path: "/", maxAge: 0 });
+
     return response;
   } catch (err) {
     console.error("Logout Error:", err);

@@ -3,8 +3,10 @@ import { FaClock, FaDownload, FaExpand } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { saveAs } from "file-saver";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
+import { useTranslation } from "react-i18next";
 
 export default function ChatMessages({ messages, userTyping, themeName }) {
+  const { t } = useTranslation("common");
   const handleDownload = async (url, id) => {
     const response = await fetch(url);
     const blob = await response.blob();
@@ -116,12 +118,12 @@ export default function ChatMessages({ messages, userTyping, themeName }) {
             </motion.div>
           ))
         ) : (
-          <p className="text-sm opacity-70">No messages yet...</p>
+          <p className="text-sm opacity-70">{t("noMessages")}</p>
         )}
       </AnimatePresence>
 
       {userTyping && (
-        <p className="text-xs italic opacity-70">User is typing...</p>
+        <p className="text-xs italic opacity-70">{t("userTyping")}</p>
       )}
     </div>
   );

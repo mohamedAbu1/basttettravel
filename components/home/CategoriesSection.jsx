@@ -116,6 +116,7 @@ const MobileCategories = ({ categories, theme, language }) => {
 const CategoriesSection = () => {
   const { theme, themeName } = useTheme();
   const { t, i18n } = useTranslation("home");
+  const { t: commonT } = useTranslation("common");
   const { categories, loading } = useCitiesCategories();
   const [index, setIndex] = useState(0);
   const normalizedLang = i18n.language.split("-")[0];
@@ -142,7 +143,7 @@ const CategoriesSection = () => {
   }, [categories.length]);
 
   if (loading) {
-    return <p className="text-center">Loading categories...</p>;
+    return <p className="text-center">{commonT("loadingCategories")}</p>;
   }
 
   const symbols = [

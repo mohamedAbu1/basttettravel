@@ -4,6 +4,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useTranslation } from "react-i18next";
 
 export default function TripSchedule({
   arrivalDate,
@@ -12,6 +13,7 @@ export default function TripSchedule({
   setDepartureDate,
 }) {
   const { theme } = useTheme();
+  const { t } = useTranslation("common");
   const [alreadyInEgypt, setAlreadyInEgypt] = useState(false);
 
   const today = new Date();
@@ -27,7 +29,7 @@ export default function TripSchedule({
 
   return (
     <div className={`mb-6 p-6 rounded-xl shadow-lg ${theme.card}`}>
-      <h3 className={`text-xl font-bold mb-4 ${theme.title}`}>Trip Schedule</h3>
+      <h3 className={`text-xl font-bold mb-4 ${theme.title}`}>{t("tripSchedule")}</h3>
 
       {/* ✅ Checkbox */}
       <div className="flex items-center gap-3 mb-6">

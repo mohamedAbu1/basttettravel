@@ -2,10 +2,12 @@ import React from "react";
 import { FaDollarSign, FaEuroSign } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import { useTrip } from "../../context/TripContext";
+import { useTranslation } from "react-i18next";
 
 export default function BasicInfo() {
   const { theme,themeName } = useTheme();
   const { tripData, updateTripField } = useTrip();
+  const { t } = useTranslation("common");
 
   const languages = ["en", "es", "fr", "de", "it", "zh"];
 
@@ -28,7 +30,7 @@ export default function BasicInfo() {
           <input
             key={lang}
             type="text"
-            placeholder={`Trip Title (${lang.toUpperCase()})`}
+            placeholder={`${t("title")} (${lang.toUpperCase()})`}
             value={tripData.title?.[lang] ?? ""}
             onChange={(e) =>
               updateTripField("title", {
@@ -46,7 +48,7 @@ export default function BasicInfo() {
         {languages.map((lang) => (
           <textarea
             key={lang}
-            placeholder={`Description (${lang.toUpperCase()})`}
+            placeholder={`${t("description")} (${lang.toUpperCase()})`}
             rows="3"
             value={tripData.description?.[lang] ?? ""}
             onChange={(e) =>
@@ -66,7 +68,7 @@ export default function BasicInfo() {
         <div className="relative w-[30%]">
           <input
             type="number"
-            placeholder="Solo Price"
+            placeholder={t("soloPrice")}
             value={tripData?.solo_price ?? ""}
             onChange={(e) => updateTripField("solo_price", e.target.value)}
             className={`${inputClass} pr-12
@@ -93,7 +95,7 @@ export default function BasicInfo() {
         <div className="relative w-[30%]">
           <input
             type="number"
-            placeholder="Group Price"
+            placeholder={t("groupPrice")}
             value={tripData?.group_price ?? ""}
             onChange={(e) => updateTripField("group_price", e.target.value)}
             className={`${inputClass} pr-12
@@ -120,7 +122,7 @@ export default function BasicInfo() {
         <div className="relative w-[20%]">
           <input
             type="number"
-            placeholder="Duration"
+            placeholder={t("duration")}
             value={tripData.duration ?? ""}
             onChange={(e) => updateTripField("duration", e.target.value)}
             className={`${inputClass} pr-20
@@ -134,9 +136,9 @@ export default function BasicInfo() {
               onChange={(e) => updateTripField("duration_unit", e.target.value)}
               className={selectClass}
             >
-              <option value="days">Days</option>
-              <option value="weeks">Weeks</option>
-              <option value="months">Months</option>
+              <option value="days">{t("days")}</option>
+              <option value="weeks">{t("weeks")}</option>
+              <option value="months">{t("months")}</option>
             </select>
           </div>
         </div>

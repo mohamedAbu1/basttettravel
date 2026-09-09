@@ -101,6 +101,7 @@ function CityCard({ city, themeName, theme, language, t }) {
 const CitiesSection = () => {
   const { theme, themeName } = useTheme();
   const { t, i18n } = useTranslation("home");
+  const { t: commonT } = useTranslation("common");
   const { cities, loading } = useCitiesCategories();
   const normalizedLang = i18n.language.split("-")[0];
 
@@ -116,7 +117,7 @@ const CitiesSection = () => {
   }, []);
 
   if (loading) {
-    return <p className="text-center">Loading cities...</p>;
+    return <p className="text-center">{commonT("loadingCities")}</p>;
   }
 
   const looped = [...cities, ...cities];

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
+import { requireAdmin } from "@/lib/auth/admin";
 
 // ================== GET ==================
 export async function GET(req, context) {
@@ -111,6 +112,9 @@ export async function GET(req, context) {
 
 // ================== PUT ==================
 export async function PUT(req, context) {
+  const authorizationError = requireAdmin(req);
+  if (authorizationError) return authorizationError;
+
   try {
     const { id } = context.params;
     const body = await req.json();
@@ -225,6 +229,9 @@ export async function PUT(req, context) {
 
 // ================== DELETE ==================
 export async function DELETE(req, context) {
+  const authorizationError = requireAdmin(req);
+  if (authorizationError) return authorizationError;
+
   try {
     const { id } = context.params;
     const db = await connectDB();

@@ -5,9 +5,12 @@
     "about": "À propos",
     "contact": "Contact",
     "admin": "Admin",
+    "Logout": "Se déconnecter",
+    "SignUp": "S’inscrire",
     "privacyPolicy": "Politique de confidentialité"
   },
   "home": {
+    "LoginBookCar": "Veuillez vous connecter et réserver votre voiture maintenant ✨",
     "FullName": "Nom complet",
     "Email": "E-mail",
     "Password": "Mot de passe",

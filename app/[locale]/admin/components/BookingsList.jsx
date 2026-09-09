@@ -5,13 +5,13 @@ import { FaCheckCircle, FaTimesCircle, FaClipboardList } from "react-icons/fa";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import { usePurchase } from "../context/PurchaseContext";
 import { motion } from "framer-motion";
-import DividerWithIcon from "@/components/layout/DividerWithIcon";
 import { useTranslation } from "react-i18next";
 export default function BookingsList() {
   const { themeName } = useTheme();
   const { purchases, loading, error, fetchPurchases, handleStatusChange } =
     usePurchase();
   const { i18n } = useTranslation();
+  const { t: commonT } = useTranslation("common");
   const getStatusIcon = (status) => {
     switch (status) {
       case "Confirmed":
@@ -25,7 +25,7 @@ export default function BookingsList() {
     }
   };
 
-  if (loading) return <p className="text-center">⏳ Loading bookings...</p>;
+  if (loading) return <p className="text-center">⏳ {commonT("loading")}</p>;
   if (error)
     return <p className="text-center text-red-500">❌ Error: {error}</p>;
 
@@ -53,7 +53,7 @@ export default function BookingsList() {
               : "bg-gradient-to-r from-[#c9a34a] to-[#eab308] bg-clip-text text-transparent"
           }`}
         >
-          ✨ Bookings
+          ✨ {commonT("bookings")}
         </h2>
         <div
           className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-md ${
@@ -63,7 +63,7 @@ export default function BookingsList() {
           }`}
         >
           <FaClipboardList />
-          <span className="font-semibold">Total: {purchases.length}</span>
+          <span className="font-semibold">{commonT("total")}: {purchases.length}</span>
         </div>
       </motion.div>
 
@@ -71,7 +71,7 @@ export default function BookingsList() {
         onClick={fetchPurchases}
         className="mb-4 px-4 py-2 rounded-lg bg-gradient-to-r from-[#c9a34a] to-[#eab308] text-white hover:scale-105 transition-transform shadow-md"
       >
-        🔄 Refresh Bookings
+        🔄 {commonT("refresh")}
       </button>
 
       {purchases.length > 0 ? (
@@ -89,8 +89,8 @@ export default function BookingsList() {
                   : "bg-[#fdf6e3] text-[#3a2c0a]"
               }`}
             >
-              <th className="p-3">👤 User</th>
-              <th className="p-3">🗺️ Trip</th>
+              <th className="p-3">👤 {commonT("user")}</th>
+              <th className="p-3">🗺️ {commonT("trips")}</th>
               <th className="p-3">👥 Persons</th>
               <th className="p-3">👶 Children</th>
               <th className="p-3">📅 Arrival</th>
@@ -101,10 +101,8 @@ export default function BookingsList() {
           </thead>
           <tbody>
             {purchases.map((purchase, i) => (
-              <>
-                <DividerWithIcon />
                 <motion.tr
-                  key={i}
+                  key={purchase.id || i}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}
@@ -156,7 +154,7 @@ export default function BookingsList() {
                       {purchase.status === "Cancelled" ? (
                         // ✅ حالة الإلغاء: نص ثابت فقط
                         <span className="text-red-600 font-semibold">
-                          ❌ Cancelled
+                          ❌ {commonT("cancelled")}
                         </span>
                       ) : (
                         // ✅ باقي الحالات: قائمة منسدلة للتغيير
@@ -176,21 +174,19 @@ export default function BookingsList() {
                             value="Pending"
                             className="text-yellow-600 font-semibold"
                           >
-                            ⏳ Pending
+                            ⏳ {commonT("pending")}
                           </option>
                           <option
                             value="Confirmed"
                             className="text-green-600 font-semibold"
                           >
-                            ✅ Confirmed
+                            ✅ {commonT("confirmed")}
                           </option>
                         </select>
                       )}
                     </div>
                   </td>
                 </motion.tr>
-                <DividerWithIcon />
-              </>
             ))}
           </tbody>
         </motion.table>
@@ -201,7 +197,7 @@ export default function BookingsList() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-          No bookings available.
+          {commonT("noBookings")}
         </motion.p>
       )}
     </div>

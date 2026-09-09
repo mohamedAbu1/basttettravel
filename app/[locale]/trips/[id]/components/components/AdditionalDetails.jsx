@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import Select from "react-select";
+import { useTranslation } from "react-i18next";
 
 export default function AdditionalDetails({
   hasChildren,
@@ -26,6 +27,7 @@ export default function AdditionalDetails({
   guideLanguages,
   setGuideLanguages,
 }) {
+  const { t } = useTranslation("common");
   const { theme } = useTheme();
 
   const availableLanguages = [
@@ -109,7 +111,7 @@ export default function AdditionalDetails({
             </svg>
           </span>
           <FaChild className={theme.icon} />
-          <span className={theme.subText}>Traveling with children</span>
+            <span className={theme.subText}>{t("travelingWithChildren")}</span>
         </label>
 
         {hasChildren && (
@@ -161,7 +163,7 @@ export default function AdditionalDetails({
               </svg>
             </span>
             <FaDog className={theme.icon} />
-            <span className={theme.subText}>Traveling with pets</span>
+            <span className={theme.subText}>{t("travelingWithPets")}</span>
           </label>
 
           {/* ✅ اختيارات الحيوانات */}
@@ -266,7 +268,7 @@ export default function AdditionalDetails({
               </svg>
             </span>
             <FaUserTie className={theme.icon} />
-            <span className={theme.subText}>Tour Guide</span>
+            <span className={theme.subText}>{t("tourGuide")}</span>
           </label>
 
           {/* ✅ اختيارات اللغات */}
@@ -315,7 +317,7 @@ export default function AdditionalDetails({
         <div className="flex flex-col gap-3">
           <label className="flex items-center gap-2">
             <FaUsers className={theme.icon} />
-            <span className={theme.subText}>Group Size</span>
+            <span className={theme.subText}>{t("groupSize")}</span>
           </label>
           <div className="grid grid-cols-5 gap-2">
             {Array.from({ length: 20 }, (_, i) => i + 1).map((num) => (

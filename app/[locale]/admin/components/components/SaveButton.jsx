@@ -1,11 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import { useTrip } from "../../context/TripContext";
+import { useTranslation } from "react-i18next";
 
 export default function SaveButton() {
   const { tripData, saveTrip } = useTrip();
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null);
+  const { t } = useTranslation("common");
 
   const handleSave = async () => {
     setLoading(true);
@@ -39,7 +41,8 @@ export default function SaveButton() {
         disabled={
           !tripData.title.en ||
           !tripData.description.en ||
-          tripData.price <= 0 ||
+          Number(tripData.solo_price) <= 0 ||
+          Number(tripData.group_price) <= 0 ||
           !tripData.duration ||
           !tripData.priceLevel ||
           tripData.cities.length === 0 ||
@@ -53,16 +56,16 @@ export default function SaveButton() {
           }
         `}
       >
-        {loading ? "Saving..." : "Save Trip"}
+        {loading ? t("saving") : t("saveTrip")}
       </button>
 
       {status === "success" && (
         <p className="mt-2 text-green-600 font-semibold">
-          Trip saved successfully ✅
+          {t("tripSaved")}
         </p>
       )}
       {status === "error" && (
-        <p className="mt-2 text-red-600 font-semibold">Error saving trip ❌</p>
+        <p className="mt-2 text-red-600 font-semibold">{t("errorSavingTrip")}</p>
       )}
     </div>
   );

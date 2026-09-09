@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth/admin";
 
-export async function GET() {
+export async function GET(request) {
+  const authorizationError = requireAdmin(request);
+  if (authorizationError) return authorizationError;
+
   try {
     const db = await connectDB();
 

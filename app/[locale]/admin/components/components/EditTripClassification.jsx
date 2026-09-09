@@ -14,7 +14,7 @@ const EditTripClassification = () => {
     categories: allCategories = [],
     loading,
   } = useCitiesCategories();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation("common");
   const currentLang = i18n.language || "en";
 
 const categories = Array.isArray(tripData?.categories)
@@ -46,7 +46,7 @@ const cities = Array.isArray(tripData?.cities)
   if (loading) {
     return (
       <p className="text-center text-gray-500">
-        Loading cities & categories...
+        {t("loadingCities")}
       </p>
     );
   }
@@ -60,7 +60,7 @@ const cities = Array.isArray(tripData?.cities)
             themeName === "dark" ? "text-gold" : "text-gray-700"
           }`}
         >
-          <FaTags /> Categories
+          <FaTags /> {t("categories")}
         </label>
         {allCategories.map((cat) => {
           const categoryName =
@@ -95,7 +95,7 @@ const cities = Array.isArray(tripData?.cities)
             themeName === "dark" ? "text-gold" : "text-gray-700"
           }`}
         >
-          <FaCity /> Cities
+          <FaCity /> {t("city")}
         </label>
         {allCities.map((city) => {
           const cityName =
@@ -127,7 +127,7 @@ const cities = Array.isArray(tripData?.cities)
             themeName === "dark" ? "text-gold" : "text-gray-700"
           }`}
         >
-          <FaDollarSign /> Price Level
+          <FaDollarSign /> {t("selectPriceLevel")}
         </label>
         <select
           value={priceLevel}
@@ -138,10 +138,10 @@ const cities = Array.isArray(tripData?.cities)
               : "bg-white/80 border border-[#c9a34a]/40 text-gray-800 focus:ring-[#c9a34a]"
           }`}
         >
-          <option value="">Select Price Level</option>
-          <option value="Economy">Economy</option>
-          <option value="Standard">Standard</option>
-          <option value="Luxury">Luxury</option>
+          <option value="">{t("selectPriceLevel")}</option>
+          <option value="Economy">{t("economy")}</option>
+          <option value="Standard">{t("standard")}</option>
+          <option value="Luxury">{t("luxury")}</option>
         </select>
       </div>
     </div>

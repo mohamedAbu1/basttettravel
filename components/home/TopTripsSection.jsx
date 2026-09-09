@@ -14,6 +14,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 const TopTripsSection = () => {
   const { theme } = useTheme();
   const { t, i18n } = useTranslation("home");
+  const { t: commonT } = useTranslation("common");
   const router = useRouter();
   const { user } = useAuth();
   const normalizedLang = i18n.language.split("-")[0];
@@ -27,7 +28,7 @@ const TopTripsSection = () => {
   }, []);
 
   if (loadingTrips) {
-    return <p className="text-center">Loading top trips...</p>;
+    return <p className="text-center">{commonT("loadingTopTrips")}</p>;
   }
 
   const topTrips = [...trips]

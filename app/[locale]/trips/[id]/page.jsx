@@ -36,6 +36,7 @@ export default function TripPage({ params }) {
   const { userData, chatUser, setChatUser } = useAuth();
   const { purchases } = usePurchase();
   const { t } = useTranslation("header");
+  const { t: commonT } = useTranslation("common");
   const { messages  } = useMessages();
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function TripPage({ params }) {
 
   const trip = getTripById(id);
   if (!trip) {
-    return <p className={`${theme.text}`}>Trip not found</p>;
+    return <p className={`${theme.text}`}>{commonT("tripNotFound")}</p>;
   }
 
   const hasActivePurchase = purchases.some(

@@ -5,7 +5,6 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-<Picker onSelect={(emoji) => setNewMessage(newMessage + emoji.native)} />;
 
 export default function ChatInput({
   text,
@@ -17,7 +16,8 @@ export default function ChatInput({
   user,
 }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const { t } = useTranslation("home");
+  const { t } = useTranslation("home");
+  const { t: commonT } = useTranslation("common");
 
   return (
     <div className={`p-3 border-t flex gap-2 items-center ${theme.border}`}>
@@ -32,7 +32,7 @@ export default function ChatInput({
       </label> */}
       <input
         type="text"
-        placeholder="Type your message..."
+        placeholder={commonT("typeMessage")}
         value={text}
         onChange={(e) => {
           setText(e.target.value);

@@ -5,13 +5,14 @@ import { FaTrash, FaMapMarkedAlt } from "react-icons/fa";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import { useTrip } from "../context/TripContext";
 import { useTripID } from "../context/TripIDContext";
-import DividerWithIcon from "@/components/layout/DividerWithIcon";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export default function TripsList() {
   const { themeName } = useTheme();
   const { trips, fetchTrips, setTrips } = useTrip();
   const { deleteTrip } = useTripID();
+  const { t } = useTranslation("common");
 
   useEffect(() => {
     fetchTrips();
@@ -48,7 +49,7 @@ export default function TripsList() {
               : "bg-gradient-to-r from-[#c9a34a] to-[#eab308] bg-clip-text text-transparent"
           }`}
         >
-          All Trips
+          {t("trips")}
         </h2>
         <div
           className={`flex items-center gap-2 px-4 py-2 rounded-lg shadow-md ${
@@ -58,7 +59,7 @@ export default function TripsList() {
           }`}
         >
           <FaMapMarkedAlt />
-          <span className="font-semibold">Total: {trips.length}</span>
+          <span className="font-semibold">{t("total")}: {trips.length}</span>
         </div>
       </motion.div>
 
@@ -71,10 +72,10 @@ export default function TripsList() {
                 : "bg-[#fdf6e3] text-[#3a2c0a]"
             }`}
           >
-            <th className="p-3">Title</th>
-            <th className="p-3">City</th>
-            <th className="p-3">Price</th>
-            <th className="p-3">Actions</th>
+            <th className="p-3">{t("title")}</th>
+            <th className="p-3">{t("city")}</th>
+            <th className="p-3">{t("price")}</th>
+            <th className="p-3">{t("actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -112,7 +113,7 @@ export default function TripsList() {
                               ? c.name.en ||
                                 c.name.ar ||
                                 Object.values(c.name)[0]
-                              : c?.name || "Unknown";
+                              : c?.name || "—";
 
                           return cityName;
                         })
@@ -133,11 +134,10 @@ export default function TripsList() {
                         : "bg-red-500 text-white hover:bg-red-600"
                     }`}
                   >
-                    <FaTrash /> Delete
+                    <FaTrash /> {t("delete")}
                   </button>
                 </td>
               </motion.tr>
-              <DividerWithIcon />
             </React.Fragment>
           ))}
         </tbody>

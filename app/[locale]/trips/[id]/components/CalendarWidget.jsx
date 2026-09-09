@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import CalendarBooking from "./components/CalendarBooking";
 import BookingSummaryCard from "./components/BookingSummaryCard";
 import { useChat } from "@/context/ChatContext";
+import { useTranslation } from "react-i18next";
 
 const BookingCalendar = ({ trip,id }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const prise = trip.solo_price;
   const { theme } = useTheme();
+  const { t } = useTranslation("common");
   const {
     participants,
     setParticipants,
@@ -29,14 +31,14 @@ const BookingCalendar = ({ trip,id }) => {
   return (
     <div className={`${theme.card} w-full lg:w-1/2 h-fit p-6 shadow-lg font-sans`}>
       {/* Participants Section */}
-      <h2 className={`${theme.title} mb-4`}>Participants</h2>
+      <h2 className={`${theme.title} mb-4`}>{t("participants")}</h2>
 
       <div className="flex flex-col lg:flex-row gap-3 lg:gap-0 justify-between mb-6">
         {/* Adults */}
         <div className="flex items-center space-x-1">
           <div>
-            <p className={theme.heading}>Adult</p>
-            <p className={theme.subText}>Age 6 - 100</p>
+            <p className={theme.heading}>{t("adult")}</p>
+            <p className={theme.subText}>{t("age6to100")}</p>
           </div>
           <div className="flex items-center ml-3 lg:ml-0 space-x-2">
             <button
@@ -59,8 +61,8 @@ const BookingCalendar = ({ trip,id }) => {
         {/* Children */}
         <div className="flex items-center space-x-1">
           <div>
-            <p className={theme.heading}>Child</p>
-            <p className={theme.subText}>Age 6 - 12</p>
+            <p className={theme.heading}>{t("child")}</p>
+            <p className={theme.subText}>{t("age6to12")}</p>
           </div>
           <div className="flex items-center ml-5 lg:ml-0 space-x-2">
             <button

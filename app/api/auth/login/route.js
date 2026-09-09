@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { setAuthCookies } from "@/lib/auth/admin";
 
 export async function POST(request) {
   try {
@@ -45,7 +46,7 @@ export async function POST(request) {
     });
 
     // ✅ تجهيز الرد بصيغة JSON واضحة للتطبيق
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         message: "تم تسجيل الدخول بنجاح",
         user: {
@@ -56,11 +57,11 @@ export async function POST(request) {
           gender: user.gender,
           avatar_url: user.avatar_url,
         },
-        accessToken,
-        refreshToken,
       },
       { status: 200 }
     );
+
+    return setAuthCookies(response, accessToken, refreshToken);
   } catch (e) {
     console.error("💥 Internal error", e);
     return NextResponse.json({ error: "خطأ داخلي" }, { status: 500 });

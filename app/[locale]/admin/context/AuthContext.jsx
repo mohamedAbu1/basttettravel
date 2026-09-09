@@ -1,124 +1,110 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
+
+import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { decodeJwt } from "@/lib/utils/JWToken";
 import { toast } from "react-toastify";
-import { useSession } from "next-auth/react"; // ✅ إضافة NextAuth
+import { useSession } from "next-auth/react";
 
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-const AuthContext = createContext();
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+const AuthContext = createContext(null);
 
+/**
+ * Admin authentication state.
+ * The browser only consumes the user returned by the server. Authorization is
+ * enforced again inside every protected API route.
+ */
 export function AuthProvider({ children }) {
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { data: session } = useSession(); // ✅ جلب المستخدم من جوجل عبر NextAuth
+  const { data: session } = useSession();
 
-  
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-  // إدارة التوكين
-  const saveToken = (token) => {
-    localStorage.setItem("token", token);
-    document.cookie = `token=${token}; path=/; max-age=${2 * 24 * 60 * 60}`;
-  };
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-  const removeToken = () => {
-    localStorage.removeItem("token");
-    document.cookie = "token=; path=/; max-age=0";
-  };
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-  const getToken = () => {
-    const lsToken = localStorage.getItem("token");
-    if (lsToken) return lsToken;
-    const cookieToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-    return cookieToken || null;
-  };
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-  // عند تحميل التطبيق: تحقق من وجود التوكين وعيّن user
   useEffect(() => {
-    const token = getToken();
-    if (token) {
-      const decoded = decodeJwt(token);
-      if (decoded) {
-        setUser(decoded);
-        setIsLoggedIn(true);
-      } else {
-        removeToken();
-        setUser(null);
-        setIsLoggedIn(false);
-      }
-    }
-  }, []);
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+    let cancelled = false;
 
-  // التسجيل
+    const loadSession = async () => {
+      try {
+        const response = await axios.get("/api/auth/me", { withCredentials: true });
+        if (!cancelled) {
+          setUser(response.data.user);
+          setIsLoggedIn(true);
+        }
+      } catch {
+        try {
+          const refreshResponse = await axios.post(
+            "/api/auth/refresh",
+            {},
+            { withCredentials: true },
+          );
+          if (!cancelled) {
+            setUser(refreshResponse.data.user);
+            setIsLoggedIn(true);
+          }
+        } catch {
+          if (!cancelled) {
+            setUser(null);
+            setIsLoggedIn(false);
+          }
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadSession();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const register = async (email, password, name, gender, onSuccess) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post("/api/auth/register", {
+      const { data } = await axios.post("/api/auth/register", {
         email,
         password,
         name,
-        gender, // ✅ أرسل الجنس
+        gender,
       });
-      const data = res.data;
 
-      if (!data.user) throw new Error(data.error || "Registration failed");
+      if (!data.user) {
+        throw new Error(data.error || "Registration failed");
+      }
 
-      saveToken(data.token);
-      const decoded = decodeJwt(data.token);
-      setUser(decoded);
+      setUser(data.user);
       setIsLoggedIn(true);
       toast.success("✅ Account created successfully!");
       if (onSuccess) setOpen(false);
-
-      return decoded;
+      return data.user;
     } catch (err) {
       setError(err.message);
       toast.error("❌ Error: " + err.message);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-  // الدخول
   const login = async (email, password, onSuccess) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.post(
+      const { data } = await axios.post(
         "/api/auth/login",
         { email, password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
-      const data = res.data;
 
-      if (!data.user || !data.token)
+      if (!data.user) {
         throw new Error(data.error || "Login failed");
+      }
 
-      saveToken(data.token);
-      const decoded = decodeJwt(data.token);
-      setUser(decoded);
+      setUser(data.user);
       setIsLoggedIn(true);
-
-      // أغلق المودال بعد النجاح
       if (onSuccess) onSuccess();
-
-      return decoded;
+      return data.user;
     } catch (err) {
       setError(err.message);
       throw err;
@@ -126,15 +112,17 @@ export function AuthProvider({ children }) {
       setLoading(false);
     }
   };
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
-  // الخروج
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await axios.post("/api/auth/logout", {}, { withCredentials: true });
+    } catch {
+      // Clear local state even when the logout request cannot reach the server.
+    }
     setUser(null);
     setIsLoggedIn(false);
-    removeToken();
   };
-// ? $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
   const userData = user || session?.user;
 
   return (
@@ -149,8 +137,8 @@ export function AuthProvider({ children }) {
         isLoggedIn,
         open,
         setOpen,
-        handleOpen,
-        handleClose,
+        handleOpen: () => setOpen(true),
+        handleClose: () => setOpen(false),
       }}
     >
       {children}

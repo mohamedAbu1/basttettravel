@@ -1,8 +1,13 @@
 // api/cover/route.js
 import fs from "fs";
 import path from "path";
+import { requireAdmin } from "@/lib/auth/admin";
+import { safeImageName, validateImageFile } from "@/lib/uploads";
 
 export async function POST(req) {
+  const authorizationError = requireAdmin(req);
+  if (authorizationError) return authorizationError;
+
   try {
     const formData = await req.formData();
     const coverFile = formData.get("cover_image");
@@ -12,7 +17,12 @@ export async function POST(req) {
     let coverImageUrl = null;
 
     if (coverFile) {
-      const originalName = coverFile.name;
+      const validationError = validateImageFile(coverFile);
+      if (validationError) {
+        return new Response(JSON.stringify({ success: false, error: validationError }), { status: 400 });
+      }
+
+      const originalName = safeImageName(coverFile.name);
       const uploadPath = path.join(uploadDir, originalName);
 
       if (!fs.existsSync(uploadPath)) {

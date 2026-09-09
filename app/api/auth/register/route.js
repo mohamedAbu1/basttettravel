@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { setAuthCookies } from "@/lib/auth/admin";
 
 // ✅ روابط الصور المخزنة على هوستنجر (iamges)
 const maleAvatars = [
@@ -89,7 +90,7 @@ export async function POST(request) {
     );
     console.log("🔵 [API REGISTER] التوكين تم إنشاؤه");
 
-    return NextResponse.json(
+    const response = NextResponse.json(
       {
         user: {
           id: newUser.id,
@@ -100,10 +101,11 @@ export async function POST(request) {
           role: newUser.role,
           status: newUser.status,
         },
-        accessToken,
       },
       { status: 201 }
     );
+
+    return setAuthCookies(response, accessToken, null);
   } catch (e) {
     console.error("❌ [API REGISTER] خطأ داخلي:", e);
     return NextResponse.json({ error: "خطأ داخلي" }, { status: 500 });

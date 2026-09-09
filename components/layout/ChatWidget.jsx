@@ -30,6 +30,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     setMessageses,
   } = useChat();
   const { t } = useTranslation("home");
+  const { t: commonT } = useTranslation("common");
 
   // ✅ جلب رسائل المستخدم
   useEffect(() => {
@@ -169,12 +170,12 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
             {bookingMode ? (
               <div className="p-6 rounded-xl shadow-lg bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900">
                 <p className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  🚗 Where would you like to book the car from and to?
+                  {commonT("carBookingPrompt")}
                 </p>
 
                 <input
                   type="text"
-                  placeholder="From"
+                  placeholder={commonT("from")}
                   value={from}
                   onChange={(e) => setFrom(e.target.value)}
                   className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 w-full mb-3 
@@ -183,7 +184,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
 
                 <input
                   type="text"
-                  placeholder="To"
+                  placeholder={commonT("to")}
                   value={to}
                   onChange={(e) => setTo(e.target.value)}
                   className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 w-full mb-3 
@@ -200,7 +201,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
                       {
                         sender: "assistant",
                         content:
-                          "✅ Your request has been recorded. Please select the date and time.",
+                          commonT("bookingRecorded"),
                       },
                     ]);
                     setBookingMode(false);

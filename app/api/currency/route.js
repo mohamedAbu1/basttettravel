@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth/admin";
 
+// Currency rates are needed by public trip pages, so reads remain public.
 export async function GET() {
   try {
     const db = await connectDB();
@@ -13,6 +15,9 @@ export async function GET() {
 }
 
 export async function PUT(req) {
+  const authorizationError = requireAdmin(req);
+  if (authorizationError) return authorizationError;
+
   try {
     const { id, rate } = await req.json();
     if (!id) {

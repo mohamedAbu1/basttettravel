@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/purity */
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import Sidebar from "./components/Sidebar";
 import DashboardHome from "./components/DashboardHome";
@@ -12,7 +12,7 @@ import MessagesList from "./components/MessagesList";
 import EditTrip from "./components/EditTrip"; 
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import UsersSection from "./components/UsersSection";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "./context/AuthContext";
 import CurrencyRates from "./components/CurrencyRates";
 
@@ -21,40 +21,51 @@ const symbols = ["𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽","𓃾",
 export default function DashboardPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const { theme, themeName } = useTheme();
-  const { userData } = useAuth(); // ✅ بيانات من الـ API
+  const { userData, loading } = useAuth();
   const router = useRouter();
+  const params = useParams();
+  const locale = params?.locale || "en";
 
+  useEffect(() => {
+    if (!loading && String(userData?.role).toUpperCase() !== "ADMIN") {
+      router.replace(`/${locale}`);
+    }
+  }, [loading, locale, router, userData]);
 
-  // ✅ تحقق من المستخدم وصلاحيته داخل useEffect
-  // useEffect(() => {
-  //   if (!userData || userData?.role?.toLowerCase() !== "admin") {
-  //     router.replace("/"); // رجعه للصفحة الرئيسية لو مش أدمن
-  //   }
-  // }, []);
+  // Deterministic positions prevent server/client hydration mismatches.
+  const floatingSymbols = useMemo(
+    () =>
+      Array.from({ length: 25 }, (_, index) => ({
+        symbol: symbols[index % symbols.length],
+        top: `${(index * 37) % 100}%`,
+        left: `${(index * 61) % 100}%`,
+        rotation: (index * 47) % 360,
+      })),
+    [],
+  );
 
-  // // لو المستخدم مش Admin، ما تعرضش أي محتوى
-  // if (!userData || userData?.role?.toLowerCase() !== "admin") {
-  //   return null;
-  // }
+  if (loading || String(userData?.role).toUpperCase() !== "ADMIN") {
+    return <main className="min-h-screen" aria-busy="true" />;
+  }
 
   return (
     <main className={`relative flex min-h-screen ${theme.background} ${theme.text} overflow-hidden`}>
       <EgyptianBackground />
 
       <div className="absolute inset-0 pointer-events-none z-10">
-        {Array.from({ length: 25 }).map((_, i) => (
+        {floatingSymbols.map((item, i) => (
           <span
             key={i}
             className={`absolute ${
               themeName === "dark" ? "text-gray-700" : "text-[#c9a34a]"
             } opacity-20 text-7xl animate-pulse`}
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              transform: `rotate(${Math.random() * 360}deg)`,
+              top: item.top,
+              left: item.left,
+              transform: `rotate(${item.rotation}deg)`,
             }}
           >
-            {symbols[Math.floor(Math.random() * symbols.length)]}
+            {item.symbol}
           </span>
         ))}
       </div>
