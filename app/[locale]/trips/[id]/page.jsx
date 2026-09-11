@@ -1,11 +1,15 @@
 "use client";
+
 import dynamic from "next/dynamic";
+import { use, useEffect } from "react";
 import { useTrip } from "@/context/TripContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
-import { useEffect } from "react";
-const Footer = dynamic(() => import("@/components/Footer/Footer"), { ssr: false });
+import { useAuth } from "@/context/AuthContext";
+import { usePurchase } from "@/context/PurchaseContext";
+import { useMessages } from "@/context/MessageContext";
 import Header from "@/components/header/Header";
+import Footer from "@/components/Footer/Footer";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import LoginModal from "@/components/home/components/LoginModal";
 import SignUpButton from "@/components/home/components/SignUpButton";
@@ -13,180 +17,90 @@ import TripHeader from "./components/TripHeader";
 import TripCities from "./components/TripCities";
 import TripCategories from "./components/TripCategories";
 import TripIncludes from "./components/TripIncludes";
+import TripExclusions from "./components/TripExclusions";
 import TripItinerary from "./components/TripItinerary";
 import TripInfo from "./components/TripInfo";
+import CancelButton from "./components/CancelButton";
+import AccessibilityInfo from "./components/components/AccessibilityInfo";
+import TripBookingBenefits from "./components/TripBookingBenefits";
+import TripFAQ from "./components/TripFAQ";
 const TripReviews = dynamic(() => import("./components/TripReviews"), { ssr: false });
 const ChatWidget = dynamic(() => import("@/components/layout/ChatWidget"), { ssr: false });
-import { useAuth } from "@/context/AuthContext";
-import PurchaseButton from "./components/PurchaseButton";
-import CancelButton from "./components/CancelButton";
-import { usePurchase } from "@/context/PurchaseContext";
-import AccessibilityInfo from "./components/components/AccessibilityInfo";
-const AdminChatWindow = dynamic(
-  () => import("@/components/layout/AdminChatWindow"),
-  { ssr: false },
-);
-import Link from "next/link";
-import { useTranslation } from "react-i18next";
-import TripExclusions from "./components/TripExclusions";
+const AdminChatWindow = dynamic(() => import("@/components/layout/AdminChatWindow"), { ssr: false });
 const CalendarWidget = dynamic(() => import("./components/CalendarWidget"), { ssr: false });
-import { useMessages } from "@/context/MessageContext";
 
 export default function TripPage({ params }) {
-  const { id } = params;
+  const { id } = use(params);
   const { trips, fetchTrips, getTripById } = useTrip();
   const { lang } = useLanguage();
   const { theme, themeName } = useTheme();
   const { userData, chatUser, setChatUser } = useAuth();
   const { purchases } = usePurchase();
-  const { t } = useTranslation("header");
-  const { t: commonT } = useTranslation("common");
-  const { messages  } = useMessages();
+  const { messages } = useMessages();
 
   useEffect(() => {
-    if (!trips.length) {
-      fetchTrips();
-    }
-  }, []);
+    if (!trips.length) fetchTrips();
+  }, [trips.length, fetchTrips]);
 
   const trip = getTripById(id);
   if (!trip) {
-    return <p className={`${theme.text}`}>{commonT("tripNotFound")}</p>;
+    return (
+      <main className="flex min-h-screen items-center justify-center p-8 text-center">
+        <p className={theme.text}>This trip could not be found.</p>
+      </main>
+    );
   }
 
   const hasActivePurchase = purchases.some(
-    (p) =>
-      p.trip_id === trip.id &&
-      p.user_id === userData?.id &&
-      p.status !== "Cancelled",
+    (purchase) =>
+      purchase.trip_id === trip.id &&
+      purchase.user_id === userData?.id &&
+      purchase.status !== "Cancelled",
   );
 
   return (
-    <main className={`min-h-screen relative ${theme.text}`}>
+    <main className={"relative min-h-screen " + theme.text}>
       <Header />
       <EgyptianBackground />
 
-      {/* ✅ تصميم للشاشات الكبيرة */}
-      <div
-        className="hidden lg:grid max-w-7xl mx-auto pt-29 p-6 relative z-10 gap-8 
-                   grid-cols-1 lg:grid-cols-2 auto-rows-min"
-      >
-        {/* العنوان */}
-        <div className="col-span-1 lg:col-span-3">
-          <TripHeader trip={trip} lang={lang} theme={theme} />
-        </div>
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
+        <TripHeader trip={trip} lang={lang} />
 
-        {/* معلومات الرحلة */}
-        <div className="col-span-3 flex flex-row gap-8">
-          <div className="col-span-3 flex flex-col gap-2.5">
-            <TripCities
-              trip={trip}
-              lang={lang}
-              theme={theme}
-              themeName={themeName}
-            />
-            <TripCategories
-              trip={trip}
-              lang={lang}
-              theme={theme}
-              themeName={themeName}
-            />
+        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
+          <div className="min-w-0 space-y-8">
+            <TripInfo trip={trip} lang={lang} />
+
+            <TripBookingBenefits />
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <TripCities trip={trip} lang={lang} theme={theme} themeName={themeName} />
+              <TripCategories trip={trip} lang={lang} theme={theme} themeName={themeName} />
+            </div>
+
             <AccessibilityInfo theme={themeName} themeName={themeName} />
-          </div>
-          <CalendarWidget trip={trip} id={id} />
-        </div>
 
-        {/* المميزات */}
-        <div className="col-span-4 flex flex-row gap-8">
-          <TripIncludes
-            trip={trip}
-            lang={lang}
-            theme={theme}
-            themeName={themeName}
-          />
-          <TripExclusions
-            trip={trip}
-            lang={lang}
-            theme={theme}
-            themeName={themeName}
-          />
-        </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <TripIncludes trip={trip} lang={lang} theme={theme} themeName={themeName} />
+              <TripExclusions trip={trip} lang={lang} theme={theme} themeName={themeName} />
+            </div>
 
-        {/* الجدول */}
-        <div className="col-span-1 lg:col-span-3">
-          <TripItinerary
-            trip={trip}
-            lang={lang}
-            theme={theme}
-            themeName={themeName}
-          />
-        </div>
+            <TripItinerary trip={trip} lang={lang} theme={theme} themeName={themeName} />
+            <TripReviews trip={trip} lang={lang} theme={theme} />
+            <TripFAQ />
 
-        {/* المراجعات + الأزرار */}
-        <div className="col-span-1 lg:col-span-3">
-          <TripReviews trip={trip} lang={lang} theme={theme} />
-          {userData &&
-            userData?.role !== "ADMIN" &&
-            (hasActivePurchase ? (
+            {userData && userData.role !== "ADMIN" && hasActivePurchase && (
               <CancelButton trip={trip} theme={theme} />
-            ) : (
-              <>
-                <Link
-                  href="/privacyPolicy"
-                  className="fixed bottom-29 left-6 flex-row rounded-[8px] px-6 py-3 bg-transparent backdrop-blur-md 
-                   border border-[#C2A878] text-[#C2A878] font-semibold tracking-wide 
-                   hover:bg-[#C2A878]/20 hover:text-white transition-all duration-300 
-                   shadow-lg cursor-pointer"
-                >
-                  {t("PrivacyPolicy")}
-                </Link>
-              </>
-            ))}
+            )}
+          </div>
+
+          <aside className="lg:sticky lg:top-24">
+            <div className="mb-3 rounded-2xl border border-[#d4b56f]/30 bg-black/10 px-5 py-4">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#d4b56f]">Plan your experience</p>
+              <p className={"mt-1 text-sm " + theme.subText}>Choose your travelers and preferred dates to see availability.</p>
+            </div>
+            <CalendarWidget trip={trip} id={id} />
+          </aside>
         </div>
-      </div>
-
-      {/* ✅ تصميم احترافي للموبايل */}
-      <div className="block lg:hidden p-4 pt-29 space-y-6">
-        <TripHeader trip={trip} lang={lang} theme={theme} />
-        <TripCities
-          trip={trip}
-          lang={lang}
-          theme={theme}
-          themeName={themeName}
-        />
-        <TripCategories
-          trip={trip}
-          lang={lang}
-          theme={theme}
-          themeName={themeName}
-        />
-        <TripIncludes
-          trip={trip}
-          lang={lang}
-          theme={theme}
-          themeName={themeName}
-        />
-        <TripExclusions
-          trip={trip}
-          lang={lang}
-          theme={theme}
-          themeName={themeName}
-        />
-
-        <TripItinerary
-          trip={trip}
-          lang={lang}
-          theme={theme}
-          themeName={themeName}
-        />
-        <CalendarWidget trip={trip} id={id} />
-
-        <TripReviews trip={trip} lang={lang} theme={theme} />
-
-        {/* أزرار واضحة وكبيرة */}
-        {userData &&
-          userData?.role !== "ADMIN" &&
-          (hasActivePurchase ? <CancelButton trip={trip} theme={theme} /> : "")}
       </div>
 
       <Footer />

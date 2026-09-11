@@ -8,6 +8,7 @@ import DividerWithIcon from "../layout/DividerWithIcon";
 import { useTrip } from "@/context/TripContext";
 import { usePurchase } from "@/context/PurchaseContext";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCurrency } from "@/context/CurrencyContext";
 
@@ -16,6 +17,8 @@ const TopTripsSection = () => {
   const { t, i18n } = useTranslation("home");
   const { t: commonT } = useTranslation("common");
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
   const { user } = useAuth();
   const normalizedLang = i18n.language.split("-")[0];
 
@@ -29,6 +32,10 @@ const TopTripsSection = () => {
 
   if (loadingTrips) {
     return <p className="text-center">{commonT("loadingTopTrips")}</p>;
+  }
+
+  if (!trips.length) {
+    return <p className="px-6 py-12 text-center opacity-70">No trips are available right now.</p>;
   }
 
   const topTrips = [...trips]
@@ -131,7 +138,7 @@ const TopTripsSection = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => router.push(`/trips/${trip?.id}`)}
+              onClick={() => router.push(`/${locale}/trips/${trip?.id}`)}
               className={`rounded-[9px] px-3 py-2 font-semibold tracking-wide cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
               style={{ border: `2px solid ${theme.logoBorder}` }}
             >

@@ -11,12 +11,15 @@ import {
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { MdEmail } from "react-icons/md";
 import { FaGlobe } from "react-icons/fa"; // مؤقت لـ Viator
 
 const Footer = () => {
   const { theme, themeName } = useTheme();
   const { t } = useTranslation("footer");
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
   const symbols = [
     "𓂀",
@@ -85,7 +88,7 @@ const Footer = () => {
         className="text-3xl font-extrabold tracking-wide relative z-10 bg-gradient-to-r from-[var(--logoGradientFrom)] to-[var(--logoGradientTo)] bg-clip-text text-transparent drop-shadow-lg"
         style={{ WebkitTextStroke: `1px ${theme.logoBorder}` }}
       >
-        Basttet travel
+        Basttet Travel
       </motion.p>
 
       {/* الوصف */}
@@ -111,7 +114,7 @@ const Footer = () => {
         ].map((link) => (
           <Link
             key={link}
-            href={`/${link === "home" ? "/" : link}`}
+            href={link === "home" ? "/" + locale : "/" + locale + "/" + link}
             className={`hover:underline transition capitalize ${
               themeName === "dark"
                 ? "text-white/80 hover:text-[var(--logoBorder)]"

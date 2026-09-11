@@ -39,15 +39,15 @@ export default function ContactInfoCard({ themeName, t }) {
       <div className="space-y-4">
         <div className="flex items-center gap-3">
           <FaPhoneAlt className="icon-theme" />
-          <span>+201100507802</span>
+          <a className="hover:underline" href="tel:+201100507802">+20 110 050 7802</a>
         </div>
         <div className="flex items-center gap-3">
           <FaEnvelope className="icon-theme" />
-          <span>BasttetTravel@outlook.com</span>
+          <a className="hover:underline" href="mailto:BasttetTravel@outlook.com">BasttetTravel@outlook.com</a>
         </div>
         <div className="flex items-center gap-3">
           <FaMapMarkerAlt className="icon-theme" />
-          <span>{t("sp")}</span>
+          <a className="hover:underline" href="https://maps.google.com/?q=Luxor,Egypt" target="_blank" rel="noreferrer">{t("sp")}</a>
         </div>
       </div>
     </motion.div>

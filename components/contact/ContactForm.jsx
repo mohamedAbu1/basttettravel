@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import DividerWithIcon from "../layout/DividerWithIcon";
 
-export default function ContactForm({ themeName, t, userData, formData, handleChange, handleSubmit }) {
+export default function ContactForm({ themeName, t, userData, formData, handleChange, handleSubmit, isSubmitting }) {
   return (
     <motion.form
       onSubmit={handleSubmit}
@@ -26,6 +26,7 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
       {/* الاسم */}
       <div>
         <label
+          htmlFor="contact-name"
           className={`contact-text block mb-2 font-semibold ${
             themeName === "dark" ? "text-stroke-dark" : "text-stroke-light"
           }`}
@@ -33,6 +34,7 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
           {t("lb")}
         </label>
         <input
+          id="contact-name"
           type="text"
           name="name"
           value={userData?.name || formData.name}
@@ -46,12 +48,14 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
                 : "input-light"
           }`}
           placeholder={t("inp")}
+          required
         />
       </div>
 
       {/* الهاتف */}
       <div>
         <label
+          htmlFor="contact-phone"
           className={`contact-text block mb-2 font-semibold ${
             themeName === "dark" ? "text-stroke-dark" : "text-stroke-light"
           }`}
@@ -59,6 +63,7 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
           {t("lb2")}
         </label>
         <input
+          id="contact-phone"
           type="tel"
           name="phone"
           value={formData.phone}
@@ -72,6 +77,7 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
       {/* البريد */}
       <div>
         <label
+          htmlFor="contact-email"
           className={`contact-text block mb-2 font-semibold ${
             themeName === "dark" ? "text-stroke-dark" : "text-stroke-light"
           }`}
@@ -79,6 +85,7 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
           {t("lb3")}
         </label>
         <input
+          id="contact-email"
           type="email"
           name="email"
           value={userData?.email || formData.email}
@@ -92,12 +99,14 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
                 : "input-light"
           }`}
           placeholder={t("inp3")}
+          required
         />
       </div>
 
       {/* الرسالة */}
       <div>
         <label
+          htmlFor="contact-message"
           className={`contact-text block mb-2 font-semibold ${
             themeName === "dark" ? "text-stroke-dark" : "text-stroke-light"
           }`}
@@ -105,6 +114,7 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
           {t("lb4")}
         </label>
         <textarea
+          id="contact-message"
           name="message"
           value={formData.message}
           onChange={handleChange}
@@ -118,9 +128,10 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
       {/* زر الإرسال */}
       <button
         type="submit"
-        className="btn-gradient w-full p-4 rounded-2xl cursor-pointer"
+        disabled={isSubmitting}
+        className="btn-gradient w-full min-h-12 p-4 rounded-2xl cursor-pointer disabled:opacity-60 disabled:cursor-wait"
       >
-        {t("btn")}
+        {isSubmitting ? "Sending…" : t("btn")}
       </button>
     </motion.form>
   );

@@ -29,7 +29,7 @@ const BookingCalendar = ({ trip,id }) => {
   };
 
   return (
-    <div className={`${theme.card} w-full lg:w-1/2 h-fit p-6 shadow-lg font-sans`}>
+    <div className={`${theme.card} w-full h-fit rounded-2xl border border-[#d4b56f]/30 p-5 shadow-xl font-sans`}>
       {/* Participants Section */}
       <h2 className={`${theme.title} mb-4`}>{t("participants")}</h2>
 
@@ -42,6 +42,7 @@ const BookingCalendar = ({ trip,id }) => {
           </div>
           <div className="flex items-center ml-3 lg:ml-0 space-x-2">
             <button
+              aria-label="Decrease adults"
               onClick={() => setParticipants(Math.max(0, participants - 1))}
               className={`${theme.buttonSecondary}`}
               disabled={participants === 0}
@@ -50,6 +51,7 @@ const BookingCalendar = ({ trip,id }) => {
             </button>
             <span className={theme.text}>{participants}</span>
             <button
+              aria-label="Increase adults"
               onClick={() => setParticipants(participants + 1)}
               className={`${theme.buttonPrimary}`}
             >
@@ -66,6 +68,7 @@ const BookingCalendar = ({ trip,id }) => {
           </div>
           <div className="flex items-center ml-5 lg:ml-0 space-x-2">
             <button
+              aria-label="Decrease children"
               onClick={() => setChildrenCount(Math.max(0, childrenCount - 1))}
               className={`${theme.buttonSecondary}`}
               disabled={childrenCount === 0}
@@ -74,6 +77,7 @@ const BookingCalendar = ({ trip,id }) => {
             </button>
             <span className={theme.text}>{childrenCount}</span>
             <button
+              aria-label="Increase children"
               onClick={() => setChildrenCount(childrenCount + 1)}
               className={`${theme.buttonPrimary}`}
             >

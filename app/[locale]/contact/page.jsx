@@ -47,26 +47,37 @@ export default function ContactPage() {
     message: "",
   });
   const { t } = useTranslation("contact");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
 
-  try {
-    // ✅ هنا مش هنبعت لأي API
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const result = await response.json();
 
-    // عرض رسالة نجاح في Toast
-    toast.success("✅ The message was sent successfully");
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Unable to send your message");
+      }
 
-    // 🧹 مسح الحقول بعد الإرسال
-    setFormData({ name: "", phone: "", email: "", message: "" });
-  } catch (err) {
-    console.error("❌ خطأ:", err);
-    toast.error("❌ حدث خطأ أثناء الإرسال");
-  }
-};
+      toast.success("✅ The message was sent successfully");
+      setFormData({ name: "", phone: "", email: "", message: "" });
+    } catch (err) {
+      console.error("Contact form error:", err);
+      toast.error("❌ We could not send your message. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -92,7 +103,7 @@ export default function ContactPage() {
         </div>
 
         {/* المحتوى */}
-        <section className="relative z-10 pt-20 px-6 mt-6">
+        <section id="main-content" className="relative z-10 pt-20 px-6 mt-6">
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <ContactInfoCard themeName={themeName} t={t} />
 
@@ -103,6 +114,7 @@ export default function ContactPage() {
               formData={formData}
               handleChange={handleChange}
               handleSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
             />
           </div>
         </section>

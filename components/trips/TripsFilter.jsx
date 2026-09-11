@@ -75,9 +75,9 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
       <div className="flex flex-col gap-8">
         {/* المدن */}
         <div>
-          <label className="filter-label">
+          <div className="filter-label">
             <FaMapMarkerAlt /> {t("Cities")} :
-          </label>
+          </div>
           <div className="grid grid-cols-2 gap-2 ml-6">
             {allCities.map((cityObj) => {
               const cityName =
@@ -90,9 +90,7 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
                     type="checkbox"
                     className="filter-input"
                     checked={
-                      city === "all"
-                        ? true
-                        : Array.isArray(city)
+                      Array.isArray(city)
                           ? city.includes(cityName)
                           : city === cityName
                     }
@@ -109,9 +107,9 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
 
         {/* الكاتجري */}
         <div>
-          <label className="filter-label">
+          <div className="filter-label">
             <FaTags /> {t("Categories")} :
-          </label>
+          </div>
           <div className="grid grid-cols-2 gap-2 ml-6">
             {allCategories.map((cat) => {
               const categoryName =
@@ -122,9 +120,7 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
                     type="checkbox"
                     className="filter-input"
                     checked={
-                      category === "all"
-                        ? true
-                        : Array.isArray(category)
+                      Array.isArray(category)
                           ? category.includes(categoryName)
                           : category === categoryName
                     }
@@ -141,10 +137,10 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
 
         {/* السعر */}
         <div>
-          <label className="filter-label">
+          <div className="filter-label">
             {currency === "USD" ? <FaDollarSign /> : <FaEuroSign />}{" "}
             {t("PriceRange")} :
-          </label>
+          </div>
           <div className="flex flex-col gap-2 ml-6">
             {priceRanges.map((range) => (
               <label key={range.value} className="filter-option">

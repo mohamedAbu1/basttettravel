@@ -63,8 +63,16 @@ export default function TripsPage() {
     return () => window.removeEventListener("resize", checkScreen);
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, city, category, group_price, popular, cardStyle]);
+
   if (loadingTrips)
-    return <p className="text-center text-gray-500">{commonT("loadingTrips")}</p>;
+    return (
+      <main className="min-h-screen p-8 text-center text-gray-500" aria-live="polite">
+        {commonT("loadingTrips")}
+      </main>
+    );
   // فلترة الرحلات
   const filteredTrips = trips.filter((trip) => {
     const lowerSearch = search.trim().toLowerCase();
@@ -153,10 +161,10 @@ export default function TripsPage() {
     });
 
     // نربط الرحلات بالمشتريات مرة واحدة فقط
-    finalTrips = trips.map((trip) => {
+    finalTrips = filteredTrips.map((trip) => {
       const count = purchaseMap.get(trip.id) || 0;
       return { ...trip, purchase_count: count };
-    });
+    }).sort((a, b) => b.purchase_count - a.purchase_count);
   } else {
     finalTrips = filteredTrips;
   }
@@ -188,6 +196,12 @@ export default function TripsPage() {
             </div>
 
             <div className="flex-1 flex flex-col gap-6">
+              <details className="lg:hidden card-theme rounded-xl p-4">
+                <summary className="cursor-pointer font-semibold">Filters</summary>
+                <div className="pt-4">
+                  <TripsFilter allCities={allCities} allCategories={allCategories} loading={loading} />
+                </div>
+              </details>
               <TripsSearch
                 search={search}
                 setSearch={setSearch}
@@ -195,6 +209,13 @@ export default function TripsPage() {
                 setCardStyle={setCardStyle}
               />
               <TripsGrid trips={currentTrips} cardStyle={cardStyle} />
+
+              {!currentTrips.length && (
+                <div className="card-theme rounded-xl p-10 text-center" role="status">
+                  <h2 className="text-xl font-semibold">No trips found</h2>
+                  <p className="mt-2 opacity-75">Try changing your search or filters.</p>
+                </div>
+              )}
 
               {totalPages > 1 && (
                 <div className="flex justify-center gap-2 mt-4">

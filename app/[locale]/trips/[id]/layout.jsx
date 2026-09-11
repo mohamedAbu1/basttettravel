@@ -8,7 +8,7 @@ export async function generateMetadata({ params }) {
   return {
     ...base,
     title: `${base.title} | Egypt Tour Details`,
-    description: `View itinerary, inclusions, schedule and booking details for this Egypt tour with Basttet Travel.`,
+    description: `View the itinerary, inclusions, schedule, price and booking details for this Egypt tour in Luxor, Aswan and the Nile Valley with Basttet Travel.`,
   };
 }
 

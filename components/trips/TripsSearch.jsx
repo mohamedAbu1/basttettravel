@@ -11,19 +11,22 @@ export default function TripsSearch({ search, setSearch, cardStyle, setCardStyle
   return (
     <div className={`search-bar ${themeName === "dark" ? "card-dark" : "card-light"}`}>
       {/* أيقونة البحث + input */}
-      <FaSearch className=" hidden lg:flex search-icon" />
+      <FaSearch className="search-icon" aria-hidden="true" />
       <input
-        type="text"
+        type="search"
+        aria-label={t("Searchtrips")}
         placeholder={t("Searchtrips")}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className={`hidden lg:flex search-input ${themeName === "dark" ? "input-dark" : "input-light"}`}
+        className={`search-input ${themeName === "dark" ? "input-dark" : "input-light"}`}
       />
 
       {/* أزرار تغيير الاستايل */}
       <div className="flex gap-2">
         <button
           onClick={() => setCardStyle("vertical")}
+          type="button"
+          aria-label={t("Vertical")}
           className={`style-btn ${cardStyle === "vertical" ? "btn-active" : "btn-inactive"}`}
         >
           <FaThLarge /> {t("Vertical")}
@@ -31,6 +34,8 @@ export default function TripsSearch({ search, setSearch, cardStyle, setCardStyle
 
         <button
           onClick={() => setCardStyle("horizontal")}
+          type="button"
+          aria-label={t("Horizontal")}
           className={`style-btn ${cardStyle === "horizontal" ? "btn-active" : "btn-inactive"}`}
         >
           <FaBars /> {t("Horizontal")}

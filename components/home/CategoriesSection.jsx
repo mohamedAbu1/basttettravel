@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import DividerWithIcon from "../layout/DividerWithIcon";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import EgyptianBackground from "../layout/EgyptianBackground";
 
 const encodeData = (obj) => btoa(JSON.stringify(obj));
@@ -14,6 +15,8 @@ const encodeData = (obj) => btoa(JSON.stringify(obj));
 function CategoryCard({ cat, theme, language }) {
   const [imgIndex, setImgIndex] = useState(0);
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -44,7 +47,7 @@ function CategoryCard({ cat, theme, language }) {
       popular: false,
     };
     const encoded = encodeData(queryObj);
-    router.push(`/trips?data=${encoded}`);
+    router.push(`/${locale}/trips?data=${encoded}`);
   };
 
   return (
@@ -144,6 +147,10 @@ const CategoriesSection = () => {
 
   if (loading) {
     return <p className="text-center">{commonT("loadingCategories")}</p>;
+  }
+
+  if (!categories.length) {
+    return <p className="px-6 py-12 text-center opacity-70">No categories are available right now.</p>;
   }
 
   const symbols = [

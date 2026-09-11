@@ -9,6 +9,8 @@ export function middleware(req) {
   if (
     url.pathname.startsWith("/_next") ||
     url.pathname.startsWith("/favicon.ico") ||
+    url.pathname === "/sitemap.xml" ||
+    url.pathname === "/robots.txt" ||
     url.pathname.startsWith("/api") ||
     url.pathname.startsWith("/assets") ||
     url.pathname.startsWith("/HomePageImage") ||

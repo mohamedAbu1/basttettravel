@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import MobileHeaderAuth from "./components/MobileHeaderAuth";
 import ThemeToggle from "../ThemeToggle";
 import LanguageSwitcher from "./components/LanguageSwitcher";
+import MobileNav from "./components/MobileNav";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -76,7 +77,10 @@ export default function Header() {
         <ThemeToggle scrolled={scrolled} />
         <LanguageSwitcher />
 
-        <MobileHeaderAuth />
+        <div className="lg:hidden flex items-center gap-1">
+          <MobileNav />
+          <MobileHeaderAuth />
+        </div>
       </div>
     </motion.header>
   );

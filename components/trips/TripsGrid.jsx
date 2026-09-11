@@ -22,7 +22,6 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
   const { lang } = useLanguage();
   const { theme } = useTheme();
 
-  const getRandomStars = () => Math.floor(Math.random() * 3) + 3;
   const convertPrice = (group_price, tripCurrency) => {
     let converted = group_price;
     if (currency === "EUR" && tripCurrency === "USD") {
@@ -45,7 +44,17 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
       } `}
     >
      {trips.map((trip, i) => {
-        const avgStars = getRandomStars();
+        const reviews = Array.isArray(trip.reviews) ? trip.reviews : [];
+        const avgStars = Math.max(
+          0,
+          Math.min(
+            5,
+            Number(trip.rating) ||
+              (reviews.length
+                ? reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / reviews.length
+                : 0),
+          ),
+        );
         const displayedPrice = convertPrice(trip.group_price, trip.currency);
 
         const hasPurchased =
@@ -65,7 +74,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
         );
 
         // 🟢 اختيار الأيقونة حسب العملة
-        let CurrencyIcon;
+        let CurrencyIcon = FaDollarSign;
         let currencyColor;
         if (currency === "USD") {
           CurrencyIcon = FaDollarSign;
@@ -120,7 +129,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
             </div>
               {/* قسم المعلومات */}
             <div className={`${cardStyle === "vertical" ? "w-full" : "lg:w-1/2"} w-full p-6 flex flex-col gap-4`}>
-              <h3 className="text-1xl font-bold text-[#C2A878]">
+              <h3 className="text-xl font-bold text-[#C2A878]">
                 {trip.title?.[lang] || trip.title?.en || "Untitled"}
               </h3>
 
@@ -180,11 +189,13 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
                     }
                   />
                 ))}
-                <span className="text-sm text-gray-500">({t("reviews")})</span>
+                <span className="text-sm text-gray-500" aria-label={avgStars.toFixed(1) + " out of 5 stars"}>
+                  {avgStars ? avgStars.toFixed(1) : t("reviews")}
+                </span>
               </div>
 
               <button
-                onClick={() => router.push(`/trips/${trip.id}`)}
+                onClick={() => router.push("/" + lang + "/trips/" + trip.id)}
                 className="mt-3 px-5 py-2 rounded-lg font-bold transition cursor-pointer 
           bg-[#C2A878] text-white hover:bg-[#a58a60] shadow-md"
               >

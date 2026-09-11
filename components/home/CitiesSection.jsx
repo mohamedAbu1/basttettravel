@@ -7,11 +7,14 @@ import { useTranslation } from "react-i18next";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import DividerWithIcon from "../layout/DividerWithIcon";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const encodeData = (obj) => btoa(JSON.stringify(obj));
 
 function CityCard({ city, themeName, theme, language, t }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
   const cityName =
     city.name?.[language] || city.name?.["en"] || city.name || "";
 
@@ -23,7 +26,7 @@ function CityCard({ city, themeName, theme, language, t }) {
       popular: false,
     };
     const encoded = encodeData(queryObj);
-    router.push(`/trips?data=${encoded}`);
+    router.push(`/${locale}/trips?data=${encoded}`);
   };
 
   const [currentImage, setCurrentImage] = useState(0);
@@ -118,6 +121,10 @@ const CitiesSection = () => {
 
   if (loading) {
     return <p className="text-center">{commonT("loadingCities")}</p>;
+  }
+
+  if (!cities.length) {
+    return <p className="px-6 py-12 text-center opacity-70">No destinations are available right now.</p>;
   }
 
   const looped = [...cities, ...cities];

@@ -9,7 +9,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { addDays } from "date-fns";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useQueryFilters } from "@/context/QueryContext";
 import { useTranslation } from "react-i18next";
 
@@ -20,6 +20,8 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
   const { cities, categories } = useCitiesCategories();
   const { updateValue } = useQueryFilters();
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
   const [showCities, setShowCities] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const { t } = useTranslation("home");
@@ -50,7 +52,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
     updateValue("group_price", queryObj.group_price);
     updateValue("popular", queryObj.popular);
 
-    router.push(`/trips?data=${encoded}`);
+    router.push("/" + locale + "/trips?data=" + encoded);
   };
 
   const toggleCity = (city) => {
@@ -68,15 +70,13 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
         : [...prev, cat],
     );
   };
-  const isFormValid =
-    selectedCities.length > 0 &&
-    selectedCategories.length > 0 &&
-    arrival &&
-    departure;
+  const isFormValid = Boolean(arrival && departure);
 
   const CustomInput = ({ value, onClick }) => (
-    <div
+    <button
+      type="button"
       onClick={onClick}
+      aria-label={value || t("SelectDate")}
       className={`flex w-full items-center rounded-[10px] px-4 py-2 cursor-pointer 
                   backdrop-blur-md border ${theme.logoBorder} shadow-md hover:shadow-lg 
                   transition-all duration-300 relative overflow-hidden ${theme.card}`}
@@ -85,7 +85,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
       <span className={`flex-1 p-2 tracking-wide font-medium ${theme.text}`}>
         {value || t("SelectDate")}
       </span>
-    </div>
+    </button>
   );
 
   return (
@@ -93,7 +93,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 2 }}
-      className={`mt-6 ${theme.card} h-auto shadow-lg w-[95%] max-w-6xl p-6 
+      className={`mt-6 ${theme.card} h-auto shadow-lg w-[95%] max-w-6xl p-6 md:p-7
                   backdrop-blur-md border ${theme.logoBorder} rounded-xl relative`}
     >
       {/* ✅ الصف الأول: المدن + الكاتجري */}
@@ -129,7 +129,8 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
 
       {/* ✅ الصف الثاني: موعد الدخول + موعد الخروج */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
+          <span className="booking-field-label">{t("checkin")}</span>
           <DatePicker
             selected={arrival}
             onChange={(date) => {
@@ -151,7 +152,8 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
           />
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-2">
+          <span className="booking-field-label">{t("checkout")}</span>
           <DatePicker
             selected={departure}
             onChange={(date) => setDeparture(date)}
@@ -170,11 +172,11 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
         whileTap={isFormValid ? { scale: 0.95 } : {}}
         onClick={handleClick}
         disabled={!isFormValid} // ✅ تعطيل الزر لو الفورم ناقص
-        className={`w-full rounded-[6px] px-6 py-3 font-semibold tracking-wide cursor-pointer 
+        className={`w-full rounded-[10px] px-6 py-3.5 min-h-12 font-semibold tracking-wide cursor-pointer
     transition-all duration-300 shadow-lg 
     ${isFormValid ? theme.buttonPrimary : "bg-gray-400 cursor-not-allowed"}`}
         style={{
-          color: `${theme.subText}`,
+          color: isFormValid ? "#211b12" : "#b8b1a4",
           border: `2px solid ${theme.logoBorder}`,
         }}
       >

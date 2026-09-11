@@ -1,156 +1,140 @@
 /* eslint-disable react-hooks/purity */
 "use client";
-import { useState, useEffect } from "react";
+
 import Image from "next/image";
-import { useTheme } from "@/context/ThemeContext";
+import { useEffect, useMemo, useState } from "react";
+import { FaChevronLeft, FaChevronRight, FaImages, FaMapMarkerAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { sites } from "@/constants/images";
-import reactStringReplace from "react-string-replace";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function TripHeader({ trip, lang }) {
-  const { theme, themeName } = useTheme();
+  const { theme } = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
+  const images = Array.isArray(trip?.gallery_images) ? trip.gallery_images : [];
 
-  // ✅ تغيير تلقائي كل 3 ثواني
   useEffect(() => {
-    if (!trip?.gallery_images || trip.gallery_images.length === 0) return;
+    setActiveIndex(0);
+  }, [trip?.id]);
+
+  useEffect(() => {
+    if (images.length < 2) return undefined;
     const interval = setInterval(() => {
-      setActiveIndex((prevIndex) =>
-        prevIndex === trip.gallery_images.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000);
+      setActiveIndex((current) => (current + 1) % images.length);
+    }, 6000);
     return () => clearInterval(interval);
-  }, [trip?.gallery_images?.length]);
+  }, [images.length]);
 
-  if (!trip?.gallery_images || trip.gallery_images.length === 0) {
-    return (
-      <div className={`text-center py-10 ${theme.text}`}>
-        No photos are available for this trip.
-      </div>
-    );
-  }
-
-  // ✅ الكلمات المراد تمييزها
-  const searchWords = sites.map((site) => site.name);
-
-  const tripDescription =
+  const description =
     typeof trip?.description?.[lang] === "string"
       ? trip.description[lang]
       : trip?.description?.en || "";
 
-  const regex = new RegExp(`(${searchWords.join("|")})`, "gi");
+  const highlightedDescription = useMemo(() => {
+    if (!description) return "";
+    const names = sites.map((site) => site.name).filter(Boolean);
+    if (!names.length) return description;
+    const regex = new RegExp("(" + names.join("|") + ")", "gi");
+    return description.split(regex).map((part, index) =>
+      names.some((name) => name.toLowerCase() === part.toLowerCase()) ? (
+        <span key={index} className="font-semibold text-[#d4b56f]">{part}</span>
+      ) : (
+        <span key={index}>{part}</span>
+      ),
+    );
+  }, [description]);
 
-  const highlightedText = reactStringReplace(tripDescription, regex, (match, i) => (
-    <span key={i} className="highlighted-text">
-      {match}
-    </span>
-  ));
+  const selectImage = (index) => {
+    if (!images.length) return;
+    setActiveIndex((index + images.length) % images.length);
+  };
+
+  if (!images.length) {
+    return (
+      <section className={theme.card + " rounded-3xl border border-[#d4b56f]/30 p-8 text-center " + theme.text}>
+        <h1 className="text-3xl font-bold text-[#d4b56f]">{trip?.title?.[lang] || trip?.title?.en}</h1>
+        <p className={"mt-4 leading-7 " + theme.subText}>No photos are available for this trip.</p>
+      </section>
+    );
+  }
+
+  const activeImage = images[activeIndex] || images[0];
+  const activeUrl = activeImage?.url || activeImage || "/default.jpg";
+  const activeName = activeImage?.name?.[lang] || activeImage?.name?.en || "";
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`w-full p-6 rounded-xl ${theme.card} ${theme.shadow} ${theme.text}`}
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className={theme.card + " overflow-hidden rounded-3xl border border-[#d4b56f]/30 shadow-2xl " + theme.text}
     >
-      {/* العنوان */}
-      <motion.h1
-        initial={{ opacity: 0, x: -50 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.1 }}
-        className={`sc-title-first text-3xl font-extrabold mb-6 border-b pb-3 text-gradient`}
-        style={{
-          WebkitTextStroke:
-            themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-          textShadow:
-            themeName === "dark"
-              ? "2px 2px 6px rgba(0,0,0,0.6)"
-              : "2px 2px 6px rgba(255,255,255,0.3)",
-        }}
-      >
-        {trip.title?.[lang] || trip.title?.en}
-      </motion.h1>
-
-      {/* ✅ الصورة الرئيسية */}
-      <motion.div
-        key={activeIndex}
-        initial={{ opacity: 0, scale: 0.9 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="overflow-hidden rounded-lg shadow-md mb-6 relative h-[500px]"
-      >
-        <Image
-          src={trip.gallery_images[activeIndex].url || "/default.jpg"}
-          alt={
-            trip.gallery_images[activeIndex].name?.[lang] ||
-            trip.gallery_images[activeIndex].name?.en ||
-            "Trip image"
-          }
-          fill
-          className="object-cover w-full h-[500px] transform hover:scale-105 transition duration-500 rounded-lg"
-          priority
-        />
-
-        {trip.gallery_images[activeIndex].name && (
-          <div className={`absolute bottom-4 left-4 text-xl font-bold px-4 py-2 rounded ${theme.overlay} ${theme.text}`}>
-            {trip.gallery_images[activeIndex].name?.[lang] ||
-              trip.gallery_images[activeIndex].name?.en}
-          </div>
-        )}
-      </motion.div>
-
-      {/* ✅ الصور الجانبية المصغرة */}
-      <div className="flex gap-4 flex-wrap">
-        {trip.gallery_images.map((img, index) => (
-          <div
-            key={index}
-            className={`relative w-[140px] lg:w-[150px] h-[100px] rounded-lg cursor-pointer border-2 ${theme.border}`}
-            style={{
-              borderColor: index === activeIndex ? theme.logoBorder : "transparent",
-            }}
-            onClick={() => setActiveIndex(index)}
-          >
+      <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="relative min-h-[290px] md:min-h-[440px]">
+          <motion.div key={activeIndex} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className="absolute inset-0">
             <Image
-              src={img.url || "/default.jpg"}
-              alt={img.name?.[lang] || img.name?.en || `Thumbnail ${index}`}
+              src={activeUrl}
+              alt={activeName || trip?.title?.[lang] || trip?.title?.en || "Trip image"}
               fill
-              className="object-cover rounded-lg"
+              priority
+              sizes="(max-width: 1024px) 100vw, 60vw"
+              className="object-cover"
             />
-
-            {img.name && (
-              <div className={`absolute bottom-2 left-2 text-xs font-bold ${theme.overlay} ${theme.text} px-2 py-1 rounded`}>
-                {img.name?.[lang] || img.name?.en}
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/10" />
+          <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 text-white">
+            <div>
+              <p className="mb-2 flex items-center gap-2 text-sm text-[#ead49e]">
+                <FaImages aria-hidden="true" /> {activeIndex + 1} / {images.length}
+              </p>
+              {activeName && <p className="text-sm font-medium">{activeName}</p>}
+            </div>
+            {images.length > 1 && (
+              <div className="flex gap-2">
+                <button type="button" onClick={() => selectImage(activeIndex - 1)} aria-label="Previous image" className="min-h-11 min-w-11 rounded-full border border-white/40 bg-black/35 p-3 backdrop-blur hover:bg-black/60">
+                  <FaChevronLeft aria-hidden="true" />
+                </button>
+                <button type="button" onClick={() => selectImage(activeIndex + 1)} aria-label="Next image" className="min-h-11 min-w-11 rounded-full border border-white/40 bg-black/35 p-3 backdrop-blur hover:bg-black/60">
+                  <FaChevronRight aria-hidden="true" />
+                </button>
               </div>
             )}
           </div>
-        ))}
+        </div>
+
+        <div className="flex flex-col justify-center p-6 md:p-10">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[#d4b56f]">Basttet Travel</p>
+          <h1 className="mt-3 text-3xl font-bold leading-tight md:text-4xl">
+            {trip.title?.[lang] || trip.title?.en || "Egypt experience"}
+          </h1>
+          <div className={"mt-5 flex items-center gap-2 text-sm " + theme.subText}>
+            <FaMapMarkerAlt className="text-[#d4b56f]" aria-hidden="true" />
+            <span>Luxor · Aswan · Egypt</span>
+          </div>
+          <p className={"mt-6 max-h-52 overflow-auto pr-2 text-base leading-8 " + theme.subText}>
+            {highlightedDescription || "Discover Egypt through a carefully planned local experience."}
+          </p>
+        </div>
       </div>
 
-      {/* ✅ الوصف مع تمييز الكلمات */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7, delay: 0.3 }}
-        className={`leading-relaxed text-lg mt-6 text-center ${theme.subText}`}
-      >
-        {highlightedText}
-      </motion.div>
-
-      <style jsx>{`
-        .highlighted-text {
-          color: #c9a34a;
-          font-weight: bold;
-          text-decoration: none;
-        }
-        .highlighted-text:hover {
-          text-decoration: underline;
-          color: #eab308;
-        }
-      `}</style>
+      <div className="flex gap-3 overflow-x-auto border-t border-[#d4b56f]/20 bg-black/10 p-4" aria-label="Trip gallery">
+        {images.map((image, index) => {
+          const imageUrl = image?.url || image || "/default.jpg";
+          const imageName = image?.name?.[lang] || image?.name?.en || "Trip image " + (index + 1);
+          return (
+            <button
+              key={imageUrl + index}
+              type="button"
+              onClick={() => selectImage(index)}
+              aria-label={"View " + imageName}
+              aria-pressed={index === activeIndex}
+              className={"relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition md:h-20 md:w-32 " + (index === activeIndex ? "border-[#d4b56f] ring-2 ring-[#d4b56f]/30" : "border-transparent opacity-70 hover:opacity-100")}
+            >
+              <Image src={imageUrl} alt="" fill sizes="128px" className="object-cover" />
+            </button>
+          );
+        })}
+      </div>
     </motion.section>
   );
 }

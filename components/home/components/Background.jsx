@@ -60,7 +60,10 @@ export default function Background() {
           className="object-cover"
           priority={index === 0}
         />
-        <div className="absolute inset-0 bg-black/20"></div>
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/55"
+          aria-hidden="true"
+        ></div>
       </motion.div>
     </div>
   );

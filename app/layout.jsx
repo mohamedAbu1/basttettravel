@@ -1,6 +1,6 @@
 import "./style/globals.css";
 import Providers from "./providers";
-import { organizationSchema, siteConfig } from "@/lib/seo/site";
+import { organizationSchema, siteConfig, websiteSchema } from "@/lib/seo/site";
 
 export const metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -14,9 +14,15 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Structured data is kept once at the root so every page describes the same agency. */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationSchema),
-        }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [organizationSchema, websiteSchema],
+            }),
+          }}
+        />
         {/* Google Analytics is loaded asynchronously after parsing. */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-GXM9KRNJHH" />
         <script

@@ -383,6 +383,122 @@
 .btn-purchased:hover {
   background: #16a34a; /* Tailwind green-600 */
 }
+
+/* =========================
+   UX/UI refinement layer
+   ========================= */
+:root {
+  --ui-gold: #d4b56f;
+  --ui-gold-strong: #b89245;
+  --ui-ink: #171411;
+  --ui-surface: rgba(20, 18, 16, 0.88);
+  --ui-muted: #c9c0b2;
+  --border-color: rgba(212, 181, 111, 0.62);
+}
+
+body {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+.hero-title,
+.hero-text,
+.sc-title,
+.sc-title-first {
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: -0.02em;
+}
+
+/* The old 1px text stroke made small copy look blurry, especially over photos. */
+.sc-title,
+.sc-p,
+.sc-text,
+.sc-text-bro,
+.sc-title-first,
+.sc-p-first,
+.about-title,
+.about-p,
+.contact-p,
+.contact-text,
+.trips-text {
+  -webkit-text-stroke: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.42);
+}
+
+.sc-p-first,
+.sc-p,
+.hero-p {
+  line-height: 1.7;
+  letter-spacing: 0;
+}
+
+.text-gradient {
+  background-image: var(--text-gradient);
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--ui-gold);
+  outline-offset: 3px;
+}
+
+.trip-card,
+.card-theme {
+  border-color: rgba(212, 181, 111, 0.42);
+}
+
+.trip-card:hover,
+.card-theme:hover {
+  border-color: var(--ui-gold);
+  transform: translateY(-4px);
+}
+
+.booking-field-label {
+  padding-inline: 0.25rem;
+  color: var(--ui-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trip-button,
+.btn-theme,
+.btn-gradient {
+  min-height: 44px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 768px) {
+  .hero-text {
+    font-size: clamp(2.5rem, 12vw, 4rem);
+  }
+
+  .sc-title-first {
+    font-size: clamp(2rem, 9vw, 3rem);
+  }
+
+  .card-theme {
+    padding: 1.25rem;
+  }
+}
 .search-bar {
   display: flex;
   width: 100%;
