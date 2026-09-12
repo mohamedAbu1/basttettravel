@@ -14,6 +14,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { MdEmail } from "react-icons/md";
 import { FaGlobe } from "react-icons/fa"; // مؤقت لـ Viator
+import BrandLogo from "@/components/BrandLogo";
 
 const Footer = () => {
   const { theme, themeName } = useTheme();
@@ -82,14 +83,10 @@ const Footer = () => {
         ))}
       </div>
 
-      {/* اسم البراند */}
-      <motion.p
-        variants={fadeUp}
-        className="text-3xl font-extrabold tracking-wide relative z-10 bg-gradient-to-r from-[var(--logoGradientFrom)] to-[var(--logoGradientTo)] bg-clip-text text-transparent drop-shadow-lg"
-        style={{ WebkitTextStroke: `1px ${theme.logoBorder}` }}
-      >
-        Basttet Travel
-      </motion.p>
+      {/* الشعار الموحد */}
+      <motion.div variants={fadeUp} className="relative z-10 w-full max-w-[18rem]">
+        <BrandLogo variant="horizontal" className="h-auto w-full" />
+      </motion.div>
 
       {/* الوصف */}
       <motion.p

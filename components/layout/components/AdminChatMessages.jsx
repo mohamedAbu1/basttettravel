@@ -29,8 +29,8 @@ export default function AdminChatMessages({ messages, themeName }) {
             src={
               msg.sender_type === "admin"
                 ? themeName === "dark"
-                  ? "/HomePageImage/Copilot_20260613_134423.webp"
-                  : "/HomePageImage/Copilot_20260613_134550.webp"
+                  ? "/brand/basttet-travel-mark-dark.svg"
+                  : "/brand/basttet-travel-mark-light.svg"
                 : msg.user_image
             }
             alt={msg.user_name}

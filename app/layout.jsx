@@ -7,7 +7,10 @@ export const metadata = {
   metadataBase: new URL(siteConfig.url),
   title: { default: "Basttet Travel | Luxury Egypt Tours", template: "%s | Basttet Travel" },
   description: "Discover luxury Nile cruises, desert adventures and unforgettable Egypt tours with Basttet Travel.",
-  icons: { icon: "/favicon.ico" },
+  icons: {
+    icon: "/brand/basttet-travel-mark-light.svg",
+    apple: "/brand/basttet-travel-mark-light.svg",
+  },
 };
 
 export default async function RootLayout({ children }) {

@@ -17,6 +17,8 @@ const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
       {/* زر الإدخال */}
       <Popover.Trigger asChild>
         <button
+          type="button"
+          aria-label={t("SelectCity")}
           className={`hero-booking-trigger flex items-center w-full px-4 py-2 rounded-lg  shadow-sm cursor-pointer`}
         >
           <MdLocationCity className={`mr-2 text-xl ${theme.iconHover}`} />
@@ -39,6 +41,7 @@ const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
           {cities.map((city) => (
             <motion.button
               key={city.id}
+              type="button"
               whileHover={{ scale: 1.05 }}
               onClick={() => toggleCity(city)}
               className={`px-4 py-2 rounded-lg text-left transition-all duration-300 cursor-pointer

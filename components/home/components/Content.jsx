@@ -9,7 +9,7 @@ import CalendarClient from "./CalendarWrapper";
 import CitySelect from "./CitySelect";
 import CategorySelect from "./CategorySelect";
 import PriceSelect from "./PriceSelect";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const Content = () => {
   const { theme } = useTheme();
@@ -21,6 +21,8 @@ const Content = () => {
     useCitiesCategories();
 
   const router = useRouter();
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
   const isFormValid = city && price && tripType;
   const handleSearch = () => {
@@ -35,7 +37,7 @@ const Content = () => {
     const encoded = btoa(JSON.stringify(queryObj));
 
     // التحويل إلى صفحة الرحلات مع الكويري الجديد
-    router.push(`/trips?data=${encoded}`);
+    router.push(`/${locale}/trips?data=${encoded}`);
   };
 
   return (

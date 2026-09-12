@@ -56,9 +56,9 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
             >
               <img
                src={
-                  msg.sender_type === "admin" ?   themeName === "dark"
-                ? "/HomePageImage/Copilot_20260613_134423.webp"
-                : "/HomePageImage/Copilot_20260613_134550.webp" :
+                msg.sender_type === "admin" ? themeName === "dark"
+                ? "/brand/basttet-travel-mark-dark.svg"
+                : "/brand/basttet-travel-mark-light.svg" :
                   msg.user_image}
                 alt={msg.user_name}
                 className={`w-12 h-12 rounded-full border ${

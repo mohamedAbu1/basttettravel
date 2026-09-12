@@ -67,7 +67,7 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeUp}
-      className={` ${
+      className={` p-5 ${
         themeName === "dark" ? "card-dark" : "card-light"
       } `} 
     >

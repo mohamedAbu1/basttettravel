@@ -4,16 +4,19 @@ import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@mui/material/styles";
 import { useAuth } from "@/context/AuthContext";
+import { usePathname } from "next/navigation";
 
 const AdminButton = () => {
   const router = useRouter();
   const muiTheme = useTheme();
-  const { user } = useAuth();
+  const { userData } = useAuth();
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
   const goToAdmin = () => {
-    router.push("/admin"); // ✅ مسار لوحة التحكم
+    router.push(`/${locale}/admin`);
   };
-  const isAdmin = user?.user_metadata?.role === "ADMIN"; // غيّر الإيميل لإيميل الأدمن الحقيقي
+  const isAdmin = String(userData?.role).toUpperCase() === "ADMIN";
 
   return (
     <>

@@ -181,6 +181,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               </div>
 
               <button
+                type="button"
                 onClick={() => router.push("/" + lang + "/trips/" + trip.id)}
                 className="site-button site-button-primary trip-list-action mt-3 px-5 py-2 font-bold transition cursor-pointer shadow-md"
               >

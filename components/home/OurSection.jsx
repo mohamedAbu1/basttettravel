@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import DividerWithIcon from "../layout/DividerWithIcon";
+import BrandLogo from "@/components/BrandLogo";
 
 const OurSection = () => {
   const router = useRouter();
@@ -64,17 +65,7 @@ const OurSection = () => {
         </div>
 
         <div className="text-center px-2">
-          <Image
-            src={
-              theme.name === "dark"
-                ? "/HomePageImage/Copilot_20260613_134423.webp"
-                : "/HomePageImage/Copilot_20260613_134550.webp"
-            }
-            alt="Basttet Travel Logo"
-            width={200}
-            height={200}
-            className="mx-auto mb-4 object-contain select-none"
-          />
+          <BrandLogo variant="mark" className="mx-auto mb-4 h-32 w-32" />
 
           <p className="sc-p text-xs uppercase mb-2 tracking-wide text-gradient">
             {t("AboutUs")}
@@ -166,17 +157,7 @@ const OurSection = () => {
             style={{ paddingLeft: "13px" }}
           >
             <div className="flex justify-center mb-6">
-              <Image
-                src={
-                  theme.name === "dark"
-                    ? "/HomePageImage/Copilot_20260613_134423.webp"
-                    : "/HomePageImage/Copilot_20260613_134550.webp"
-                }
-                alt="Basttet Travel Logo"
-                width={330}
-                height={330}
-                className="object-contain select-none"
-              />
+              <BrandLogo variant="horizontal" className="h-auto w-full max-w-[25rem]" />
             </div>
 
             <p className="sc-p text-sm uppercase mb-2 tracking-wide text-gradient">

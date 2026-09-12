@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import LogoLetter from "@/components/LogoLetter";
+import BrandLogo from "@/components/BrandLogo";
 import { useLanguage } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -65,17 +65,12 @@ export default function Packages({ showTrips }) {
     >
       {/* العنوان */}
       <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1, transition: { staggerChildren: 0.2 } },
-        }}
-        className="hero-title flex flex-wrap gap-4 justify-center font-[Cinzel] mb-5 z-[1]"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex justify-center mb-5 z-[1]"
       >
-        {["B","A","S","T","T","E","T","𓂀","T","R","A","V","E","L"].map((char, i) => (
-          <LogoLetter key={i} char={char} theme={theme} />
-        ))}
+        <BrandLogo variant="horizontal" className="h-auto w-full max-w-[30rem]" />
       </motion.div>
 
       {/* الكروت */}

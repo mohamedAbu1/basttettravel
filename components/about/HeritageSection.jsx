@@ -1,12 +1,10 @@
 "use client";
-import Image from "next/image";
-import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import DividerWithIcon from "../layout/DividerWithIcon";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function HeritageSection() {
-  const { themeName } = useTheme();
   const { t } = useTranslation("about");
 
   // ✨ إعدادات الأنيميشن
@@ -42,18 +40,7 @@ export default function HeritageSection() {
         <motion.div variants={fadeLeft} className="flex-1">
           {/* اللوجو في الأعلى */}
           <div className="flex justify-center mb-6">
-            <Image
-               src={
-                themeName === "dark"
-                  ? "/HomePageImage/Copilot_20260613_134423.webp"
-                  : "/HomePageImage/Copilot_20260613_134550.webp"
-              }
-              alt="Basttet Travel Logo"
-              width={400}
-              height={400}
-              className="object-contain select-none"
-              priority
-            />
+            <BrandLogo variant="horizontal" className="h-auto w-full max-w-[28rem]" priority />
           </div>
 
           <h3 className="about-section-title text-2xl font-bold mb-3">

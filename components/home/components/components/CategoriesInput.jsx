@@ -17,6 +17,8 @@ const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => 
         {/* زر الإدخال */}
         <Popover.Trigger asChild>
           <button
+            type="button"
+            aria-label={t("SelectCategory")}
             className={`hero-booking-trigger flex items-center w-full px-4 py-2 rounded-lg  shadow-sm cursor-pointer`}
           >
             <MdCategory className={`mr-2 text-xl ${theme.iconHover}`} />
@@ -38,7 +40,8 @@ const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => 
           >
             {categories.map((cat) => (
               <motion.button
-                key={cat.id}
+              key={cat.id}
+              type="button"
                 whileHover={{ scale: 1.05 }}
                 onClick={(e) => {
                   e.preventDefault(); // يمنع الإغلاق التلقائي
