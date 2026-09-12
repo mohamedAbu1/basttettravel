@@ -35,7 +35,7 @@ const LeftSocialIcons = () => {
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className={`p-3 rounded-full ${theme.card} ${theme.shadow}`}
+          className={`p-3 rounded-full ${theme.shadow}`}
         >
           <Icon size={22} className={theme.icon} />
         </motion.a>

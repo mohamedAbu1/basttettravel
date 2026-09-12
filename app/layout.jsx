@@ -1,4 +1,5 @@
 import "./style/globals.css";
+import { headers } from "next/headers";
 import Providers from "./providers";
 import { organizationSchema, siteConfig, websiteSchema } from "@/lib/seo/site";
 
@@ -9,9 +10,12 @@ export const metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const requestHeaders = await headers();
+  const locale = requestHeaders.get("x-locale") || "en";
+  const direction = locale === "ar" ? "rtl" : "ltr";
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} dir={direction} suppressHydrationWarning>
       <head>
         {/* Structured data is kept once at the root so every page describes the same agency. */}
         <script

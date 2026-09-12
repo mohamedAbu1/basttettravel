@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db"; // الاتصال بقاعدة البيانات
+import { requireUser } from "@/lib/auth/admin";
 
 export async function POST(req) {
   try {
-    const { userId, event_type, message } = await req.json();
+    const auth = requireUser(req);
+    if (auth.response) return auth.response;
+    const { event_type, message } = await req.json();
+    const userId = auth.user.id;
     const db = await connectDB();
 
     // 🟢 1. إدخال الإشعار في جدول notifications

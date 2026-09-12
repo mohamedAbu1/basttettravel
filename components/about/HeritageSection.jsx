@@ -36,7 +36,7 @@ export default function HeritageSection() {
       viewport={{ once: true, amount: 0.2 }}
     >
       <div
-        className={`max-w-7xl mx-auto rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8  text-gradient`}
+        className="about-heritage-card max-w-7xl mx-auto rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8"
       >
         {/* النص */}
         <motion.div variants={fadeLeft} className="flex-1">
@@ -56,12 +56,12 @@ export default function HeritageSection() {
             />
           </div>
 
-          <h3 className={`about-p text-2xl font-bold mb-3 text-gradient`}>
+          <h3 className="about-section-title text-2xl font-bold mb-3">
             {t("h5")}
           </h3>
           <DividerWithIcon />
 
-          <p className={`text-center text-gradient`}>
+          <p className="about-section-description text-center">
             {t("p4")}
           </p>
         </motion.div>

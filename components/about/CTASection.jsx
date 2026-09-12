@@ -4,10 +4,13 @@ import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import DividerWithIcon from "../layout/DividerWithIcon";
+import { usePathname } from "next/navigation";
 
 export default function CTASection() {
   const { themeName } = useTheme();
   const { t } = useTranslation("about");
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
   // ✨ إعدادات الأنيميشن
   const fadeUp = {
@@ -30,28 +33,28 @@ export default function CTASection() {
     >
       <motion.div
         variants={staggerContainer}
-        className="max-w-7xl mx-auto text-center"
+        className="about-cta-card max-w-7xl mx-auto text-center"
       >
         <motion.h4
           variants={fadeUp}
-          className={`about-p text-xl font-semibold mb-3 text-gradient`}  
+          className="about-cta-title text-xl font-semibold mb-3"
         >
           {t("h6")}
         </motion.h4>
 
         <motion.p
           variants={fadeUp}
-          className={`text-gradient mb-6`}
+          className="about-cta-description mb-6"
         >
           {t("p5")}
         </motion.p>
 
       <motion.a
   variants={fadeUp}
-  href="/contact"
+  href={`/${locale}/contact`}
   whileHover={{ scale: 1.05 }}
   whileTap={{ scale: 0.95 }}
-  className="btn-gradient w-full rounded-[4px] px-6 py-3 font-semibold tracking-wide shadow-lg cursor-pointer"
+  className="site-button site-button-primary w-full"
 >
   {t("a")}
 </motion.a>

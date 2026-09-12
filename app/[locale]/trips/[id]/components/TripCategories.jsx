@@ -59,7 +59,7 @@ export default function TripCategories({ trip, lang }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`p-6 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text}`}
+      className={`p-6 rounded-xl transition ${theme.shadow} ${theme.text}`}
     >
       {/* العنوان */}
       <motion.h2
@@ -92,7 +92,7 @@ export default function TripCategories({ trip, lang }) {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
               whileHover={{ scale: 1.05, rotate: 1 }}
-              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${theme.card}`}
+              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${theme.shadow}`}
             >
               <FaTags className={theme.icon} />
               <span className={`text-sm md:text-base font-medium ${theme.subText}`}>

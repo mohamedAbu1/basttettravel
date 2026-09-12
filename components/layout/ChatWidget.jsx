@@ -145,7 +145,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
           onClick={() => setOpen(!open)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className={`fixed bottom-6 right-6 p-4 rounded-full shadow-lg flex items-center justify-center ${theme.buttonPrimary}`}
+          className={`chat-widget-trigger fixed bottom-6 right-6 p-4 rounded-full shadow-lg flex items-center justify-center ${theme.buttonPrimary}`}
         >
           <FaComments size={22} color="#fff" />
         </motion.button>
@@ -157,7 +157,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className={`fixed overflow-x-hidden bottom-20 right-2 lg:right-6 w-90 lg:w-110 h-125 rounded-xl shadow-xl flex flex-col z-50 ${theme.card} ${theme.text}`}
+            className={`chat-widget-panel fixed overflow-x-hidden bottom-20 right-2 lg:right-6 w-90 lg:w-110 h-125 rounded-xl shadow-xl flex flex-col z-50 ${theme.card} ${theme.text}`}
           >
             <EgyptianBackground />
             <ChatHeader onClose={() => setOpen(false)} theme={theme} />

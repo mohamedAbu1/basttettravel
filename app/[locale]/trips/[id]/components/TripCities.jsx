@@ -54,7 +54,7 @@ export default function TripCities({ trip, lang }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`p-6 rounded-xl shadow-lg transition ${theme.card} ${theme.text}`}
+      className={`p-6 rounded-xl shadow-lg transition ${theme.text} ${theme.shadow}`}
       style={{ boxShadow: theme.shadow }}
     >
       {/* العنوان */}
@@ -85,7 +85,7 @@ export default function TripCities({ trip, lang }) {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
               whileHover={{ scale: 1.05, rotate: 1 }}
-              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${theme.card} ${theme.hover}`}
+              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${theme.shadow} ${theme.hover}`}
             >
               <FaMapMarkerAlt className={theme.icon} />
               <span className="text-sm md:text-base font-medium">

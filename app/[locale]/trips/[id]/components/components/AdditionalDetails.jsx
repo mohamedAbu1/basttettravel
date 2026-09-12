@@ -79,7 +79,7 @@ export default function AdditionalDetails({
   };
 
   return (
-    <div className={`mb-6 p-6 rounded-xl shadow-lg ${theme.card}`}>
+    <div className={`mb-6 p-6 rounded-xl shadow-lg`}>
       <h3 className={`text-xl font-bold mb-4 ${theme.title}`}>
         Additional Details
       </h3>

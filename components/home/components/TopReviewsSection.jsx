@@ -76,12 +76,12 @@ export default function TopReviewsSection() {
   }, []);
 
   return (
-    <section className={`py-20 px-4 md:px-8 ${theme.background} ${theme.text} w-screen max-w-full bg-[url('/HomePageImage/427421070_8ee61396-b440-41b5-af8d-619e23dd51b5.svg')] bg-cover bg-center`}>
+    <section className={`py-20 px-4 md:px-8 ${theme.text} w-screen max-w-full`}>
       <EgyptianBackground />
       <h2 className="sc-title-first text-[21px] md:text-5xl font-extrabold tracking-wide drop-shadow-md text-left text-gradient">
-        <span className="inline-block transform scale-x-[-1] mr-4">𓅓</span>
+        <span className="inline-block transform  text-gradient scale-x-[-1] mr-4">𓅓</span>
         {t("h6")}
-        <span className="inline-block ml-4">𓅓</span>
+        <span className="inline-block text-gradient ml-4">𓅓</span>
       </h2>
 
       <DividerWithIcon />
@@ -121,7 +121,7 @@ export default function TopReviewsSection() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className={`flex flex-col justify-between gap-4 ml-3 p-4 md:p-6 rounded-2xl min-h-[260px] ${theme.card}`}
+        className={`flex flex-col justify-between gap-4 ml-3 p-4 md:p-6 rounded-2xl min-h-[260px] `}
         style={{
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",

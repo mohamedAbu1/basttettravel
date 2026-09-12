@@ -43,7 +43,7 @@ export default function ReviewCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6, delay: idx * 0.1 }}
-      className={`w-[99%] lg:w-[48%] p-5 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text} ${theme.border}`}
+      className={`w-[99%] lg:w-[48%] p-5 rounded-xl transition ${theme.shadow} ${theme.text} ${theme.border}`}
     >
       {/* رأس البطاقة */}
       <div className="flex items-center gap-4 mb-3">
@@ -92,13 +92,13 @@ export default function ReviewCard({
           <div className="flex gap-2 mt-2">
             <button
               onClick={handleSave}
-              className={`px-3 py-1 rounded ${theme.buttonPrimary}`}
+              className={`px-3 py-1 rounded `}
             >
               Save
             </button>
             <button
               onClick={() => setIsEditing(false)}
-              className={`px-3 py-1 rounded ${theme.buttonSecondary}`}
+              className={`px-3 py-1 rounded `}
             >
               Cancel
             </button>
@@ -115,7 +115,7 @@ export default function ReviewCard({
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.1 }}
           onClick={() => addLike(rev.id, user?.id)}
-          className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm ${theme.buttonSecondary}`}
+          className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm `}
         >
           <FaThumbsUp /> {likes[rev.id]?.count || 0}
         </motion.button>
@@ -125,7 +125,7 @@ export default function ReviewCard({
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.1 }}
           onClick={() => removeLike(rev.id)}
-          className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm ${theme.buttonSecondary}`}
+          className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm `}
         >
           <FaThumbsDown /> Unlike
         </motion.button>
@@ -136,7 +136,7 @@ export default function ReviewCard({
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.1 }}
             onClick={() => deleteReview(rev.id)}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm ${theme.buttonSecondary}`}
+            className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm `}
           >
             <FaTrash /> Delete
           </motion.button>
@@ -150,7 +150,7 @@ export default function ReviewCard({
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ scale: 1.1 }}
                 onClick={() => setIsEditing(true)}
-                className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm ${theme.buttonSecondary}`}
+                className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm `}
               >
                 <FaEdit /> Edit
               </motion.button>
@@ -160,7 +160,7 @@ export default function ReviewCard({
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => deleteReview(rev.id)}
-              className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm ${theme.buttonSecondary}`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm `}
             >
               <FaTrash /> Delete
             </motion.button>

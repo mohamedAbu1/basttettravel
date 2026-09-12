@@ -178,16 +178,15 @@ export default function TripsPage() {
   return (
     <>
 
-      <main className="relative flex flex-col min-h-screen justify-center items-center mt-7">
+      <main className="trips-page public-page relative flex flex-col min-h-screen justify-center items-center mt-7">
         <EgyptianBackground />
         <Header />
 
        
           <motion.section
-            style={{ marginTop: "105px", paddingBottom: "20px" }}
-            className="container flex flex-1 gap-6 px-6 relative z-10"
+            className="trips-content container flex flex-1 gap-6 px-6 relative z-10"
           >
-            <div className=" hidden lg:flex w-1/4 max-h-fit bg-[url('/HomePageImage/427421070_8ee61396-b440-41b5-af8d-619e23dd51b5.svg')] bg-cover bg-center rounded-2xl">
+            <div className="trips-filter-shell hidden lg:flex w-1/4 max-h-fit bg-[url('/HomePageImage/427421070_8ee61396-b440-41b5-af8d-619e23dd51b5.svg')] bg-cover bg-center rounded-2xl">
               <TripsFilter
                 allCities={allCities}
                 allCategories={allCategories}
@@ -196,7 +195,7 @@ export default function TripsPage() {
             </div>
 
             <div className="flex-1 flex flex-col gap-6">
-              <details className="lg:hidden card-theme rounded-xl p-4">
+              <details className="lg:hidden card-theme trips-mobile-filter rounded-xl p-4">
                 <summary className="cursor-pointer font-semibold">Filters</summary>
                 <div className="pt-4">
                   <TripsFilter allCities={allCities} allCategories={allCategories} loading={loading} />

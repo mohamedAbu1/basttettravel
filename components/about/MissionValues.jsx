@@ -33,20 +33,20 @@ export default function MissionValues() {
     >
       <motion.div
         variants={staggerContainer}
-        className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8"
+        className="about-values-grid max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8"
       >
         <motion.div
           variants={fadeUp}
-          className={`rounded-2xl p-6 border text-gradient`}
+          className="about-value-card"
         >
           <h3
-            className={`about-p text-xl font-bold mb-2 text-gradient`} 
+            className="about-value-title"
           >
             {t("h3")}
           </h3>
           <DividerWithIcon />
           <p
-            className={`text-center text-gradient`}
+            className="about-value-description"
           >
             {t("p2")}
           </p>
@@ -55,17 +55,17 @@ export default function MissionValues() {
 
         <motion.div
           variants={fadeUp}
-          className={`rounded-2xl p-6 border text-gradient`}
+          className="about-value-card"
         >
           <h3
-            className={`about-p text-xl font-bold mb-2 text-gradient`}
+            className="about-value-title"
           >
             {t("h2")}
           </h3>
           <DividerWithIcon />
 
           <p
-            className={`text-center text-gradient`}
+            className="about-value-description"
           >
             {t("li")}
           </p>
@@ -74,17 +74,17 @@ export default function MissionValues() {
 
         <motion.div
           variants={fadeUp}
-          className={`rounded-2xl p-6 border text-gradient`}
+          className="about-value-card"
         >
           <h3
-            className={`about-p text-xl font-bold mb-2 text-gradient`} 
+            className="about-value-title"
           >
             {t("h4")}
           </h3>
           <DividerWithIcon />
 
           <p
-            className={`text-center text-gradient`}
+            className="about-value-description"
           >
             {t("p3")}
           </p>

@@ -50,7 +50,7 @@ const CarBookingSection = () => {
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={fadeInUp}
-      className={`hidden lg:flex relative w-full items-center justify-center py-24 px-6 transition-colors duration-500 overflow-hidden ${theme.background}`}
+      className={`hidden lg:flex relative w-full items-center justify-center py-24 px-6 transition-colors duration-500 overflow-hidden`}
     >
       {/* Background Car Image */}
       <div className="absolute inset-0 -z-10">

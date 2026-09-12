@@ -67,9 +67,9 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeUp}
-      className={`filter-card ${
+      className={` ${
         themeName === "dark" ? "card-dark" : "card-light"
-      } `}
+      } `} 
     >
       <h3 className="filter-title">{t("Filters")}</h3>
       <div className="flex flex-col gap-8">

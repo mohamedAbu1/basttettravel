@@ -9,7 +9,7 @@ export default function ContactForm({ themeName, t, userData, formData, handleCh
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8 }}
-      className={`card-theme rounded-2xl p-8 shadow-xl space-y-6 ${
+      className={`contact-form card-theme rounded-2xl p-8 shadow-xl space-y-6 ${
         themeName === "dark" ? "card-dark" : "card-light"
       }`}
     >

@@ -7,8 +7,8 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import Divider from "@mui/material/Divider";
-import { MdEmail, MdLock } from "react-icons/md";
+import CloseIcon from "@mui/icons-material/Close";
+import { MdEmail, MdLock, MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { FcGoogle } from "react-icons/fc";
 import { useData } from "@/context/DataContext";
 import { useTheme } from "@/context/ThemeContext"; // ✅ جلب الثيم
@@ -24,12 +24,14 @@ export default function LoginModal() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation("home");
 
   const { login, loginWithGoogle, loading, handleClose } = useAuth();
   const { validateField } = useSecurity();
 
-  const handleSubmit = useCallback(async () => {
+  const handleSubmit = useCallback(async (event) => {
+    event?.preventDefault();
     const emailError = validateField("email", email);
     const passwordError = validateField("password", password);
 
@@ -39,8 +41,8 @@ export default function LoginModal() {
     }
 
     try {
-      await login(email, password);
-      toast.success("✅ Logged in successfully!");
+      const result = await login(email, password);
+      if (!result?.success) return;
       handleLoginClose();
       handleClose();
     } catch (err) {
@@ -49,33 +51,40 @@ export default function LoginModal() {
   }, [email, password, validateField, login, handleLoginClose, handleClose]);
 
   return (
-    <Dialog open={loginOpen} onClose={handleLoginClose} fullWidth maxWidth="sm">
+    <Dialog
+      open={loginOpen}
+      onClose={handleLoginClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{ className: "auth-dialog-paper" }}
+      BackdropProps={{ className: "auth-dialog-backdrop" }}
+      aria-labelledby="login-title"
+    >
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`${theme.card} ${theme.shadow}`} // ✅ خلفية الكارد من الثيم
+        className="auth-modal auth-modal-login"
       >
-        {/* Header */}
-        <div className="text-center py-6">
-          <h2
-            className="text-4xl font-extrabold tracking-wide text-center"
-            style={{
-              background: "var(--text-gradient)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            {t("Login")}
-          </h2>
+        <div className="auth-modal-header">
+          <div>
+            <p className="auth-modal-eyebrow">Basttet Travel</p>
+            <h2 id="login-title" className="auth-modal-title">{t("Login")}</h2>
+            <p className="auth-modal-description">{t("authLoginDescription", { defaultValue: "Continue your journey with your Basttet Travel account." })}</p>
+          </div>
+          <IconButton onClick={handleLoginClose} className="auth-close-button" aria-label={t("close", { defaultValue: "Close" })}>
+            <CloseIcon />
+          </IconButton>
         </div>
         <DividerWithIcon />
         {/* Content */}
-        <DialogContent className="flex flex-col gap-5 p-8">
+        <DialogContent component="form" onSubmit={handleSubmit} className="auth-modal-content flex flex-col gap-5">
           <TextField
             label={t("Email")}
             type="email"
             fullWidth
+            required
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             InputProps={{
@@ -85,18 +94,35 @@ export default function LoginModal() {
                 </InputAdornment>
               ),
             }}
+            className="auth-field"
           />
 
           <TextField
             label={t("Password")}
-            type="password"
+            type={showPassword ? "text" : "password"}
             fullWidth
+            required
+            autoComplete="current-password"
+            inputProps={{ minLength: 8, maxLength: 128 }}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="auth-field"
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
                   <MdLock className={theme.icon} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <button
+                    type="button"
+                    className="auth-password-toggle"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
+                  </button>
                 </InputAdornment>
               ),
             }}
@@ -105,24 +131,24 @@ export default function LoginModal() {
         <DividerWithIcon />
 
           {/* Social Buttons */}
-          <div className="flex justify-center mt-4">
+          <div className="auth-action-wide">
             <IconButton
               onClick={loginWithGoogle}
-              style={{ borderRadius: "15px" }}
-              className="w-[280px] h-[56px] bg-gradient-to-r from-[#4285F4] via-[#34A853] via-[#FBBC05] to-[#EA4335] text-white font-bold shadow-md hover:shadow-lg flex items-center gap-3 transition-all"
+              type="button"
+              className="auth-google-button"
             >
               <FcGoogle size={28} />
-              <span>Sign in with Google</span>
+              <span>{t("continueWithGoogle", { defaultValue: "Continue with Google" })}</span>
             </IconButton>
           </div>
 
           {/* Login Button */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div whileTap={{ scale: 0.98 }} className="auth-action-wide">
             <Button
               fullWidth
-              onClick={handleSubmit}
+              type="submit"
               disabled={loading}
-              className={theme.buttonPrimary}
+              className="auth-primary-button"
             >
               {loading ? t("Loggingin") : t("Login")}
             </Button>
@@ -135,7 +161,8 @@ export default function LoginModal() {
               handleLoginClose();
               handleSignUpOpen();
             }}
-            className={theme.buttonSecondary}
+            className="auth-secondary-button"
+            type="button"
           >
             {t("Don’thaveanaccount?SignUp")}
           </Button>

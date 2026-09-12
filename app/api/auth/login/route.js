@@ -9,6 +9,9 @@ export async function POST(request) {
   try {
     const db = await connectDB();
     const { email, password } = await request.json();
+    if (typeof email !== "string" || typeof password !== "string" || !process.env.JWT_SECRET) {
+      return NextResponse.json({ error: "Invalid credentials" }, { status: 400 });
+    }
 
     console.log("📩 Step 1: Received login request", { email });
 
@@ -19,7 +22,6 @@ export async function POST(request) {
     }
 
     const user = rows[0];
-    console.log("👤 Step 2: User retrieved", { user });
 
     // ✅ التحقق من كلمة المرور
     const isValid = await bcrypt.compare(password, user.password);
@@ -63,7 +65,7 @@ export async function POST(request) {
 
     return setAuthCookies(response, accessToken, refreshToken);
   } catch (e) {
-    console.error("💥 Internal error", e);
+    console.error("Login failed", e.message);
     return NextResponse.json({ error: "خطأ داخلي" }, { status: 500 });
   }
 }

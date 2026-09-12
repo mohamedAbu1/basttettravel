@@ -70,10 +70,11 @@ export function AuthProvider({ children }) {
 
       toast.success("✅ Account created successfully!");
       handleSignUpClose();
-      return data;
+      return { success: true, ...data };
     } catch (err) {
       setError(err.message);
       toast.error("❌ Error: " + err.message);
+      return { success: false, error: err.message };
     } finally {
       setLoading(false);
     }
@@ -115,11 +116,12 @@ export function AuthProvider({ children }) {
       router.push(`/?data=${encodedQuery}`);
 
       toast.success("✅ Logged in successfully!");
-      return user;
+      return { success: true, user };
     } catch (err) {
       console.error("💥 خطأ أثناء تسجيل الدخول:", err.message);
       setError(err.message);
       toast.error("❌ Error: " + err.message);
+      return { success: false, error: err.message };
     } finally {
       setLoading(false);
     }

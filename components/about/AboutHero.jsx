@@ -3,23 +3,26 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
-import DividerWithIcon from "../layout/DividerWithIcon";
+import Link from "next/link";
+import { FaArrowRight, FaCompass } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
 export default function AboutHero() {
   const { themeName } = useTheme();
   const { t } = useTranslation("about");
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
   return (
-    <section className="relative z-10 py-20 px-6 mt-12">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-        
-        {/* الصورة الأولى */}
+    <section className="about-hero relative z-10 px-6 pt-32 pb-20 mt-0">
+      <div className="about-hero-inner max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-12 lg:gap-20 items-center">
+        <div className="about-visual-grid order-2 lg:order-1">
         <motion.div
           initial={{ opacity: 0, x: 60 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative w-full h-80 lg:h-[460px] rounded-2xl overflow-hidden shadow-2xl"
+          className="about-main-image relative w-full h-80 lg:h-[510px] rounded-[2rem] overflow-hidden shadow-2xl"
         >
           <Image
             src={
@@ -31,57 +34,48 @@ export default function AboutHero() {
             fill
             className="object-cover scale-x-[-1]"
           />
+          <div className="about-image-caption">
+            <span><FaCompass aria-hidden="true" /> {t("heroBadge")}</span>
+          </div>
         </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+          className="about-secondary-image relative w-[70%] h-48 lg:h-64 rounded-[1.5rem] overflow-hidden shadow-2xl"
+        >
+          <Image
+            src="/Luxor/pexels-francesco-ungaro-2325447.webp"
+            alt="Luxor temple at sunset"
+            fill
+            className="object-cover"
+          />
+        </motion.div>
+        </div>
 
-        {/* النصوص */}
         <motion.div
           initial={{ opacity: 0, x: -60 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="space-y-5"
+          className="about-hero-copy space-y-5 order-1 lg:order-2"
         >
-          <p
-            className={`about-p uppercase tracking-widest text-sm text-gradient `}
-          >
-            {t("AboutWasetTravel")}
-          </p>
-
-          <DividerWithIcon />
-
-          <h1
-            className={`about-title text-4xl lg:text-5xl font-extrabold leading-tight text-gradient`}
-          >
-            {t("h1")}
-          </h1>
-
-          <DividerWithIcon />
-
-          <p
-            className={`about-p text-gradient`}
-          >
-            {t("p")}
-          </p>
-        </motion.div>
-
-        {/* الصورة الثانية */}
-        <motion.div
-          initial={{ opacity: 0, x: 60 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className=" hidden lg:flex relative w-full h-80 lg:h-[460px] rounded-2xl overflow-hidden shadow-2xl"
-        >
-          <Image
-            src={
-              themeName === "dark"
-                ? "/Aswan/pexels-radwa-magdy-1718930-28144568.webp"
-                : "/Nile_Cruise/5116-900x600.webp"
-            }
-            alt="Basttet Travel luxury Egypt experience"
-            fill
-            className="object-cover"
-          />
+          <p className="about-eyebrow">{t("heroEyebrow")}</p>
+          <h1 className="about-hero-title">{t("h1")}</h1>
+          <p className="about-hero-description">{t("p")}</p>
+          <div className="about-hero-actions">
+            <Link href={`/${locale}/trips`} className="site-button site-button-primary">
+              {t("heroCta")} <FaArrowRight aria-hidden="true" />
+            </Link>
+            <Link href={`/${locale}/contact`} className="site-button site-button-secondary">
+              {t("heroSecondaryCta")}
+            </Link>
+          </div>
+          <div className="about-hero-meta">
+            <span><strong>𓂀</strong> {t("heroMetaOne")}</span>
+            <span><strong>𓆣</strong> {t("heroMetaTwo")}</span>
+          </div>
         </motion.div>
       </div>
     </section>

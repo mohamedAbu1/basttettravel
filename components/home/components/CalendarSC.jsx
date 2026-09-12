@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { MdDateRange } from "react-icons/md"; // أيقونة احترافية للتقويم
 // Custom Input Component
 const CustomInput = forwardRef(({ value, onClick, placeholder }, ref) => (
-  <button className="luxury-input w-full text-left" onClick={onClick} ref={ref}>
+  <button type="button" className="luxury-input w-full text-left" onClick={onClick} ref={ref}>
     <span className={`luxury-label ${value ? "active" : ""}`}>
       {placeholder}
     </span>

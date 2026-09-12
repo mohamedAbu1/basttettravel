@@ -1,28 +1,41 @@
 "use client";
-import { Typewriter } from "react-simple-typewriter";
-import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
+import Link from "next/link";
+import { FaArrowRight, FaCheck } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
 export default function HeroText() {
-  const { theme } = useTheme();
   const { t } = useTranslation("home");
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
   return (
-    <h1
-      className="hero-text absolute bottom-1 left-24 text-center font-extrabold text-4xl md:text-5xl text-gradient"
-      style={{
-        filter: `drop-shadow(0 0 6px ${theme.logoBorder})`,
-      }}
-    >
-      <Typewriter
-        words={[t("welcome"), t("brand"), t("journey")]}
-        loop={true}
-        cursor
-        cursorStyle="𓂀"
-        typeSpeed={75}
-        deleteSpeed={40}
-        delaySpeed={2000}
-      />
-    </h1>
+    <div className="hero-copy max-w-2xl text-left pl-5">
+      <p className="hero-eyebrow">
+        <span className="hero-eyebrow-mark">𓂀</span>
+        {t("heroEyebrow")}
+      </p>
+      <h1 className="hero-heading">
+        {t("heroTitle")} <span>{t("heroTitleAccent")}</span>
+      </h1>
+      <p className="hero-description">{t("heroDescription")}</p>
+
+      <div className="hero-actions">
+        <Link href={`/${locale}/trips`} className="hero-primary-action">
+          {t("heroCta")} <FaArrowRight aria-hidden="true" />
+        </Link>
+        <a href="#top-trips" className="hero-secondary-action">
+          {t("heroSecondaryCta")}
+        </a>
+      </div>
+
+      <div className="hero-trust-row" aria-label={t("heroTrustLabel")}>
+        {["heroTrustOne", "heroTrustTwo", "heroTrustThree"].map((key) => (
+          <span key={key}>
+            <FaCheck aria-hidden="true" /> {t(key)}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }

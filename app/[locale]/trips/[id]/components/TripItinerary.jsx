@@ -85,7 +85,7 @@ const dayGroups = chunkDays(tripDays || []);
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`p-6 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text}`}
+      className={`p-6 rounded-xl transition ${theme.shadow} ${theme.text}`}
     >
       {/* العنوان */}
       <motion.h2
@@ -119,7 +119,7 @@ const dayGroups = chunkDays(tripDays || []);
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: dayIdx * 0.2 }}
-            className={`rounded-lg p-4 transition ${theme.card} ${theme.shadow}`}
+            className={`rounded-lg p-4 transition ${theme.shadow}`}
           >
             <h3 className={`text-lg font-semibold mb-3 ${theme.title}`}>
               {t.day} {day.day_number}
@@ -157,8 +157,8 @@ const dayGroups = chunkDays(tripDays || []);
             style={{ cursor: "pointer" }}
             className={`px-3 py-1 rounded-full font-bold transition ${
               currentPage === idx
-                ? `${theme.buttonPrimary}`
-                : `${theme.buttonSecondary}`
+                ? ``
+                : ``
             }`}
           >
             {idx + 1}

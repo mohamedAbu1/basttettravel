@@ -23,9 +23,9 @@ const LightTheme = {
 
   // الأزرار الأساسية (زجاجية ذهبية مع لمسة بحرية)
   buttonPrimary:
-    "bg-[rgba(194,168,120,0.25)] backdrop-blur-[12px] text-[#fff] font-semibold rounded-xl px-4 py-2 border border-[#1A4D5C]/70 hover:bg-[#1A4D5C]/30 hover:text-[#0A2E36] transition-all shadow-md tracking-wide uppercase",
+    "bg-[#C2A878] text-[#173B45] font-bold rounded-full px-4 py-2 border border-[#A68B5B] hover:bg-[#A68B5B] hover:text-white transition-all shadow-md tracking-wide uppercase",
   buttonSecondary:
-    "bg-[rgba(255,255,255,0.25)] backdrop-blur-[12px] text-[#0A2E36] font-medium rounded-xl px-4 py-2 hover:bg-[rgba(255,255,255,0.35)] transition-all border border-[#C2A878]/60",
+    "bg-white/85 backdrop-blur-[12px] text-[#173B45] font-bold rounded-full px-4 py-2 hover:bg-white transition-all border border-[#A68B5B] shadow-sm",
 
   // الحدود
   border: "border border-[rgba(194,168,120,0.5)] rounded-[16px]",

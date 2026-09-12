@@ -48,7 +48,7 @@ function CityCard({ city, themeName, theme, language, t }) {
       className="min-w-[250px] p-4"
     >
       <div
-        className={`relative h-82 rounded-2xl overflow-hidden group cursor-pointer
+        className={`city-card relative h-82 rounded-2xl overflow-hidden group cursor-pointer
           ${theme.card} ${theme.border} ${theme.shadow}
           transition-all duration-500 hover:scale-[1.05] hover:shadow-2xl hover:-rotate-1`}
       >
@@ -74,7 +74,7 @@ function CityCard({ city, themeName, theme, language, t }) {
           className={`absolute inset-0 ${theme.overlay} flex flex-col items-center justify-end pb-6`}
         >
           <p
-            className={`trips-text text-lg font-bold mb-2 ${theme.title}`}
+            className="city-card-title text-lg font-bold mb-2"
             style={{
               WebkitTextStroke:
                 themeName === "dark" ? "1px #C2A878" : "1px #ffffff",
@@ -90,7 +90,7 @@ function CityCard({ city, themeName, theme, language, t }) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleExplore}
-            className={`rounded-[9px] px-3 py-2 font-semibold tracking-wide cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
+            className="site-button site-button-primary city-card-action rounded-[9px] px-3 py-2 font-semibold tracking-wide cursor-pointer transition-all duration-300 shadow-lg"
             style={{ border: `2px solid ${theme.logoBorder}` }}
           >
             {t("Explore")}
@@ -150,7 +150,7 @@ const CitiesSection = () => {
 
   return (
     <section
-      className={`flex py-8 sm:py-12 px-4 sm:px-6 md:px-8 flex-col w-full mx-auto relative ${theme.background}`}
+      className={`flex py-8 sm:py-12 px-4 sm:px-6 md:px-8 flex-col w-full mx-auto relative`}
     >
       {/* خلفية الرموز */}
       <div className="absolute inset-0 pointer-events-none">
@@ -189,11 +189,11 @@ const CitiesSection = () => {
 
         <div className="max-w-2xl mx-auto mb-10 sm:mb-16 w-full relative z-10">
           <h2 className="sc-title-first text-3xl sm:text-5xl font-extrabold tracking-wide drop-shadow-md text-center text-gradient">
-            <span className="inline-block transform scale-x-[-1] mr-2 sm:mr-4">
+            <span className="inline-block transform text-gradient scale-x-[-1] mr-2 sm:mr-4">
               𓅓
             </span>
             {t("ExploreCities")}
-            <span className="inline-block ml-2 sm:ml-4">𓅓</span>
+            <span className="inline-block text-gradient ml-2 sm:ml-4">𓅓</span>
           </h2>
           <DividerWithIcon />
         </div>

@@ -91,7 +91,7 @@ export default function TripReviews({ trip, lang }) {
   };
 
   return (
-    <section className={`p-6 rounded-xl transition ${theme.card} ${theme.shadow} ${theme.text}`}>
+    <section className={`p-6 rounded-xl transition ${theme.shadow} ${theme.text}`}>
       <EgyptianBackground />
 
       {/* العنوان + المتوسط */}

@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 
 const encodeData = (obj) => btoa(JSON.stringify(obj));
 
-export default function BookingForm({ setShowTrips, trips = [] }) {
+export default function BookingForm({ setShowTrips, trips = [], compact = false }) {
   const { theme } = useTheme();
   const { cities, categories } = useCitiesCategories();
   const { updateValue } = useQueryFilters();
@@ -25,6 +25,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
   const [showCities, setShowCities] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const { t } = useTranslation("home");
+  const { t: commonT } = useTranslation("common");
 
   const [selectedCities, setSelectedCities] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -77,9 +78,9 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
       type="button"
       onClick={onClick}
       aria-label={value || t("SelectDate")}
-      className={`flex w-full items-center rounded-[10px] px-4 py-2 cursor-pointer 
+      className={`hero-booking-trigger flex w-full items-center rounded-[10px] px-4 py-2 cursor-pointer
                   backdrop-blur-md border ${theme.logoBorder} shadow-md hover:shadow-lg 
-                  transition-all duration-300 relative overflow-hidden ${theme.card}`}
+                  transition-all duration-300 relative overflow-hidden`}
     >
       <FaCalendarAlt className={`mr-3 text-xl ${theme.iconHover}`} />
       <span className={`flex-1 p-2 tracking-wide font-medium ${theme.text}`}>
@@ -93,13 +94,12 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 2 }}
-      className={`mt-6 ${theme.card} h-auto shadow-lg w-[95%] max-w-6xl p-6 md:p-7
-                  backdrop-blur-md border ${theme.logoBorder} rounded-xl relative`}
+      className={`${compact ? "hero-booking-form" : `mt-6 shadow-lg w-[95%] max-w-6xl p-6 md:p-7 backdrop-blur-md border ${theme.logoBorder} rounded-xl`} h-auto relative`}
     >
       {/* ✅ الصف الأول: المدن + الكاتجري */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div
-          className={`flex items-center border ${theme.logoBorder} rounded-[4px] px-3 ${theme.card}`}
+          className={`flex items-center border ${theme.logoBorder}  ${theme.shadow} rounded-[4px] px-3 `}
         >
           <CitiesInput
             selectedCities={selectedCities}
@@ -113,7 +113,7 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
         </div>
 
         <div
-          className={`flex items-center border ${theme.logoBorder} rounded-[4px] px-3 ${theme.card}`}
+          className={`flex items-center border ${theme.logoBorder} border-amber-200 ${theme.shadow} rounded-[4px] px-3 `}
         >
           <CategoriesInput
             selectedCategories={selectedCategories}
@@ -168,12 +168,12 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
       </div>
 
       <motion.button
+        type="button"
         whileHover={isFormValid ? { scale: 1.05 } : {}}
         whileTap={isFormValid ? { scale: 0.95 } : {}}
         onClick={handleClick}
         disabled={!isFormValid} // ✅ تعطيل الزر لو الفورم ناقص
-        className={`w-full rounded-[10px] px-6 py-3.5 min-h-12 font-semibold tracking-wide cursor-pointer
-    transition-all duration-300 shadow-lg 
+        className={`w-full hero-secondary-action
     ${isFormValid ? theme.buttonPrimary : "bg-gray-400 cursor-not-allowed"}`}
         style={{
           color: isFormValid ? "#211b12" : "#b8b1a4",
@@ -182,6 +182,13 @@ export default function BookingForm({ setShowTrips, trips = [] }) {
       >
         {t("experience")}
       </motion.button>
+      {!isFormValid && (
+        <p className="booking-form-hint" role="status">
+          {commonT("selectDatesToContinue", {
+            defaultValue: "Select both dates to continue",
+          })}
+        </p>
+      )}
     </motion.div>
   );
 }

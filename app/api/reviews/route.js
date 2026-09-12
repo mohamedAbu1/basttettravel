@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid"; 
+import { requireUser } from "@/lib/auth/admin";
 
 // ✅ جلب التعليقات
 export async function GET(req) {
@@ -30,42 +31,35 @@ export async function GET(req) {
 // ✅ إضافة تعليق جديد
 export async function POST(req) {
   try {
-    console.log("📩 Request received at /api/reviews");
+    const auth = requireUser(req);
+    if (auth.response) return auth.response;
 
     const body = await req.json();
-    console.log("📌 Parsed body:", body);
 
-    const { trip_id, user_id, rating, comment, name, avatar_url, time } = body;
-    console.log("✅ Extracted values:", {
-      trip_id,
-      user_id,
-      rating,
-      comment,
-      name,
-      avatar_url,
-      time,
-    });
+    const { trip_id, rating, comment, time } = body;
+    const user_id = auth.user.id;
+    if (!trip_id || !Number.isFinite(Number(rating)) || Number(rating) < 1 || Number(rating) > 5) {
+      return NextResponse.json({ success: false, error: "Invalid review data" }, { status: 400 });
+    }
+    if (typeof comment !== "string" || comment.trim().length < 2 || comment.length > 2000) {
+      return NextResponse.json({ success: false, error: "Invalid review comment" }, { status: 400 });
+    }
 
     const db = await connectDB();
-    console.log("🔗 Connected to DB successfully");
 
     const reviewId = uuidv4();
-    console.log("🆔 Generated reviewId:", reviewId);
 
     const query = `
       INSERT INTO reviews 
       (id, trip_id, user_id, rating, comment, name, avatar_url, time, created_at) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `;
-    const params = [reviewId, trip_id, user_id, rating, comment, name, avatar_url, time];
-    console.log("📝 Executing query:", query);
-    console.log("📊 With params:", params);
+    const params = [reviewId, trip_id, user_id, Number(rating), comment.trim(), auth.user.name || auth.user.email, auth.user.avatar_url || null, time || null];
 
     await db.query(query, params);
-    console.log("✅ Insert successful");
 
     return NextResponse.json(
-      { success: true, review: { id: reviewId, ...body } },
+      { success: true, review: { id: reviewId, trip_id, user_id, rating: Number(rating), comment: comment.trim() } },
       { status: 201 }
     );
   } catch (err) {

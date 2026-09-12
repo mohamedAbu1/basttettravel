@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
+import { requireUser } from "@/lib/auth/admin";
 
 // ✅ جلب اللايكات
 export async function GET(req, { params }) {
@@ -24,13 +25,12 @@ export async function GET(req, { params }) {
 
 // ✅ إضافة لايك
 export async function POST(req, context) {
+  const auth = requireUser(req);
+  if (auth.response) return auth.response;
   const { params } = await context; // ✅ لازم await
   const reviewId = params.id;
 
-  const { user_id } = await req.json();
-  if (!user_id) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-  }
+  const user_id = auth.user.id;
 
   const db = await connectDB();
   await db.query(
@@ -46,12 +46,10 @@ export async function POST(req, context) {
 // ✅ إزالة لايك
 export async function DELETE(req, { params }) {
   try {
+    const auth = requireUser(req);
+    if (auth.response) return auth.response;
     const reviewId = params.id;
-    const { user_id } = await req.json();
-
-    if (!user_id) {
-      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-    }
+    const user_id = auth.user.id;
 
     const db = await connectDB();
     await db.query(

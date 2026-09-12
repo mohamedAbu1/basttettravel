@@ -110,12 +110,12 @@ const CalendarBooking = ({
 
   return (
     <div
-      className={`${theme.card} max-w-2xl mx-auto p-6 shadow-lg font-sans mb-3`}
+      className={` max-w-2xl mx-auto p-6 shadow-lg font-sans mb-3`}
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <button
-          className={`${theme.buttonSecondary} p-2 rounded-full`}
+          className={` p-2 rounded-full`}
           onClick={prevMonth}
         >
           <ChevronLeftIcon className={`${theme.icon} w-5 h-5`} />
@@ -124,7 +124,7 @@ const CalendarBooking = ({
           {months[currentMonth]} {year}
         </h2>
         <button
-          className={`${theme.buttonSecondary} p-2 rounded-full`}
+          className={` p-2 rounded-full`}
           onClick={nextMonth}
         >
           <ChevronRightIcon className={`${theme.icon} w-5 h-5`} />
@@ -199,7 +199,7 @@ const CalendarBooking = ({
 
       {/* Selected Info */}
       <div className="mt-6 grid grid-cols-2 gap-6 text-center">
-        <div className={`${theme.card} p-4`}>
+        <div className={` ${theme.shadow} p-4`}>
           <h3 className={`${theme.heading} text-sm uppercase tracking-wide`}>
             Check-in
           </h3>
@@ -212,7 +212,7 @@ const CalendarBooking = ({
             </p>
           )}
         </div>
-        <div className={`${theme.card} p-4`}>
+        <div className={` ${theme.shadow} p-4`}>
           <h3 className={`${theme.heading} text-sm uppercase tracking-wide`}>
             Check-out
           </h3>
@@ -231,7 +231,7 @@ const CalendarBooking = ({
               setCheckInPrice(null);
               setCheckOut(null);
             }}
-            className={`${theme.buttonSecondary} px-4 py-2`}
+            className={`px-4 py-2`}
           >
             Clear All
           </button>

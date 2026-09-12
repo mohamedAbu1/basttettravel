@@ -36,7 +36,7 @@ const OurSection = () => {
     <>
       {/* نسخة الموبايل */}
       <section
-        className={`flex lg:hidden flex-col items-center justify-start w-full px-4 py-10 ${theme.background} ${theme.text}`}
+        className={`flex lg:hidden flex-col items-center justify-start w-full px-4 py-10 ${theme.text}`}
       >
         <div className="w-full rounded-2xl overflow-hidden shadow-lg mb-6">
           <Swiper
@@ -119,7 +119,7 @@ const OurSection = () => {
       {/* نسخة الديسكتوب */}
       <section
         id="section-four"
-        className={`hidden lg:flex relative w-full min-h-screen px-4 py-12 flex-col items-center justify-start ${theme.background} ${theme.text}`}
+        className={`hidden lg:flex relative w-full min-h-screen px-4 py-12 flex-col items-center justify-start ${theme.text}`}
       >
         <div className="w-full max-w-screen-xl flex flex-row items-center justify-between gap-10 relative z-10">
           {/* ✅ Slider يسار */}

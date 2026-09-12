@@ -1,13 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { use, useEffect } from "react";
+import { use, useEffect, useState } from "react";
 import { useTrip } from "@/context/TripContext";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
 import { usePurchase } from "@/context/PurchaseContext";
 import { useMessages } from "@/context/MessageContext";
+import { useTranslation } from "react-i18next";
 import Header from "@/components/header/Header";
 import Footer from "@/components/Footer/Footer";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
@@ -31,22 +32,31 @@ const CalendarWidget = dynamic(() => import("./components/CalendarWidget"), { ss
 
 export default function TripPage({ params }) {
   const { id } = use(params);
-  const { trips, fetchTrips, getTripById } = useTrip();
+  const { trips, fetchTrips, getTripById, loadingTrips } = useTrip();
   const { lang } = useLanguage();
   const { theme, themeName } = useTheme();
   const { userData, chatUser, setChatUser } = useAuth();
   const { purchases } = usePurchase();
   const { messages } = useMessages();
+  const { t } = useTranslation("common");
+  const [hasLoadedTrips, setHasLoadedTrips] = useState(false);
 
   useEffect(() => {
-    if (!trips.length) fetchTrips();
+    if (!trips.length) {
+      fetchTrips().finally(() => setHasLoadedTrips(true));
+    } else {
+      setHasLoadedTrips(true);
+    }
   }, [trips.length, fetchTrips]);
 
   const trip = getTripById(id);
+  if (!trip && (!hasLoadedTrips || loadingTrips)) {
+    return <main className="public-page flex min-h-screen items-center justify-center p-8 text-center"><p>{t("loadingTrips")}</p></main>;
+  }
   if (!trip) {
     return (
       <main className="flex min-h-screen items-center justify-center p-8 text-center">
-        <p className={theme.text}>This trip could not be found.</p>
+        <p className={theme.text}>{t("tripNotFound")}</p>
       </main>
     );
   }
@@ -59,7 +69,7 @@ export default function TripPage({ params }) {
   );
 
   return (
-    <main className={"relative min-h-screen " + theme.text}>
+    <main className={"trip-detail-page public-page relative min-h-screen " + theme.text}>
       <Header />
       <EgyptianBackground />
 
@@ -94,9 +104,9 @@ export default function TripPage({ params }) {
           </div>
 
           <aside className="lg:sticky lg:top-24">
-            <div className="mb-3 rounded-2xl border border-[#d4b56f]/30 bg-black/10 px-5 py-4">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#d4b56f]">Plan your experience</p>
-              <p className={"mt-1 text-sm " + theme.subText}>Choose your travelers and preferred dates to see availability.</p>
+            <div className="trip-planner-note mb-3 rounded-2xl border border-[#d4b56f]/30 bg-black/10 px-5 py-4">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#d4b56f]">{t("planExperience")}</p>
+              <p className={"mt-1 text-sm " + theme.subText}>{t("chooseTravelers")}</p>
             </div>
             <CalendarWidget trip={trip} id={id} />
           </aside>

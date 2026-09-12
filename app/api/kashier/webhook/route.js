@@ -1,36 +1,38 @@
-// استورد هنا ملف اتصال قاعدة البيانات الخاص بك
+import crypto from "crypto";
 
 export async function POST(req) {
   try {
-    const body = await req.json();
-    const event = body.event; // نوع الحدث مثل: pay
-    const data = body.data;
+    const rawBody = await req.text();
+    const secret = process.env.KASHIER_WEBHOOK_SECRET || process.env.KASHIER_SECRET_KEY;
+    const providedSignature = req.headers.get("x-kashier-signature");
 
-    // 1. التحقق من التوقيع (Signature) لضمان أن الإشعار قادم فعلياً من Kashier
-    // (اختياري) يمكنك فحص التوقيع المشفّر بالأمر التالي
-    // const calculatedSignature = crypto.createHmac('sha256', secretKey).update(JSON.stringify(body)).digest('hex');
-
-    // 2. معالجة الأحداث
-    if (event === 'pay' || data?.status === 'SUCCESS') {
-      const orderId = data.merchantOrderId;
-      const transactionId = data.transactionId;
-
-      // TODO: قم بتحديث حالة الحجز في قاعدة البيانات (MySQL) إلى "PAID"
-      // await db.query('UPDATE bookings SET status = ?, transaction_id = ? WHERE order_id = ?', ['SUCCESS', transactionId, orderId]);
-
-      console.log(`Payment successful for Order: ${orderId}, transaction: ${transactionId}`);
-    } else if (data?.status === 'FAILED') {
-      const orderId = data.merchantOrderId;
-      
-      // TODO: تحديث حالة الحجز إلى "FAILED"
-      console.log(`Payment failed for Order: ${orderId}`);
+    if (!secret || !providedSignature) {
+      return Response.json({ message: "Webhook signature is required" }, { status: 401 });
     }
 
-    // 3. إرجاع استجابة 200 لكاشير لتأكيد وصول الإشعار
-    return Response.json({ status: 'success' }, { status: 200 });
+    const expectedSignature = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+    const validSignature = providedSignature.length === expectedSignature.length &&
+      crypto.timingSafeEqual(Buffer.from(providedSignature), Buffer.from(expectedSignature));
+    if (!validSignature) {
+      return Response.json({ message: "Invalid webhook signature" }, { status: 401 });
+    }
 
+    const body = JSON.parse(rawBody);
+    const event = body.event;
+    const data = body.data || {};
+
+    if (event === "pay" || data.status === "SUCCESS") {
+      console.info("Verified payment webhook", {
+        orderId: data.merchantOrderId,
+        transactionId: data.transactionId,
+      });
+    } else if (data.status === "FAILED") {
+      console.info("Verified failed payment webhook", { orderId: data.merchantOrderId });
+    }
+
+    return Response.json({ status: "success" }, { status: 200 });
   } catch (error) {
-    console.error('Webhook Error:', error);
-    return Response.json({ message: 'Webhook processing failed' }, { status: 500 });
+    console.error("Webhook processing failed", error.message);
+    return Response.json({ message: "Webhook processing failed" }, { status: 500 });
   }
 }

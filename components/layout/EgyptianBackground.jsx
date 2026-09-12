@@ -23,6 +23,7 @@ export default function EgyptianBackground() {
       opacity: 0.1 + Math.random() * 0.4,
       rotate: Math.random() * 360,
       delay: Math.random() * 5,
+      duration: 6 + Math.random() * 4,
     }));
     setItems(generated);
   }, []);
@@ -35,7 +36,7 @@ export default function EgyptianBackground() {
           initial={{ y: 0, opacity: 0 }}
           animate={{ y: [0, -10, 0], opacity: item.opacity }}
           transition={{
-            duration: 6 + Math.random() * 4,
+            duration: item.duration,
             repeat: Infinity,
             delay: item.delay,
             ease: "easeInOut",

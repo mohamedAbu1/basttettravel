@@ -25,10 +25,10 @@ export default function TripSchedule({
 
   const customInputStyle = `ml-2 px-4 py-2 rounded-lg shadow-md cursor-pointer 
                             focus:outline-none focus:ring-2 transition-all duration-300 
-                            ${theme.card} ${theme.text} ${theme.border}`;
+                            ${theme.text} ${theme.border}`;
 
   return (
-    <div className={`mb-6 p-6 rounded-xl shadow-lg ${theme.card}`}>
+    <div className={`mb-6 p-6 rounded-xl shadow-lg `}>
       <h3 className={`text-xl font-bold mb-4 ${theme.title}`}>{t("tripSchedule")}</h3>
 
       {/* ✅ Checkbox */}

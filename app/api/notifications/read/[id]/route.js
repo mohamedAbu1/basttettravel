@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth/admin";
 
 // ✅ تحديث حالة الإشعار إلى مقروء
 export async function PUT(req, { params }) {
   try {
+    const authorizationError = requireAdmin(req);
+    if (authorizationError) return authorizationError;
     const db = await connectDB();
     const { id } = params; // نأخذ id من الرابط
 

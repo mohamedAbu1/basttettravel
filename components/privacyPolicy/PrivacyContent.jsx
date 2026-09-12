@@ -12,7 +12,7 @@ export default function PrivacyContent({ theme }) {
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1.5 }}
-      className={`${theme.card} shadow-lg p-10 mt-[-4rem] relative z-10 max-w-5xl mx-auto`}
+      className={`policy-content ${theme.card} shadow-lg p-10 mt-[-4rem] relative z-10 max-w-5xl mx-auto`}
     >
       <article
         className={`prose max-w-none prose-lg leading-relaxed ${theme.text} flex flex-col gap-3`}

@@ -87,7 +87,7 @@ export default function TripHeader({ trip, lang }) {
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className={theme.card + " overflow-hidden rounded-3xl border border-[#d4b56f]/30 shadow-2xl " + theme.text}
+      className={ " overflow-hidden rounded-3xl border border-[#d4b56f]/30 shadow-2xl " + theme.text}
     >
       <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
         <div className="relative min-h-[290px] md:min-h-[440px]">

@@ -49,13 +49,19 @@ export async function POST(request) {
     console.log("🔵 [API REGISTER] الاتصال بقاعدة البيانات ناجح");
 
     const body = await request.json();
-    console.log("🔵 [API REGISTER] البيانات المستلمة:", body);
 
     const { name, email, password, gender } = body;
+    if (typeof name !== "string" || name.trim().length < 2 || name.length > 120 ||
+        typeof email !== "string" || !/^\S+@\S+\.\S+$/.test(email) ||
+        typeof password !== "string" || password.length < 8 || password.length > 128) {
+      return NextResponse.json({ error: "Invalid registration data" }, { status: 400 });
+    }
+    if (!process.env.JWT_SECRET) {
+      return NextResponse.json({ error: "Authentication is not configured" }, { status: 500 });
+    }
 
     // ✅ تحقق من البريد إذا كان موجود مسبقًا
     const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-    console.log("🔵 [API REGISTER] نتيجة البحث عن البريد:", existing);
 
     if (existing.length > 0) {
       console.warn("⚠️ [API REGISTER] البريد مستخدم بالفعل");
@@ -80,7 +86,6 @@ export async function POST(request) {
     // ✅ جلب بيانات المستخدم الجديد
     const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
     const newUser = rows[0];
-    console.log("🔵 [API REGISTER] المستخدم الجديد:", newUser);
 
     // ✅ إنشاء JWT token
     const accessToken = jwt.sign(
@@ -88,7 +93,6 @@ export async function POST(request) {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    console.log("🔵 [API REGISTER] التوكين تم إنشاؤه");
 
     const response = NextResponse.json(
       {
@@ -107,7 +111,7 @@ export async function POST(request) {
 
     return setAuthCookies(response, accessToken, null);
   } catch (e) {
-    console.error("❌ [API REGISTER] خطأ داخلي:", e);
+    console.error("Registration failed:", e.message);
     return NextResponse.json({ error: "خطأ داخلي" }, { status: 500 });
   }
 }

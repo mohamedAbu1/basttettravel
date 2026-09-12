@@ -27,7 +27,7 @@ export default function ReviewForm({
           type="button"
           style={{ cursor: "pointer" }}
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          className={`px-3 py-2 rounded-lg transition ${theme.buttonSecondary}`}
+          className={`px-3 py-2 rounded-lg transition`}
         >
           😀
         </button>

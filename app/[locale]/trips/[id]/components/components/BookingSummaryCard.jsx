@@ -176,7 +176,7 @@ let EGP = total * 49.85
   };
 
   return (
-    <div className={`${theme.card} p-6`}>
+    <div className={` p-6`}>
       <h2 className={`${theme.title} mb-4`}>{t("bookingSummary")}</h2>
 
       <div className={`${theme.border} p-4 flex justify-between`}>
@@ -203,7 +203,7 @@ let EGP = total * 49.85
           disabled={loading}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`${theme.buttonPrimary} w-full flex items-center justify-center gap-2 ${
+          className={`hero-primary-action w-full flex items-center justify-center gap-2 ${
             loading ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >

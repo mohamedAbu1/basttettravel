@@ -9,10 +9,11 @@ import DividerWithIcon from "../layout/DividerWithIcon";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import EgyptianBackground from "../layout/EgyptianBackground";
+import { FaArrowRight } from "react-icons/fa";
 
 const encodeData = (obj) => btoa(JSON.stringify(obj));
 
-function CategoryCard({ cat, theme, language }) {
+function CategoryCard({ cat, theme, language, exploreLabel }) {
   const [imgIndex, setImgIndex] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
@@ -53,7 +54,13 @@ function CategoryCard({ cat, theme, language }) {
   return (
     <div
       onClick={handleClick}
-      className={`relative overflow-hidden group cursor-pointer h-[320px] transition-all duration-500 hover:scale-[1.06] hover:shadow-2xl ${theme.card}`}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") handleClick();
+      }}
+      role="button"
+      tabIndex={0}
+      aria-label={`Explore ${displayName}`}
+      className={`category-card relative overflow-hidden group cursor-pointer h-[320px] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${theme.card}`}
       style={{ border: `1px solid ${theme.logoBorder}` }}
     >
       <AnimatePresence mode="sync">
@@ -80,21 +87,19 @@ function CategoryCard({ cat, theme, language }) {
         </motion.div>
       </AnimatePresence>
 
-      <div
-        className={`absolute inset-0 ${theme.overlay} flex items-end justify-center pb-4`}
-      >
-        <p
-          className={`trips-text text-lg font-bold tracking-wide drop-shadow-lg ${theme.title}`}
-        >
-          {displayName}
-        </p>
+      <div className="category-card-overlay">
+        <div className="category-card-copy">
+          <span className="category-card-kicker">{exploreLabel}</span>
+          <p className="category-card-title">{displayName}</p>
+          <FaArrowRight className="category-card-arrow" aria-hidden="true" />
+        </div>
       </div>
     </div>
   );
 }
 
 // نسخة الموبايل مع سلايدر تلقائي
-const MobileCategories = ({ categories, theme, language }) => {
+const MobileCategories = ({ categories, theme, language, exploreLabel }) => {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -110,6 +115,7 @@ const MobileCategories = ({ categories, theme, language }) => {
           cat={categories[index]}
           theme={theme}
           language={language}
+          exploreLabel={exploreLabel}
         />
       </div>
     </div>
@@ -176,7 +182,7 @@ const CategoriesSection = () => {
     <>
       {/* نسخة الموبايل */}
       <section
-        className={`flex lg:hidden py-12 px-4 flex-col w-full mx-auto ${theme.background}`}
+        className={`flex lg:hidden py-12 px-4 flex-col w-full mx-auto `}
       >
         <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
           {symbols.map((sym, i) => (
@@ -213,12 +219,13 @@ const CategoriesSection = () => {
           categories={categories}
           theme={theme}
           language={normalizedLang}
+          exploreLabel={t("Explore")}
         />
       </section>
 
       {/* نسخة الديسكتوب */}
       <section
-        className={`hidden lg:flex flex-col py-24 px-6 w-full mx-auto relative transition-colors duration-500 ${theme.background}`}
+        className={`hidden lg:flex flex-col py-24 px-6 w-full mx-auto relative transition-colors duration-500`}
       >
         {/* خلفية الرموز */}
         <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
@@ -295,6 +302,7 @@ const CategoriesSection = () => {
                   theme={theme}
                   themeName={themeName}
                   language={normalizedLang}
+                  exploreLabel={t("Explore")}
                 />
               </div>
             ))}

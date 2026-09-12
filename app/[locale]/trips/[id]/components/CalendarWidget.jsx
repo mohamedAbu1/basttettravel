@@ -42,7 +42,7 @@ const BookingCalendar = ({ trip,id }) => {
   };
 
   return (
-    <div className={`${theme.card} w-full h-fit rounded-2xl border border-[#d4b56f]/30 p-5 shadow-xl font-sans`}>
+    <div className={` w-full h-fit rounded-2xl border border-[#d4b56f]/30 p-5 shadow-xl font-sans`}>
       {/* Participants Section */}
       <h2 className={`${theme.title} mb-4`}>{t("participants")}</h2>
 
@@ -57,7 +57,7 @@ const BookingCalendar = ({ trip,id }) => {
             <button
               aria-label="Decrease adults"
               onClick={() => setParticipants(Math.max(0, participants - 1))}
-              className={`${theme.buttonSecondary}`}
+              className={`hero-secondary-action2`}
               disabled={participants === 0}
             >
               -
@@ -66,7 +66,7 @@ const BookingCalendar = ({ trip,id }) => {
             <button
               aria-label="Increase adults"
               onClick={() => setParticipants(participants + 1)}
-              className={`${theme.buttonPrimary}`}
+              className={`hero-primary-action2`}
             >
               +
             </button>
@@ -83,7 +83,7 @@ const BookingCalendar = ({ trip,id }) => {
             <button
               aria-label="Decrease children"
               onClick={() => setChildrenCount(Math.max(0, childrenCount - 1))}
-              className={`${theme.buttonSecondary}`}
+              className={`hero-secondary-action2`}
               disabled={childrenCount === 0}
             >
               -
@@ -92,7 +92,7 @@ const BookingCalendar = ({ trip,id }) => {
             <button
               aria-label="Increase children"
               onClick={() => setChildrenCount(childrenCount + 1)}
-              className={`${theme.buttonPrimary}`}
+              className={`hero-primary-action2`}
             >
               +
             </button>

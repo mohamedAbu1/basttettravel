@@ -60,7 +60,7 @@ const Footer = () => {
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={staggerContainer}
-      className={`flex flex-col items-center justify-center py-12 px-6 w-full relative overflow-hidden transition-colors duration-500 ${theme.background} ${theme.text}`}
+      className={`site-footer flex flex-col items-center justify-center py-12 px-6 w-full relative overflow-hidden transition-colors duration-500 ${theme.background} ${theme.text}`}
     >
       {/* خلفية الرموز الفرعونية */}
       <div className="absolute inset-0 pointer-events-none -z-10">

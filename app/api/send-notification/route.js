@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth/admin";
 
 export async function POST(req) {
   try {
+    const authorizationError = requireAdmin(req);
+    if (authorizationError) return authorizationError;
     const body = await req.json();
     const { expoPushToken, title, bodyText } = body;
 
@@ -13,7 +16,7 @@ export async function POST(req) {
       data: { screen: "chat" },
     };
 
-    const response = await fetch("https://exp.host/--/api/v2/push/send", {
+    await fetch("https://exp.host/--/api/v2/push/send", {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -21,9 +24,6 @@ export async function POST(req) {
       },
       body: JSON.stringify(message),
     });
-    const result = await response.json();
-    console.log("Expo Response:", result);
-
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(

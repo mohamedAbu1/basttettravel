@@ -14,7 +14,7 @@ export default function AccessibilityInfo() {
 
   return (
     <div
-      className={`flex flex-col gap-6 p-8 rounded-2xl transition ${theme.card} ${theme.shadow} ${theme.text}`}
+      className={`flex flex-col gap-6 p-8 rounded-2xl transition ${theme.shadow} ${theme.text}`}
     >
       <EgyptianBackground />
 
@@ -32,7 +32,7 @@ export default function AccessibilityInfo() {
       <div className="grid grid-rows-3 gap-4">
         {/* بطاقة الوصول */}
         <div
-          className={`flex flex-col items-center gap-2 p-4 rounded-xl hover:scale-105 transition transform ${theme.card} ${theme.shadow}`}
+          className={`flex flex-col items-center gap-2 p-4 rounded-xl hover:scale-105 transition transform ${theme.shadow}`}
         >
           <motion.div
             animate={{ x: [0, 10, 0] }}
@@ -47,7 +47,7 @@ export default function AccessibilityInfo() {
 
         {/* بطاقة الدعم */}
         <div
-          className={`flex flex-col items-center gap-2 p-4 rounded-xl hover:scale-105 transition transform ${theme.card} ${theme.shadow}`}
+          className={`flex flex-col items-center gap-2 p-4 rounded-xl hover:scale-105 transition transform ${theme.shadow}`}
         >
           <motion.div
             animate={{ scale: [1, 1.2, 1] }}
@@ -62,7 +62,7 @@ export default function AccessibilityInfo() {
 
         {/* بطاقة الرعاية */}
         <div
-          className={`flex flex-col items-center gap-2 p-4 rounded-xl hover:scale-105 transition transform ${theme.card} ${theme.shadow}`}
+          className={`flex flex-col items-center gap-2 p-4 rounded-xl hover:scale-105 transition transform ${theme.shadow}`}
         >
           <motion.div
             animate={{ scale: [1, 1.3, 1] }}

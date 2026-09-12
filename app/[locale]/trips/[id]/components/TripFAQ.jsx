@@ -18,7 +18,7 @@ export default function TripFAQ() {
   const content = questions[i18n.language?.split("-")[0]] || questions.en;
 
   return (
-    <section className={theme.card + " rounded-2xl border border-[#d4b56f]/25 p-6 " + theme.text} aria-labelledby="trip-faq-title">
+    <section className={ " rounded-2xl border border-[#d4b56f]/25 p-6 " + theme.text} aria-labelledby="trip-faq-title">
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b56f]">{content.eyebrow}</p>
       <h2 id="trip-faq-title" className="mt-2 text-2xl font-bold">{content.title}</h2>
       <div className="mt-5 divide-y divide-[#d4b56f]/15">

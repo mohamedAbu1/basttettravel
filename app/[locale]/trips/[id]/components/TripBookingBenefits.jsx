@@ -19,7 +19,7 @@ export default function TripBookingBenefits() {
   const content = benefits[i18n.language?.split("-")[0]] || benefits.en;
 
   return (
-    <section className={theme.card + " rounded-2xl border border-[#d4b56f]/25 p-6 " + theme.text} aria-labelledby="booking-benefits-title">
+    <section className={ " rounded-2xl border border-[#d4b56f]/25 p-6 " + theme.text} aria-labelledby="booking-benefits-title">
       <div className="mb-5">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b56f]">{content.eyebrow}</p>
         <h2 id="booking-benefits-title" className="mt-2 text-2xl font-bold">{content.title}</h2>

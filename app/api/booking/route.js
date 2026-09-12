@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
+import { requireUser } from "@/lib/auth/admin";
 
 export async function POST(req) {
   try {
+    const auth = requireUser(req);
+    if (auth.response) return auth.response;
     const body = await req.json();
+    if (!body.trip_id || !body.checkIn || !body.checkOut) {
+      return NextResponse.json({ success: false, error: "Missing booking data" }, { status: 400 });
+    }
     const db = await connectDB();
 
     const bookingId = uuidv4();
@@ -20,7 +26,7 @@ export async function POST(req) {
         body.checkIn,
         body.checkOut,
         "pending", // الحالة الافتراضية
-        "web"      // المنصة
+        body.platform || "web"
       ]
     );
 

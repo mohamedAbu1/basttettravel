@@ -46,7 +46,7 @@ export default function Home() {
     <>
       <main
         id="main-content"
-        className={`
+        className={`home-page public-page
         w-full
         flex
         flex-col

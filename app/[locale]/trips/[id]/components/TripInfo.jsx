@@ -104,7 +104,7 @@ export default function TripInfo({ trip, lang }) {
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`h-fit p-6 rounded-xl transition ${theme.card}`}
+      className={`h-fit p-6 rounded-xl transition `}
       style={{ boxShadow: theme.shadow }}
     >
       <motion.h2 className={`text-2xl mb-4 border-b pb-2 ${theme.title}`}>

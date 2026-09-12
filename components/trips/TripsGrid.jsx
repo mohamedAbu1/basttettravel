@@ -14,6 +14,16 @@ import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+
+function localizedName(value, lang, fallback) {
+  if (!value) return fallback;
+  const parsed = typeof value === "string" ? (() => {
+    try { return JSON.parse(value); } catch { return value; }
+  })() : value;
+  if (typeof parsed === "object") return parsed?.[lang] || parsed?.en || Object.values(parsed)[0] || fallback;
+  return String(parsed);
+}
+
 export default function TripsGrid({ trips, cardStyle = "vertical" }) {
   const router = useRouter();
   const { userData } = useAuth();
@@ -97,7 +107,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               scale: 1.02,
               boxShadow: theme.shadow,
             }}
-            className={`flex ${cardStyle === "vertical" ? "w-full flex-col" : "flex-row"} bg-white dark:bg-transparent rounded-xl shadow-lg overflow-hidden`}
+            className={`trip-list-card flex ${cardStyle === "vertical" ? "w-full flex-col" : "flex-row"} rounded-xl overflow-hidden`}
           >
            
 
@@ -128,54 +138,30 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               </Swiper>
             </div>
               {/* قسم المعلومات */}
-            <div className={`${cardStyle === "vertical" ? "w-full" : "lg:w-1/2"} w-full p-6 flex flex-col gap-4`}>
-              <h3 className="text-xl font-bold text-[#C2A878]">
+            <div className={`${cardStyle === "vertical" ? "w-full" : "lg:w-1/2"} trip-list-copy w-full p-6 flex flex-col gap-4`}>
+              <h3 className="trip-list-title text-xl font-bold">
                 {trip.title?.[lang] || trip.title?.en || "Untitled"}
               </h3>
 
-              <p className="text-gray-600 dark:text-gray-500 text-sm">
+              <p className="trip-list-meta text-sm">
                 {Array.isArray(trip.cities) && trip.cities.length > 0
                   ? trip.cities
                       .filter(Boolean)
-                      .map((c) => {
-                        try {
-                          const parsed = JSON.parse(c.name);
-                          return (
-                            parsed?.[lang] ||
-                            parsed?.["en"] ||
-                            Object.values(parsed)[0] ||
-                            "Unknown City"
-                          );
-                        } catch {
-                          return c.name || "Unknown City";
-                        }
-                      })
+                      .map((c) => localizedName(c.name, lang, "Unknown City"))
                       .join(", ")
                   : "Unknown City"}
               </p>
 
-              <p className="text-gray-600 dark:text-gray-500 text-sm">
+              <p className="trip-list-meta text-sm">
                 {Array.isArray(trip.categories) && trip.categories.length > 0
                   ? trip.categories
                       .filter(Boolean)
-                      .map((cat) => {
-                        try {
-                          const parsed = JSON.parse(cat.name);
-                          return (
-                            parsed?.[lang] ||
-                            parsed?.["en"] ||
-                            Object.values(parsed)[0] ||
-                            "Unknown Category"
-                          );
-                        } catch {
-                          return cat.name || "Unknown Category";
-                        }
-                      })
+                      .map((cat) => localizedName(cat.name, lang, "Unknown Category"))
                       .join(", ")
                   : t("NoCategory")}
               </p>
 
-              <p className="text-lg font-semibold flex items-center gap-2">
+              <p className="trip-list-price text-lg font-semibold flex items-center gap-2">
                 <CurrencyIcon style={{ color: currencyColor }} />
                 {displayedPrice} {currency}
               </p>
@@ -196,8 +182,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
 
               <button
                 onClick={() => router.push("/" + lang + "/trips/" + trip.id)}
-                className="mt-3 px-5 py-2 rounded-lg font-bold transition cursor-pointer 
-          bg-[#C2A878] text-white hover:bg-[#a58a60] shadow-md"
+                className="site-button site-button-primary trip-list-action mt-3 px-5 py-2 font-bold transition cursor-pointer shadow-md"
               >
                 {hasPurchased ? t("Tripdetails") : t("btn")}
               </button>

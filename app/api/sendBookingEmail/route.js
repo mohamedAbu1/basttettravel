@@ -1,15 +1,17 @@
 import sgMail from "@sendgrid/mail";
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 export async function sendBookingEmail(user, bookingData) {
   const msg = {
     to: user.email,
-    from: "admin@soldelnilo.com", // لازم يكون verified sender في SendGrid
-    cc: "admin@soldelnilo.com",
-    subject: "Your Trip Booking Confirmation",
+    from: process.env.SENDGRID_FROM_EMAIL || "BasttetTravel@outlook.com",
+    cc: process.env.SENDGRID_ADMIN_EMAIL || "BasttetTravel@outlook.com",
+    subject: "Your Basttet Travel booking confirmation",
     text: `
-Dear ${user?.user_metadata?.name},
+Dear ${user?.name || user?.user_metadata?.name || "Traveler"},
 
 Your booking has been confirmed successfully.
 
@@ -24,12 +26,12 @@ Trip Details:
 - Pets: ${bookingData.hasPets ? bookingData.petTypes.join(", ") : "None"}
 - Guide Languages: ${bookingData.selectedLanguages.join(", ") || "None"}
 
-For any assistance, please contact our admin:
-- Phone: +20 100 123 4567
-- Email: admin@soldelnilo.com
+For any assistance, please contact Basttet Travel:
+- Phone: +20 110 050 7802
+- Email: BasttetTravel@outlook.com
 
 Best regards,
-SolDelNilo Team
+Basttet Travel Team
     `,
   };
 

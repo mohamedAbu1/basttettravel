@@ -43,18 +43,18 @@ function AnimatedStat({ stat, themeName }) {
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
-      className={`rounded-2xl p-6 text-center border text-gradient`}
+      className="about-stat-card"
     >
       <motion.div
         animate={controls}
         initial={{ count: 0 }}
         onUpdate={(latest) => setCount(Math.floor(latest.count))}
-        className={`about-p text-3xl font-extrabold text-gradient`} 
+        className="about-stat-value"
       >
         {count}+
       </motion.div>
       <div
-        className={`text-gradient`}
+        className="about-stat-label"
       >
         {stat.label}
       </div>

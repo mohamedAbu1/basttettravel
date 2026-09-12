@@ -9,6 +9,7 @@ export function middleware(req) {
   if (
     url.pathname.startsWith("/_next") ||
     url.pathname.startsWith("/favicon.ico") ||
+    url.pathname.startsWith("/brand") ||
     url.pathname === "/sitemap.xml" ||
     url.pathname === "/robots.txt" ||
     url.pathname.startsWith("/api") ||
@@ -46,6 +47,9 @@ export function middleware(req) {
     return NextResponse.redirect(url);
   }
 
-  // لو اللغة موجودة بالفعل → لا تعمل أي إعادة توجيه
-  return NextResponse.next();
+  // Pass the resolved locale to the root layout so the initial HTML has the
+  // correct language and direction before hydration.
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-locale", segments[0]);
+  return NextResponse.next({ request: { headers: requestHeaders } });
 }

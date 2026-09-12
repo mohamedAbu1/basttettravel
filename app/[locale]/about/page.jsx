@@ -24,7 +24,7 @@ export default function AboutPage() {
   const { messages } = useMessages();
   return (
     <>
-      <main className="relative flex flex-col min-h-screen justify-center items-center ">
+      <main className="about-page relative flex flex-col min-h-screen justify-center items-center ">
         <Header />
         <EgyptianBackground />
 

@@ -57,7 +57,7 @@ export default function TripIncludes({ trip, lang }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`w-full p-6 rounded-2xl border border-[#d4b56f]/20 transition ${theme.card} ${theme.shadow} ${theme.text}`}
+      className={`w-full p-6 rounded-2xl border border-[#d4b56f]/20 transition ${theme.shadow} ${theme.text}`}
     >
       {/* العنوان */}
       <motion.h2
@@ -85,7 +85,7 @@ export default function TripIncludes({ trip, lang }) {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
               whileHover={{ scale: 1.05 }}
-              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${theme.card}`}
+              className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${theme.shadow}`}
             >
               <motion.div
                 whileHover={{ scale: 1.3, rotate: 10 }}

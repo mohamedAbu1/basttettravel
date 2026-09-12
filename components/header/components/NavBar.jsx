@@ -30,7 +30,7 @@ export default function NavBar({ scrolled }) {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
       }}
-      className="hidden lg:flex items-center gap-10 font-medium text-lg"
+      className="site-nav hidden lg:flex items-center gap-2 font-medium text-lg"
     >
       {navItems.map((item) => {
         let path;
@@ -67,27 +67,20 @@ export default function NavBar({ scrolled }) {
           >
             <Link
               href={`/${langPrefix}${path}`}
-              className={`relative group px-4 py-2 rounded-lg transition-all duration-300 ${
+              className={`site-nav-link relative group px-4 py-2 rounded-lg transition-all duration-300 ${
                 isActive
-                  ? `bg-gradient-to-r from-[${theme.logoGradientFrom}] to-[${theme.logoGradientTo}] text-white font-bold shadow-md scale-105 border-b-4 border-[${theme.logoBorder}]`
+                  ? "site-nav-link-active"
                   : themeName === "dark"
-                    ? `${theme.text} hover:${theme.icon}`
+                    ? "site-nav-link-dark"
                     : scrolled
-                      ? `${theme.text} hover:${theme.heading}`
-                      : `${theme.subText} hover:${theme.iconHover}`
+                      ? "site-nav-link-scrolled"
+                      : "site-nav-link-top"
               }`}
             >
               <span>{t(item)}</span>
               <span
-                className={`absolute left-0 -bottom-1 h-[3px] ${theme.stone} rounded-full transition-all duration-300 ${
-                  isActive ? "w-full" : "w-0 group-hover:w-full"
-                }`}
+                className={`absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-0.5 bg-[var(--ui-gold)] rounded-full transition-all duration-300 ${isActive ? "w-3/5" : "w-0 group-hover:w-3/5"}`}
               />
-              {isActive && (
-                <span
-                  className={`absolute -top-2 -right-2 w-3 h-3 ${theme.iconHover} rounded-full shadow-md animate-pulse`}
-                ></span>
-              )}
             </Link>
           </motion.div>
         );

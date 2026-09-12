@@ -34,16 +34,14 @@ export default function Header() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled
-          ? `${theme.background} ${theme.border} ${theme.shadow}`
-          : "bg-transparent"
+      className={`site-header fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
+        scrolled ? "site-header-scrolled" : "site-header-top"
       }`}
     >
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      <div className="max-w-8xl container mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="site-header-inner max-w-8xl container mx-auto px-6 py-3 flex items-center justify-between">
         {/* شعار الموقع */}
         <Logo scrolled={scrolled} />
 
@@ -54,12 +52,10 @@ export default function Header() {
         <RightBar scrolled={scrolled} />
 
         {/* زر تسجيل الدخول/الخروج */}
-        <motion.div whileHover={{ scale: 1.05 }} className="hidden lg:flex">
+        <motion.div whileHover={{ scale: 1.03 }} className="hidden lg:flex">
           <Button
             onClick={userData ? () => signOut() : () => handleLoginOpen()}
-            className={`transition-all font-semibold tracking-wide uppercase shadow-md flex items-center gap-2 px-6 py-3 rounded-xl ${
-              userData ? theme.buttonSecondary : theme.buttonPrimary
-            }`}
+            className="header-auth-button"
           >
             {userData ? (
               <>

@@ -81,7 +81,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <main className="relative flex flex-col min-h-screen justify-center items-center mt-7">
+      <main className="contact-page public-page relative flex flex-col min-h-screen justify-center items-center mt-7">
         <Header />
         {/* خلفية الرموز الفرعونية */}
         <div className="absolute inset-0 pointer-events-none">
@@ -103,7 +103,7 @@ export default function ContactPage() {
         </div>
 
         {/* المحتوى */}
-        <section id="main-content" className="relative z-10 pt-20 px-6 mt-6">
+        <section id="main-content" className="contact-content relative z-10 pt-20 px-6 mt-6">
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <ContactInfoCard themeName={themeName} t={t} />
 
