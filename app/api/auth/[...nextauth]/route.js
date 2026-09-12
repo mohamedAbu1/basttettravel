@@ -1,8 +1,13 @@
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuthModule from "next-auth";
+import GoogleProviderModule from "next-auth/providers/google";
 import { connectDB } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs"; // ✅ مكتبة التشفير
+
+// next-auth/providers are CommonJS modules. Normalize both ESM and CJS
+// shapes so the App Router build can invoke them correctly on all hosts.
+const NextAuth = NextAuthModule.default ?? NextAuthModule;
+const GoogleProvider = GoogleProviderModule.default ?? GoogleProviderModule;
 
 const pool = await connectDB();
 
