@@ -46,7 +46,7 @@ const Content = () => {
           className={theme.title}
           style={{ fontSize: "4.4rem", opacity: "0" }}
         >
-          WasetTravel
+          Basttet Travel
         </h1>
 
         <p

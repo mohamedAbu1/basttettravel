@@ -57,7 +57,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
       <EgyptianBackground />
 
       <h2 className="text-2xl font-bold mb-6 flex flex-row items-center justify-between">
-        <span>WasetTravel</span> <ThemeToggle />
+        <span>Basttet Travel</span> <ThemeToggle />
       </h2>
 
       <nav className="flex flex-col gap-3">

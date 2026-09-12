@@ -19,7 +19,20 @@ const BookingSummaryCard = ({
   const { userData } = useAuth();
   const { handleLoginOpen } = useData();
   const [loading, setLoading] = useState(false);
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
+  const labels = {
+    en: { participants: "Participants", children: "Children", pay: "Continue to payment", processing: "Preparing payment..." },
+    de: { participants: "Teilnehmer", children: "Kinder", pay: "Weiter zur Zahlung", processing: "Zahlung wird vorbereitet..." },
+    es: { participants: "Participantes", children: "Niños", pay: "Continuar al pago", processing: "Preparando el pago..." },
+    fr: { participants: "Participants", children: "Enfants", pay: "Continuer vers le paiement", processing: "Préparation du paiement..." },
+    it: { participants: "Partecipanti", children: "Bambini", pay: "Continua al pagamento", processing: "Preparazione del pagamento..." },
+    zh: { participants: "参与者", children: "儿童", pay: "继续付款", processing: "正在准备付款..." },
+  }[i18n.language?.split("-")[0]] || {
+    participants: "Participants",
+    children: "Children",
+    pay: "Continue to payment",
+    processing: "Preparing payment...",
+  };
 
   const childrenPrice = (checkInPrice * childrenCount) / 2;
   let total = checkInPrice * participants + childrenPrice;
@@ -172,8 +185,8 @@ let EGP = total * 49.85
             {tourName ||
               "Private Cairo Tour – Giza Pyramids, Sphinx & Grand Egyptian Museum (GEM)"}
           </p>
-          <p className={theme.subText}>Participants: {participants || 0}</p>
-          <p className={theme.subText}>Children: {childrenCount || 0}</p>
+          <p className={theme.subText}>{labels.participants}: {participants || 0}</p>
+          <p className={theme.subText}>{labels.children}: {childrenCount || 0}</p>
         </div>
 
         <div>
@@ -195,7 +208,7 @@ let EGP = total * 49.85
           }`}
         >
           <span className="text-xl">🛒</span>
-          <span>{loading ? "Processing..." : "Pay Trip"}</span>
+          <span>{loading ? labels.processing : labels.pay}</span>
         </motion.button>
       </div>
     </div>

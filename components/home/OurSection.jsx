@@ -52,7 +52,7 @@ const OurSection = () => {
                 <div className="w-full h-full relative">
                   <Image
                     src={imgSrc || "/fallback.jpg"}
-                    alt={`WasetTravel Slide ${index + 1}`}
+                    alt={`Basttet Travel destination image ${index + 1}`}
                     fill
                     className="object-cover rounded-lg"
                     loading="lazy"
@@ -145,7 +145,7 @@ const OurSection = () => {
                   <div className="w-full h-full relative">
                     <Image
                       src={imgSrc || "/fallback.jpg"}
-                      alt={`WasetTravel Slide ${index + 1}`}
+                      alt={`Basttet Travel destination image ${index + 1}`}
                       fill
                       className="object-cover rounded-lg"
                       loading="lazy"
@@ -239,7 +239,7 @@ const OurSection = () => {
                   <div className="w-full h-full relative">
                     <Image
                       src={imgSrc || "/fallback.jpg"}
-                      alt={`WasetTravel Slide ${index + 1}`}
+                      alt={`Basttet Travel destination image ${index + 1}`}
                       fill
                       className="object-cover rounded-lg"
                       loading="lazy"

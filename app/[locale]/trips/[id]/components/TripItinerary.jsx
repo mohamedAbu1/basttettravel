@@ -13,12 +13,12 @@ function formatTime(time) {
 }
 
 const translations = {
-  en: { title: "Itinerary" },
-  de: { title: "Reiseplan" },
-  it: { title: "Itinerario" },
-  es: { title: "Itinerario" },
-  zh: { title: "行程" },
-  fr: { title: "Itinéraire" },
+  en: { title: "Itinerary", day: "Day", empty: "The itinerary will be confirmed with your travel specialist." },
+  de: { title: "Reiseplan", day: "Tag", empty: "Der Reiseplan wird mit Ihrem Reiseberater bestätigt." },
+  it: { title: "Itinerario", day: "Giorno", empty: "L'itinerario sarà confermato con il tuo consulente di viaggio." },
+  es: { title: "Itinerario", day: "Día", empty: "El itinerario se confirmará con su especialista de viajes." },
+  zh: { title: "行程", day: "第", empty: "行程将与您的旅行顾问确认。" },
+  fr: { title: "Itinéraire", day: "Jour", empty: "L'itinéraire sera confirmé avec votre conseiller de voyage." },
 };
 
 export default function TripItinerary({ trip, lang }) {
@@ -57,6 +57,8 @@ let tripDays = [];
 try {
   if (Array.isArray(trip.days)) {
     tripDays = trip.days;
+  } else if (Array.isArray(trip.itinerary)) {
+    tripDays = trip.itinerary;
   } else if (typeof trip.days === "string") {
     const parsed = JSON.parse(trip.days);
     tripDays = Array.isArray(parsed) ? parsed : [parsed];
@@ -120,7 +122,7 @@ const dayGroups = chunkDays(tripDays || []);
             className={`rounded-lg p-4 transition ${theme.card} ${theme.shadow}`}
           >
             <h3 className={`text-lg font-semibold mb-3 ${theme.title}`}>
-              Day {day.day_number}
+              {t.day} {day.day_number}
             </h3>
             <ul className="space-y-3">
               {day.activities?.map((act, actIdx) => (
@@ -141,6 +143,10 @@ const dayGroups = chunkDays(tripDays || []);
           </motion.div>
         ))}
       </motion.div>
+
+      {!tripDays.length && (
+        <p className={"py-6 text-center " + theme.subText}>{t.empty}</p>
+      )}
 
       {/* ✅ Pagination */}
       <div className="flex justify-center mt-6 gap-2">

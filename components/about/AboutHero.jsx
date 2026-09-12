@@ -27,7 +27,7 @@ export default function AboutHero() {
                 ? "/Aswan/pexels-radwa-magdy-1718930-28144568.webp"
                 : "/Nile_Cruise/5116-900x600.webp"
             }
-            alt="WasetTravel Luxury Experience"
+            alt="Basttet Travel luxury Egypt experience"
             fill
             className="object-cover scale-x-[-1]"
           />
@@ -78,7 +78,7 @@ export default function AboutHero() {
                 ? "/Aswan/pexels-radwa-magdy-1718930-28144568.webp"
                 : "/Nile_Cruise/5116-900x600.webp"
             }
-            alt="WasetTravel Luxury Experience"
+            alt="Basttet Travel luxury Egypt experience"
             fill
             className="object-cover"
           />

@@ -10,7 +10,20 @@ const BookingCalendar = ({ trip,id }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const prise = trip.solo_price;
   const { theme } = useTheme();
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
+  const labels = {
+    en: { addPeople: "Add travelers to view available dates", addPeopleHint: "Select at least one adult or child to continue booking.", adults: "Adults", children: "Children" },
+    de: { addPeople: "Fügen Sie Reisende hinzu, um verfügbare Termine zu sehen", addPeopleHint: "Wählen Sie mindestens einen Erwachsenen oder ein Kind aus.", adults: "Erwachsene", children: "Kinder" },
+    es: { addPeople: "Añada viajeros para ver las fechas disponibles", addPeopleHint: "Seleccione al menos un adulto o niño para continuar.", adults: "Adultos", children: "Niños" },
+    fr: { addPeople: "Ajoutez des voyageurs pour voir les dates disponibles", addPeopleHint: "Sélectionnez au moins un adulte ou un enfant pour continuer.", adults: "Adultes", children: "Enfants" },
+    it: { addPeople: "Aggiungi viaggiatori per vedere le date disponibili", addPeopleHint: "Seleziona almeno un adulto o un bambino per continuare.", adults: "Adulti", children: "Bambini" },
+    zh: { addPeople: "添加旅客以查看可用日期", addPeopleHint: "请选择至少一名成人或儿童以继续预订。", adults: "成人", children: "儿童" },
+  }[i18n.language?.split("-")[0]] || {
+    addPeople: "Add travelers to view available dates",
+    addPeopleHint: "Select at least one adult or child to continue booking.",
+    adults: "Adults",
+    children: "Children",
+  };
   const {
     participants,
     setParticipants,
@@ -37,7 +50,7 @@ const BookingCalendar = ({ trip,id }) => {
         {/* Adults */}
         <div className="flex items-center space-x-1">
           <div>
-            <p className={theme.heading}>{t("adult")}</p>
+            <p className={theme.heading}>{labels.adults}</p>
             <p className={theme.subText}>{t("age6to100")}</p>
           </div>
           <div className="flex items-center ml-3 lg:ml-0 space-x-2">
@@ -63,7 +76,7 @@ const BookingCalendar = ({ trip,id }) => {
         {/* Children */}
         <div className="flex items-center space-x-1">
           <div>
-            <p className={theme.heading}>{t("child")}</p>
+            <p className={theme.heading}>{labels.children}</p>
             <p className={theme.subText}>{t("age6to12")}</p>
           </div>
           <div className="flex items-center ml-5 lg:ml-0 space-x-2">
@@ -91,10 +104,10 @@ const BookingCalendar = ({ trip,id }) => {
       {participants + childrenCount === 0 ? (
         <div className="text-center py-10">
           <p className={`${theme.heading} text-lg`}>
-            Please add participants to view available dates
+            {labels.addPeople}
           </p>
           <p className={theme.subText}>
-            Select the number of adults or children to continue booking.
+            {labels.addPeopleHint}
           </p>
         </div>
       ) : (
