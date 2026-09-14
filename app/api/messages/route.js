@@ -54,8 +54,8 @@ export async function POST(req) {
 
       await db.query(
         `INSERT INTO messages 
-         (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, created_at) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', NOW())`,
+         (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, message_type, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', 'chat', NOW())`,
          [messagesId, user_id, baseUrl, sender_type, user_name, user_image, reply_to ?? null, resolvedAdminId],
       );
 
@@ -95,8 +95,8 @@ export async function POST(req) {
 
     await db.query(
       `INSERT INTO messages 
-       (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, created_at) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', NOW())`,
+       (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, message_type, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', 'chat', NOW())`,
       [messagesId, user_id, content, sender_type, user_name, user_image, reply_to, resolvedAdminId],
     );
 
@@ -130,7 +130,7 @@ export async function GET(req) {
     const messageId = searchParams.get("messageId");
 
     const db = await connectDB();
-    let query = `SELECT id, content, sender_type, created_at, user_name, user_image, reply_to, admin_id,user_id , status 
+    let query = `SELECT id, content, sender_type, created_at, user_name, user_image, reply_to, admin_id,user_id , status, message_type
                  FROM messages`;
     let params = [];
 
@@ -178,10 +178,13 @@ export async function PUT(req) {
     }
 
     const db = await connectDB();
-    const [messages] = await db.query("SELECT user_id FROM messages WHERE id = ?", [messageId]);
+    const [messages] = await db.query("SELECT user_id, sender_type FROM messages WHERE id = ?", [messageId]);
     if (!messages.length) return NextResponse.json({ error: "Message not found" }, { status: 404 });
-    const canUpdate = String(auth.user.role).toUpperCase() === "ADMIN" || String(messages[0].user_id) === String(auth.user.id);
-    if (!canUpdate) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const isAdmin = String(auth.user.role).toUpperCase() === "ADMIN";
+    const isRecipient = isAdmin
+      ? messages[0].sender_type === "user"
+      : messages[0].sender_type === "admin" && String(messages[0].user_id) === String(auth.user.id);
+    if (!isRecipient) return NextResponse.json({ error: "Only the recipient can mark this message as seen" }, { status: 403 });
     const [result] = await db.query(
       `UPDATE messages SET status = ?, updated_at = NOW() WHERE id = ?`,
       [status, messageId],

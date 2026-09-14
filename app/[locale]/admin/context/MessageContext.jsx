@@ -107,7 +107,7 @@ const sendMessage = async ({
 
   return (
     <MessageContext.Provider
-      value={{ messages, loading, fetchMessages, sendMessage, markMessageSeen }}
+      value={{ messages, loading, fetchMessages, setMessages, sendMessage, markMessageSeen }}
     >
       {children}
     </MessageContext.Provider>

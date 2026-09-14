@@ -45,6 +45,9 @@ export default function ChatInput({
             }),
           });
         }}
+        onBlur={() => {
+          if (user?.id) fetch("/api/typing", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: user.id, isTyping: false }) });
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();

@@ -169,6 +169,7 @@ export function MessageProvider({ children }) {
     <MessageContext.Provider
       value={{
         messages,
+        setMessages,
         loading,
         fetchMessages,
         setMessages,

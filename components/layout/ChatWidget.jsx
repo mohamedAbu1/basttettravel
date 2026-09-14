@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useMessages } from "@/context/MessageContext";
@@ -18,6 +18,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
   const [text, setText] = useState("");
   const { userData } = useAuth(); // ✅ بيانات من AuthContext
   const [adminTyping, setAdminTyping] = useState(false);
+  const welcomeRequestedRef = useRef(null);
   const {
     open,
     bookingMode,
@@ -34,10 +35,11 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
 
   // ✅ جلب رسائل المستخدم
   useEffect(() => {
-    if (userData?.id) {
-      fetchMessages(userData.id);
-    }
-  }, [userData]);
+    if (!userData?.id || userData?.role === "ADMIN") return;
+    fetchMessages(userData.id);
+    const interval = setInterval(() => fetchMessages(userData.id), 3000);
+    return () => clearInterval(interval);
+  }, [userData?.id, userData?.role]);
 
   // ✅ تحديث حالة الرسائل إلى "seen"
   useEffect(() => {
@@ -49,31 +51,13 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
       });
     }
   }, [userData, messages]);
-  // ✅ فتح الدردشة بعد دقيقتين من تسجيل الدخول
-
   useEffect(() => {
-    if (userData?.id) {
-      const timer = setTimeout(async () => {
-        setOpen(true); // يفتح نافذة الدردشة
-
-        // ✅ إرسال الرسالة باسم الأدمن وليس المستخدم
-        await sendMessage({
-          user_id: "c7674367-18c9-4d2a-b94c-eb80ac716005", // أو ID الأدمن الحقيقي
-          user_name: "👑 Basttet Travel 👑",
-
-          user_image: "/brand/basttet-travel-mark-dark.svg",
-          content: t("welcomeMessage", {
-            defaultValue:
-              "👋 Hello and welcome! The Basttet Travel team is excited to help you plan your next unforgettable journey. How can we assist you today?",
-          }),
-          sender_type: "admin", // مهم جداً لتظهر الرسالة بلون الأدمن
-          status: "sent",
-        });
-      }, 30000); //  نص دقيقه
-
-      return () => clearTimeout(timer);
-    }
-  }, []);
+    if (!userData?.id || userData?.role === "ADMIN" || welcomeRequestedRef.current === userData.id) return;
+    welcomeRequestedRef.current = userData.id;
+    fetch("/api/messages/welcome", { method: "POST" })
+      .then(() => fetchMessages(userData.id))
+      .catch((error) => console.error("Welcome message request failed:", error));
+  }, [userData?.id, userData?.role]);
 
   // ✅ استعلام حالة الكتابة للأدمن
   useEffect(() => {

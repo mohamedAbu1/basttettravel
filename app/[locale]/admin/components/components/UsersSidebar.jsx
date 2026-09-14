@@ -40,7 +40,7 @@ const UsersSidebar = ({ users,userData, activeUser, setActiveUser, theme, themeN
                 setActiveUser(user);
                 // تحديث حالة الرسائل إلى "seen" عند فتح المحادثة
                 messages
-                  .filter((msg) => msg.user_id === user.id && msg.status === "sent")
+                  .filter((msg) => msg.user_id === user.id && msg.sender_type === "user" && msg.status === "sent")
                   .forEach((msg) => markMessageSeen(msg.id));
               }}
               className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-300

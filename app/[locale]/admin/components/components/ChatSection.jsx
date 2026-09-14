@@ -110,9 +110,9 @@ const handleSendImage = async (file) => {
 
       <ChatInput
         handleSendImage={handleSendImage}
-        activeUser={activeUser}
-        newMessage={newMessage}
-        setNewMessage={setNewMessage}
+        user={activeUser}
+        text={newMessage}
+        setText={setNewMessage}
         handleSend={handleSend}
         setIsTyping={setIsTyping}
         theme={theme}

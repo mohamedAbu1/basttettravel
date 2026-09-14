@@ -43,6 +43,9 @@ const [showEmojiPicker, setShowEmojiPicker] = useState(false);
             }),
           });
         }}
+        onBlur={() => {
+          if (user?.id) fetch("/api/typing", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: user.id, adminTyping: false }) });
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();

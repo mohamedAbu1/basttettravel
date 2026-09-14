@@ -23,9 +23,8 @@ export default function MessagesPage() {
       const fetchMessages = async () => {
         try {
           const res = await axios.get(`/api/messages?userId=${activeUser.id}`);
-          if (res.data.success) {
-            setMessages(res.data.messages);
-          }
+          const nextMessages = Array.isArray(res.data) ? res.data : res.data?.messages;
+          if (Array.isArray(nextMessages)) setMessages(nextMessages);
         } catch (err) {
           console.error("❌ Error fetching messages:", err.message);
         }
