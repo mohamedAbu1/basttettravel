@@ -78,8 +78,9 @@ export default function LoginModal() {
         </div>
         <DividerWithIcon />
         {/* Content */}
-        <DialogContent component="form" onSubmit={handleSubmit} className="auth-modal-content flex flex-col gap-5">
-          <TextField
+        <form onSubmit={handleSubmit}>
+          <DialogContent className="auth-modal-content flex flex-col gap-5">
+            <TextField
             label={t("Email")}
             type="email"
             fullWidth
@@ -95,9 +96,9 @@ export default function LoginModal() {
               ),
             }}
             className="auth-field"
-          />
+            />
 
-          <TextField
+            <TextField
             label={t("Password")}
             type={showPassword ? "text" : "password"}
             fullWidth
@@ -126,47 +127,48 @@ export default function LoginModal() {
                 </InputAdornment>
               ),
             }}
-          />
+            />
 
-        <DividerWithIcon />
+            <DividerWithIcon />
 
           {/* Social Buttons */}
-          <div className="auth-action-wide">
-            <IconButton
-              onClick={loginWithGoogle}
-              type="button"
-              className="auth-google-button"
-            >
-              <FcGoogle size={28} />
-              <span>{t("continueWithGoogle", { defaultValue: "Continue with Google" })}</span>
-            </IconButton>
-          </div>
+            <div className="auth-action-wide">
+              <IconButton
+                onClick={loginWithGoogle}
+                type="button"
+                className="auth-google-button"
+              >
+                <FcGoogle size={28} />
+                <span>{t("continueWithGoogle", { defaultValue: "Continue with Google" })}</span>
+              </IconButton>
+            </div>
 
           {/* Login Button */}
-          <motion.div whileTap={{ scale: 0.98 }} className="auth-action-wide">
-            <Button
-              fullWidth
-              type="submit"
-              disabled={loading}
-              className="auth-primary-button"
-            >
-              {loading ? t("Loggingin") : t("Login")}
-            </Button>
-          </motion.div>
+            <motion.div whileTap={{ scale: 0.98 }} className="auth-action-wide">
+              <Button
+                fullWidth
+                type="submit"
+                disabled={loading}
+                className="auth-primary-button"
+              >
+                {loading ? t("Loggingin") : t("Login")}
+              </Button>
+            </motion.div>
 
           {/* زر العودة إلى إنشاء حساب */}
-          <Button
-            fullWidth
-            onClick={() => {
-              handleLoginClose();
-              handleSignUpOpen();
-            }}
-            className="auth-secondary-button"
-            type="button"
-          >
-            {t("Don’thaveanaccount?SignUp")}
-          </Button>
-        </DialogContent>
+            <Button
+              fullWidth
+              onClick={() => {
+                handleLoginClose();
+                handleSignUpOpen();
+              }}
+              className="auth-secondary-button"
+              type="button"
+            >
+              {t("Don’thaveanaccount?SignUp")}
+            </Button>
+          </DialogContent>
+        </form>
       </motion.div>
     </Dialog>
   );

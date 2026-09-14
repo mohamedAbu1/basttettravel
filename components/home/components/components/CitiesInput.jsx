@@ -2,12 +2,10 @@
 import React from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { MdLocationCity } from "react-icons/md";
-import { motion } from "framer-motion";
-import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
+import { FaChevronDown, FaCheck } from "react-icons/fa";
 
 const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
-  const { theme } = useTheme();
   const { i18n } = useTranslation();
   const normalizedLang = i18n.language.split("-")[0]; // مثل en أو ar أو fr
   const { t } = useTranslation("home");
@@ -19,48 +17,45 @@ const CitiesInput = ({ selectedCities, toggleCity, cities }) => {
         <button
           type="button"
           aria-label={t("SelectCity")}
-          className={`hero-booking-trigger flex items-center w-full px-4 py-2 rounded-lg  shadow-sm cursor-pointer`}
+          className="booking-select-trigger"
         >
-          <MdLocationCity className={`mr-2 text-xl ${theme.iconHover}`} />
-          <span className={`flex-1 text-left ${theme.text}`}>
+          <span className="booking-field-icon"><MdLocationCity aria-hidden="true" /></span>
+          <span className="booking-select-copy">
+            <small>{t("SelectCity")}</small>
             {(selectedCities || [])
               .map((c) => c.name?.[normalizedLang] || c.name?.["en"] || c.name)
-              .join(" - ") || t("SelectCity")}
+              .join(" · ") || <strong>{t("SelectCity")}</strong>}
           </span>
+          <FaChevronDown className="booking-select-chevron" aria-hidden="true" />
         </button>
       </Popover.Trigger>
 
       {/* محتوى الـ dropdown */}
       <Popover.Portal>
         <Popover.Content
-          side="left"
+          side="bottom"
           align="start"
-          sideOffset={45}
-          className={`w-[350px] p-4 rounded-xl z-[9999] shadow-lg flex flex-col gap-3`}
+          sideOffset={8}
+          collisionPadding={12}
+          className="booking-options-popover"
         >
+          <div className="booking-options-heading">{t("SelectCity")}</div>
+          <div className="booking-options-list">
           {cities.map((city) => (
-            <motion.button
+            <button
               key={city.id}
               type="button"
-              whileHover={{ scale: 1.05 }}
               onClick={() => toggleCity(city)}
-              className={`px-4 py-2 rounded-lg text-left transition-all duration-300 cursor-pointer
-                ${
-                  (selectedCities || []).some((c) => c.id === city.id)
-                    ? `${theme.buttonPrimary} text-black shadow-lg`
-                    : `${theme.text} hover:${theme.buttonSecondary}`
-                }`}
+              className={`booking-option ${(selectedCities || []).some((c) => c.id === city.id) ? "is-selected" : ""}`}
             >
-              {city.name?.[normalizedLang] || city.name?.["en"] || city.name}
-            </motion.button>
+              <span>{city.name?.[normalizedLang] || city.name?.["en"] || city.name}</span>
+              {(selectedCities || []).some((c) => c.id === city.id) && <FaCheck aria-hidden="true" />}
+            </button>
           ))}
+          </div>
 
           {/* زر التأكيد */}
-          <Popover.Close
-            className={`w-full rounded-[6px] px-6 py-3 text-center font-semibold tracking-wide 
-                        cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
-            style={{ border: `2px solid ${theme.logoBorder}` }}
-          >
+          <Popover.Close className="booking-options-confirm">
             {t("Confirm")}
           </Popover.Close>
         </Popover.Content>

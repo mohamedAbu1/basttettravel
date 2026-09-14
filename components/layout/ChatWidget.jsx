@@ -143,11 +143,18 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
         <motion.button
           style={{ cursor: "pointer" }}
           onClick={() => setOpen(!open)}
+          aria-label={open ? "Close support chat" : "Open support chat"}
+          title={open ? "Close support chat" : "Chat with Basttet Travel"}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className={`chat-widget-trigger fixed bottom-6 right-6 p-4 rounded-full shadow-lg flex items-center justify-center ${theme.buttonPrimary}`}
+          className={`chat-widget-trigger fixed bottom-6 right-6 rounded-full shadow-lg flex items-center justify-center ${theme.buttonPrimary}`}
         >
-          <FaComments size={22} color="#fff" />
+          <span className="chat-trigger-icon"><FaComments aria-hidden="true" /></span>
+          <span className="chat-trigger-copy">
+            <strong>{commonT("chatWithUs", { defaultValue: "Chat with us" })}</strong>
+            <small>{commonT("supportOnline", { defaultValue: "We are here to help" })}</small>
+          </span>
+          <span className="chat-trigger-status" aria-hidden="true" />
         </motion.button>
       )}
 
@@ -157,7 +164,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
-            className={`chat-widget-panel fixed overflow-x-hidden bottom-20 right-2 lg:right-6 w-90 lg:w-110 h-125 rounded-xl shadow-xl flex flex-col z-50 ${theme.card} ${theme.text}`}
+          className="chat-widget-panel fixed overflow-x-hidden bottom-20 right-2 lg:right-6 w-90 lg:w-110 h-125 rounded-xl shadow-xl flex flex-col z-50"
           >
             <EgyptianBackground />
             <ChatHeader onClose={() => setOpen(false)} theme={theme} />
@@ -168,8 +175,8 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
             />
 
             {bookingMode ? (
-              <div className="p-6 rounded-xl shadow-lg bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900">
-                <p className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
+              <div className="chat-booking-card">
+                <p className="chat-booking-title">
                   {commonT("carBookingPrompt")}
                 </p>
 
@@ -178,8 +185,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
                   placeholder={commonT("from")}
                   value={from}
                   onChange={(e) => setFrom(e.target.value)}
-                  className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 w-full mb-3 
-               focus:outline-none focus:ring-2 focus:ring-[#C2A878] dark:bg-gray-700 dark:text-white"
+                  className="chat-message-input chat-booking-input"
                 />
 
                 <input
@@ -187,8 +193,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
                   placeholder={commonT("to")}
                   value={to}
                   onChange={(e) => setTo(e.target.value)}
-                  className="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 w-full mb-3 
-               focus:outline-none focus:ring-2 focus:ring-[#C2A878] dark:bg-gray-700 dark:text-white"
+                  className="chat-message-input chat-booking-input"
                 />
 
                 <button
@@ -206,9 +211,8 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
                     ]);
                     setBookingMode(false);
                   }}
-                  className="mt-4 w-full px-6 py-3 rounded-lg font-bold text-white 
-               bg-gradient-to-r from-[#C2A878] to-[#eab308] 
-               shadow-md hover:scale-105 transition-transform duration-300"
+                  type="button"
+                  className="chat-send-button chat-booking-submit"
                 >
                   Confirm Booking
                 </button>

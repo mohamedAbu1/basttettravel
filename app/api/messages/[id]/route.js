@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 
 // ✅ جلب رسالة واحدة بالـ id
-export async function GET(req, { params }) {
+export async function GET(req, context) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const db = await connectDB();
 
     const [rows] = await db.query("SELECT * FROM messages WHERE id = ?", [id]);
@@ -20,9 +20,9 @@ export async function GET(req, { params }) {
 }
 
 // ✅ تحديث حالة الرسالة بالـ id
-export async function PUT(req, { params }) {
+export async function PUT(req, context) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const { status = "seen" } = await req.json();
 
     const db = await connectDB();
@@ -42,9 +42,9 @@ export async function PUT(req, { params }) {
 }
 
 // ✅ حذف رسالة بالـ id
-export async function DELETE(req, { params }) {
+export async function DELETE(req, context) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const db = await connectDB();
 
     const [result] = await db.query("DELETE FROM messages WHERE id = ?", [id]);

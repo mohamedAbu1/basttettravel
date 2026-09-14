@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useQueryFilters } from "./QueryContext";
 import { useRouter } from "next/navigation";
-import { useSession, signIn } from "next-auth/react"; // ✅ NextAuth
+import { useSession, signIn, signOut } from "next-auth/react"; // ✅ NextAuth
 import { useData } from "./DataContext";
 
 const AuthContext = createContext();
@@ -29,21 +29,40 @@ export function AuthProvider({ children }) {
   const fetchUserFromServer = async () => {
     try {
       const res = await axios.get("/api/auth/me", { withCredentials: true });
+      if (!res.data?.user) {
+        setUser(null);
+        setUserToken(null);
+        setIsLoggedIn(false);
+        return;
+      }
+      setUser(res.data.user);
       setUserToken(res.data.user);
       setIsLoggedIn(true);
     } catch (err) {
-      console.warn("⚠️ Token expired or invalid, trying refresh...");
+      const initialStatus = err.response?.status;
       try {
         const retry = await axios.post(
           "/api/auth/refresh",
           {},
           { withCredentials: true },
         );
+        if (!retry.data?.user) {
+          setUser(null);
+          setUserToken(null);
+          setIsLoggedIn(false);
+          return;
+        }
+        setUser(retry.data.user);
         setUserToken(retry.data.user);
         setIsLoggedIn(true);
       } catch (refreshErr) {
-        console.error("💥 Refresh failed:", refreshErr.message);
+        // Guests commonly have no refresh cookie; this is an expected auth state,
+        // not an application error that should trigger a recoverable-render overlay.
+        if (initialStatus !== 401 && refreshErr.response?.status !== 401) {
+          console.warn("Authentication refresh unavailable:", refreshErr.message);
+        }
         setUserToken(null);
+        setUser(null);
         setIsLoggedIn(false);
       }
     }
@@ -54,6 +73,32 @@ export function AuthProvider({ children }) {
     fetchUserFromServer();
   }, []);
 
+  // NextAuth completes Google OAuth after the browser returns from Google's
+  // callback. Only then can the application issue its own auth cookies.
+  useEffect(() => {
+    if (!session?.user?.email || user) return;
+
+    let cancelled = false;
+    axios
+      .post("/api/auth/google", {}, { withCredentials: true })
+      .then(({ data }) => {
+        if (cancelled || !data?.user) return;
+        setUser(data.user);
+        setUserToken(data.user);
+        setIsLoggedIn(true);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error("Google account sync failed:", err.message);
+          toast.error("❌ تعذر إكمال تسجيل الدخول بجوجل.");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.email, user]);
+
   // ✅ تسجيل مستخدم جديد يدويًا
   const register = async (email, password, name, gender) => {
     setLoading(true);
@@ -61,7 +106,7 @@ export function AuthProvider({ children }) {
     try {
       const res = await axios.post(
         "/api/auth/register",
-        { name, email, password, gender },
+        { name: name.trim(), email: email.trim().toLowerCase(), password, gender },
         { withCredentials: true },
       );
       const data = res.data;
@@ -69,6 +114,9 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || "Registration failed");
 
       toast.success("✅ Account created successfully!");
+      setUser(data.user);
+      setUserToken(data.user);
+      setIsLoggedIn(true);
       handleSignUpClose();
       return { success: true, ...data };
     } catch (err) {
@@ -88,7 +136,7 @@ export function AuthProvider({ children }) {
 
       const res = await axios.post(
         "/api/auth/login",
-        { email, password },
+        { email: email.trim().toLowerCase(), password },
         { withCredentials: true },
       );
 
@@ -130,30 +178,15 @@ export function AuthProvider({ children }) {
   // ✅ تسجيل الدخول بجوجل
   const loginWithGoogle = async () => {
     try {
-      const result = await signIn("google", { redirect: false });
+      // OAuth providers must be allowed to perform the full browser redirect.
+      // Using redirect:false here can leave the state cookie and callback
+      // exchange incomplete, which causes "State cookie was missing".
+      const result = await signIn("google", {
+        callbackUrl: window.location.href,
+      });
       if (result?.error) {
         toast.error("❌ خطأ أثناء تسجيل الدخول بجوجل: " + result.error);
-        return;
       }
-
-      const res = await fetch("/api/auth/session");
-      const sessionData = await res.json();
-      const userData = sessionData?.user;
-
-      if (!userData) {
-        toast.error("❌ لم يتم العثور على بيانات المستخدم.");
-        return;
-      }
-
-      // ✅ استدعاء API route للتعامل مع MySQL
-      const dbRes = await axios.post("/api/auth/google", {
-        email: userData.email,
-        name: userData.name,
-      });
-
-      setUser(dbRes.data);
-      setIsLoggedIn(true);
-      toast.success("✅ تم تسجيل الدخول بجوجل!");
     } catch (err) {
       console.error("OAuth Error:", err);
       toast.error("❌ حدث خطأ غير متوقع أثناء تسجيل الدخول بجوجل.");
@@ -166,6 +199,11 @@ export function AuthProvider({ children }) {
       await axios.post("/api/auth/logout", {}, { withCredentials: true });
     } catch (err) {
       console.error("❌ Error clearing cookies on server:", err);
+    }
+    try {
+      await signOut({ redirect: false });
+    } catch (err) {
+      console.warn("NextAuth logout unavailable:", err.message);
     }
     setUser(null);
     setUserToken(null);

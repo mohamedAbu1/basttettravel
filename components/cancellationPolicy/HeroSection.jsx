@@ -17,6 +17,7 @@ export default function HeroSection({ themeName, theme }) {
         }
         alt={t("cancellationPolicy.altImage", { defaultValue: "Great Sphinx of Giza" })}
         fill
+        sizes="100vw"
         className="object-cover brightness-75"
       />
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">

@@ -12,6 +12,25 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useCurrency } from "@/context/CurrencyContext";
 
+const TRIP_IMAGE_FALLBACK = "/HomePageImage/asdasdas.webp";
+
+function SafeTripImage({ src, ...props }) {
+  const [imageSrc, setImageSrc] = useState(src || TRIP_IMAGE_FALLBACK);
+
+  useEffect(() => {
+    setImageSrc(src || TRIP_IMAGE_FALLBACK);
+  }, [src]);
+
+  return (
+    <Image
+      {...props}
+      src={imageSrc}
+      unoptimized={imageSrc.startsWith("http")}
+      onError={() => setImageSrc(TRIP_IMAGE_FALLBACK)}
+    />
+  );
+}
+
 const TopTripsSection = () => {
   const { theme } = useTheme();
   const { t, i18n } = useTranslation("home");
@@ -121,7 +140,7 @@ const TopTripsSection = () => {
       >
         {/* صورة الرحلة */}
         <div className="relative w-full h-[58%] shrink-0">
-          <Image
+          <SafeTripImage
             src={trip?.cover_image || "/default.jpg"}
             alt={trip?.title?.[normalizedLang] || "Trip image"}
             fill

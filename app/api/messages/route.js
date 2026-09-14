@@ -48,13 +48,15 @@ export async function POST(req) {
       const admin_id = isAdmin ? auth.user.id : null;
 
       const db = await connectDB();
+      const resolvedAdminId = admin_id || (await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1"))[0][0]?.id;
+      if (!resolvedAdminId) return NextResponse.json({ error: "No administrator is configured" }, { status: 503 });
       const messagesId = uuidv4();
 
       await db.query(
         `INSERT INTO messages 
          (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, created_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', NOW())`,
-        [messagesId, user_id, baseUrl, sender_type, user_name, user_image, reply_to ?? null, admin_id],
+         [messagesId, user_id, baseUrl, sender_type, user_name, user_image, reply_to ?? null, resolvedAdminId],
       );
 
       const newMessage = {
@@ -65,7 +67,7 @@ export async function POST(req) {
         user_name,
         user_image,
         reply_to,
-        admin_id,
+        admin_id: resolvedAdminId,
         status: "sent",
         created_at: new Date(),
       };
@@ -87,13 +89,15 @@ export async function POST(req) {
     if (!content) return NextResponse.json({ error: "Content cannot be null" }, { status: 400 });
 
     const db = await connectDB();
+    const resolvedAdminId = admin_id || (await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1"))[0][0]?.id;
+    if (!resolvedAdminId) return NextResponse.json({ error: "No administrator is configured" }, { status: 503 });
     const messagesId = uuidv4();
 
     await db.query(
       `INSERT INTO messages 
        (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, created_at) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', NOW())`,
-      [messagesId, user_id, content, sender_type, user_name, user_image, reply_to, admin_id],
+      [messagesId, user_id, content, sender_type, user_name, user_image, reply_to, resolvedAdminId],
     );
 
     const newMessage = {
@@ -104,7 +108,7 @@ export async function POST(req) {
       user_name,
       user_image,
       reply_to,
-      admin_id,
+      admin_id: resolvedAdminId,
       status: "sent",
       created_at: new Date(),
     };

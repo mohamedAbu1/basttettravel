@@ -3,12 +3,12 @@ import { connectDB } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/admin";
 
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req, context) {
   try {
     const authorizationError = requireAdmin(req);
     if (authorizationError) return authorizationError;
     const db = await connectDB();
-    const { id } = params; // نأخذ id من الرابط مثل /api/notifications/[id]
+    const { id } = await context.params;
 
     await db.execute("DELETE FROM notifications WHERE id = ?", [id]);
 

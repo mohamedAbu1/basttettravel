@@ -9,14 +9,15 @@ export async function POST(request) {
   try {
     const db = await connectDB();
     const { email, password } = await request.json();
-    if (typeof email !== "string" || typeof password !== "string" || !process.env.JWT_SECRET) {
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    if (!normalizedEmail || typeof password !== "string" || !process.env.JWT_SECRET) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 400 });
     }
 
-    console.log("📩 Step 1: Received login request", { email });
+    console.log("📩 Step 1: Received login request", { email: normalizedEmail });
 
     // ✅ البحث عن المستخدم
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const [rows] = await db.query("SELECT * FROM users WHERE LOWER(email) = ? LIMIT 1", [normalizedEmail]);
     if (rows.length === 0) {
       return NextResponse.json({ error: "المستخدم غير موجود" }, { status: 401 });
     }

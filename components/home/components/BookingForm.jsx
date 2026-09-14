@@ -1,8 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
-import { useTheme } from "@/context/ThemeContext";
-import { FaCalendarAlt } from "react-icons/fa";
 import { useState } from "react";
+import { useTheme } from "@/context/ThemeContext";
+import { FaCalendarAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import CitiesInput from "./components/CitiesInput";
 import CategoriesInput from "./components/CategoriesInput";
 import DatePicker from "react-datepicker";
@@ -22,8 +22,6 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
   const router = useRouter();
   const pathname = usePathname();
   const locale = pathname.split("/").filter(Boolean)[0] || "en";
-  const [showCities, setShowCities] = useState(false);
-  const [showCategories, setShowCategories] = useState(false);
   const { t } = useTranslation("home");
   const { t: commonT } = useTranslation("common");
 
@@ -32,9 +30,8 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
   const [arrival, setArrival] = useState(null);
   const [departure, setDeparture] = useState(null);
   const [startDate, setStartDate] = useState(null);
-  const specialDates = [];
-
-  const handleClick = () => {
+  const handleClick = (event) => {
+    event.preventDefault();
     const queryObj = {
       city: selectedCities.length ? selectedCities.map((c) => c.name) : ["all"],
       category: selectedCategories.length
@@ -73,63 +70,63 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
   };
   const isFormValid = Boolean(arrival && departure);
 
-  const CustomInput = ({ value, onClick }) => (
+  const CustomInput = ({ value, onClick, placeholder }) => (
     <button
       type="button"
       onClick={onClick}
-      aria-label={value || t("SelectDate")}
-      className={`hero-booking-trigger flex w-full items-center rounded-[10px] px-4 py-2 cursor-pointer
-                  backdrop-blur-md border ${theme.logoBorder} shadow-md hover:shadow-lg 
-                  transition-all duration-300 relative overflow-hidden`}
+      aria-label={value || placeholder}
+      className="booking-date-trigger"
     >
-      <FaCalendarAlt className={`mr-3 text-xl ${theme.iconHover}`} />
-      <span className={`flex-1 p-2 tracking-wide font-medium ${theme.text}`}>
-        {value || t("SelectDate")}
+      <span className="booking-field-icon"><FaCalendarAlt aria-hidden="true" /></span>
+      <span className="booking-date-copy">
+        <small>{placeholder}</small>
+        <strong>{value || t("SelectDate")}</strong>
       </span>
     </button>
   );
 
+  const renderCalendarHeader = ({ date, decreaseMonth, increaseMonth }) => (
+    <div className="booking-calendar-header">
+      <button type="button" onClick={decreaseMonth} aria-label="Previous month"><FaChevronLeft /></button>
+      <strong>{date.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</strong>
+      <button type="button" onClick={increaseMonth} aria-label="Next month"><FaChevronRight /></button>
+    </div>
+  );
+
   return (
-    <motion.div
+    <motion.form
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 2 }}
+      transition={{ duration: 0.6 }}
+      onSubmit={handleClick}
       className={`${compact ? "hero-booking-form" : `mt-6 shadow-lg w-[95%] max-w-6xl p-6 md:p-7 backdrop-blur-md border ${theme.logoBorder} rounded-xl`} h-auto relative`}
     >
       {/* ✅ الصف الأول: المدن + الكاتجري */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div
-          className={`flex items-center border ${theme.logoBorder}  ${theme.shadow} rounded-[4px] px-3 `}
-        >
+      <div className="booking-filter-grid">
+        <div className="booking-filter-field">
           <CitiesInput
             selectedCities={selectedCities}
             setSelectedCities={setSelectedCities}
             confirmSelection={() => setShowCities(false)}
-            setShowCities={setShowCities}
             toggleCity={toggleCity}
-            showCities={showCities}
             cities={cities}
           />
         </div>
 
-        <div
-          className={`flex items-center border ${theme.logoBorder} border-amber-200 ${theme.shadow} rounded-[4px] px-3 `}
-        >
+        <div className="booking-filter-field">
           <CategoriesInput
             selectedCategories={selectedCategories}
             setSelectedCategories={setSelectedCategories}
             confirmSelection={() => setShowCategories(false)}
-            setShowCategories={setShowCategories}
             toggleCategory={toggleCategory}
-            showCategories={showCategories}
             categories={categories}
           />
         </div>
       </div>
 
       {/* ✅ الصف الثاني: موعد الدخول + موعد الخروج */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="flex flex-col gap-2">
+      <div className="booking-date-grid">
+        <div className="booking-date-field">
           <span className="booking-field-label">{t("checkin")}</span>
           <DatePicker
             selected={arrival}
@@ -142,17 +139,14 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
             dateFormat="dd/MM/yyyy"
             placeholderText={t("checkin")}
             customInput={<CustomInput />}
+            renderCustomHeader={renderCalendarHeader}
+            popperClassName="booking-calendar-popper"
+            calendarClassName="booking-calendar"
             minDate={addDays(new Date(), 2)}
-            dayClassName={(day) => {
-              const special = specialDates.find(
-                (item) => item.date.toDateString() === day.toDateString(),
-              );
-              return special ? "special-day" : "";
-            }}
           />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="booking-date-field">
           <span className="booking-field-label">{t("checkout")}</span>
           <DatePicker
             selected={departure}
@@ -163,6 +157,9 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
             dateFormat="dd/MM/yyyy"
             placeholderText={t("checkout")}
             customInput={<CustomInput />}
+            renderCustomHeader={renderCalendarHeader}
+            popperClassName="booking-calendar-popper"
+            calendarClassName="booking-calendar"
           />
         </div>
       </div>
@@ -171,9 +168,8 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
         type="button"
         whileHover={isFormValid ? { scale: 1.05 } : {}}
         whileTap={isFormValid ? { scale: 0.95 } : {}}
-        onClick={handleClick}
         disabled={!isFormValid} // ✅ تعطيل الزر لو الفورم ناقص
-        className={`w-full hero-secondary-action
+        className={`booking-submit w-full hero-secondary-action
     ${isFormValid ? theme.buttonPrimary : "bg-gray-400 cursor-not-allowed"}`}
         style={{
           color: isFormValid ? "#211b12" : "#b8b1a4",
@@ -189,6 +185,6 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
           })}
         </p>
       )}
-    </motion.div>
+    </motion.form>
   );
 }

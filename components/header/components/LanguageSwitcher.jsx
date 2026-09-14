@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { useTheme } from "@/context/ThemeContext";
+import { FaGlobe, FaChevronDown } from "react-icons/fa";
 
 const languages = [
   { code: "en", label: "EN" },
@@ -18,7 +19,7 @@ export default function LanguageSwitcher() {
   const pathname = usePathname() || "/en";
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { theme, themeName } = useTheme();
+  const { themeName } = useTheme();
   const [isPending, startTransition] = useTransition();
   const segments = pathname.split("/").filter(Boolean);
   const currentLocale = languages.some(({ code }) => code === segments[0])
@@ -37,13 +38,14 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <label className="relative" aria-label="Select language">
+    <label className="language-switcher" aria-label="Select language">
       <span className="sr-only">Select language</span>
+      <FaGlobe className="language-switcher-icon" aria-hidden="true" />
       <select
         value={currentLocale}
         onChange={handleChange}
         disabled={isPending}
-        className={`cursor-pointer appearance-none rounded-lg border px-2 py-1.5 pr-7 text-xs font-bold outline-none transition ${theme.border} ${themeName === "dark" ? "bg-[#202020] text-[#E6DCCF]" : "bg-white/70 text-[#1A4D5C]"}`}
+        className={`language-select ${themeName === "dark" ? "is-dark" : "is-light"}`}
       >
         {languages.map((language) => (
           <option key={language.code} value={language.code}>
@@ -51,7 +53,7 @@ export default function LanguageSwitcher() {
           </option>
         ))}
       </select>
-      <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-70" aria-hidden="true">⌄</span>
+      <FaChevronDown className="language-switcher-chevron" aria-hidden="true" />
     </label>
   );
 }

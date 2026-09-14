@@ -1,6 +1,7 @@
 "use client";
 import { FaStar, FaDollarSign, FaEuroSign, FaPoundSign } from "react-icons/fa";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
@@ -14,6 +15,25 @@ import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+
+const TRIP_IMAGE_FALLBACK = "/HomePageImage/asdasdas.webp";
+
+function SafeTripImage({ src, ...props }) {
+  const [imageSrc, setImageSrc] = useState(src || TRIP_IMAGE_FALLBACK);
+
+  useEffect(() => {
+    setImageSrc(src || TRIP_IMAGE_FALLBACK);
+  }, [src]);
+
+  return (
+    <Image
+      {...props}
+      src={imageSrc}
+      unoptimized={imageSrc.startsWith("http")}
+      onError={() => setImageSrc(TRIP_IMAGE_FALLBACK)}
+    />
+  );
+}
 
 function localizedName(value, lang, fallback) {
   if (!value) return fallback;
@@ -126,7 +146,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               >
                 {(trip.images || [trip.cover_image]).map((img, idx) => (
                   <SwiperSlide key={idx}>
-                    <Image
+                    <SafeTripImage
                       src={img || "/default.jpg"}
                       alt={trip.title?.[lang] || trip.title?.en || "Trip image"}
                       width={1900}

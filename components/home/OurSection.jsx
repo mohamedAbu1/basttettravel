@@ -55,6 +55,7 @@ const OurSection = () => {
                     src={imgSrc || "/fallback.jpg"}
                     alt={`Basttet Travel destination image ${index + 1}`}
                     fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                     className="object-cover rounded-lg"
                     loading="lazy"
                   />
@@ -138,6 +139,7 @@ const OurSection = () => {
                       src={imgSrc || "/fallback.jpg"}
                       alt={`Basttet Travel destination image ${index + 1}`}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-cover rounded-lg"
                       loading="lazy"
                     />
@@ -222,6 +224,7 @@ const OurSection = () => {
                       src={imgSrc || "/fallback.jpg"}
                       alt={`Basttet Travel destination image ${index + 1}`}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-cover rounded-lg"
                       loading="lazy"
                     />

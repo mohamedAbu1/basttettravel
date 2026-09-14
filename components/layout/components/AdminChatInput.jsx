@@ -5,13 +5,11 @@ import { FaImage, FaPaperPlane, FaSmile } from "react-icons/fa";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { useState } from "react";
-<Picker onSelect={(emoji) => setNewMessage(newMessage + emoji.native)} />;
 
 export default function AdminChatInput({
   text,
   setText,
   handleSend,
-  theme,
   themeName,
   handleSendImage,
   user,
@@ -19,7 +17,7 @@ export default function AdminChatInput({
 const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   return (
-    <div className={`p-3 border-t flex gap-2 items-center ${theme.border}`}>
+    <div className="chat-input-bar">
       {/* <label className="cursor-pointer">
         <FaImage size={20} className={theme.icon} />
         <input
@@ -30,6 +28,7 @@ const [showEmojiPicker, setShowEmojiPicker] = useState(false);
         />
       </label> */}
       <input
+        aria-label="Type your message"
         type="text"
         placeholder="Type your message..."
         value={text}
@@ -50,22 +49,19 @@ const [showEmojiPicker, setShowEmojiPicker] = useState(false);
             handleSend();
           }
         }}
-        className={`flex-1 rounded px-2 py-1 border ${theme.border}`}
+        className="chat-message-input"
       />
       <button
+        type="button"
+        aria-label="Add emoji"
         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-        className={`flex items-center justify-center w-10 h-10 rounded-md transition-all duration-300 ${
-          themeName === "dark"
-            ? "bg-gray-700 text-white hover:bg-gray-600"
-            : "bg-gray-200 text-black hover:bg-gray-300"
-        }`}
+        className="chat-icon-button"
       >
         <FaSmile className="text-lg" />
       </button>
       {showEmojiPicker && (
         <div
-          className="absolute right-30 bottom-25 z-50 bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg"
-          style={{ width: "300px", height: "400px" }}
+          className="chat-emoji-picker"
         >
           <Picker
             data={data}
@@ -76,13 +72,15 @@ const [showEmojiPicker, setShowEmojiPicker] = useState(false);
       )}
 
       <motion.button
+        type="button"
+        aria-label="Send message"
         style={{ cursor: "pointer" }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleSend}
-        className={`${theme.buttonPrimary} text-white flex items-center gap-1`}
+        className="chat-send-button"
       >
-        <FaPaperPlane /> Send
+        <FaPaperPlane aria-hidden="true" /> <span>Send</span>
       </motion.button>
     </div>
   );

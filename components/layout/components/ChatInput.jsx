@@ -11,7 +11,6 @@ export default function ChatInput({
   setText,
   handleSend,
   handleSendImage,
-  theme,
   themeName,
   user,
 }) {
@@ -20,7 +19,7 @@ export default function ChatInput({
   const { t: commonT } = useTranslation("common");
 
   return (
-    <div className={`p-3 border-t flex gap-2 items-center ${theme.border}`}>
+    <div className="chat-input-bar">
       {/* <label className="cursor-pointer">
         <FaImage size={20} className={theme.icon} />
         <input
@@ -31,6 +30,7 @@ export default function ChatInput({
         />
       </label> */}
       <input
+        aria-label={commonT("typeMessage")}
         type="text"
         placeholder={commonT("typeMessage")}
         value={text}
@@ -51,22 +51,19 @@ export default function ChatInput({
             handleSend();
           }
         }}
-        className={`flex-1 rounded px-2 py-1 border ${theme.border}`}
+        className="chat-message-input"
       />
       <button
+        type="button"
+        aria-label="Add emoji"
         onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-        className={`flex items-center justify-center w-10 h-10 rounded-md transition-all duration-300 ${
-          themeName === "dark"
-            ? "bg-gray-700 text-white hover:bg-gray-600"
-            : "bg-gray-200 text-black hover:bg-gray-300"
-        }`}
+        className="chat-icon-button"
       >
         <FaSmile className="text-lg" />
       </button>
       {showEmojiPicker && (
         <div
-          className="absolute right-30 bottom-25 z-50 bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg"
-          style={{ width: "300px", height: "400px" }}
+          className="chat-emoji-picker"
         >
           <Picker
             data={data}
@@ -77,13 +74,15 @@ export default function ChatInput({
       )}
 
       <motion.button
+        type="button"
+        aria-label={t("Send")}
         style={{ cursor: "pointer" }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleSend}
-        className={`${theme.buttonPrimary} text-white flex items-center gap-1`}
+        className="chat-send-button"
       >
-        <FaPaperPlane /> {t("Send")}
+        <FaPaperPlane aria-hidden="true" /> <span>{t("Send")}</span>
       </motion.button>
     </div>
   );

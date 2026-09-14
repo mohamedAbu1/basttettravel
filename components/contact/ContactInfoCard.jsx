@@ -23,6 +23,7 @@ export default function ContactInfoCard({ themeName, t }) {
           }
           alt="Decorative Background"
           fill
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="object-contain"
         />
       </div>

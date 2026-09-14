@@ -9,7 +9,6 @@ import Button from "@mui/material/Button";
 import { useAuth } from "@/context/AuthContext";
 import { FaSignOutAlt, FaUserPlus } from "react-icons/fa";
 import { useData } from "@/context/DataContext";
-import { signOut, signIn } from "next-auth/react"; // ✅ إضافة
 import { useTranslation } from "react-i18next";
 import MobileHeaderAuth from "./components/MobileHeaderAuth";
 import ThemeToggle from "../ThemeToggle";
@@ -19,7 +18,7 @@ import MobileNav from "./components/MobileNav";
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { theme } = useTheme();
-  const { userData } = useAuth();
+  const { userData, logout } = useAuth();
   const { handleLoginOpen } = useData();
   const { t } = useTranslation("home");
 
@@ -54,7 +53,7 @@ export default function Header() {
         {/* زر تسجيل الدخول/الخروج */}
         <motion.div whileHover={{ scale: 1.03 }} className="hidden lg:flex">
           <Button
-            onClick={userData ? () => signOut() : () => handleLoginOpen()}
+            onClick={userData ? logout : handleLoginOpen}
             className="header-auth-button"
           >
             {userData ? (

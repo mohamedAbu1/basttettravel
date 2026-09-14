@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { saveAs } from "file-saver";
-import { FaClock, FaDownload, FaExpand, FaComments } from "react-icons/fa";
+import { FaCheck, FaClock, FaDownload, FaExpand, FaComments } from "react-icons/fa";
 import { useEffect ,useRef} from "react";
 import { useTranslation } from "react-i18next";
 
@@ -38,7 +38,7 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
   };
 
   return (
-    <div className="flex-1 overflow-x-hidden p-4 overflow-y-auto space-y-4">
+    <div className={`chat-messages-list ${themeName === "dark" ? "is-dark" : "is-light"}`}>
       <AnimatePresence>
         {messages.length > 0 ? (
           messages.map((msg) => (
@@ -48,48 +48,33 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className={`flex items-start gap-3 max-w-[100%] ${
-                msg.sender_type === "user"
-                  ? "self-start"
-                  : "self-end flex-row-reverse"
-              }`}
+              className={`chat-message-row ${msg.sender_type === "user" ? "is-user" : "is-admin"}`}
             >
-              <img
-               src={
-                msg.sender_type === "admin" ? themeName === "dark"
-                ? "/brand/basttet-travel-mark-dark.svg"
-                : "/brand/basttet-travel-mark-light.svg" :
-                  msg.user_image}
-                alt={msg.user_name}
-                className={`w-12 h-12 rounded-full border ${
-                  msg.sender_type === "admin" ? "border-yellow-500" : "border-[#41707e]"
-                } object-cover`}
-              />
-              <div
-                className={`p-3 rounded-lg shadow-md max-w-[70%] flex flex-col ${
-                  msg.sender_type === "user"
-                    ? themeName === "dark"
-                      ? "bg-gray-700 text-white"
-                      : "bg-gray-200 text-black"
-                    : themeName === "dark"
-                    ? "bg-yellow-500 text-black"
-                    : "bg-[#41707e] text-white"
-                }`}
-              >
-                <p className="text-sm font-semibold mb-1 capitalize">
-                  {msg.sender_type === "admin" ? "👑 Basttet Travel 👑" : msg.user_name} 
-                </p>
+              <div className={`chat-message-avatar ${msg.sender_type === "admin" ? "is-admin" : "is-user"}`}>
+                <img
+                  src={msg.sender_type === "admin"
+                    ? themeName === "dark" ? "/brand/basttet-travel-mark-dark.svg" : "/brand/basttet-travel-mark-light.svg"
+                    : msg.user_image || "/default-avatar.png"}
+                  alt={msg.sender_type === "admin" ? "Basttet Travel support" : msg.user_name || "Traveler"}
+                />
+              </div>
+              <div className="chat-message-stack">
+                <div className="chat-message-bubble">
+                  <div className="chat-message-meta">
+                    <span>{msg.sender_type === "admin" ? "Basttet Travel" : msg.user_name || "Traveler"}</span>
+                    {msg.sender_type === "admin" && <span className="chat-message-role">Support</span>}
+                  </div>
 
-                {msg.content.startsWith("http") &&
+                  {typeof msg.content === "string" && msg.content.startsWith("http") &&
                 msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/) ? (
-                  <div className="relative group w-full max-w-xs">
+                  <div className="chat-attachment group">
                     <img
                       src={msg.content}
                       alt="uploaded"
                       className="w-full rounded-lg object-cover"
                     />
                     <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button
+                      <button type="button"
                         onClick={() => handleDownload(msg.content, msg.id)}
                         className={`flex items-center gap-2 px-3 py-1 text-xs font-medium rounded shadow ${
                           themeName === "dark"
@@ -99,7 +84,7 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
                       >
                         <FaDownload className="text-sm" /> Download
                       </button>
-                      <button
+                      <button type="button"
                         onClick={() => window.open(msg.content, "_blank")}
                         className={`flex items-center gap-2 px-3 py-1 text-xs font-medium rounded shadow ${
                           themeName === "dark"
@@ -111,40 +96,36 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
                       </button>
                     </div>
                   </div>
-                ) : (
-                  <p>{msg.content}</p>
-                )}
+                  ) : (
+                    <p className="chat-message-text">{msg.content}</p>
+                  )}
 
-                <div className="flex items-center gap-1 mt-1 text-xs opacity-70">
-                  <FaClock className="text-xs" />
-                  <span className="italic">
+                  <div className="chat-message-footer">
+                    <span>
                     {msg.created_at
                       ? formatDistanceToNow(new Date(msg.created_at), {
                           addSuffix: true,
                         })
                       : ""}
-                  </span>
-                  {msg.status && (
-                    <span className="ml-2">
-                      {msg.status === "sent" ? "✅ Sent" : "👀 Seen"}
                     </span>
-                  )}
+                    {msg.status && msg.sender_type === "user" && <span className="chat-message-status"><FaCheck /> {msg.status === "sent" ? "Sent" : "Seen"}</span>}
+                    <FaClock aria-hidden="true" />
+                  </div>
                 </div>
               </div>
             </motion.div>
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500 opacity-80">
-            <FaComments className="text-3xl mb-2 text-yellow-500" />
-            <p className="font-semibold">{t("noMessages")}</p>
-            <p className="text-sm">{t("carBookingPrompt")}</p>
+          <div className="chat-empty-state">
+            <span className="chat-empty-icon"><FaComments /></span>
+            <p>{t("noMessages")}</p>
+            <small>{t("carBookingPrompt")}</small>
           </div>
         )}
       </AnimatePresence>
 
-      {adminTyping && (
-        <p className="text-xs italic opacity-70">{t("adminTyping")}</p>
-      )}
+      {adminTyping && <p className="chat-typing-indicator"><span /><span /><span /> {t("adminTyping")}</p>}
+      <div ref={messagesEndRef} aria-hidden="true" />
     </div>
   );
 }

@@ -11,9 +11,15 @@ export async function POST(req) {
     const db = await connectDB();
 
     // 🟢 1. إدخال الإشعار في جدول notifications
+    const [[admin]] = await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1");
+    const [[user]] = await db.query("SELECT name, email, avatar_url FROM users WHERE id = ? LIMIT 1", [userId]);
+    if (!admin || !user) return NextResponse.json({ success: false, error: "User or administrator not found" }, { status: 404 });
     await db.query(
-      "INSERT INTO notifications (id, user_id, event_type, message, is_read, created_at) VALUES (UUID(), ?, ?, ?, 0, NOW())",
-      [userId, event_type, message]
+      `INSERT INTO notifications
+        (id, admin_id, user_id, event_type, message, user_name, user_email, user_image,
+         trip_id, message_id, type, is_read, created_at)
+       VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, NULL, UUID(), 'message', 0, NOW())`,
+      [admin.id, userId, event_type || "message", message, user.name, user.email, user.avatar_url || "/default-avatar.png"]
     );
 
     // 🟢 2. جلب كل الـ tokens الخاصة بالمستخدم من جدول push_tokens

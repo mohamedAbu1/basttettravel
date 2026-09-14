@@ -38,7 +38,13 @@ function CityCard({ city, themeName, theme, language, t }) {
     return () => clearInterval(interval);
   }, []);
 
-  const images = city.images?.slice(0, 2) || ["/fallback.jpg", "/fallback.jpg"];
+  const images = city.images?.slice(0, 2) || ["/HomePageImage/asdasdas.webp"];
+  const imageSrc = images[currentImage] || images[0];
+  const [safeImageSrc, setSafeImageSrc] = useState(imageSrc);
+
+  useEffect(() => {
+    setSafeImageSrc(imageSrc);
+  }, [imageSrc]);
 
   return (
     <motion.div
@@ -62,10 +68,13 @@ function CityCard({ city, themeName, theme, language, t }) {
             className="absolute inset-0"
           >
             <Image
-              src={images[currentImage]}
+              src={safeImageSrc}
               alt={cityName || "City image"}
               fill
+              sizes="(max-width: 768px) 90vw, 45vw"
               className="object-cover rounded-lg"
+              unoptimized={safeImageSrc.startsWith("http")}
+              onError={() => setSafeImageSrc("/HomePageImage/asdasdas.webp")}
             />
           </motion.div>
         </AnimatePresence>

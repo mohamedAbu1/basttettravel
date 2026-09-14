@@ -8,6 +8,25 @@ import { motion } from "framer-motion";
 import { sites } from "@/constants/images";
 import { useTheme } from "@/context/ThemeContext";
 
+const TRIP_IMAGE_FALLBACK = "/HomePageImage/asdasdas.webp";
+
+function SafeTripImage({ src, ...props }) {
+  const [imageSrc, setImageSrc] = useState(src || TRIP_IMAGE_FALLBACK);
+
+  useEffect(() => {
+    setImageSrc(src || TRIP_IMAGE_FALLBACK);
+  }, [src]);
+
+  return (
+    <Image
+      {...props}
+      src={imageSrc}
+      unoptimized={imageSrc.startsWith("http")}
+      onError={() => setImageSrc(TRIP_IMAGE_FALLBACK)}
+    />
+  );
+}
+
 export default function TripHeader({ trip, lang }) {
   const { theme } = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -92,7 +111,7 @@ export default function TripHeader({ trip, lang }) {
       <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
         <div className="relative min-h-[290px] md:min-h-[440px]">
           <motion.div key={activeIndex} initial={{ opacity: 0.5 }} animate={{ opacity: 1 }} className="absolute inset-0">
-            <Image
+            <SafeTripImage
               src={activeUrl}
               alt={activeName || trip?.title?.[lang] || trip?.title?.en || copy.image}
               fill
@@ -150,7 +169,7 @@ export default function TripHeader({ trip, lang }) {
               aria-pressed={index === activeIndex}
               className={"relative h-16 w-24 shrink-0 overflow-hidden rounded-xl border-2 transition md:h-20 md:w-32 " + (index === activeIndex ? "border-[#d4b56f] ring-2 ring-[#d4b56f]/30" : "border-transparent opacity-70 hover:opacity-100")}
             >
-              <Image src={imageUrl} alt="" fill sizes="128px" className="object-cover" />
+              <SafeTripImage src={imageUrl} alt="" fill sizes="128px" className="object-cover" />
             </button>
           );
         })}

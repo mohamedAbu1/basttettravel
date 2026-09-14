@@ -12,6 +12,9 @@ const GoogleProvider = GoogleProviderModule.default ?? GoogleProviderModule;
 const pool = await connectDB();
 
 export const authOptions = {
+  // Keep the signing key stable across instances/redeploys. NEXTAUTH_SECRET
+  // is preferred, while JWT_SECRET keeps existing deployments compatible.
+  secret: process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
@@ -30,11 +33,10 @@ export const authOptions = {
 
       const role = adminEmails.includes(user.email) ? "ADMIN" : "USER";
 
-      // ✅ لو مفيش باسورد، نحط باسورد افتراضي مشفر
+      // OAuth users must not receive a shared/default local password.
       let password = rows.length > 0 ? rows[0].password : null;
       if (!password) {
-        const salt = await bcrypt.genSalt(10);
-        password = await bcrypt.hash("Mohamed19971126", salt);
+        password = await bcrypt.hash(uuidv4(), 10);
       }
 
       await pool.query(

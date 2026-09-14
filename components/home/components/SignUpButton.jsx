@@ -74,8 +74,9 @@ export default function SignUpModal() {
         </div>
         <DividerWithIcon />
 
-        <DialogContent component="form" onSubmit={handleSubmit} className="auth-modal-content flex flex-col gap-5">
-          <FormComponent
+        <form onSubmit={handleSubmit}>
+          <DialogContent className="auth-modal-content flex flex-col gap-5">
+            <FormComponent
             t={t}
             fullName={fullName}
             setFullName={setFullName}
@@ -88,17 +89,18 @@ export default function SignUpModal() {
             showPassword={showPassword}
             setShowPassword={setShowPassword}
             theme={theme} // ✅ تمرير الثيم للفورم
-          />
-        <DividerWithIcon />
+            />
+            <DividerWithIcon />
 
-          <ActionsComponent
-            t={t}
-            loginWithGoogle={loginWithGoogle}
-            handleSubmit={handleSubmit}
-            loading={loading}
-            handleLoginOpen={handleLoginOpen}
-          />
-        </DialogContent>
+            <ActionsComponent
+              t={t}
+              loginWithGoogle={loginWithGoogle}
+              handleSubmit={handleSubmit}
+              loading={loading}
+              handleLoginOpen={handleLoginOpen}
+            />
+          </DialogContent>
+        </form>
       </motion.div>
     </Dialog>
   );

@@ -108,6 +108,7 @@ const CarBookingSection = () => {
             }
             alt="Luxury Car"
             fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-contain drop-shadow-2xl"
             priority // ✅ لو الصورة أساسية في الصفحة (مثلاً Hero أو خلفية مهمة)
             quality={85} // ✅ يقلل حجم الصورة ويحافظ على جودة مناسبة

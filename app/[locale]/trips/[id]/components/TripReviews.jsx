@@ -18,9 +18,9 @@ export default function TripReviews({ trip, lang }) {
     deleteReview,
     updateReview,
     likes,
-    addLike,
+    toggleLike,
+    likeBusy,
     fetchReviewsByTrip,
-    removeLike,
   } = useReviews();
   const { userData } = useAuth();
   const { t } = useTranslation("tripsId");
@@ -142,8 +142,8 @@ export default function TripReviews({ trip, lang }) {
             updateReview={updateReview}
             theme={theme}
             likes={likes}
-            addLike={addLike}
-            removeLike={removeLike}
+            toggleLike={toggleLike}
+            likeBusy={likeBusy}
           />
         ))}
         {tripReviews.length === 0 && (

@@ -67,18 +67,16 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={fadeUp}
-      className={` p-5 ${
+      className={`trips-filter-card ${
         themeName === "dark" ? "card-dark" : "card-light"
       } `} 
     >
-      <h3 className="filter-title">{t("Filters")}</h3>
-      <div className="flex flex-col gap-8">
+      <div className="filter-card-heading"><span className="filter-kicker">Basttet Travel</span><h3 className="filter-title">{t("Filters")}</h3><span className="filter-heading-line" /></div>
+      <div className="filter-sections">
         {/* المدن */}
         <div>
-          <div className="filter-label">
-            <FaMapMarkerAlt /> {t("Cities")} :
-          </div>
-          <div className="grid grid-cols-2 gap-2 ml-6">
+          <div className="filter-label"><span className="filter-label-icon"><FaMapMarkerAlt /></span>{t("Cities")}</div>
+          <div className="filter-options-grid">
             {allCities.map((cityObj) => {
               const cityName =
                 cityObj.name?.[normalizedLang] ||
@@ -107,10 +105,8 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
 
         {/* الكاتجري */}
         <div>
-          <div className="filter-label">
-            <FaTags /> {t("Categories")} :
-          </div>
-          <div className="grid grid-cols-2 gap-2 ml-6">
+          <div className="filter-label"><span className="filter-label-icon"><FaTags /></span>{t("Categories")}</div>
+          <div className="filter-options-grid">
             {allCategories.map((cat) => {
               const categoryName =
                 cat.name?.[normalizedLang] || cat.name?.["en"] || cat.name;
@@ -141,7 +137,7 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
             {currency === "USD" ? <FaDollarSign /> : <FaEuroSign />}{" "}
             {t("PriceRange")} :
           </div>
-          <div className="flex flex-col gap-2 ml-6">
+          <div className="filter-options-stack">
             {priceRanges.map((range) => (
               <label key={range.value} className="filter-option">
                 <input
@@ -161,11 +157,11 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
 
         {/* الأكثر طلباً */}
 <div>
-  <label className="filter-label cursor-pointer">
-    <FaFire /> {t("MostPopular")}
+  <label className="filter-popular-option">
+    <span className="filter-label-icon"><FaFire /></span><span>{t("MostPopular")}</span>
     <input
       type="checkbox"
-      className="ml-2 filter-input"
+      className="filter-input filter-toggle-input"
       checked={popular === true}
       onChange={(e) => updateValue("popular", e.target.checked)}
     />

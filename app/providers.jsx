@@ -30,11 +30,11 @@ export default function Providers({ children }) {
       <I18nextProvider i18n={i18n}>
         <ThemeProvider>
           <Suspense fallback={<div>Loading filters...</div>}>
-            <NotificationsProvider>
-              <CurrencyProvider>
-                <QueryProvider>
-                  <DataProvider>
-                    <AuthProvider>
+            <CurrencyProvider>
+              <QueryProvider>
+                <DataProvider>
+                  <AuthProvider>
+                    <NotificationsProvider>
                       <UserProvider>
                         <SecurityProvider>
                           <TripProvider>
@@ -63,11 +63,11 @@ export default function Providers({ children }) {
                           </TripProvider>
                         </SecurityProvider>
                       </UserProvider>
-                    </AuthProvider>
-                  </DataProvider>
-                </QueryProvider>
-              </CurrencyProvider>
-            </NotificationsProvider>
+                    </NotificationsProvider>
+                  </AuthProvider>
+                </DataProvider>
+              </QueryProvider>
+            </CurrencyProvider>
           </Suspense>
         </ThemeProvider>
       </I18nextProvider>

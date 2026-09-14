@@ -11,6 +11,7 @@ export function ReviewsProvider({ children }) {
   const [allReviews, setAllReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [likes, setLikes] = useState({});
+  const [likeBusy, setLikeBusy] = useState({});
   // ✅ جلب التعليقات الخاصة برحلة معينة
   const fetchReviewsByTrip = async (tripId) => {
     if (!tripId) return;
@@ -107,50 +108,55 @@ export function ReviewsProvider({ children }) {
     }
   };
 
-const addLike = async (reviewId, userId) => {
-  if (!reviewId || !userId) return;
-
-  try {
-    const res = await axios.post(`/api/reviews/${reviewId}/like`, {
-      user_id: userId, // ✅ استخدم الباراميتر المرسل
-    });
-
-    if (!res.data?.error) {
-      setLikes((prev) => ({
-        ...prev,
-        [reviewId]: {
-          count: (prev[reviewId]?.count || 0) + 1,
-          users: [...(prev[reviewId]?.users || []), userId],
-        },
-      }));
+  // الإعجاب عملية تبديلية واحدة: الضغط الأول Like والضغط التالي Unlike.
+  // هذا يمنع وجود زر Dislike وهمي لا يملك تخزينًا أو API مستقلًا.
+  const toggleLike = async (reviewId) => {
+    const userId = userData?.id;
+    if (!reviewId || !userId || likeBusy[reviewId]) {
+      return { success: false, error: "Authentication required or request is busy" };
     }
-  } catch (err) {
-    console.error("❌ Error adding like:", err);
-  }
-};
 
+    const current = likes[reviewId] || { count: 0, users: [] };
+    const isLiked = current.users.some((id) => String(id) === String(userId));
+    const previous = current;
+    const next = isLiked
+      ? {
+          count: Math.max(current.count - 1, 0),
+          users: current.users.filter((id) => String(id) !== String(userId)),
+        }
+      : { count: current.count + 1, users: [...current.users, userId] };
 
-  // ✅ إزالة لايك
-  const removeLike = async (reviewId) => {
-    if (!user?.id) return;
+    setLikeBusy((prev) => ({ ...prev, [reviewId]: true }));
+    setLikes((prev) => ({ ...prev, [reviewId]: next }));
 
     try {
-      const res = await axios.delete(`/api/reviews/${reviewId}/like`, {
-        data: { user_id: userData.id },
-      });
+      const res = isLiked
+        ? await axios.delete(`/api/reviews/${reviewId}/like`)
+        : await axios.post(`/api/reviews/${reviewId}/like`);
 
-      if (!res.data?.error) {
-        setLikes((prev) => ({
-          ...prev,
-          [reviewId]: {
-            count: Math.max((prev[reviewId]?.count || 1) - 1, 0),
-            users: (prev[reviewId]?.users || []).filter((id) => id !== userData.id),
-          },
-        }));
-      }
+      if (!res.data?.ok) throw new Error(res.data?.error || "Like request failed");
+      return { success: true, liked: !isLiked };
     } catch (err) {
-      console.error("❌ Error removing like:", err);
+      setLikes((prev) => ({ ...prev, [reviewId]: previous }));
+      console.error("❌ Error toggling like:", err);
+      return { success: false, error: err.message };
+    } finally {
+      setLikeBusy((prev) => ({ ...prev, [reviewId]: false }));
     }
+  };
+
+  const addLike = async (reviewId, userId) => {
+    if (!userData?.id || String(userData.id) !== String(userId)) return;
+    const current = likes[reviewId];
+    const alreadyLiked = current?.users?.some((id) => String(id) === String(userId));
+    if (!alreadyLiked) return toggleLike(reviewId);
+  };
+
+  const removeLike = async (reviewId) => {
+    const userId = userData?.id;
+    const current = likes[reviewId];
+    const alreadyLiked = current?.users?.some((id) => String(id) === String(userId));
+    if (userId && alreadyLiked) return toggleLike(reviewId);
   };
 
   // ✅ جلب لايكات المستخدم
@@ -215,12 +221,14 @@ const deleteReview = async (reviewId) => {
         loading,
         userData,
         likes,
+        likeBusy,
         fetchReviewsByTrip,
         fetchAllReviews,
         addReview,
         fetchLikes,
         addLike,
         removeLike,
+        toggleLike,
         getUserLikes,
         deleteReview,
       }}

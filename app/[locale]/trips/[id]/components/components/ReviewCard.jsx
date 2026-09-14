@@ -2,27 +2,32 @@
 import {
   FaStar,
   FaThumbsUp,
-  FaThumbsDown,
+  FaRegThumbsUp,
+  FaSpinner,
   FaUserCircle,
   FaTrash,
   FaEdit,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function ReviewCard({
   rev,
   idx,
   theme,
   likes,
-  addLike,
-  removeLike,
+  toggleLike,
+  likeBusy,
   deleteReview,
   updateReview,
   user,
 }) {
   const isOwner = user && String(user.id) === String(rev.users?.id);
   const isAdmin = user && user?.role === "ADMIN";
+  const likeState = likes[rev.id] || { count: 0, users: [] };
+  const isLiked = likeState.users.some((id) => String(id) === String(user?.id));
+  const isLikeBusy = Boolean(likeBusy?.[rev.id]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedComment, setEditedComment] = useState(rev.comment);
@@ -43,7 +48,7 @@ export default function ReviewCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6, delay: idx * 0.1 }}
-      className={`w-[99%] lg:w-[48%] p-5 rounded-xl transition ${theme.shadow} ${theme.text} ${theme.border}`}
+      className={`review-card w-[99%] lg:w-[48%] p-5 rounded-xl transition ${theme.shadow} ${theme.text} ${theme.border}`}
     >
       {/* رأس البطاقة */}
       <div className="flex items-center gap-4 mb-3">
@@ -109,30 +114,33 @@ export default function ReviewCard({
       )}
 
       {/* أزرار التحكم */}
-      <div className="flex flex-wrap items-center gap-3 mt-2">
-        {/* زر لايك */}
+      <div className="review-card-actions flex flex-wrap items-center gap-3 mt-2">
         <motion.button
+          type="button"
           whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.1 }}
-          onClick={() => addLike(rev.id, user?.id)}
-          className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm `}
+          whileHover={{ y: -1 }}
+          disabled={isLikeBusy}
+          aria-pressed={isLiked}
+          aria-label={isLiked ? "Remove your like" : "Like this review"}
+          onClick={() => {
+            if (!user?.id) {
+              toast.info("Please log in to like this review.");
+              return;
+            }
+            toggleLike(rev.id);
+          }}
+          className={`review-like-toggle ${isLiked ? "is-liked" : ""}`}
         >
-          <FaThumbsUp /> {likes[rev.id]?.count || 0}
+          {isLikeBusy ? <FaSpinner className="review-action-spinner" /> : isLiked ? <FaThumbsUp /> : <FaRegThumbsUp />}
+          <span>{isLiked ? "Liked" : "Helpful"}</span>
+          <strong>{likeState.count}</strong>
         </motion.button>
-
-        {/* زر إزالة لايك */}
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          whileHover={{ scale: 1.1 }}
-          onClick={() => removeLike(rev.id)}
-          className={`flex items-center gap-1 px-3 py-1 rounded-md text-sm `}
-        >
-          <FaThumbsDown /> Unlike
-        </motion.button>
+        <span className="review-like-hint">{isLiked ? "Tap again to remove" : "Was this helpful?"}</span>
 
         {/* صلاحيات الأدمن */}
         {isAdmin && !isOwner && (
           <motion.button
+            type="button"
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.1 }}
             onClick={() => deleteReview(rev.id)}
@@ -147,6 +155,7 @@ export default function ReviewCard({
           <>
             {!isEditing && (
               <motion.button
+                type="button"
                 whileTap={{ scale: 0.9 }}
                 whileHover={{ scale: 1.1 }}
                 onClick={() => setIsEditing(true)}
@@ -157,6 +166,7 @@ export default function ReviewCard({
             )}
 
             <motion.button
+              type="button"
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => deleteReview(rev.id)}

@@ -6,7 +6,7 @@ import { connectDB } from "@/lib/db";
 export async function POST(request) {
   const refreshToken = request.cookies.get("refresh-token")?.value;
   if (!refreshToken) {
-    return NextResponse.json({ error: "No refresh token" }, { status: 401 });
+    return NextResponse.json({ authenticated: false, user: null }, { status: 200 });
   }
 
   try {

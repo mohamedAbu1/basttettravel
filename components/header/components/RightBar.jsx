@@ -83,7 +83,7 @@ export default function RightBar({ scrolled }) {
       );
     }
 
-    if (notification.event_type === "review_like" && notification.trip_id) {
+    if (["review_like", "like"].includes(notification.event_type) && notification.trip_id) {
       router.push(
         `/trips/${notification.trip_id}?highlightReview=${notification.review_id}`,
       );

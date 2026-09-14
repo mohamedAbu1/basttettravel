@@ -31,6 +31,17 @@ function CategoryCard({ cat, theme, language, exploreLabel }) {
       ? cat?.name?.[language] || cat?.name?.en || cat?.name
       : cat?.name;
 
+  const imageSrc =
+    cat.images?.[imgIndex]?.startsWith("/") ||
+    cat.images?.[imgIndex]?.startsWith("http")
+      ? cat.images[imgIndex]
+      : "/HomePageImage/asdasdas.webp";
+  const [safeImageSrc, setSafeImageSrc] = useState(imageSrc);
+
+  useEffect(() => {
+    setSafeImageSrc(imageSrc);
+  }, [imageSrc]);
+
   const luxuryNames = [
     "Luxusreisen",
     "Luxury Tours",
@@ -73,16 +84,13 @@ function CategoryCard({ cat, theme, language, exploreLabel }) {
           className="absolute inset-0"
         >
           <Image
-            src={
-              cat.images?.[imgIndex]?.startsWith("/")
-                ? cat.images[imgIndex]
-                : cat.images?.[imgIndex]?.startsWith("http")
-                  ? cat.images[imgIndex]
-                  : "/fallback.jpg"
-            }
+            src={safeImageSrc}
             alt={displayName}
             fill
+            sizes="(max-width: 768px) 90vw, 30vw"
             className="object-cover rounded-lg"
+            unoptimized={safeImageSrc.startsWith("http")}
+            onError={() => setSafeImageSrc("/HomePageImage/asdasdas.webp")}
           />
         </motion.div>
       </AnimatePresence>

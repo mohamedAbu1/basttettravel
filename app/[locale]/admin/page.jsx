@@ -75,10 +75,18 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <section
-        className={`flex-1 p-10 relative z-10 ${
+        className={`admin-main-content flex-1 relative z-10 ${
           themeName === "dark" ? "bg-black" : "bg-white"
         } rounded-tl-3xl`}
       >
+        <header className="admin-topbar">
+          <div>
+            <p className="admin-topbar-kicker">Basttet Travel workspace</p>
+            <h1>Operations dashboard</h1>
+            <p>Keep every Egypt journey moving smoothly.</p>
+          </div>
+          <div className="admin-topbar-status"><span /> Live overview</div>
+        </header>
         {activeSection === "dashboard" && <DashboardHome themeName={themeName} />}
         {activeSection === "addTrip" && <AddTrip themeName={themeName} />}
         {activeSection === "trips" && <TripsList themeName={themeName} />}

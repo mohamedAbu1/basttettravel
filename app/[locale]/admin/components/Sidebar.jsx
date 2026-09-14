@@ -22,50 +22,32 @@ export default function Sidebar({ activeSection, setActiveSection }) {
     return (
       <button
         onClick={() => setActiveSection(section)}
-        className={`flex items-center gap-3 px-4 py-2 rounded-lg font-semibold transition-all duration-300 relative cursor-pointer
-          ${
-            isActive
-              ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg border-l-4 border-yellow-500"
-              : "text-gold hover:text-yellow-400 hover:bg-black/20"
-          }`}
+        className={`admin-nav-button ${isActive ? "is-active" : ""}`}
       >
         {/* ✅ خط جانبي يوضح الزر النشط */}
-        {isActive && (
-          <span className="absolute left-0 top-0 h-full w-1 bg-yellow-500 rounded-r"></span>
-        )}
-
-        {/* ✅ نقطة ذهبية صغيرة بجانب الزر النشط */}
-        {isActive && (
-          <span className="absolute -left-3 w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
-        )}
-
-        {/* ✅ أيقونة مع تأثير عند النشط */}
-        <span
-          className={`text-lg transition-transform ${
-            isActive ? "scale-110 text-yellow-800 drop-shadow-md" : ""
-          }`}
-        >
-          {icon}
-        </span>
-        {label}
+        <span className="admin-nav-icon">{icon}</span>
+        <span>{label}</span>
+        {isActive && <span className="admin-nav-active-dot" />}
       </button>
     );
   };
 
   return (
-    <aside className="w-64 p-6 flex flex-col gap-6 bg-black/0 border-r border-gold/30">
+    <aside className="admin-sidebar">
       <EgyptianBackground />
 
-      <h2 className="text-2xl font-bold mb-6 flex flex-row items-center justify-between">
-        <span>Basttet Travel</span> <ThemeToggle />
-      </h2>
+      <div className="admin-brand">
+        <div className="admin-brand-mark">𓂀</div>
+        <div><strong>Basttet Travel</strong><small>Admin workspace</small></div>
+        <ThemeToggle />
+      </div>
 
-      <nav className="flex flex-col gap-3">
+      <nav className="admin-sidebar-nav">
         <Link
           href="/"
-          className="flex items-center gap-3 font-bold text-gold hover:text-yellow-500 transition"
+          className="admin-back-link"
         >
-          ⬅ Back to Home
+          <span>←</span> Back to Home
         </Link>
 
         <NavButton section="dashboard" icon={<FaHome />} label="Dashboard" />

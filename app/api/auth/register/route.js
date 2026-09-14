@@ -51,9 +51,13 @@ export async function POST(request) {
     const body = await request.json();
 
     const { name, email, password, gender } = body;
-    if (typeof name !== "string" || name.trim().length < 2 || name.length > 120 ||
-        typeof email !== "string" || !/^\S+@\S+\.\S+$/.test(email) ||
-        typeof password !== "string" || password.length < 8 || password.length > 128) {
+    const normalizedName = typeof name === "string" ? name.trim() : "";
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const normalizedGender = typeof gender === "string" ? gender.trim().toLowerCase() : "";
+    if (normalizedName.length < 2 || normalizedName.length > 120 ||
+        !/^\S+@\S+\.\S+$/.test(normalizedEmail) ||
+        typeof password !== "string" || password.length < 8 || password.length > 128 ||
+        !["male", "female"].includes(normalizedGender)) {
       return NextResponse.json({ error: "Invalid registration data" }, { status: 400 });
     }
     if (!process.env.JWT_SECRET) {
@@ -61,7 +65,7 @@ export async function POST(request) {
     }
 
     // ✅ تحقق من البريد إذا كان موجود مسبقًا
-    const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const [existing] = await db.query("SELECT id FROM users WHERE LOWER(email) = ? LIMIT 1", [normalizedEmail]);
 
     if (existing.length > 0) {
       console.warn("⚠️ [API REGISTER] البريد مستخدم بالفعل");
@@ -79,19 +83,19 @@ export async function POST(request) {
     // ✅ إدخال المستخدم في قاعدة البيانات
     await db.query(
       "INSERT INTO users (id, name, email, password, gender, role, avatar_url, created_at) VALUES (UUID(), ?, ?, ?, ?, ?, ?, NOW())",
-      [name, email, hashedPassword, gender, "USER", avatarUrl],
+      [normalizedName, normalizedEmail, hashedPassword, normalizedGender, "USER", avatarUrl],
     );
     console.log("✅ [API REGISTER] المستخدم أُضيف لقاعدة البيانات");
 
     // ✅ جلب بيانات المستخدم الجديد
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const [rows] = await db.query("SELECT * FROM users WHERE LOWER(email) = ? LIMIT 1", [normalizedEmail]);
     const newUser = rows[0];
 
     // ✅ إنشاء JWT token
     const accessToken = jwt.sign(
-      { id: newUser.id, email: newUser.email, role: newUser.role },
+      { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role, gender: newUser.gender, avatar_url: newUser.avatar_url },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     );
 
     const response = NextResponse.json(
@@ -109,7 +113,8 @@ export async function POST(request) {
       { status: 201 }
     );
 
-    return setAuthCookies(response, accessToken, null);
+    const refreshToken = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+    return setAuthCookies(response, accessToken, refreshToken);
   } catch (e) {
     console.error("Registration failed:", e.message);
     return NextResponse.json({ error: "خطأ داخلي" }, { status: 500 });

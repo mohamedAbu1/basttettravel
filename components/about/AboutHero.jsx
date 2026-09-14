@@ -32,6 +32,7 @@ export default function AboutHero() {
             }
             alt="Basttet Travel luxury Egypt experience"
             fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover scale-x-[-1]"
           />
           <div className="about-image-caption">
@@ -49,6 +50,7 @@ export default function AboutHero() {
             src="/Luxor/pexels-francesco-ungaro-2325447.webp"
             alt="Luxor temple at sunset"
             fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover"
           />
         </motion.div>

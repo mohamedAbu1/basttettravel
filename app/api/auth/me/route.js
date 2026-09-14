@@ -7,7 +7,7 @@ export async function GET(request) {
     const accessToken = request.cookies.get("access-token")?.value;
 
     if (!accessToken) {
-      return NextResponse.json({ error: "No token found" }, { status: 401 });
+      return NextResponse.json({ authenticated: false, user: null }, { status: 200 });
     }
 
     const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);

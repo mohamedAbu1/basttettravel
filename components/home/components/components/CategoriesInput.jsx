@@ -2,12 +2,10 @@
 import React from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { MdCategory } from "react-icons/md";
-import { motion } from "framer-motion";
-import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
+import { FaChevronDown, FaCheck } from "react-icons/fa";
 
 const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => {
-  const { theme } = useTheme();
  const { i18n } = useTranslation();
   const normalizedLang = i18n.language.split("-")[0]; // مثل en أو ar أو fr
   const { t } = useTranslation("home");
@@ -19,54 +17,48 @@ const CategoriesInput = ({ selectedCategories, toggleCategory, categories }) => 
           <button
             type="button"
             aria-label={t("SelectCategory")}
-            className={`hero-booking-trigger flex items-center w-full px-4 py-2 rounded-lg  shadow-sm cursor-pointer`}
+            className="booking-select-trigger"
           >
-            <MdCategory className={`mr-2 text-xl ${theme.iconHover}`} />
-            <span className={`flex-1 text-left ${theme.text}`}>
+            <span className="booking-field-icon"><MdCategory aria-hidden="true" /></span>
+            <span className="booking-select-copy">
+              <small>{t("SelectCategory")}</small>
               {(selectedCategories || [])
                 .map((c) => c.name?.[normalizedLang] || c.name?.["en"] || c.name)
-                .join(" - ") || t("SelectCategory")}
+                .join(" · ") || <strong>{t("SelectCategory")}</strong>}
             </span>
+            <FaChevronDown className="booking-select-chevron" aria-hidden="true" />
           </button>
         </Popover.Trigger>
 
         {/* محتوى الـ dropdown */}
         <Popover.Portal>
           <Popover.Content
-            side="left"        // ✅ يظهر بجانب الزر من اليسار
-            align="start"      // ✅ يبدأ من أعلى الزر
-            sideOffset={10}    // مسافة صغيرة بين الزر والـ Popover
-            className={`absolute w-[350px] z-[9999] p-4 rounded-xl shadow-lg flex flex-col gap-3`}
+            side="bottom"
+            align="start"
+            sideOffset={8}
+            collisionPadding={12}
+            className="booking-options-popover"
           >
+            <div className="booking-options-heading">{t("SelectCategory")}</div>
+            <div className="booking-options-list">
             {categories.map((cat) => (
-              <motion.button
-              key={cat.id}
-              type="button"
-                whileHover={{ scale: 1.05 }}
+              <button
+                key={cat.id}
+                type="button"
                 onClick={(e) => {
-                  e.preventDefault(); // يمنع الإغلاق التلقائي
+                  e.preventDefault();
                   toggleCategory(cat);
                 }}
-                className={`px-4 py-2 rounded-lg text-left transition-all duration-300 cursor-pointer
-                  ${
-                    (selectedCategories || []).some((c) => c.id === cat.id)
-                      ? `${theme.buttonPrimary} text-black shadow-lg`
-                      : `${theme.text} hover:${theme.buttonSecondary}`
-                  }`}
+                className={`booking-option ${(selectedCategories || []).some((c) => c.id === cat.id) ? "is-selected" : ""}`}
               >
-                {cat.name?.[normalizedLang] ||
-                  cat.name?.["en"] ||
-                  cat.displayName ||
-                  cat.name}
-              </motion.button>
+                <span>{cat.name?.[normalizedLang] || cat.name?.["en"] || cat.displayName || cat.name}</span>
+                {(selectedCategories || []).some((c) => c.id === cat.id) && <FaCheck aria-hidden="true" />}
+              </button>
             ))}
+            </div>
 
             {/* زر التأكيد */}
-            <Popover.Close
-              className={`w-full rounded-[6px] px-6 py-3 text-center font-semibold tracking-wide 
-                          cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
-              style={{ border: `2px solid ${theme.logoBorder}` }}
-            >
+            <Popover.Close className="booking-options-confirm">
               {t("Confirm")}
             </Popover.Close>
           </Popover.Content>

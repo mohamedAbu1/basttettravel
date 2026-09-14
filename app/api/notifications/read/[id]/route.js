@@ -3,12 +3,12 @@ import { connectDB } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth/admin";
 
 // ✅ تحديث حالة الإشعار إلى مقروء
-export async function PUT(req, { params }) {
+export async function PUT(req, context) {
   try {
     const authorizationError = requireAdmin(req);
     if (authorizationError) return authorizationError;
     const db = await connectDB();
-    const { id } = params; // نأخذ id من الرابط
+    const { id } = await context.params;
 
     await db.execute("UPDATE notifications SET is_read = 1 WHERE id = ?", [id]);
 

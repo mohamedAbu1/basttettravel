@@ -33,11 +33,7 @@ export default function DashboardHome() {
 
   const colors = themeName === "dark" ? { scheme: "nivo" } : { scheme: "set2" };
 
-  const sectionStyle = `p-6 rounded-xl shadow-lg ${
-    themeName === "dark"
-      ? "bg-black/40 border border-gold/30 text-gold"
-      : "bg-white/70 border border-[#c9a34a]/30 text-[#3a2c0a] backdrop-blur-sm"
-  }`;
+  const sectionStyle = `dashboard-panel ${themeName === "dark" ? "dashboard-panel-dark" : "dashboard-panel-light"}`;
 
   const quickStats = [
     { title: "Users", value: users.length, icon: <FaUsers /> },
@@ -51,7 +47,7 @@ export default function DashboardHome() {
     fetchUsers(); // ✅ تحميل تلقائي عند أول فتح
   }, []);
   return (
-    <div className="flex flex-col gap-10 mt-6">
+    <div className="dashboard-content mt-2">
       <EgyptianBackground />
 
       {/* ✅ Quick Stats Cards */}
@@ -59,18 +55,18 @@ export default function DashboardHome() {
         {quickStats.map((card, i) => (
           <div
             key={i}
-            className={`${sectionStyle} flex flex-col items-center justify-center gap-3 transform transition hover:scale-105`}
+            className={`${sectionStyle} dashboard-stat-card`}
           >
-            <div className="text-3xl">{card.icon}</div>
-            <h4 className="text-lg font-bold">{card.title}</h4>
-            <p className="text-2xl font-extrabold">{card.value}</p>
+            <div className="dashboard-stat-icon">{card.icon}</div>
+            <div className="dashboard-stat-copy"><h4>{card.title}</h4><p>{card.value}</p></div>
+            <span className="dashboard-stat-arrow">↗</span>
           </div>
         ))}
       </div>
 
       {/* ✅ Bar Chart */}
-      <div className={sectionStyle} style={{ height: "350px" }}>
-        <h3 className="text-xl font-bold mb-4">📊 Users & Trips</h3>
+      <div className={`${sectionStyle} dashboard-chart-panel`}>
+        <h3>📊 Users & Trips</h3>
         <ResponsiveBar
           data={stats}
           keys={["value"]}
@@ -92,8 +88,8 @@ export default function DashboardHome() {
       </div>
 
       {/* ✅ Pie Chart */}
-      <div className={sectionStyle} style={{ height: "350px" }}>
-        <h3 className="text-xl font-bold mb-4">🍩 Revenue Distribution</h3>
+      <div className={`${sectionStyle} dashboard-chart-panel`}>
+        <h3>🍩 Revenue Distribution</h3>
         <ResponsivePie
           data={stats}
           margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
@@ -105,8 +101,8 @@ export default function DashboardHome() {
       </div>
 
       {/* ✅ Line Chart */}
-      <div className={sectionStyle} style={{ height: "350px" }}>
-        <h3 className="text-xl font-bold mb-4">📈 Bookings Over Time</h3>
+      <div className={`${sectionStyle} dashboard-chart-panel`}>
+        <h3>📈 Bookings Over Time</h3>
         <ResponsiveLine
           data={[
             {
