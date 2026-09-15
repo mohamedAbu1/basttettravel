@@ -1,0 +1,66 @@
+"use client";
+
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { getActiveSeasonalEvent, getSeasonalEvent, getSeasonalEventFromConfig } from "@/lib/seasonalEvents";
+
+const SeasonalContext = createContext(null);
+
+export const useSeasonalEvent = () => useContext(SeasonalContext);
+
+export default function SeasonalTheme({ children }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const preview = searchParams.get("seasonPreview");
+  const [config, setConfig] = useState([]);
+  const [configLoaded, setConfigLoaded] = useState(false);
+  useEffect(() => {
+    fetch("/api/seasonal-events", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : [])
+      .then((data) => setConfig(Array.isArray(data) ? data : []))
+      .catch(() => setConfig([]))
+      .finally(() => setConfigLoaded(true));
+  }, []);
+  const event = useMemo(() => getSeasonalEvent(preview) || (configLoaded && config.length ? getSeasonalEventFromConfig(config) : getActiveSeasonalEvent()), [config, configLoaded, preview]);
+  const isAdmin = pathname?.includes("/admin");
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const active = !isAdmin && event;
+    root.classList.toggle("has-seasonal-theme", Boolean(active));
+    root.dataset.season = active?.theme || "default";
+
+    if (active) {
+      root.style.setProperty("--season-accent", active.accent);
+      root.style.setProperty("--season-accent-strong", active.accentStrong);
+      root.style.setProperty("--season-accent-contrast", active.accentContrast);
+      root.style.setProperty("--season-glow", active.glow);
+      root.style.setProperty("--season-page", active.page);
+      root.style.setProperty("--season-surface", active.surface);
+      root.style.setProperty("--season-surface-strong", active.surfaceStrong);
+      root.style.setProperty("--season-border", active.border);
+      root.style.setProperty("--season-pattern", active.pattern);
+    } else {
+      ["--season-accent", "--season-accent-strong", "--season-accent-contrast", "--season-glow", "--season-page", "--season-surface", "--season-surface-strong", "--season-border", "--season-pattern"].forEach((property) => root.style.removeProperty(property));
+    }
+
+    return () => root.classList.remove("has-seasonal-theme");
+  }, [event, isAdmin]);
+
+  const active = !isAdmin && event;
+
+  return (
+    <SeasonalContext.Provider value={event}>
+      <>
+      {active && (
+        <aside className="seasonal-banner" role="status" aria-label={`${active.label} campaign`}>
+          <span className="seasonal-banner-icon" aria-hidden="true">{active.icon}</span>
+          <span><strong>{active.label}</strong> · {active.message}</span>
+          <span className="seasonal-banner-offer">Save {active.discount}% on selected journeys</span>
+        </aside>
+      )}
+        {children}
+      </>
+    </SeasonalContext.Provider>
+  );
+}

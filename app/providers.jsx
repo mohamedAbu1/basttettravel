@@ -23,13 +23,15 @@ import { CitiesCategoriesProvider } from "@/context/CitiesCategoriesContext";
 import { ToastContainer } from "react-toastify";
 import { Suspense } from "react";
 import { SessionProvider } from "next-auth/react"; // ✅ إضافة SessionProvider
+import SeasonalTheme from "@/components/layout/SeasonalTheme";
 
 export default function Providers({ children }) {
   return (
     <SessionProvider>
       <I18nextProvider i18n={i18n}>
         <ThemeProvider>
-          <Suspense fallback={<div>Loading filters...</div>}>
+          <SeasonalTheme>
+            <Suspense fallback={<div>Loading filters...</div>}>
             <CurrencyProvider>
               <QueryProvider>
                 <DataProvider>
@@ -68,7 +70,8 @@ export default function Providers({ children }) {
                 </DataProvider>
               </QueryProvider>
             </CurrencyProvider>
-          </Suspense>
+            </Suspense>
+          </SeasonalTheme>
         </ThemeProvider>
       </I18nextProvider>
     </SessionProvider>

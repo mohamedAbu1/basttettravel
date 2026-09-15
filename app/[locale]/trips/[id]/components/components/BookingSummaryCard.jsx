@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useData } from "@/context/DataContext";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { useSeasonalEvent } from "@/components/layout/SeasonalTheme";
 
 const BookingSummaryCard = ({
   tourName,
@@ -36,9 +37,14 @@ const BookingSummaryCard = ({
 
   const childrenPrice = (checkInPrice * childrenCount) / 2;
   let total = checkInPrice * participants + childrenPrice;
+  const seasonalEvent = useSeasonalEvent();
+  const originalTotal = total;
 
   if (participants > 1) {
     total = total * 0.6;
+  }
+  if (seasonalEvent) {
+    total = total * (1 - seasonalEvent.discount / 100);
   }
 let EGP = total * 49.85
   // تحميل سكريبت Kashier SDK
@@ -192,7 +198,13 @@ let EGP = total * 49.85
         <div>
           <p className={theme.heading}>{t("totalLabel")}</p>
           <p className={`${theme.title} text-lg`}>
-            {!isNaN(total) ? `$${total.toFixed(2)}` : "$0.00"}
+            {!isNaN(total) ? (
+              <>
+                {seasonalEvent && <span className="seasonal-old-price">${originalTotal.toFixed(2)}</span>}
+                <span>${total.toFixed(2)}</span>
+                {seasonalEvent && <span className="seasonal-discount-badge">-{seasonalEvent.discount}%</span>}
+              </>
+            ) : "$0.00"}
           </p>
         </div>
       </div>

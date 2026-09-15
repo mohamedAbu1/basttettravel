@@ -12,6 +12,8 @@ import {
   FaChartBar,
   FaEnvelope,
   FaEdit,
+  FaCalendarAlt,
+  FaCoins,
 } from "react-icons/fa";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 
@@ -42,6 +44,12 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         <ThemeToggle />
       </div>
 
+      <div className="admin-profile-card">
+        <div className="admin-profile-avatar">BT</div>
+        <div><strong>Travel operations</strong><small>Administrator</small></div>
+        <span className="admin-profile-dot" />
+      </div>
+
       <nav className="admin-sidebar-nav">
         <Link
           href="/"
@@ -58,7 +66,8 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         <NavButton section="bookings" icon={<FaClipboardList />} label="Bookings" />
         <NavButton section="reports" icon={<FaChartBar />} label="Reports" />
         <NavButton section="messages" icon={<FaEnvelope />} label="Messages" />
-        <NavButton section="currency" icon={<FaChartBar />} label="Currency Rates" />
+        <NavButton section="currency" icon={<FaCoins />} label="Currency Rates" />
+        <NavButton section="seasonalEvents" icon={<FaCalendarAlt />} label="Seasonal Events" />
       </nav>
     </aside>
   );

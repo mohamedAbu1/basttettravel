@@ -15,8 +15,23 @@ import UsersSection from "./components/UsersSection";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "./context/AuthContext";
 import CurrencyRates from "./components/CurrencyRates";
+import SeasonalEvents from "./components/SeasonalEvents";
+import { FaBell, FaCompass, FaShieldAlt } from "react-icons/fa";
 
 const symbols = ["𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽","𓃾","𓅓","𓈇","𓉐","𓊹","𓌙","𓍿","𓎟"];
+
+const sectionMeta = {
+  dashboard: { eyebrow: "Overview", title: "Operations dashboard", description: "Keep every Egypt journey moving smoothly." },
+  addTrip: { eyebrow: "Catalog", title: "Create a new trip", description: "Build a polished travel experience ready for your guests." },
+  trips: { eyebrow: "Catalog", title: "Trip library", description: "Review, manage, and curate every published experience." },
+  editTrip: { eyebrow: "Catalog", title: "Edit trip details", description: "Fine-tune content, media, inclusions, and schedules." },
+  users: { eyebrow: "People", title: "Users management", description: "Understand your community and manage access securely." },
+  bookings: { eyebrow: "Operations", title: "Booking desk", description: "Track guest reservations and keep status up to date." },
+  reports: { eyebrow: "Insights", title: "Reports & performance", description: "Turn your travel activity into clear operational signals." },
+  messages: { eyebrow: "Guest care", title: "Guest conversations", description: "Respond to travelers and keep every conversation personal." },
+  currency: { eyebrow: "Settings", title: "Currency rates", description: "Keep pricing data consistent across the travel experience." },
+  seasonalEvents: { eyebrow: "Merchandising", title: "Seasonal campaigns", description: "Shape timely offers and moments across the platform." },
+};
 
 export default function DashboardPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -45,14 +60,24 @@ export default function DashboardPage() {
   );
 
   if (loading || String(userData?.role).toUpperCase() !== "ADMIN") {
-    return <main className="min-h-screen" aria-busy="true" />;
+    return (
+      <main className="admin-shell admin-auth-loading min-h-screen" aria-busy="true">
+        <div className="admin-loading-card">
+          <div className="admin-loading-mark">𓂀</div>
+          <span className="admin-section-eyebrow">Basttet Travel</span>
+          <h1>Preparing your workspace</h1>
+          <p>Checking your secure admin session…</p>
+          <div className="admin-loading-bar"><span /></div>
+        </div>
+      </main>
+    );
   }
 
   return (
-    <main className={`relative flex min-h-screen ${theme.background} ${theme.text} overflow-hidden`}>
+    <main className={`admin-shell relative flex min-h-screen ${theme.background} ${theme.text} overflow-hidden`}>
       <EgyptianBackground />
 
-      <div className="absolute inset-0 pointer-events-none z-10">
+      <div className="admin-symbol-layer absolute inset-0 pointer-events-none z-10" aria-hidden="true">
         {floatingSymbols.map((item, i) => (
           <span
             key={i}
@@ -81,11 +106,16 @@ export default function DashboardPage() {
       >
         <header className="admin-topbar">
           <div>
-            <p className="admin-topbar-kicker">Basttet Travel workspace</p>
-            <h1>Operations dashboard</h1>
-            <p>Keep every Egypt journey moving smoothly.</p>
+            <div className="admin-breadcrumb"><FaCompass aria-hidden="true" /> <span>Basttet Travel</span><b>/</b><span>Admin workspace</span></div>
+            <p className="admin-topbar-kicker">{sectionMeta[activeSection]?.eyebrow}</p>
+            <h1>{sectionMeta[activeSection]?.title}</h1>
+            <p>{sectionMeta[activeSection]?.description}</p>
           </div>
-          <div className="admin-topbar-status"><span /> Live overview</div>
+          <div className="admin-topbar-actions">
+            <button className="admin-icon-button" type="button" aria-label="Notifications"><FaBell /></button>
+            <div className="admin-topbar-status"><span /> Live overview</div>
+            <div className="admin-secure-badge"><FaShieldAlt /> Secure</div>
+          </div>
         </header>
         {activeSection === "dashboard" && <DashboardHome themeName={themeName} />}
         {activeSection === "addTrip" && <AddTrip themeName={themeName} />}
@@ -96,6 +126,7 @@ export default function DashboardPage() {
         {activeSection === "reports" && <Reports themeName={themeName} />}
         {activeSection === "messages" && <MessagesList themeName={themeName} />}
         {activeSection === "currency" && <CurrencyRates themeName={themeName} />}
+        {activeSection === "seasonalEvents" && <SeasonalEvents themeName={themeName} />}
       </section>
     </main>
   );

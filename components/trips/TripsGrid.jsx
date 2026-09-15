@@ -15,6 +15,7 @@ import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import { useSeasonalEvent } from "@/components/layout/SeasonalTheme";
 
 const TRIP_IMAGE_FALLBACK = "/HomePageImage/asdasdas.webp";
 
@@ -51,6 +52,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
   const { t } = useTranslation("trips");
   const { lang } = useLanguage();
   const { theme } = useTheme();
+  const seasonalEvent = useSeasonalEvent();
 
   const convertPrice = (group_price, tripCurrency) => {
     let converted = group_price;
@@ -86,6 +88,9 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
           ),
         );
         const displayedPrice = convertPrice(trip.group_price, trip.currency);
+        const discountedPrice = seasonalEvent
+          ? (Number(displayedPrice) * (1 - seasonalEvent.discount / 100)).toFixed(2)
+          : displayedPrice;
 
         const hasPurchased =
           userData &&
@@ -183,7 +188,9 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
 
               <p className="trip-list-price text-lg font-semibold flex items-center gap-2">
                 <CurrencyIcon style={{ color: currencyColor }} />
-                {displayedPrice} {currency}
+                {seasonalEvent && <span className="seasonal-old-price">{displayedPrice}</span>}
+                <span>{discountedPrice} {currency}</span>
+                {seasonalEvent && <span className="seasonal-discount-badge">-{seasonalEvent.discount}%</span>}
               </p>
 
               <div className="flex items-center gap-2">

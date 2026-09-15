@@ -50,6 +50,11 @@ export default function DashboardHome() {
     <div className="dashboard-content mt-2">
       <EgyptianBackground />
 
+      <div className="dashboard-welcome-row">
+        <div><span className="admin-section-eyebrow">Today at a glance</span><h2>Good to see you, team.</h2><p>Your workspace is ready for the next journey.</p></div>
+        <span className="dashboard-live-chip"><span /> Updated just now</span>
+      </div>
+
       {/* ✅ Quick Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {quickStats.map((card, i) => (
@@ -66,7 +71,7 @@ export default function DashboardHome() {
 
       {/* ✅ Bar Chart */}
       <div className={`${sectionStyle} dashboard-chart-panel`}>
-        <h3>📊 Users & Trips</h3>
+        <div className="dashboard-panel-heading"><div><span className="admin-section-eyebrow">Growth</span><h3>Users & trips</h3></div><span className="dashboard-heading-note">Live data</span></div>
         <ResponsiveBar
           data={stats}
           keys={["value"]}
@@ -89,7 +94,7 @@ export default function DashboardHome() {
 
       {/* ✅ Pie Chart */}
       <div className={`${sectionStyle} dashboard-chart-panel`}>
-        <h3>🍩 Revenue Distribution</h3>
+        <div className="dashboard-panel-heading"><div><span className="admin-section-eyebrow">Finance</span><h3>Revenue distribution</h3></div><span className="dashboard-heading-note">This period</span></div>
         <ResponsivePie
           data={stats}
           margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
@@ -102,7 +107,7 @@ export default function DashboardHome() {
 
       {/* ✅ Line Chart */}
       <div className={`${sectionStyle} dashboard-chart-panel`}>
-        <h3>📈 Bookings Over Time</h3>
+        <div className="dashboard-panel-heading"><div><span className="admin-section-eyebrow">Momentum</span><h3>Bookings over time</h3></div><span className="dashboard-heading-note">Recent activity</span></div>
         <ResponsiveLine
           data={[
             {

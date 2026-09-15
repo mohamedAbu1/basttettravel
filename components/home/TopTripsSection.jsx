@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import DividerWithIcon from "../layout/DividerWithIcon";
 import { useTrip } from "@/context/TripContext";
 import { usePurchase } from "@/context/PurchaseContext";
+import { useSeasonalEvent } from "@/components/layout/SeasonalTheme";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -43,6 +44,7 @@ const TopTripsSection = () => {
 
   const { trips, fetchTrips, loadingTrips } = useTrip();
   const { currency, purchases } = usePurchase();
+  const seasonalEvent = useSeasonalEvent();
   const { rates } = useCurrency();
 
   useEffect(() => {
@@ -169,7 +171,11 @@ const TopTripsSection = () => {
           </div>
           <div className="flex items-center justify-between">
             <p className="trip-card-price text-lg font-extrabold">
-              {convertPrice(trip?.group_price, trip?.currency)} {currency}
+              {seasonalEvent && <span className="seasonal-old-price">{convertPrice(trip?.group_price, trip?.currency)}</span>}
+              {seasonalEvent
+                ? (Number(convertPrice(trip?.group_price, trip?.currency)) * (1 - seasonalEvent.discount / 100)).toFixed(2)
+                : convertPrice(trip?.group_price, trip?.currency)} {currency}
+              {seasonalEvent && <span className="seasonal-discount-badge">-{seasonalEvent.discount}%</span>}
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}

@@ -5,6 +5,7 @@ import { usePurchase } from "@/context/PurchaseContext";
 import { motion } from "framer-motion";
 import { useCurrency } from "@/context/CurrencyContext"; // ✅ استدعاء الكونتكست
 import { useTranslation } from "react-i18next";
+import { useSeasonalEvent } from "@/components/layout/SeasonalTheme";
 
 const translations = {
   en: {
@@ -66,6 +67,7 @@ const translations = {
 export default function TripInfo({ trip, lang }) {
   const { themeName, theme } = useTheme();
   const { currency } = usePurchase();
+  const seasonalEvent = useSeasonalEvent();
   const { rates, loading, error } = useCurrency(); // ✅ جلب أسعار العملات
   const { t: commonT } = useTranslation("common");
   const t = translations[lang] || translations.en;
@@ -96,7 +98,13 @@ export default function TripInfo({ trip, lang }) {
     displayedGroup = (trip.group_price / (rates.USD || 49.1)).toFixed(2);
   }
 
-  const displayedChild = (displayedGroup / 2).toFixed(2);
+  let displayedChild = (displayedGroup / 2).toFixed(2);
+  if (seasonalEvent) {
+    const factor = 1 - seasonalEvent.discount / 100;
+    displayedSolo = (Number(displayedSolo) * factor).toFixed(2);
+    displayedGroup = (Number(displayedGroup) * factor).toFixed(2);
+    displayedChild = (Number(displayedChild) * factor).toFixed(2);
+  }
   const localizedDurationUnit = trip.duration_unit?.[lang] || trip.duration_unit?.en || "";
 
   return (
