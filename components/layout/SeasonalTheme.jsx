@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { getActiveSeasonalEvent, getSeasonalEvent, getSeasonalEventFromConfig } from "@/lib/seasonalEvents";
+import { getActiveSeasonalEvent, getSeasonalEvent, getSeasonalEventFromConfig, seasonalThemes } from "@/lib/seasonalEvents";
 
 const SeasonalContext = createContext(null);
 
@@ -21,7 +21,16 @@ export default function SeasonalTheme({ children }) {
       .catch(() => setConfig([]))
       .finally(() => setConfigLoaded(true));
   }, []);
-  const event = useMemo(() => getSeasonalEvent(preview) || (configLoaded && config.length ? getSeasonalEventFromConfig(config) : getActiveSeasonalEvent()), [config, configLoaded, preview]);
+  const event = useMemo(() => {
+    // A preview must use the saved campaign settings even when its calendar
+    // window is not active today. This makes design QA deterministic.
+    if (configLoaded && preview) {
+      const configuredPreview = config.find((item) => item.key === preview && (item.enabled === true || item.enabled === 1 || item.enabled === "1"));
+      if (configuredPreview) return { ...configuredPreview, discount: Number(configuredPreview.discount) || 0, ...seasonalThemes[configuredPreview.theme] };
+      return getSeasonalEvent(preview);
+    }
+    return configLoaded && config.length ? getSeasonalEventFromConfig(config) : getActiveSeasonalEvent();
+  }, [config, configLoaded, preview]);
   const isAdmin = pathname?.includes("/admin");
 
   useEffect(() => {

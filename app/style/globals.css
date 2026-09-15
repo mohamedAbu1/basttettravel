@@ -107,6 +107,45 @@
   .admin-shell .dashboard-chart-panel { height: 290px; padding: .9rem; }
 }
 
+/* One contract for every admin page and nested control. */
+.admin-shell .admin-page-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--admin-line, rgba(212,181,111,.22));
+  border-radius: 1.2rem;
+  background: var(--admin-panel, rgba(255,255,255,.055));
+  color: var(--admin-text, #fff8e9);
+  box-shadow: 0 18px 50px rgba(0,0,0,.12);
+}
+.admin-shell .admin-page-panel h2,
+.admin-shell .admin-page-panel h3,
+.admin-shell .admin-page-panel h4 { color: var(--admin-text, #fff8e9); }
+.admin-shell .admin-page-panel > h2,
+.admin-shell .admin-page-panel > h3 { letter-spacing: -.025em; }
+.admin-shell .admin-page-panel label { color: var(--admin-muted, rgba(255,255,255,.68)); font-size: .72rem; font-weight: 750; letter-spacing: .01em; }
+.admin-shell .admin-page-panel input:not([type="checkbox"]),
+.admin-shell .admin-page-panel select,
+.admin-shell .admin-page-panel textarea { min-height: 2.65rem; padding: .65rem .75rem; }
+.admin-shell .admin-page-panel input::placeholder,
+.admin-shell .admin-page-panel textarea::placeholder { color: var(--admin-muted, rgba(255,255,255,.5)); }
+.admin-shell .admin-page-panel input[type="checkbox"] { accent-color: var(--ui-gold); width: 1rem; height: 1rem; }
+.admin-page-actions { display: flex; align-items: center; gap: .65rem; }
+.admin-primary-button { min-height: 2.7rem; border: 1px solid rgba(255,255,255,.16); }
+.admin-event-card { border-color: var(--admin-line) !important; background: linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.025)) !important; box-shadow: 0 14px 34px rgba(0,0,0,.12) !important; }
+.admin-event-card:hover { border-color: var(--ui-gold) !important; transform: translateY(-2px); transition: 180ms ease; }
+.admin-switch { cursor: pointer; user-select: none; }
+.admin-event-preview-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-top: 1.1rem; padding-top: .85rem; border-top: 1px solid var(--admin-line); color: var(--admin-muted); font-size: .67rem; }
+.admin-preview-link { color: var(--ui-gold); font-weight: 850; white-space: nowrap; }
+.admin-preview-link:hover { text-decoration: underline; }
+.admin-messages-panel { min-height: 38rem; padding: 0 !important; }
+.admin-shell .admin-page-panel button,
+.admin-shell .admin-page-panel a { outline-offset: 3px; }
+.admin-shell .admin-page-panel button:focus-visible,
+.admin-shell .admin-page-panel a:focus-visible,
+.admin-shell .admin-page-panel input:focus-visible,
+.admin-shell .admin-page-panel select:focus-visible,
+.admin-shell .admin-page-panel textarea:focus-visible { outline: 2px solid var(--ui-gold); }
+
 /* Seasonal campaign layer. It intentionally targets public pages only; admin stays neutral. */
 :root {
   --season-accent: var(--ui-gold, #d4b56f);

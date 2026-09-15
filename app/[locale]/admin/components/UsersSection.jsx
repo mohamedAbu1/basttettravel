@@ -67,7 +67,7 @@ const UsersSection = () => {
 
   return (
     <motion.div
-      className={`p-6 rounded-lg shadow-lg ${theme.card} ${theme.text}`}
+      className={`admin-page-panel p-6 rounded-lg shadow-lg ${theme.card} ${theme.text}`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.6 }}

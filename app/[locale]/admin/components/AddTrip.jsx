@@ -28,7 +28,7 @@ export default function AddTrip() {
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8 }}
-      className={`space-y-8 max-w-3xl mx-auto p-8 rounded-2xl shadow-2xl ${
+      className={`admin-page-panel space-y-8 max-w-3xl mx-auto p-8 rounded-2xl shadow-2xl ${
         themeName === "dark"
           ? "bg-black/40 border border-gold/30"
           : "bg-white/70 border border-[#c9a34a]/30 backdrop-blur-sm"

@@ -37,7 +37,7 @@ export default function MessagesPage() {
   }, [activeUser, setMessages]);
 
   return (
-    <main className={`flex h-[99%] ${theme.background} ${theme.text}`}>
+    <main className={`admin-page-panel admin-messages-panel flex h-[99%] ${theme.background} ${theme.text}`}>
       <UsersSidebar
         users={users}
         userData={userData}

@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/admin";
 
 const defaults = [
   ["newYear", "New Year", "new-year", 1, "2026-01-01", "2026-01-07", 15],
+  ["valentinesDay", "Valentine's Day", "valentines-day", 1, "2026-02-14", "2026-02-16", 15],
   ["womensDay", "International Women's Day", "womens-day", 1, "2026-03-08", "2026-03-10", 12],
   ["mothersDay", "Mother's Day", "mothers-day", 1, "2026-03-21", "2026-03-24", 12],
   ["ramadan", "Ramadan", "ramadan", 0, "2026-02-18", "2026-03-19", 18],
@@ -30,6 +31,16 @@ async function ensureTable(db) {
       "INSERT INTO seasonal_events (event_key, label, theme, annual, enabled, start_date, end_date, discount) VALUES ?",
       [defaults.map((item) => [item[0], item[1], item[2], item[3], 1, item[4], item[5], item[6]])],
     );
+  } else {
+    // Keep newly added built-in campaigns available for existing installations
+    // without overwriting any dates or settings already customized by admins.
+    for (const item of defaults) {
+      await db.query(
+        `INSERT IGNORE INTO seasonal_events (event_key, label, theme, annual, enabled, start_date, end_date, discount)
+         VALUES (?, ?, ?, ?, 1, ?, ?, ?)`,
+        [item[0], item[1], item[2], item[3], item[4], item[5], item[6]],
+      );
+    }
   }
 }
 

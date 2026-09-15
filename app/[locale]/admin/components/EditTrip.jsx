@@ -13,7 +13,7 @@ import EditTripExclusions from "./components/EditTripExclusions";
 export default function EditTripFull({ themeName }) {
   return (
     <div
-      className={`p-6 ${
+      className={`admin-page-panel p-6 ${
         themeName === "dark" ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
       } rounded-lg`}
     >

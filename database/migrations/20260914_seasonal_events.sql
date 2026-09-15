@@ -10,3 +10,8 @@ CREATE TABLE IF NOT EXISTS seasonal_events (
   discount DECIMAL(5,2) NOT NULL DEFAULT 0,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+INSERT IGNORE INTO seasonal_events
+  (event_key, label, theme, annual, enabled, start_date, end_date, discount)
+VALUES
+  ('valentinesDay', 'Valentine''s Day', 'valentines-day', 1, 1, '2026-02-14', '2026-02-16', 15);

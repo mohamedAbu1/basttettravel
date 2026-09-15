@@ -14,7 +14,7 @@ export default function CurrencyRates() {
 
   return (
     <div
-      className={`p-6 rounded-xl shadow-lg ${
+      className={`admin-page-panel p-6 rounded-xl shadow-lg ${
         themeName === "dark"
           ? "bg-black/40 border border-gold/30 text-white"
           : "bg-white/70 border border-[#c9a34a]/30 text-[#3a2c0a] backdrop-blur-sm"

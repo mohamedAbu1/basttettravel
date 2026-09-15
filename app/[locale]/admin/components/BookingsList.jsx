@@ -31,7 +31,7 @@ export default function BookingsList() {
 
   return (
     <div
-      className={`rounded-xl shadow-lg p-6 ${
+      className={`admin-page-panel rounded-xl shadow-lg p-6 ${
         themeName === "dark"
           ? "bg-black/40 border border-gold/30 text-white"
           : "bg-white/70 border border-[#c9a34a]/30 text-[#3a2c0a] backdrop-blur-sm"
