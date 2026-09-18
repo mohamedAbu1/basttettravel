@@ -6,7 +6,7 @@ import { requireUser } from "@/lib/auth/admin";
 // ✅ GET: جلب تعليق واحد
 export async function GET(req, { params }) {
   try {
-    const reviewId = params.id;
+    const { id: reviewId } = await params;
     const db = await connectDB();
 
     const [rows] = await db.query("SELECT * FROM reviews WHERE id = ?", [reviewId]);
@@ -26,7 +26,7 @@ export async function DELETE(req, { params }) {
   try {
     const auth = requireUser(req);
     if (auth.response) return auth.response;
-    const reviewId = params.id;
+    const { id: reviewId } = await params;
     const db = await connectDB();
 
     // جلب التعليق للتأكد من وجوده
@@ -54,7 +54,7 @@ export async function PUT(req, { params }) {
   try {
     const auth = requireUser(req);
     if (auth.response) return auth.response;
-    const reviewId = params.id;
+    const { id: reviewId } = await params;
     const body = await req.json();
     const { comment, rating } = body;
     if (typeof comment !== "string" || comment.trim().length < 2 || comment.length > 2000 || Number(rating) < 1 || Number(rating) > 5) {

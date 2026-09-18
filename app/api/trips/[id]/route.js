@@ -6,7 +6,7 @@ import { requireAdmin } from "@/lib/auth/admin";
 // ================== GET ==================
 export async function GET(req, context) {
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const db = await connectDB();
 
     const [rows] = await db.query(`SELECT * FROM trips WHERE id = ? LIMIT 1`, [id]);
@@ -116,7 +116,7 @@ export async function PUT(req, context) {
   if (authorizationError) return authorizationError;
 
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const body = await req.json();
     const db = await connectDB();
 
@@ -233,7 +233,7 @@ export async function DELETE(req, context) {
   if (authorizationError) return authorizationError;
 
   try {
-    const { id } = context.params;
+    const { id } = await context.params;
     const db = await connectDB();
 
     const [days] = await db.query("SELECT id FROM trip_days WHERE trip_id = ?", [id]);

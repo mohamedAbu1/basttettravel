@@ -58,6 +58,16 @@ export async function POST(req) {
 
     await db.query(query, params);
 
+    const [[admin]] = await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1");
+    if (admin) {
+      await db.query(
+        `INSERT INTO notifications
+          (id, admin_id, event_type, message, user_id, user_name, user_email, user_image, trip_id, message_id, type, created_at, is_read)
+         VALUES (UUID(), ?, 'review', ?, ?, ?, ?, ?, ?, ?, 'review', NOW(), 0)`,
+        [admin.id, comment.trim().slice(0, 500), user_id, auth.user.name || "Traveler", auth.user.email || "", auth.user.avatar_url || "/default-avatar.png", trip_id, reviewId],
+      );
+    }
+
     return NextResponse.json(
       { success: true, review: { id: reviewId, trip_id, user_id, rating: Number(rating), comment: comment.trim() } },
       { status: 201 }

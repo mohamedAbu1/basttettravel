@@ -39,7 +39,7 @@ const [showEmojiPicker, setShowEmojiPicker] = useState(false);
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               userId: user.id,
-              isTyping: e.target.value.length > 0,
+              adminTyping: e.target.value.length > 0,
             }),
           });
         }}

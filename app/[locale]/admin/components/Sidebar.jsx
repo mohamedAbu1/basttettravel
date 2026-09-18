@@ -62,6 +62,7 @@ export default function Sidebar({ activeSection, setActiveSection }) {
         <NavButton section="addTrip" icon={<FaPlus />} label="Add New Trip" />
         <NavButton section="trips" icon={<FaSuitcase />} label="All Trips" />
         <NavButton section="editTrip" icon={<FaEdit />} label="Edit Trips" />
+        <span className="admin-nav-label">Operations</span>
         <NavButton section="users" icon={<FaUsers />} label="Users" />
         <NavButton section="bookings" icon={<FaClipboardList />} label="Bookings" />
         <NavButton section="reports" icon={<FaChartBar />} label="Reports" />

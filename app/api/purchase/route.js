@@ -9,9 +9,6 @@ export async function POST(req) {
     if (auth.response) return auth.response;
     const {
       tripId,
-      user_name,
-      user_email,
-      user_image,
       numPersons,
       hasChildren,
       numChildren,
@@ -20,13 +17,23 @@ export async function POST(req) {
       hasGuide,
       selectedLanguages,
       arrivalDate,
-      status,
       departureDate,
-      platform,
     } = await req.json();
 
     const userId = auth.user.id;
+    const persons = Number(numPersons);
+    const children = Number(numChildren || 0);
+    if (!tripId || !Number.isInteger(persons) || persons < 1 || !Number.isInteger(children) || children < 0) {
+      return NextResponse.json({ error: "Invalid purchase data" }, { status: 400 });
+    }
     const db = await connectDB();
+    const [[trip]] = await db.query("SELECT id FROM trips WHERE id = ? LIMIT 1", [tripId]);
+    if (!trip) return NextResponse.json({ error: "Trip not found" }, { status: 404 });
+    const userName = auth.user.name || auth.user.email || "Traveler";
+    const userEmail = auth.user.email || "";
+    const userImage = auth.user.avatar_url || null;
+    const purchaseStatus = "pending";
+    const purchasePlatform = "web";
 
     // ✅ Check if there is an existing purchase
     const [existing] = await db.query(
@@ -49,20 +56,20 @@ export async function POST(req) {
             purchaseId,
             userId,
             tripId,
-            user_name,                // ✅ correct position
-            user_email,               // ✅ correct position
-            user_image,               // ✅ correct position
-            numPersons,
+            userName,
+            userEmail,
+            userImage,
+            persons,
             hasChildren,
-            numChildren,
+            children,
             hasPets,
             JSON.stringify(petTypes),
             hasGuide,
             JSON.stringify(selectedLanguages),
             arrivalDate,
             departureDate,
-            platform,
-            status,
+            purchasePlatform,
+            purchaseStatus,
           ],
         );
 
@@ -90,20 +97,20 @@ export async function POST(req) {
         purchaseId,
         userId,
         tripId,
-        user_name,                // ✅ correct position
-        user_email,               // ✅ correct position
-        user_image,               // ✅ correct position
-        numPersons,
+        userName,
+        userEmail,
+        userImage,
+        persons,
         hasChildren,
-        numChildren,
+        children,
         hasPets,
         JSON.stringify(petTypes),
         hasGuide,
         JSON.stringify(selectedLanguages),
         arrivalDate,
         departureDate,
-        platform,
-        status,
+        purchasePlatform,
+        purchaseStatus,
       ],
     );
 
@@ -113,6 +120,6 @@ export async function POST(req) {
     );
   } catch (err) {
     console.error("❌ Error in purchase:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: "Unable to create purchase" }, { status: 500 });
   }
 }

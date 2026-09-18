@@ -6,6 +6,18 @@ import path from "path";
 import { requireUser } from "@/lib/auth/admin";
 import { safeImageName, validateImageFile } from "@/lib/uploads";
 
+async function notifyAdminOfMessage(db, { messageId, userId, message }) {
+  const [[admin]] = await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1");
+  const [[user]] = await db.query("SELECT name, email, avatar_url FROM users WHERE id = ? LIMIT 1", [userId]);
+  if (!admin || !user) return;
+  await db.query(
+    `INSERT INTO notifications
+      (id, admin_id, event_type, message, user_id, user_name, user_email, user_image, trip_id, message_id, type, created_at, is_read)
+     VALUES (UUID(), ?, 'message', ?, ?, ?, ?, ?, NULL, ?, 'message', NOW(), 0)`,
+    [admin.id, message, userId, user.name, user.email, user.avatar_url || "/default-avatar.png", messageId],
+  );
+}
+
 export async function POST(req) {
   try {
     const auth = requireUser(req);
@@ -56,8 +68,11 @@ export async function POST(req) {
         `INSERT INTO messages 
          (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, message_type, created_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', 'chat', NOW())`,
-         [messagesId, user_id, baseUrl, sender_type, user_name, user_image, reply_to ?? null, resolvedAdminId],
+        [messagesId, user_id, baseUrl, sender_type, user_name, user_image, reply_to ?? null, resolvedAdminId],
       );
+      if (sender_type === "user") {
+        await notifyAdminOfMessage(db, { messageId: messagesId, userId: user_id, message: "تم إرسال صورة جديدة في المحادثة" });
+      }
 
       const newMessage = {
         id: messagesId,
@@ -86,7 +101,9 @@ export async function POST(req) {
     const admin_id = isAdmin ? auth.user.id : null;
 
     if (!user_id) return NextResponse.json({ error: "user_id is required" }, { status: 400 });
-    if (!content) return NextResponse.json({ error: "Content cannot be null" }, { status: 400 });
+    if (typeof content !== "string" || !content.trim() || content.length > 5000) {
+      return NextResponse.json({ error: "Invalid message content" }, { status: 400 });
+    }
 
     const db = await connectDB();
     const resolvedAdminId = admin_id || (await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1"))[0][0]?.id;
@@ -97,8 +114,11 @@ export async function POST(req) {
       `INSERT INTO messages 
        (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, message_type, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', 'chat', NOW())`,
-      [messagesId, user_id, content, sender_type, user_name, user_image, reply_to, resolvedAdminId],
+      [messagesId, user_id, content.trim(), sender_type, user_name, user_image, reply_to, resolvedAdminId],
     );
+    if (sender_type === "user") {
+      await notifyAdminOfMessage(db, { messageId: messagesId, userId: user_id, message: content.trim().slice(0, 500) });
+    }
 
     const newMessage = {
       id: messagesId,

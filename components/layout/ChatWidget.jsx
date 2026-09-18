@@ -13,7 +13,7 @@ import { useChat } from "@/context/ChatContext";
 import { useTranslation } from "react-i18next";
 export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
   const { theme, themeName } = useTheme();
-  const { messages, sendMessage, fetchMessages, markMessageSeen } =
+  const { messages, sendMessage, fetchMessages, markMessageSeen, setMessages } =
     useMessages();
   const [text, setText] = useState("");
   const { userData } = useAuth(); // ✅ بيانات من AuthContext
@@ -107,18 +107,11 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     });
 
     const data = await res.json();
-    if (!data.url) return;
+    if (!data.content) return;
 
-    // ✅ الرسالة الجديدة تدخل في الـ context
-    await sendMessage({
-      user_id: userData?.id,
-      user_name: userData?.name,
-      user_image:
-        userData?.avatar_url || userData?.image || "/default-avatar.png",
-      content: data.url, // الرابط النهائي للصورة
-      sender_type: "user",
-      status: "sent",
-    });
+    // The multipart endpoint already inserts the message. Add its response to
+    // local state instead of POSTing the same image a second time.
+    setMessages((prev) => [...prev, data]);
   };
 
   return (

@@ -58,6 +58,16 @@ export async function POST(req, context) {
       [reviewId, trip_id, user_id, trip_id]
     );
 
+    const [[admin]] = await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1");
+    if (admin) {
+      await db.query(
+        `INSERT INTO notifications
+          (id, admin_id, event_type, message, user_id, user_name, user_email, user_image, trip_id, message_id, type, created_at, is_read)
+         VALUES (UUID(), ?, 'like', 'تم تسجيل إعجاب جديد على تعليق', ?, ?, ?, ?, ?, ?, 'like', NOW(), 0)`,
+        [admin.id, user_id, auth.user.name || "Traveler", auth.user.email || "", auth.user.avatar_url || "/default-avatar.png", trip_id, reviewId, reviewId],
+      );
+    }
+
     return NextResponse.json({ ok: true, liked: true }, { status: 200 });
   } catch (err) {
     console.error("❌ Error adding like:", err);

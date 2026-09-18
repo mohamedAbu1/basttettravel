@@ -1,10 +1,12 @@
 import sgMail from "@sendgrid/mail";
+import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/auth/admin";
 
 if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
-export async function sendBookingEmail(user, bookingData) {
+async function sendBookingEmail(user, bookingData) {
   const msg = {
     to: user.email,
     from: process.env.SENDGRID_FROM_EMAIL || "BasttetTravel@outlook.com",
@@ -40,5 +42,21 @@ Basttet Travel Team
     console.log("Email sent successfully ✅");
   } catch (error) {
     console.error("Error sending email ❌", error);
+  }
+}
+
+export async function POST(req) {
+  const authorizationError = requireAdmin(req);
+  if (authorizationError) return authorizationError;
+  try {
+    const { user, bookingData } = await req.json();
+    if (!user?.email || !bookingData?.title) {
+      return NextResponse.json({ error: "Invalid email payload" }, { status: 400 });
+    }
+    await sendBookingEmail(user, bookingData);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Booking email failed:", error.message);
+    return NextResponse.json({ error: "Unable to send booking email" }, { status: 500 });
   }
 }

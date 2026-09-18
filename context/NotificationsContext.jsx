@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 const NotificationsContext = createContext();
@@ -7,21 +7,66 @@ const NotificationsContext = createContext();
 export function NotificationsProvider({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [desktopPermission, setDesktopPermission] = useState("default");
+  const knownNotificationIds = useRef(new Set());
+  const hasLoadedNotifications = useRef(false);
   const { userData } = useAuth();
 
-  // استدعاء API لجلب الإشعارات
   useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setDesktopPermission(window.Notification.permission);
+    }
+  }, []);
+
+  const requestDesktopNotifications = async () => {
+    if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
+    const permission = await window.Notification.requestPermission();
+    setDesktopPermission(permission);
+    return permission;
+  };
+
+  const showDesktopNotification = (notification) => {
+    if (typeof window === "undefined" || !("Notification" in window) || window.Notification.permission !== "granted") return;
+    const eventType = String(notification.event_type || notification.type || "").toLowerCase();
+    if (!(eventType === "message" || eventType === "review" || eventType === "comment" || eventType === "like" || eventType === "review_like")) return;
+
+    const title = eventType === "message" ? "رسالة جديدة من Basttet Travel" : eventType === "like" || eventType === "review_like" ? "إعجاب جديد على تعليق" : "تعليق جديد على رحلة";
+    const desktopNotification = new window.Notification(title, {
+      body: notification.message || notification.user_name || "لديك إشعار جديد",
+      icon: notification.user_image || "/favicon.ico",
+      tag: `basttet-${notification.id}`,
+    });
+    desktopNotification.onclick = () => {
+      window.focus();
+      desktopNotification.close();
+    };
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+    let interval;
+
     async function fetchNotifications() {
       if (!userData?.id || userData?.role !== "ADMIN") {
         setNotifications([]);
+        knownNotificationIds.current = new Set();
+        hasLoadedNotifications.current = false;
         setLoading(false);
         return;
       }
       try {
-        const res = await fetch("/api/notifications");
+        const res = await fetch("/api/notifications", { cache: "no-store" });
         const data = await res.json();
-        if (data.success) {
-          setNotifications(data.notifications);
+        if (data.success && !cancelled) {
+          const nextNotifications = Array.isArray(data.notifications) ? data.notifications : [];
+          if (hasLoadedNotifications.current) {
+            nextNotifications
+              .filter((item) => !knownNotificationIds.current.has(String(item.id)) && Number(item.is_read) === 0)
+              .forEach(showDesktopNotification);
+          }
+          knownNotificationIds.current = new Set(nextNotifications.map((item) => String(item.id)));
+          hasLoadedNotifications.current = true;
+          setNotifications(nextNotifications);
         }
       } catch (err) {
         console.error("خطأ في جلب الإشعارات:", err);
@@ -30,6 +75,11 @@ export function NotificationsProvider({ children }) {
       }
     }
     fetchNotifications();
+    interval = setInterval(fetchNotifications, 10000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [userData?.id, userData?.role]);
 
   // تحديث حالة الإشعار إلى مقروء
@@ -42,7 +92,7 @@ const markAsRead = async (id) => {
       prev.map((n) => (n.id === id ? { ...n, is_read: 1 } : n))
     );
     // إعادة جلب من السيرفر للتأكد
-    const res = await fetch("/api/notifications");
+    const res = await fetch("/api/notifications", { cache: "no-store" });
     const data = await res.json();
     if (data.success) setNotifications(data.notifications);
   } catch (err) {
@@ -67,7 +117,14 @@ const markAsRead = async (id) => {
 
   return (
     <NotificationsContext.Provider
-      value={{ notifications, loading, markAsRead,deleteNotification }}
+      value={{
+        notifications,
+        loading,
+        markAsRead,
+        deleteNotification,
+        requestDesktopNotifications,
+        desktopPermission,
+      }}
     >
       {children}
     </NotificationsContext.Provider>

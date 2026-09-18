@@ -8,10 +8,21 @@ export async function POST(req) {
     const auth = requireUser(req);
     if (auth.response) return auth.response;
     const body = await req.json();
-    if (!body.trip_id || !body.checkIn || !body.checkOut) {
+    const participants = Number(body.participants);
+    const childrenCount = Number(body.childrenCount || 0);
+    const checkIn = String(body.checkIn || "");
+    const checkOut = String(body.checkOut || "");
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    if (!body.trip_id || !checkIn || !checkOut || !Number.isInteger(participants) || participants < 1
+      || !Number.isInteger(childrenCount) || childrenCount < 0
+      || Number.isNaN(checkInDate.getTime()) || Number.isNaN(checkOutDate.getTime())
+      || checkOutDate <= checkInDate) {
       return NextResponse.json({ success: false, error: "Missing booking data" }, { status: 400 });
     }
     const db = await connectDB();
+    const [[trip]] = await db.query("SELECT id FROM trips WHERE id = ? LIMIT 1", [body.trip_id]);
+    if (!trip) return NextResponse.json({ success: false, error: "Trip not found" }, { status: 404 });
 
     const bookingId = uuidv4();
 
@@ -21,12 +32,12 @@ export async function POST(req) {
       [
         bookingId,
         body.trip_id,
-        body.participants,
-        body.childrenCount,
-        body.checkIn,
-        body.checkOut,
+        participants,
+        childrenCount,
+        checkIn,
+        checkOut,
         "pending", // الحالة الافتراضية
-        body.platform || "web"
+        "web"
       ]
     );
 
@@ -53,6 +64,6 @@ export async function POST(req) {
     return NextResponse.json({ success: true, bookingId }, { status: 201 });
   } catch (err) {
     console.error("❌ [POST Booking] Exception:", err.message);
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Unable to create booking" }, { status: 500 });
   }
 }

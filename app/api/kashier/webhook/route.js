@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { connectDB } from "@/lib/db";
 
 export async function POST(req) {
   try {
@@ -22,11 +23,21 @@ export async function POST(req) {
     const data = body.data || {};
 
     if (event === "pay" || data.status === "SUCCESS") {
+      const db = await connectDB();
+      await db.query(
+        "UPDATE booking SET status = 'paid' WHERE id = ? AND status <> 'paid'",
+        [data.merchantOrderId],
+      );
       console.info("Verified payment webhook", {
         orderId: data.merchantOrderId,
         transactionId: data.transactionId,
       });
     } else if (data.status === "FAILED") {
+      const db = await connectDB();
+      await db.query(
+        "UPDATE booking SET status = 'failed' WHERE id = ? AND status NOT IN ('paid', 'failed')",
+        [data.merchantOrderId],
+      );
       console.info("Verified failed payment webhook", { orderId: data.merchantOrderId });
     }
 

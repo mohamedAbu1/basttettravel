@@ -98,7 +98,6 @@ let EGP = total * 49.85
     setLoading(true);
 
     try {
-      const orderId = `BOOK-${Date.now()}`;
       const amountInEgp = EGP.toFixed(2);
 
       // ✅ أولاً: إدخال بيانات الحجز في قاعدة البيانات
@@ -120,6 +119,8 @@ let EGP = total * 49.85
       if (!bookingRes.ok || !bookingData.success) {
         throw new Error(bookingData.error || "Failed to save booking.");
       }
+      // The webhook uses the server-created booking id to update this record.
+      const orderId = bookingData.bookingId;
       // ✅ ثانياً: طلب الـ Hash من الـ API Route للدفع
       const res = await fetch("/api/kashier/hash", {
         method: "POST",

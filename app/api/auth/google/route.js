@@ -32,7 +32,7 @@ export async function POST() {
   }
 
   const user = rows[0];
-  const accessToken = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "30d" });
+  const accessToken = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: "15m" });
   const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "30d" });
   const response = NextResponse.json({ user }, { status: 200 });
   return setAuthCookies(response, accessToken, refreshToken);

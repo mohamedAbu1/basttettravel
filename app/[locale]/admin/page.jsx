@@ -17,6 +17,7 @@ import { useAuth } from "./context/AuthContext";
 import CurrencyRates from "./components/CurrencyRates";
 import SeasonalEvents from "./components/SeasonalEvents";
 import { FaBell, FaCompass, FaShieldAlt } from "react-icons/fa";
+import { useNotifications } from "@/context/NotificationsContext";
 
 const symbols = ["𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽","𓃾","𓅓","𓈇","𓉐","𓊹","𓌙","𓍿","𓎟"];
 
@@ -37,9 +38,19 @@ export default function DashboardPage() {
   const [activeSection, setActiveSection] = useState("dashboard");
   const { theme, themeName } = useTheme();
   const { userData, loading } = useAuth();
+  const { notifications, requestDesktopNotifications, desktopPermission } = useNotifications();
   const router = useRouter();
   const params = useParams();
   const locale = params?.locale || "en";
+  const unreadNotifications = notifications.filter((notification) => Number(notification.is_read) === 0).length;
+
+  const handleNotificationAction = async () => {
+    if (desktopPermission === "default") {
+      await requestDesktopNotifications();
+      return;
+    }
+    setActiveSection("messages");
+  };
 
   useEffect(() => {
     if (!loading && String(userData?.role).toUpperCase() !== "ADMIN") {
@@ -112,21 +123,32 @@ export default function DashboardPage() {
             <p>{sectionMeta[activeSection]?.description}</p>
           </div>
           <div className="admin-topbar-actions">
-            <button className="admin-icon-button" type="button" aria-label="Notifications"><FaBell /></button>
+            <button
+              className="admin-icon-button admin-notification-button"
+              type="button"
+              aria-label={desktopPermission === "default" ? "Enable desktop notifications" : "Open notifications"}
+              title={desktopPermission === "default" ? "Enable desktop notifications" : "Open notifications"}
+              onClick={handleNotificationAction}
+            >
+              <FaBell />
+              {unreadNotifications > 0 && <span className="admin-topbar-notification-count">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>}
+            </button>
             <div className="admin-topbar-status"><span /> Live overview</div>
             <div className="admin-secure-badge"><FaShieldAlt /> Secure</div>
           </div>
         </header>
-        {activeSection === "dashboard" && <DashboardHome themeName={themeName} />}
-        {activeSection === "addTrip" && <AddTrip themeName={themeName} />}
-        {activeSection === "trips" && <TripsList themeName={themeName} />}
-        {activeSection === "editTrip" && <EditTrip themeName={themeName} />}
-        {activeSection === "users" && <UsersSection themeName={themeName} />}
-        {activeSection === "bookings" && <BookingsList themeName={themeName} />}
-        {activeSection === "reports" && <Reports themeName={themeName} />}
-        {activeSection === "messages" && <MessagesList themeName={themeName} />}
-        {activeSection === "currency" && <CurrencyRates themeName={themeName} />}
-        {activeSection === "seasonalEvents" && <SeasonalEvents themeName={themeName} />}
+        <div className="admin-content-stage">
+          {activeSection === "dashboard" && <DashboardHome themeName={themeName} onNavigate={setActiveSection} />}
+          {activeSection === "addTrip" && <AddTrip themeName={themeName} />}
+          {activeSection === "trips" && <TripsList themeName={themeName} />}
+          {activeSection === "editTrip" && <EditTrip themeName={themeName} />}
+          {activeSection === "users" && <UsersSection themeName={themeName} />}
+          {activeSection === "bookings" && <BookingsList themeName={themeName} />}
+          {activeSection === "reports" && <Reports themeName={themeName} />}
+          {activeSection === "messages" && <MessagesList themeName={themeName} />}
+          {activeSection === "currency" && <CurrencyRates themeName={themeName} />}
+          {activeSection === "seasonalEvents" && <SeasonalEvents themeName={themeName} />}
+        </div>
       </section>
     </main>
   );

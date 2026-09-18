@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useRef } from "react";
 
 const TripContext = createContext();
 
@@ -31,6 +31,8 @@ export function TripProvider({ children }) {
   const [trips, setTrips] = useState([]);
   const [loadingTrips, setLoadingTrips] = useState(false);
   const [error, setError] = useState(null);
+  const tripsRequestRef = useRef(null);
+  const lastTripsFetchRef = useRef(0);
 
   const updateTripField = (field, value) => {
     setTripData((prev) => ({ ...prev, [field]: value }));
@@ -123,20 +125,31 @@ export function TripProvider({ children }) {
 
   // ✅ جلب الرحلات
   const fetchTrips = useCallback(async () => {
+    const now = Date.now();
+    if (tripsRequestRef.current) return tripsRequestRef.current;
+    if (now - lastTripsFetchRef.current < 30000) return null;
+
     setLoadingTrips(true);
     setError(null);
-    try {
-      const res = await fetch("/api/trips");
-      const result = await res.json();
-      if (result.success) {
+    tripsRequestRef.current = fetch("/api/trips", { cache: "no-store" })
+      .then(async (res) => {
+        const result = await res.json();
+        if (!res.ok || !result.success) throw new Error(result.error || "Failed to load trips");
         setTrips(result.trips);
+        lastTripsFetchRef.current = Date.now();
         localStorage.setItem("trips", JSON.stringify(result.trips));
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoadingTrips(false);
-    }
+        return result;
+      })
+      .catch((err) => {
+        setError(err.message);
+        return { success: false, error: err.message };
+      })
+      .finally(() => {
+        setLoadingTrips(false);
+        tripsRequestRef.current = null;
+      });
+
+    return tripsRequestRef.current;
   }, []);
 
   const getTripById = (id) => {

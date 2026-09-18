@@ -8,12 +8,7 @@ import { requireAdmin } from "@/lib/auth/admin";
 export async function POST(req) {
   try {
     const authorizationError = requireAdmin(req);
-    // The public shell loads this endpoint before authentication is known.
-    // Return an empty private collection for guests instead of surfacing a
-    // noisy 401 request in the browser console.
-    if (authorizationError) {
-      return NextResponse.json({ success: true, notifications: [] }, { status: 200 });
-    }
+    if (authorizationError) return authorizationError;
     const db = await connectDB();
     const body = await req.json();
     const [[defaultAdmin]] = await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1");
@@ -46,16 +41,20 @@ export async function POST(req) {
     // 🟢 اجلب الـ token من جدول push_tokens
     const expoPushToken = await getUserToken(body.user_id);
     if (expoPushToken) {
-      // 🟢 استدعاء API Route send-notification
-      await fetch("https://basttettravel.com/api/send-notification", {
+      // Call Expo directly. Calling our own protected route without forwarding
+      // the admin cookie would always result in a 401 response.
+      const pushResponse = await fetch("https://exp.host/--/api/v2/push/send", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
-          expoPushToken,
-          title: `إشعار جديد (${body.event_type})`,
-          bodyText: body.message,
+          to: expoPushToken,
+          sound: "default",
+          title: `إشعار جديد (${body.event_type || notificationType})`,
+          body: body.message,
+          data: { screen: "notifications", userId: body.user_id },
         }),
       });
+      if (!pushResponse.ok) console.warn("Push notification was rejected by Expo");
     }
 
     return NextResponse.json({ success: true, id });

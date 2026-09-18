@@ -95,7 +95,7 @@ export async function POST(request) {
     const accessToken = jwt.sign(
       { id: newUser.id, email: newUser.email, name: newUser.name, role: newUser.role, gender: newUser.gender, avatar_url: newUser.avatar_url },
       process.env.JWT_SECRET,
-      { expiresIn: "30d" }
+      { expiresIn: "15m" }
     );
 
     const response = NextResponse.json(
