@@ -1,242 +1,59 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { useRouter } from "next/navigation";
+
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { useTheme } from "@/context/ThemeContext";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import DividerWithIcon from "../layout/DividerWithIcon";
 import BrandLogo from "@/components/BrandLogo";
+import DividerWithIcon from "../layout/DividerWithIcon";
 
-const OurSection = () => {
-  const router = useRouter();
-  const { theme } = useTheme();
+const images = [
+  "/Luxor/pexels-diego-f-parra-33199-15188096.webp",
+  "/Luxor/pexels-girlvsglobe86-300284270-30404381.webp",
+  "/Luxor/pexels-elenav-2011499497-29046654.webp",
+  "/Luxor/WhatsApp Image 2025-12-31 at 11.30.42 AM.webp",
+  "/Aswan/pexels-axp-photography-500641970-18991592.webp",
+];
+
+export default function OurSection() {
   const { t } = useTranslation("home");
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-  if (!hasMounted) return null;
-
-  const images = [
-    "/Luxor/pexels-diego-f-parra-33199-15188096.webp",
-    "/Luxor/pexels-girlvsglobe86-300284270-30404381.webp",
-    "/Luxor/pexels-elenav-2011499497-29046654.webp",
-    "/Luxor/WhatsApp Image 2025-12-31 at 11.30.42 AM.webp",
-    "/Aswan/pexels-axp-photography-500641970-18991592.webp",
-    "/Luxor/wasdwaw.webp",
-  ];
+  const pathname = usePathname();
+  const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
   return (
-    <>
-      {/* نسخة الموبايل */}
-      <section
-        className={`flex lg:hidden flex-col items-center justify-start w-full px-4 py-10 ${theme.text}`}
-      >
-        <div className="w-full rounded-2xl overflow-hidden shadow-lg mb-6">
-          <Swiper
-            modules={[Pagination, Autoplay]}
-            pagination={{ clickable: true }}
-            autoplay={{ delay: 4000, disableOnInteraction: false }}
-            spaceBetween={20}
-            slidesPerView={1}
-            className="w-full h-[50vh]"
-          >
-            {images.map((imgSrc, index) => (
-              <SwiperSlide key={index}>
-                <div className="w-full h-full relative">
-                  <Image
-                    src={imgSrc || "/fallback.jpg"}
-                    alt={`Basttet Travel destination image ${index + 1}`}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover rounded-lg"
-                    loading="lazy"
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+    <section className="our-story-section" aria-labelledby="our-story-title">
+      <div className="our-story-inner">
+        <div className="our-story-gallery" aria-label={t("AboutUs")}>
+          <div className="our-story-image our-story-image-main">
+            <Image src={images[0]} alt="Luxor temple and Nile landscape" fill sizes="(max-width: 800px) 92vw, 48vw" loading="lazy" />
+            <span className="our-story-image-label">Basttet Travel</span>
+          </div>
+          <div className="our-story-image our-story-image-small our-story-image-top">
+            <Image src={images[1]} alt="Egyptian travel experience" fill sizes="(max-width: 800px) 44vw, 20vw" loading="lazy" />
+          </div>
+          <div className="our-story-image our-story-image-small our-story-image-bottom">
+            <Image src={images[2]} alt="Nile journey in Egypt" fill sizes="(max-width: 800px) 44vw, 20vw" loading="lazy" />
+          </div>
+          <span className="our-story-gallery-badge" aria-hidden="true">𓂀</span>
         </div>
 
-        <div className="text-center px-2">
-          <BrandLogo variant="mark" className="mx-auto mb-4 h-32 w-32" />
-
-          <p className="sc-p text-xs uppercase mb-2 tracking-wide text-gradient">
-            {t("AboutUs")}
-          </p>
-
-          <h2 className="sc-title text-2xl font-bold mb-4 leading-snug text-gradient">
-            {t("DiscoverWasetTravel")}
-          </h2>
-
+        <div className="our-story-copy">
+          <p className="section-kicker">{t("AboutUs")}</p>
+          <h2 id="our-story-title">{t("DiscoverWasetTravel")}</h2>
           <DividerWithIcon />
-
-          <p
-            className="text-sm mb-6 leading-relaxed"
-            style={{ color: theme.text }}
-          >
-            {t("At")}{" "}
-            <span style={{ color: theme.logoBorder, fontWeight: 600 }}>
-              Basttet Travel{" "}
-            </span>
-            {t("AtP")}{" "}
-            <span style={{ color: theme.logoBorder, fontWeight: 600 }}>
-              {t("professionalguides")}
-            </span>{" "}
-            {t("AtPP")}
+          <p className="our-story-lead">
+            {t("At")} <strong>Basttet Travel</strong>{t("AtP")} <strong>{t("professionalguides")}</strong> {t("AtPP")}
           </p>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => router.push("/about")}
-            className={`w-full rounded-[6px] px-6 py-3 font-semibold tracking-wide cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
-            style={{
-              color: `${theme.subText}`,
-              border: `2px solid ${theme.logoBorder}`,
-            }}
-          >
-            {t("LearnMoreAboutUs")}
-          </motion.button>
+          <div className="our-story-points" aria-label="Basttet Travel values">
+            <span><b>01</b> Local knowledge</span>
+            <span><b>02</b> Thoughtful planning</span>
+            <span><b>03</b> Human support</span>
+          </div>
+          <Link className="our-story-action" href={`/${locale}/about`}>
+            {t("LearnMoreAboutUs")} <span aria-hidden="true">↗</span>
+          </Link>
         </div>
-      </section>
-
-      {/* نسخة الديسكتوب */}
-      <section
-        id="section-four"
-        className={`hidden lg:flex relative w-full min-h-screen px-4 py-12 flex-col items-center justify-start ${theme.text}`}
-      >
-        <div className="w-full max-w-screen-xl flex flex-row items-center justify-between gap-10 relative z-10">
-          {/* ✅ Slider يسار */}
-          <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full lg:w-1/2 rounded-3xl overflow-hidden shadow-xl"
-            style={{ boxShadow: theme.shadow }}
-          >
-            <Swiper
-              modules={[Navigation, Pagination, Autoplay]}
-              navigation
-              pagination={{ clickable: true }}
-              autoplay={{ delay: 4000, disableOnInteraction: false }}
-              spaceBetween={30}
-              slidesPerView={1}
-              className="w-full h-[85vh]"
-            >
-              {images.map((imgSrc, index) => (
-                <SwiperSlide key={index}>
-                  <div className="w-full h-full relative">
-                    <Image
-                      src={imgSrc || "/fallback.jpg"}
-                      alt={`Basttet Travel destination image ${index + 1}`}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover rounded-lg"
-                      loading="lazy"
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </motion.div>
-
-          {/* ✅ Text يمين */}
-          <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full lg:w-1/2 text-start"
-            style={{ paddingLeft: "13px" }}
-          >
-            <div className="flex justify-center mb-6">
-              <BrandLogo variant="horizontal" className="h-auto w-full max-w-[25rem]" />
-            </div>
-
-            <p className="sc-p text-sm uppercase mb-2 tracking-wide text-gradient">
-              {t("AboutUs")}
-            </p>
-
-            <h2 className="sc-title text-4xl font-bold mb-4 leading-snug text-gradient">
-              {t("DiscoverWasetTravel")}
-            </h2>
-
-            <DividerWithIcon />
-
-            <p
-              className="text-base mb-6 leading-relaxed"
-              style={{ color: theme.text }}
-            >
-              {t("At")}{" "}
-              <span style={{ color: theme.logoBorder, fontWeight: 600 }}>
-                Basttet Travel{" "}
-              </span>
-              {t("AtP")}{" "}
-              <span style={{ color: theme.logoBorder, fontWeight: 600 }}>
-                {t("professionalguides")}
-              </span>{" "}
-              {t("AtPP")}
-            </p>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => router.push("/about")}
-              className={`w-full rounded-[6px] px-6 py-3 font-semibold tracking-wide cursor-pointer transition-all duration-300 shadow-lg ${theme.buttonPrimary}`}
-              style={{
-                color: `${theme.subText}`,
-                border: `2px solid ${theme.logoBorder}`,
-              }}
-            >
-              {t("LearnMoreAboutUs")}
-            </motion.button>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className=" hidden lg:flex w-full lg:w-1/2 rounded-3xl overflow-hidden shadow-xl"
-            style={{ boxShadow: theme.shadow }}
-          >
-            <Swiper
-              modules={[Navigation, Pagination, Autoplay]}
-              navigation
-              pagination={{ clickable: true }}
-              autoplay={{ delay: 4000, disableOnInteraction: false }}
-              spaceBetween={30}
-              slidesPerView={1}
-              className="w-full h-[85vh]"
-            >
-              {images.map((imgSrc, index) => (
-                <SwiperSlide key={index}>
-                  <div className="w-full h-full relative">
-                    <Image
-                      src={imgSrc || "/fallback.jpg"}
-                      alt={`Basttet Travel destination image ${index + 1}`}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover rounded-lg"
-                      loading="lazy"
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </motion.div>
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
-};
-
-export default OurSection;
+}

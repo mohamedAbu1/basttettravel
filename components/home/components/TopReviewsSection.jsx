@@ -1,195 +1,100 @@
 "use client";
-import { useReviews } from "@/context/ReviewsContext";
-import { useTheme } from "@/context/ThemeContext";
-import { FaStar, FaUserCircle, FaQuoteLeft, FaHeart } from "react-icons/fa";
-import { motion } from "framer-motion";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import EgyptianBackground from "@/components/layout/EgyptianBackground";
+
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { useState, useEffect } from "react";
+import { FaHeart, FaQuoteLeft, FaStar, FaUserCircle } from "react-icons/fa";
+import { useReviews } from "@/context/ReviewsContext";
 import DividerWithIcon from "@/components/layout/DividerWithIcon";
 
 export default function TopReviewsSection() {
-  const { allReviews, likes, fetchAllReviews } = useReviews();
-  const { theme } = useTheme();
+  const { allReviews, likes, likeBusy, toggleLike, userData, fetchAllReviews, loading } = useReviews();
   const { t } = useTranslation("home");
+  const [expandedIds, setExpandedIds] = useState([]);
 
   useEffect(() => {
     fetchAllReviews();
-    // Load reviews once when this below-the-fold section mounts.
+    // The home section owns one intentionally lazy, one-time review request.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const safeReviews = Array.isArray(allReviews) ? allReviews : [];
+  const reviews = useMemo(() => {
+    const safe = Array.isArray(allReviews) ? [...allReviews] : [];
+    return safe
+      .map((review) => ({ ...review, likesCount: likes[review.id]?.count || Number(review.likes_count || 0) }))
+      .sort((a, b) => b.likesCount - a.likesCount || new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 6);
+  }, [allReviews, likes]);
 
-  // ✅ حساب التعليقات الأكثر إعجابًا
-  const topLikedReviews = safeReviews
-    .map((rev) => ({
-      ...rev,
-      likesCount: likes[rev.id]?.count || 0,
-    }))
-    .filter((rev) => rev.likesCount > 0)
-    .sort((a, b) => b.likesCount - a.likesCount)
-    .slice(0, 5);
-
-  // ✅ لو ما فيش تعليقات عليها إعجابات → نعرض آخر 6 تعليقات
-  const fallbackReviews =
-    topLikedReviews.length > 0
-      ? topLikedReviews
-      : safeReviews
-          .sort(
-            (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
-          )
-          .slice(0, 6);
-
-  const [expandedIds, setExpandedIds] = useState([]);
-  const toggleExpand = (id) => {
-    setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+  const toggleExpanded = (id) => {
+    setExpandedIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 700,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    arrows: false,
-    responsive: [
-      { breakpoint: 1440, settings: { slidesToShow: 4 } },
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 640, settings: { slidesToShow: 1 } },
-    ],
-  };
-
-  // ✅ تحديد حجم الشاشة
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
-  useEffect(() => {
-    const handleResize = () => {
-      setIsLargeScreen(window.innerWidth >= 1024);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
-    <section className={`py-20 px-4 md:px-8 ${theme.text} w-screen max-w-full`}>
-      <EgyptianBackground />
-      <h2 className="sc-title-first text-[21px] md:text-5xl font-extrabold tracking-wide drop-shadow-md text-left text-gradient">
-        <span className="inline-block transform  text-gradient scale-x-[-1] mr-4">𓅓</span>
-        {t("h6")}
-        <span className="inline-block text-gradient ml-4">𓅓</span>
-      </h2>
-
+    <section className="reviews-section" aria-labelledby="reviews-title">
+      <div className="reviews-section-heading">
+        <div>
+          <p className="section-kicker">Basttet Travel community</p>
+          <h2 id="reviews-title">{t("h6")}</h2>
+        </div>
+        <span className="reviews-heading-mark" aria-hidden="true">𓅓</span>
+      </div>
       <DividerWithIcon />
 
-      {fallbackReviews.length > 0 ? (
-        isLargeScreen ? (
-          // ✅ عرض Slider في الشاشات الكبيرة
-          <div className="max-w-7xl mx-auto">
-            <Slider {...settings} className="w-full flex gap-2">
-              {fallbackReviews.map((rev, idx) => renderCard(rev, idx))}
-            </Slider>
-          </div>
-        ) : (
-          // ✅ عرض Grid في الشاشات الصغيرة
-          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
-            {fallbackReviews.map((rev, idx) => renderCard(rev, idx))}
-          </div>
-        )
+      {loading && !reviews.length ? (
+        <div className="reviews-empty" role="status" aria-live="polite">Loading traveler stories…</div>
+      ) : reviews.length ? (
+        <div className="reviews-grid">
+          {reviews.map((review, index) => {
+            const expanded = expandedIds.includes(review.id);
+            const text = review.comment || "A memorable Egypt experience.";
+            const isLong = text.length > 170;
+            const displayed = isLong && !expanded ? `${text.slice(0, 170)}…` : text;
+            const rating = Math.max(0, Math.min(5, Number(review.rating) || 0));
+            const isLiked = likes[review.id]?.users?.some((id) => String(id) === String(userData?.id));
+
+            return (
+              <article className="review-card review-card-modern" key={review.id || index}>
+                <div className="review-card-topline">
+                  <div className="review-author">
+                    {review.avatar_url ? <img src={review.avatar_url} alt="" /> : <FaUserCircle aria-hidden="true" />}
+                    <div>
+                      <h3>{review.name || "Anonymous traveler"}</h3>
+                      <div className="review-stars" aria-label={`${rating} out of 5 stars`}>
+                        {[1, 2, 3, 4, 5].map((star) => <FaStar key={star} aria-hidden="true" className={star <= rating ? "is-filled" : ""} />)}
+                      </div>
+                    </div>
+                  </div>
+                  <FaQuoteLeft className="review-quote" aria-hidden="true" />
+                </div>
+                <p className="review-card-copy">{displayed}</p>
+                <div className="review-card-footer">
+                  <time dateTime={review.created_at || undefined}>{review.created_at ? format(new Date(review.created_at), "dd MMM yyyy") : "Recent"}</time>
+                  <div className="review-card-actions">
+                    {isLong && <button type="button" className="review-read-more" onClick={() => toggleExpanded(review.id)}>{expanded ? "Show less" : "Read more"}</button>}
+                    <button
+                      type="button"
+                      className={`review-like-toggle ${isLiked ? "is-liked" : ""}`}
+                      disabled={!userData || likeBusy[review.id]}
+                      aria-label={userData ? "Like this review" : "Log in to like this review"}
+                      title={userData ? "Like this review" : "Log in to like this review"}
+                      onClick={() => toggleLike(review.id)}
+                    >
+                      <FaHeart aria-hidden="true" /> {likes[review.id]?.count || 0}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       ) : (
-        <p className={`text-center opacity-70 ${theme.subText}`}>{t("p6")}</p>
+        <div className="reviews-empty" role="status">
+          <span aria-hidden="true">✦</span>
+          <p>{t("p6")}</p>
+          <small>Your experience could be the first story we share.</small>
+        </div>
       )}
     </section>
   );
-
-  // ✅ دالة لإعادة استخدام الكارت
-  function renderCard(rev, idx) {
-    const expanded = expandedIds.includes(rev.id);
-    const comment =
-      rev.comment?.length > 150 && !expanded
-        ? rev.comment.slice(0, 150) + "..."
-        : rev.comment;
-
-    return (
-      <motion.div
-        key={rev.id || idx}
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className={`flex flex-col justify-between gap-4 ml-3 p-4 md:p-6 rounded-2xl min-h-[260px] `}
-        style={{
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          marginLeft:"20px",
-          border: `1px solid ${theme.logoBorder}`,
-          boxShadow: theme.shadow,
-        }}
-      >
-        {/* Header */}
-        <div className="flex items-center gap-3 border-b pb-2">
-          {rev.avatar_url ? (
-            <img
-              src={rev.avatar_url}
-              alt={rev.name}
-              className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 object-cover"
-              style={{ borderColor: theme.logoBorder }}
-            />
-          ) : (
-            <FaUserCircle size={48} className={theme.icon} />
-          )}
-          <div>
-            <h3 className={`font-bold text-base md:text-lg ${theme.title}`}>
-              {rev.name || "Anonymous"}
-            </h3>
-            <div className="flex gap-1">
-              {[...Array(rev.rating || 0)].map((_, i) => (
-                <FaStar key={i} className="text-yellow-500 text-sm md:text-base" />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Body */}
-        <div className="relative flex-1 mt-4">
-          <FaQuoteLeft className={`absolute top-0 left-0 text-2xl opacity-20 ${theme.icon}`} />
-          <p className={`italic leading-relaxed text-sm md:text-base pl-8 ${theme.subText}`} style={{ textAlign: "justify" }}>
-            {comment}
-          </p>
-          {rev.comment?.length > 150 && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => toggleExpand(rev.id)}
-              className={`text-xs md:text-sm mt-2 font-semibold tracking-wide cursor-pointer transition-all duration-300 ${theme.buttonPrimary}`}
-              style={{ border: `1px solid ${theme.logoBorder}` }}
-            >
-              {expanded ? "إخفاء" : "اقرأ المزيد"}
-            </motion.button>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="flex justify-between items-center mt-4 border-t pt-2">
-          <span className={`text-xs md:text-sm ${theme.subText}`}>
-            {rev.created_at ? format(new Date(rev.created_at), "dd MMM yyyy") : "Unknown date"}
-          </span>
-          <div className={`flex items-center gap-2 font-semibold text-xs md:text-sm px-3 py-1 rounded-full shadow-sm ${theme.buttonPrimary}`}>
-            <FaHeart />
-            <span>{rev.likesCount}</span>
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
 }

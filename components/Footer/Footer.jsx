@@ -1,208 +1,68 @@
 "use client";
-import React from "react";
-import { useTheme } from "@/context/ThemeContext";
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaTiktok,
-  FaWhatsapp,
-  FaTripadvisor,
-} from "react-icons/fa";
-import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
+import { FaFacebookF, FaInstagram, FaTripadvisor, FaWhatsapp } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { FaGlobe } from "react-icons/fa"; // مؤقت لـ Viator
 import BrandLogo from "@/components/BrandLogo";
 
-const Footer = () => {
-  const { theme, themeName } = useTheme();
-  const { t } = useTranslation("footer");
+const socialLinks = [
+  { Icon: FaFacebookF, label: "Facebook", url: "https://www.facebook.com/profile.php?id=61591222981163", color: "#1877f2" },
+  { Icon: FaInstagram, label: "Instagram", url: "https://www.instagram.com/ismailharoun225/", color: "#e1306c" },
+  { Icon: FaWhatsapp, label: "WhatsApp", url: "https://wa.me/201100507802", color: "#25d366" },
+  { Icon: MdEmail, label: "Email", url: "mailto:BasttetTravel@outlook.com", color: "#ea4335" },
+  { Icon: FaTripadvisor, label: "Tripadvisor", url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html", color: "#34e0a1" },
+];
+
+export default function Footer() {
   const pathname = usePathname();
+  const { t } = useTranslation("footer");
   const locale = pathname.split("/").filter(Boolean)[0] || "en";
-
-  const symbols = [
-    "𓂀",
-    "𓋹",
-    "𓆣",
-    "𓇼",
-    "𓇯",
-    "𓏏",
-    "𓎛",
-    "𓊽",
-    "𓃾",
-    "𓅓",
-    "𓈇",
-    "𓉐",
-    "𓊹",
-    "𓌙",
-    "𓍿",
-    "𓎟",
-  ];
-
-  const fadeUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
-    },
-  };
-
-  const staggerContainer = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.2 } },
-  };
+  const link = (path) => `/${locale}/${path}`;
 
   return (
-    <motion.footer
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-      variants={staggerContainer}
-      className={`site-footer flex flex-col items-center justify-center py-12 px-6 w-full relative overflow-hidden transition-colors duration-500 ${theme.background} ${theme.text}`}
-    >
-      {/* خلفية الرموز الفرعونية */}
-      <div className="absolute inset-0 pointer-events-none -z-10">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <motion.span
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 0.15, y: 0 }}
-            transition={{ duration: 2, delay: i * 0.1 }}
-            className={`absolute ${themeName === "dark" ? "text-gray-700" : "text-[#222]"} text-6xl`}
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              transform: `rotate(${Math.random() * 360}deg)`,
-            }}
-          >
-            {symbols[Math.floor(Math.random() * symbols.length)]}
-          </motion.span>
-        ))}
+    <footer className="site-footer site-footer-modern">
+      <div className="site-footer-inner">
+        <div className="site-footer-brand">
+          <BrandLogo variant="horizontal" className="site-footer-logo" />
+          <p>{t("p")}</p>
+          <div className="site-footer-socials" aria-label="Social media">
+            {socialLinks.map(({ Icon, label, url, color }) => (
+              <a key={label} href={url} aria-label={label} title={label} target="_blank" rel="noopener noreferrer" style={{ "--social-color": color }}>
+                <Icon aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="site-footer-column">
+          <p className="site-footer-label">Explore</p>
+          <Link href={`/${locale}`}>{t("Home")}</Link>
+          <Link href={link("trips")}>{t("Tours")}</Link>
+          <Link href={link("about")}>{t("AboutUs")}</Link>
+          <Link href={link("contact")}>{t("Contact")}</Link>
+        </div>
+
+        <div className="site-footer-column">
+          <p className="site-footer-label">Support</p>
+          <Link href={link("privacyPolicy")}>{t("privacyPolicy")}</Link>
+          <Link href={link("cancellationPolicy")}>{t("cancellationPolicy", { defaultValue: "Cancellation Policy" })}</Link>
+          <a href="tel:+201100507802">+20 110 050 7802</a>
+          <a href="mailto:BasttetTravel@outlook.com">BasttetTravel@outlook.com</a>
+        </div>
+
+        <div className="site-footer-cta">
+          <span className="site-footer-kicker">Plan with confidence</span>
+          <h2>Egypt is waiting.</h2>
+          <p>Tell us what you want to feel, and we will help shape the journey.</p>
+          <Link href={link("contact")} className="site-footer-cta-link">Talk to our team <span aria-hidden="true">↗</span></Link>
+        </div>
       </div>
-
-      {/* الشعار الموحد */}
-      <motion.div variants={fadeUp} className="relative z-10 w-full max-w-[18rem]">
-        <BrandLogo variant="horizontal" className="h-auto w-full" />
-      </motion.div>
-
-      {/* الوصف */}
-      <motion.p
-        variants={fadeUp}
-        className="mt-2 text-sm opacity-80 text-center max-w-xl relative z-10"
-      >
-        {t("p")}
-      </motion.p>
-
-      {/* روابط سريعة */}
-      <motion.div
-        variants={fadeUp}
-        className="flex gap-6 mt-6 text-sm font-medium relative z-10 flex-wrap"
-      >
-        {[
-          "home",
-          "about",
-          "trips",
-          "contact",
-          "privacyPolicy",
-          "cancellationPolicy",
-        ].map((link) => (
-          <Link
-            key={link}
-            href={link === "home" ? "/" + locale : "/" + locale + "/" + link}
-            className={`hover:underline transition capitalize ${
-              themeName === "dark"
-                ? "text-white/80 hover:text-[var(--logoBorder)]"
-                : "text-[#3a2c0a]/80 hover:text-[#222]"
-            }`}
-          >
-            {t(link)}
-          </Link>
-        ))}
-      </motion.div>
-
-      {/* Divider متدرج */}
-      <motion.div
-        variants={fadeUp}
-        className="w-32 h-[2px] bg-gradient-to-r from-[var(--logoGradientFrom)] to-[var(--logoGradientTo)]  mb-6 animate-pulse"
-      ></motion.div>
-
-      {/* أيقونات السوشيال ميديا */}
-      <motion.div variants={fadeUp} className="flex gap-5 mt-4 relative z-10">
-        {[
-          {
-            Icon: FaFacebookF,
-            label: "Basttet Travel on Facebook",
-            url: "https://www.facebook.com/profile.php?id=61591222981163",
-          },
-          {
-            Icon: FaInstagram,
-            label: "Basttet Travel on Instagram",
-            url: "https://www.instagram.com/ismailharoun225/",
-          },
-          {
-            Icon: FaWhatsapp,
-            label: "Contact Basttet Travel on WhatsApp",
-            url: "https://wa.me/201100507802",
-          },
-          {
-            Icon: MdEmail,
-            label: "Email Basttet Travel",
-            url: "mailto:BasttetTravel@outlook.com",
-          },
-          {
-            Icon: FaTripadvisor,
-            label: "Basttet Travel on Tripadvisor",
-            url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html",
-          }, // ✅ Tripadvisor
-        ].map(({ Icon, label, url }, i) => (
-          <motion.a
-            key={i}
-            href={url}
-            aria-label={label}
-            title={label}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.6, rotate: 5 }} // ✅ تكبير أفضل
-            className={`p-3 rounded-full transition shadow-md cursor-pointer ${
-              themeName === "dark"
-                ? "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40"
-                : "bg-[var(--logoGradientFrom)]/20 hover:bg-[var(--logoGradientTo)]/40"
-            }`}
-            style={{
-              fontSize: "22px",
-              color:
-                Icon === FaFacebookF
-                  ? "#1877F2" // أزرق فيسبوك
-                  : Icon === FaInstagram
-                    ? "#E1306C" // وردي إنستجرام
-                    : Icon === FaWhatsapp
-                      ? "#25D366" // أخضر واتساب
-                      : Icon === MdEmail
-                        ? "#EA4335" // أحمر Gmail
-                        : Icon === FaGlobe
-                          ? "#0A7A8C" // تركواز Viator
-                          : Icon === FaTripadvisor
-                            ? "#34E0A1" // أخضر Tripadvisor
-                            : theme.icon,
-            }}
-          >
-            <Icon />
-          </motion.a>
-        ))}
-      </motion.div>
-
-      {/* حقوق النشر + اسم ورقم الأونر */}
-      <motion.p
-        variants={fadeUp}
-        className="mt-8 text-sm text-2xl opacity-70 relative z-10"
-      >
-        {t("Footer")}
-      </motion.p>
-    </motion.footer>
+      <div className="site-footer-bottom">
+        <span>{t("Footer")}</span>
+        <span className="site-footer-mark" aria-hidden="true">𓂀</span>
+      </div>
+    </footer>
   );
-};
-
-export default Footer;
+}
