@@ -2,10 +2,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-const encodeData = (obj) => btoa(JSON.stringify(obj));
+const encodeData = (obj) => btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
 const decodeData = (encoded) => {
   try {
-    return JSON.parse(atob(encoded));
+    return JSON.parse(decodeURIComponent(escape(atob(encoded))));
   } catch {
     return null;
   }

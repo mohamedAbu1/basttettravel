@@ -44,7 +44,15 @@ export function NotificationsProvider({ children }) {
 
   useEffect(() => {
     let cancelled = false;
-    let interval;
+    let fallbackInterval;
+    let eventSource;
+
+    const mergeNotification = (notification, announce = true) => {
+      if (!notification || knownNotificationIds.current.has(String(notification.id))) return;
+      knownNotificationIds.current.add(String(notification.id));
+      if (announce && Number(notification.is_read) === 0) showDesktopNotification(notification);
+      setNotifications((previous) => [notification, ...previous.filter((item) => String(item.id) !== String(notification.id))]);
+    };
 
     async function fetchNotifications() {
       if (!userData?.id || userData?.role !== "ADMIN") {
@@ -74,11 +82,31 @@ export function NotificationsProvider({ children }) {
         setLoading(false);
       }
     }
-    fetchNotifications();
-    interval = setInterval(fetchNotifications, 10000);
+    if (userData?.id && userData?.role === "ADMIN") {
+      fetchNotifications();
+      eventSource = new window.EventSource("/api/notifications/stream");
+      eventSource.addEventListener("notification", (event) => {
+        try {
+          mergeNotification(JSON.parse(event.data));
+        } catch (error) {
+          console.error("Invalid notification stream event:", error);
+        }
+      });
+      eventSource.onerror = () => {
+        // EventSource reconnects automatically; this slower fallback covers deployments that close streams.
+        if (!fallbackInterval) fallbackInterval = setInterval(fetchNotifications, 30000);
+      };
+    } else {
+      setNotifications([]);
+      knownNotificationIds.current = new Set();
+      hasLoadedNotifications.current = false;
+      setLoading(false);
+    }
+
     return () => {
       cancelled = true;
-      clearInterval(interval);
+      if (eventSource) eventSource.close();
+      if (fallbackInterval) clearInterval(fallbackInterval);
     };
   }, [userData?.id, userData?.role]);
 

@@ -1,179 +1,77 @@
-/* eslint-disable react-hooks/purity */
 "use client";
-import React from "react";
-import { useTheme } from "@/context/ThemeContext";
-import { FaCarSide } from "react-icons/fa";
+
 import Image from "next/image";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaCalendarAlt, FaCarSide, FaClock, FaMapMarkerAlt, FaPhone, FaTimes, FaUserFriends, FaWhatsapp } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
-import DividerWithIcon from "../layout/DividerWithIcon";
+import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
-import { useChat } from "@/context/ChatContext";
-const CarBookingSection = () => {
-  const { theme, themeName } = useTheme();
-  const { t } = useTranslation("home");
-  const { openChatWithCarBooking  } = useChat();
-  const { userData } = useAuth();
+import DividerWithIcon from "../layout/DividerWithIcon";
 
-  const symbols = [
-    "𓂀",
-    "𓋹",
-    "𓆣",
-    "𓇼",
-    "𓇯",
-    "𓏏",
-    "𓎛",
-    "𓊽",
-    "𓃾",
-    "𓅓",
-    "𓈇",
-    "𓉐",
-    "𓊹",
-    "𓌙",
-    "𓍿",
-    "𓎟",
-  ];
+const WHATSAPP_NUMBER = "201100507802";
 
-  // ✨ إعدادات الأنيميشن
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 60 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
-    },
-  };
-
-  return (
-    <motion.section
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.3 }}
-      variants={fadeInUp}
-      className={`hidden lg:flex relative w-full items-center justify-center py-24 px-6 transition-colors duration-500 overflow-hidden`}
-    >
-      {/* Background Car Image */}
-      <div className="absolute inset-0 -z-10">
-        {/* <Image
-          src="/HomePageImage/30204164_jaipur_bw_001.svg"
-          alt="Luxury Car Background"
-          fill
-          className="object-cover opacity-20 rounded-lg"
-          priority // ✅ لو الصورة أساسية في الصفحة (خلفية أو Hero)
-          quality={85} // ✅ يقلل حجم الصورة ويحافظ على الجودة
-        /> */}
-        <div
-          className={`absolute inset-0 bg-gradient-to-br ${
-            themeName === "dark"
-              ? "from-black/70 via-transparent to-black/10"
-              : "from-[#fdf6e3]/80 via-transparent to-[#c9a34a]/20"
-          }`}
-        ></div>
-      </div>
-
-      {/* Hieroglyphic Symbols Background */}
-      <div className="absolute inset-0 pointer-events-none -z-0">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <span
-            key={i}
-            className={`absolute ${
-              themeName === "dark" ? "text-[#222]" : "text-[#222]"
-            } opacity-30 text-6xl animate-pulse`}
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              transform: `rotate(${Math.random() * 360}deg)`,
-            }}
-          >
-            {symbols[Math.floor(Math.random() * symbols.length)]}
-          </span>
-        ))}
-      </div>
-
-      {/* Content with Car beside text */}
-      <motion.div
-        variants={fadeInUp}
-        className="flex flex-col lg:flex-row items-center gap-12 max-w-7xl w-full mx-auto"
-      >
-        {/* Car Image beside text */}
-        <motion.div
-          variants={fadeInUp}
-          className="flex-1 relative w-full h-80 lg:h-[400px]"
-        >
-          <Image
-            src={
-              themeName === "dark"
-                ? "/HomePageImage/20752-5-2014-hyundai-tucson.webp"
-                : "/HomePageImage/White-Kia-PNG-High-Quality-Image.webp"
-            }
-            alt="Luxury Car"
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-contain drop-shadow-2xl"
-            priority // ✅ لو الصورة أساسية في الصفحة (مثلاً Hero أو خلفية مهمة)
-            quality={85} // ✅ يقلل حجم الصورة ويحافظ على جودة مناسبة
-          />
-        </motion.div>
-
-        {/* Text Section */}
-        <motion.div
-          variants={fadeInUp}
-          className="flex-1 text-center lg:text-left"
-        >
-          <h2
-            className={`sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md flex items-center gap-3 justify-center lg:justify-start`}
-            style={{
-              WebkitTextStroke:
-                themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-              textShadow:
-                themeName === "dark"
-                  ? "2px 2px 6px rgba(0,0,0,0.6)"
-                  : "2px 2px 6px rgba(255,255,255,0.3)",
-            }}
-          >
-            {t("PremiumCarTransfer")}
-          </h2>
-          <DividerWithIcon />
-
-          <p className="mt-6 text-lg opacity-80 leading-relaxed max-w-xl">
-            {t("Experience")}
-          </p>
-          {userData && userData?.role !== "ADMIN" ? (
-            // ✅ زر الحجز يظهر فقط لو فيه مستخدم عادي
-            <motion.button
-              variants={fadeInUp}
-              style={{ cursor: "pointer" }}
-              onClick={openChatWithCarBooking} // ✅ يفتح الدردشة ويضيف رسالة ترحيب
-              className="w-full mt-8 inline-block px-10 py-4 rounded-full font-bold text-lg shadow-xl transition-transform transform hover:scale-105 
-     bg-transparent backdrop-blur-md 
-     border border-[#C2A878] 
-     text-[#C2A878] tracking-wide
-     hover:bg-[#C2A878]/20 hover:text-white 
-     duration-300 cursor-pointer"
-            >
-              {t("Book")}
-            </motion.button>
-          ) : (
-            // ✅ رسالة أنيقة بدل الزر لو ما فيش مستخدم أو لو أدمن
-            <motion.p
-              variants={fadeInUp}
-              className="sc-p-first mt-8 text-lg font-semibold opacity-80 italic text-center lg:text-left"
-              style={{
-                WebkitTextStroke:
-                  themeName === "dark" ? "1px #C2A878" : "1px #5C4B3B",
-                textShadow:
-                  themeName === "dark"
-                    ? "2px 2px 6px rgba(0,0,0,0.6)"
-                    : "2px 2px 6px rgba(255,255,255,0.3)",
-              }}
-            >
-             {t("LoginBookCar")}
-            </motion.p>
-          )}
-        </motion.div>
-      </motion.div>
-    </motion.section>
-  );
+const initialForm = {
+  name: "",
+  phone: "",
+  pickup: "",
+  dropoff: "",
+  date: "",
+  time: "",
+  passengers: "1",
+  vehicle: "Sedan",
+  notes: "",
 };
 
-export default CarBookingSection;
+export default function CarBookingSection() {
+  const { theme, themeName } = useTheme();
+  const { t } = useTranslation("home");
+  const { userData } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
+  const [form, setForm] = useState(initialForm);
+
+  const openBooking = () => {
+    setForm((previous) => ({
+      ...previous,
+      name: previous.name || userData?.name || "",
+      phone: previous.phone || userData?.phone || "",
+    }));
+    setIsOpen(true);
+  };
+
+  const updateField = (field, value) => setForm((previous) => ({ ...previous, [field]: value }));
+
+  const submitBooking = (event) => {
+    event.preventDefault();
+    const message = [
+      "Hello Basttet Travel, I would like to book a private car transfer.",
+      "",
+      `Name: ${form.name}`,
+      `Phone: ${form.phone || "Not provided"}`,
+      `Pickup: ${form.pickup}`,
+      `Drop-off: ${form.dropoff}`,
+      `Date: ${form.date}`,
+      `Time: ${form.time}`,
+      `Passengers: ${form.passengers}`,
+      `Vehicle: ${form.vehicle}`,
+      `Notes: ${form.notes || "None"}`,
+      "",
+      "Please confirm availability and the final price. Thank you.",
+    ].join("\n");
+
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    setIsOpen(false);
+  };
+
+  return <>
+    <motion.section initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .2 }} className={`car-transfer-section ${themeName === "dark" ? "is-dark" : "is-light"}`}>
+      <div className="car-transfer-glow" />
+      <div className="car-transfer-shell">
+        <div className="car-transfer-visual"><div className="car-transfer-image-frame"><Image src={themeName === "dark" ? "/HomePageImage/20752-5-2014-hyundai-tucson.webp" : "/HomePageImage/White-Kia-PNG-High-Quality-Image.webp"} alt="Private car transfer" fill sizes="(max-width: 900px) 100vw, 48vw" className="car-transfer-image" /></div><span className="car-transfer-visual-badge"><FaCarSide /> Private transfer</span></div>
+        <div className="car-transfer-copy"><span className="car-transfer-eyebrow">Basttet Travel · Door to door</span><h2>{t("PremiumCarTransfer")}</h2><DividerWithIcon /><p>{t("Experience")}</p>{userData && userData.role !== "ADMIN" ? <button type="button" onClick={openBooking} className="car-transfer-button"><FaWhatsapp /> Book your transfer <span>→</span></button> : <p className="car-transfer-login-note">{t("LoginBookCar")}</p>}</div>
+      </div>
+    </motion.section>
+
+    <AnimatePresence>{isOpen && <motion.div className="car-booking-modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(event) => { if (event.target === event.currentTarget) setIsOpen(false); }}><motion.div role="dialog" aria-modal="true" aria-labelledby="car-booking-title" className="car-booking-modal" initial={{ opacity: 0, y: 20, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 15, scale: .98 }}><div className="car-booking-modal-header"><div><span className="car-transfer-eyebrow">WhatsApp concierge</span><h2 id="car-booking-title">Plan your private transfer</h2><p>Share the details and our team will confirm availability on WhatsApp.</p></div><button type="button" className="car-booking-close" onClick={() => setIsOpen(false)} aria-label="Close booking form"><FaTimes /></button></div><form onSubmit={submitBooking}><div className="car-booking-form-grid"><label><span>Your name *</span><div className="car-booking-input"><FaCarSide /><input required value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Full name" /></div></label><label><span>Phone number <small>(recommended)</small></span><div className="car-booking-input"><FaPhone /><input type="tel" value={form.phone} onChange={(event) => updateField("phone", event.target.value)} placeholder="+20 ..." /></div></label><label><span>Pickup location *</span><div className="car-booking-input"><FaMapMarkerAlt /><input required value={form.pickup} onChange={(event) => updateField("pickup", event.target.value)} placeholder="Hotel, airport or address" /></div></label><label><span>Drop-off location *</span><div className="car-booking-input"><FaMapMarkerAlt /><input required value={form.dropoff} onChange={(event) => updateField("dropoff", event.target.value)} placeholder="Where are you going?" /></div></label><label><span>Date *</span><div className="car-booking-input"><FaCalendarAlt /><input required type="date" min={new Date().toISOString().split("T")[0]} value={form.date} onChange={(event) => updateField("date", event.target.value)} /></div></label><label><span>Pickup time *</span><div className="car-booking-input"><FaClock /><input required type="time" value={form.time} onChange={(event) => updateField("time", event.target.value)} /></div></label><label><span>Passengers *</span><div className="car-booking-input"><FaUserFriends /><input required min="1" max="30" type="number" value={form.passengers} onChange={(event) => updateField("passengers", event.target.value)} /></div></label><label><span>Vehicle type *</span><div className="car-booking-input"><FaCarSide /><select value={form.vehicle} onChange={(event) => updateField("vehicle", event.target.value)}><option>Sedan</option><option>SUV</option><option>Van</option><option>Luxury car</option></select></div></label></div><label className="car-booking-notes"><span>Extra notes <small>(optional)</small></span><textarea rows="3" value={form.notes} onChange={(event) => updateField("notes", event.target.value)} placeholder="Flight number, luggage, child seat or special request" /></label><button type="submit" className="car-booking-submit"><FaWhatsapp /> Continue to WhatsApp</button><p className="car-booking-privacy">Your details are placed in the WhatsApp message only. No phone number is required to open the chat.</p></form></motion.div></motion.div>}</AnimatePresence>
+  </>;
+}

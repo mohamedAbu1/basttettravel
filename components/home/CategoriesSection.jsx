@@ -1,324 +1,52 @@
 "use client";
+
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useTheme } from "@/context/ThemeContext";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { FaArrowRight, FaCompass } from "react-icons/fa";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
-import DividerWithIcon from "../layout/DividerWithIcon";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import EgyptianBackground from "../layout/EgyptianBackground";
-import { FaArrowRight } from "react-icons/fa";
+import { useTheme } from "@/context/ThemeContext";
 
-const encodeData = (obj) => btoa(JSON.stringify(obj));
+const FALLBACK_IMAGE = "/HomePageImage/asdasdas.webp";
 
-function CategoryCard({ cat, theme, language, exploreLabel }) {
-  const [imgIndex, setImgIndex] = useState(0);
+function SafeImage({ src, alt }) {
+  const [imageSrc, setImageSrc] = useState(src || FALLBACK_IMAGE);
+  return <Image src={imageSrc} alt={alt} fill sizes="(max-width: 700px) 88vw, (max-width: 1100px) 42vw, 26vw" className="curated-collection-image" unoptimized={imageSrc.startsWith("http")} onError={() => setImageSrc(FALLBACK_IMAGE)} />;
+}
+
+const getName = (value, language, fallback) => {
+  if (!value) return fallback;
+  if (typeof value === "string") return value;
+  return value[language] || value.en || Object.values(value).find(Boolean) || fallback;
+};
+
+const encodeData = (value) => btoa(unescape(encodeURIComponent(JSON.stringify(value))));
+
+export default function CategoriesSection() {
+  const { categories = [], loading } = useCitiesCategories();
+  const { theme } = useTheme();
+  const { t, i18n } = useTranslation("home");
+  const { t: commonT } = useTranslation("common");
   const router = useRouter();
   const pathname = usePathname();
+  const language = i18n.language.split("-")[0];
   const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setImgIndex((prev) => (prev + 1) % (cat.images?.length || 1));
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [cat?.images]);
-
-  const displayName =
-    typeof cat.name === "object"
-      ? cat?.name?.[language] || cat?.name?.en || cat?.name
-      : cat?.name;
-
-  const imageSrc =
-    cat.images?.[imgIndex]?.startsWith("/") ||
-    cat.images?.[imgIndex]?.startsWith("http")
-      ? cat.images[imgIndex]
-      : "/HomePageImage/asdasdas.webp";
-  const [safeImageSrc, setSafeImageSrc] = useState(imageSrc);
-
-  useEffect(() => {
-    setSafeImageSrc(imageSrc);
-  }, [imageSrc]);
-
-  const luxuryNames = [
-    "Luxusreisen",
-    "Luxury Tours",
-    "Tours de lujo",
-    "Voyages de luxe",
-    "Tour di lusso",
-    "豪华旅游",
-  ];
-
-  const handleClick = () => {
-    const queryObj = {
-      city: "all",
-      category: [displayName],
-      group_price: luxuryNames.includes(displayName) ? "Luxury" : "All",
-      popular: false,
-    };
-    const encoded = encodeData(queryObj);
+  const openCategory = (category) => {
+    const name = getName(category.name, language, "All experiences");
+    const encoded = encodeData({ city: "all", category: [name], group_price: "All", popular: false });
     router.push(`/${locale}/trips?data=${encoded}`);
   };
 
-  return (
-    <div
-      onClick={handleClick}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") handleClick();
-      }}
-      role="button"
-      tabIndex={0}
-      aria-label={`Explore ${displayName}`}
-      className={`category-card relative overflow-hidden group cursor-pointer h-[320px] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${theme.card}`}
-      style={{ border: `1px solid ${theme.logoBorder}` }}
-    >
-      <AnimatePresence mode="sync">
-        <motion.div
-          key={imgIndex}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0"
-        >
-          <Image
-            src={safeImageSrc}
-            alt={displayName}
-            fill
-            sizes="(max-width: 768px) 90vw, 30vw"
-            className="object-cover rounded-lg"
-            unoptimized={safeImageSrc.startsWith("http")}
-            onError={() => setSafeImageSrc("/HomePageImage/asdasdas.webp")}
-          />
-        </motion.div>
-      </AnimatePresence>
+  if (loading) return <section className="curated-collection-section curated-section-loading"><div className="curated-collection-shell"><div className="curated-loading-line" /><div className="curated-loading-grid"><span /><span /><span /></div></div></section>;
+  if (!categories.length) return <section className="curated-collection-section"><div className="curated-empty-state"><FaCompass /><strong>No categories are available right now.</strong><span>{commonT("checkBackSoon", { defaultValue: "Please check back soon for new experiences." })}</span></div></section>;
 
-      <div className="category-card-overlay">
-        <div className="category-card-copy">
-          <span className="category-card-kicker">{exploreLabel}</span>
-          <p className="category-card-title">{displayName}</p>
-          <FaArrowRight className="category-card-arrow" aria-hidden="true" />
-        </div>
-      </div>
+  return <section className="curated-collection-section categories-showcase" style={{ "--collection-accent": theme.logoBorder }}>
+    <div className="curated-collection-shell">
+      <header className="curated-collection-header"><div><span className="curated-eyebrow">Basttet Travel · Find your pace</span><h2>{t("ExploreCategories")}</h2><p>{t("Discover")}</p></div><span className="curated-count"><strong>{String(categories.length).padStart(2, "0")}</strong><small>Ways to travel</small></span></header>
+      <div className="curated-collection-grid">{categories.slice(0, 7).map((category, index) => { const name = getName(category.name, language, "Travel experience"); const image = category.images?.[0] || FALLBACK_IMAGE; return <motion.button type="button" key={category.id || name} className={`curated-collection-card ${index === 0 ? "is-featured" : ""}`} onClick={() => openCategory(category)} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .45, delay: index * .05 }}><SafeImage src={image} alt={name} /><span className="curated-card-overlay" /><span className="curated-card-number">{String(index + 1).padStart(2, "0")}</span><span className="curated-card-content"><small>{t("Explore")}</small><strong>{name}</strong><span className="curated-card-link">Discover collection <FaArrowRight /></span></span></motion.button>; })}</div>
     </div>
-  );
+  </section>;
 }
-
-// نسخة الموبايل مع سلايدر تلقائي
-const MobileCategories = ({ categories, theme, language, exploreLabel }) => {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % categories.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [categories.length]);
-  return (
-    <div className="flex flex-col items-center gap-6 w-full">
-      <div key={index} className="w-[90%] max-w-sm">
-        <CategoryCard
-          cat={categories[index]}
-          theme={theme}
-          language={language}
-          exploreLabel={exploreLabel}
-        />
-      </div>
-    </div>
-  );
-};
-
-const CategoriesSection = () => {
-  const { theme, themeName } = useTheme();
-  const { t, i18n } = useTranslation("home");
-  const { t: commonT } = useTranslation("common");
-  const { categories, loading } = useCitiesCategories();
-  const [index, setIndex] = useState(0);
-  const normalizedLang = i18n.language.split("-")[0];
-
-  const looped = [...categories, ...categories];
-  const cardWidth = 220;
-  const [screenSize, setScreenSize] = useState({ width: 0, height: 0 });
-
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenSize({ width: window.innerWidth, height: window.innerHeight });
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % categories.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [categories.length]);
-
-  if (loading) {
-    return <p className="text-center">{commonT("loadingCategories")}</p>;
-  }
-
-  if (!categories.length) {
-    return <p className="px-6 py-12 text-center opacity-70">No categories are available right now.</p>;
-  }
-
-  const symbols = [
-    "𓂀",
-    "𓋹",
-    "𓆣",
-    "𓇼",
-    "𓇯",
-    "𓏏",
-    "𓎛",
-    "𓊽",
-    "𓃾",
-    "𓅓",
-    "𓈇",
-    "𓉐",
-    "𓊹",
-    "𓌙",
-    "𓍿",
-    "𓎟",
-  ];
-
-  return (
-    <>
-      {/* نسخة الموبايل */}
-      <section
-        className={`flex lg:hidden py-12 px-4 flex-col w-full mx-auto `}
-      >
-        <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
-          {symbols.map((sym, i) => (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 0.3, y: 0 }}
-              transition={{ duration: 1, delay: i * 0.1 }}
-              className="text-6xl m-6"
-              style={{ color: theme.icon }}
-            >
-              {sym}
-            </motion.span>
-          ))}
-        </div>
-        <EgyptianBackground />
-
-        {/* العنوان */}
-        <div className="max-w-7xl mx-auto mb-10 text-start relative z-10">
-          <h2 className="sc-title-first text-2xl font-extrabold tracking-wide drop-shadow-md text-gradient">
-            <span className="inline-block transform scale-x-[-1] text-gradient mr-4">
-              𓅓
-            </span>
-            {t("ExploreCategories")}
-            <span className="inline-block ml-4 text-gradient">𓅓</span>
-          </h2>
-          <p className="sc-p-first mt-4 text-lg opacity-80 text-start text-gradient">
-            {t("Discover")}
-          </p>
-          <DividerWithIcon />
-        </div>
-
-        <MobileCategories
-          categories={categories}
-          theme={theme}
-          language={normalizedLang}
-          exploreLabel={t("Explore")}
-        />
-      </section>
-
-      {/* نسخة الديسكتوب */}
-      <section
-        className={`hidden lg:flex flex-col py-24 px-6 w-full mx-auto relative transition-colors duration-500`}
-      >
-        {/* خلفية الرموز */}
-        <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
-          {symbols.map((sym, i) => (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 0.3, y: 0 }}
-              transition={{ duration: 1, delay: i * 0.1 }}
-              className="text-6xl m-6"
-              style={{ color: theme.icon }}
-            >
-              {sym}
-            </motion.span>
-          ))}
-        </div>
-        <EgyptianBackground />
-
-        {/* العنوان */}
-        <div className="max-w-7xl mx-auto mb-10 text-start relative z-10 flex flex-row items-center gap-14">
-          {/* ✅ صورة قبل العنوان حسب الثيم */}
-          <img
-            src={
-              themeName === "dark"
-                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
-                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
-            }
-            alt="Decor before title"
-            className="w-34 h-34 object-contain scale-x-[-1]"
-          />
-
-          <div className="flex flex-col items-center justify-center gap-2">
-            <h2 className="sc-title-first text-5xl font-extrabold tracking-wide drop-shadow-md text-gradient">
-              <span className="inline-block transform scale-x-[-1] text-gradient mr-4">
-                𓅓
-              </span>
-              {t("ExploreCategories")}
-              <span className="inline-block ml-4 text-gradient">𓅓</span>
-            </h2>
-            <p className="sc-p-first mt-4 text-lg opacity-80 text-start text-gradient">
-              {t("Discover")}
-            </p>
-            <DividerWithIcon />
-          </div>
-          {/* ✅ صورة بعد العنوان حسب الثيم */}
-          <img
-            src={
-              themeName === "dark"
-                ? "/HomePageImage/ancient-egyptian-winged-goddess-isis-statue-white-background.webp"
-                : "/HomePageImage/johnny_automatic_ocean_liner.svg"
-            }
-            alt="Decor after title"
-            className="w-34 h-34 object-contain"
-          />
-        </div>
-
-        {/* الكروت */}
-        <div className="relative overflow-hidden w-full max-w-7xl mx-auto z-10">
-          <motion.div
-            className="flex h-full"
-            drag="x"
-            dragConstraints={{ left: -looped.length * cardWidth, right: 0 }}
-            whileTap={{ cursor: "grabbing" }}
-            animate={{ x: -index * cardWidth }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-          >
-            {looped.map((cat, i) => (
-              <div
-                key={i}
-                className="min-w-[100%] sm:min-w-[50%] md:min-w-[33.33%] lg:min-w-[20%] p-3"
-              >
-                <CategoryCard
-                  cat={cat}
-                  theme={theme}
-                  themeName={themeName}
-                  language={normalizedLang}
-                  exploreLabel={t("Explore")}
-                />
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-    </>
-  );
-};
-
-export default CategoriesSection;

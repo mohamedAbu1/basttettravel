@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { getUserToken } from "@/lib/notifications"; // 🟢 الدالة اللي تجيب التوكن
-import { requireAdmin } from "@/lib/auth/admin";
+import { getAuthenticatedUser, requireAdmin } from "@/lib/auth/admin";
 
 // ✅ إضافة إشعار جديد + إرسال إشعار للموبايل
 export async function POST(req) {
@@ -71,11 +71,14 @@ export async function GET(req) {
   try {
     const authorizationError = requireAdmin(req);
     if (authorizationError) return authorizationError;
+    const admin = getAuthenticatedUser(req);
     const db = await connectDB();
     const [rows] = await db.execute(
       `SELECT id, admin_id, event_type, user_id, message, type, user_name, user_email, user_image, created_at, is_read, trip_id, comment_id, message_id
-       FROM notifications 
-       ORDER BY created_at DESC`
+       FROM notifications
+       WHERE admin_id = ?
+       ORDER BY created_at DESC`,
+      [admin.id],
     );
 
     return NextResponse.json({ success: true, notifications: rows });
