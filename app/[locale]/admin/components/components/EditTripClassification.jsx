@@ -2,8 +2,8 @@
 import React from "react";
 import { FaCity, FaTags, FaDollarSign } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import { useTripID } from "../../context/TripIDContext";
-import { useCitiesCategories } from "../../context/CitiesCategoriesContext";
+import { useTripID } from "@/context/TripIDContext";
+import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { useTranslation } from "react-i18next";
 
 const EditTripClassification = () => {

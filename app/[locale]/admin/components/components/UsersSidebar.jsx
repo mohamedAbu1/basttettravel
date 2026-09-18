@@ -1,87 +1,34 @@
 "use client";
-import React from "react";
-import { FaUserCircle } from "react-icons/fa";
 
-const UsersSidebar = ({ users,userData, activeUser, setActiveUser, theme, themeName, markMessageSeen, messages }) => {
-  // فلترة المستخدمين بحيث نستبعد الـ Admin
-  const nonAdminUsers = users.filter(
-    (user) => user?.role?.toUpperCase() !== "ADMIN"
-  );
-  return (
-    <aside
-      style={{ marginRight: "5px" }}
-      className={`w-72 border-r ${theme.border} p-4 space-y-4 
-      ${themeName === "dark" ? "bg-gray-950 text-gray-100" : "bg-white text-gray-900"} 
-      shadow-lg`}
-    >
-      {/* العنوان */}
-      <h3
-        className={`mb-4 text-lg font-bold tracking-wide 
-        ${themeName === "dark" ? "text-yellow-400" : theme.title}`}
-      >
-        Users
-      </h3>
+import React, { useMemo, useState } from "react";
+import { FaInbox, FaSearch, FaUserCircle } from "react-icons/fa";
 
-      {/* قائمة المستخدمين */}
-      {nonAdminUsers.length > 0 ? (
-        nonAdminUsers.map((user) => {
-          // عدد الرسائل الجديدة غير المقروءة
-          const unreadCount = messages.filter(
-            (msg) =>
-              msg.user_id === user.id &&
-              msg.sender_type === "user" &&
-              msg.status === "sent"
-          ).length;
+const UsersSidebar = ({ users = [], activeUser, setActiveUser, themeName, markMessageSeen, messages = [] }) => {
+  const [query, setQuery] = useState("");
+  const nonAdminUsers = useMemo(() => users.filter((user) => user?.role?.toUpperCase() !== "ADMIN"), [users]);
+  const filteredUsers = useMemo(() => nonAdminUsers.filter((user) => `${user.name || ""} ${user.email || ""}`.toLowerCase().includes(query.toLowerCase())), [nonAdminUsers, query]);
+  const totalUnread = nonAdminUsers.reduce((total, user) => total + messages.filter((message) => message.user_id === user.id && message.sender_type === "user" && message.status === "sent").length, 0);
 
-          return (
-            <div
-              key={user.id}
-              onClick={() => {
-                setActiveUser(user);
-                // تحديث حالة الرسائل إلى "seen" عند فتح المحادثة
-                messages
-                  .filter((msg) => msg.user_id === user.id && msg.sender_type === "user" && msg.status === "sent")
-                  .forEach((msg) => markMessageSeen(msg.id));
-              }}
-              className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all duration-300
-                ${
-                  activeUser?.id === user.id
-                    ? themeName === "dark"
-                      ? "bg-yellow-500 text-black shadow-md"
-                      : "bg-yellow-400 text-white shadow-md"
-                    : themeName === "dark"
-                    ? "hover:bg-gray-800"
-                    : "hover:bg-gray-100"
-                }`}
-            >
-              {/* صورة المستخدم أو أيقونة افتراضية */}
-              {user?.avatar_url ? (
-                <img
-                  src={user?.avatar_url}
-                  alt={user.name}
-                  className="w-10 h-10 rounded-full border object-cover"
-                />
-              ) : (
-                <FaUserCircle className="w-10 h-10 text-gray-400" />
-              )}
+  const selectUser = (user) => {
+    setActiveUser(user);
+    messages.filter((message) => message.user_id === user.id && message.sender_type === "user" && message.status === "sent").forEach((message) => markMessageSeen(message.id));
+  };
 
-              {/* الاسم */}
-              <span className="flex-1 font-medium capitalize">{user?.name}</span>
-
-              {/* Badge لو فيه رسائل جديدة */}
-              {unreadCount > 0 && (
-                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full shadow-sm">
-                  {unreadCount}
-                </span>
-              )}
-            </div>
-          );
-        })
-      ) : (
-        <p className="text-sm opacity-70">No non-admin users available.</p>
-      )}
-    </aside>
-  );
+  return <aside className={`admin-chat-users ${themeName === "dark" ? "is-dark" : "is-light"}`}>
+    <div className="admin-chat-users-header"><div><span className="admin-chat-eyebrow">Guest care</span><h2>Conversations</h2><p>{nonAdminUsers.length} travelers in your inbox</p></div><span className="admin-chat-inbox-count"><FaInbox /> {totalUnread || 0}</span></div>
+    <label className="admin-chat-search"><FaSearch /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search travelers" aria-label="Search travelers" /></label>
+    <div className="admin-chat-list" role="list">
+      {filteredUsers.length > 0 ? filteredUsers.map((user) => {
+        const unreadCount = messages.filter((message) => message.user_id === user.id && message.sender_type === "user" && message.status === "sent").length;
+        const isActive = activeUser?.id === user.id;
+        return <button type="button" role="listitem" key={user.id} onClick={() => selectUser(user)} className={`admin-chat-user-row ${isActive ? "is-active" : ""}`}>
+          <span className="admin-chat-avatar-wrap"><img src={user.avatar_url || "/default-avatar.png"} alt="" className="admin-chat-avatar" /><span className="admin-chat-online-dot" /></span>
+          <span className="admin-chat-user-copy"><strong>{user.name || "Unnamed traveler"}</strong><small>{user.email || "No email available"}</small></span>
+          {unreadCount > 0 && <span className="admin-chat-unread">{unreadCount > 9 ? "9+" : unreadCount}</span>}
+        </button>;
+      }) : <div className="admin-chat-list-empty"><FaUserCircle /><strong>{query ? "No traveler found" : "No conversations yet"}</strong><span>{query ? "Try another search term." : "New guest messages will appear here."}</span></div>}
+    </div>
+  </aside>;
 };
 
 export default UsersSidebar;

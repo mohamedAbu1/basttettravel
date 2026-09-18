@@ -3,7 +3,7 @@ import React from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { FaCity, FaTags, FaDollarSign } from "react-icons/fa";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
-import { useTrip } from "../../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 import { useTranslation } from "react-i18next";
 
 export default function TripClassification() {

@@ -2,7 +2,7 @@ import React from "react";
 import { FaImage, FaTrash } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
 import Image from "next/image";
-import { useTrip } from "../../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 
 export default function GalleryUpload() {
   const { themeName } = useTheme();

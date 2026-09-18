@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { useTripID } from "../../context/TripIDContext";
+import { useTripID } from "@/context/TripIDContext";
 
 const EditTripDailyItinerary = () => {
   const { themeName } = useTheme();

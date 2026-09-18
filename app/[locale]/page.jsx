@@ -2,16 +2,18 @@
 import dynamic from "next/dynamic";
 import Footer from "@/components/Footer/Footer";
 import Header from "@/components/header/Header";
-import CarBookingSection from "@/components/home/CarBookingSection";
-import CategoriesSection from "@/components/home/CategoriesSection";
-import CitiesSection from "@/components/home/CitiesSection";
 import HeroSection from "@/components/home/HeroSection";
+// Keep the first viewport focused on the header and hero. These sections are
+// below the fold and are loaded as separate chunks to reduce the initial JS.
+const CategoriesSection = dynamic(() => import("@/components/home/CategoriesSection"));
+const TopTripsSection = dynamic(() => import("@/components/home/TopTripsSection"));
+const CitiesSection = dynamic(() => import("@/components/home/CitiesSection"));
+const CarBookingSection = dynamic(() => import("@/components/home/CarBookingSection"));
 // Below-the-fold sections are loaded after the critical home content so the
 // first mobile render has less JavaScript to parse and execute.
 const OurSection = dynamic(() => import("@/components/home/OurSection"), {
   ssr: false,
 });
-import TopTripsSection from "@/components/home/TopTripsSection";
 import LoginModal from "@/components/home/components/LoginModal";
 import SignUpButton from "@/components/home/components/SignUpButton";
 const TopReviewsSection = dynamic(

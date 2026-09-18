@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
-import { useTrip } from "../../context/TripContext";
-import { useTripID } from "../../context/TripIDContext";
+import { useTrip } from "@/context/TripContext";
+import { useTripID } from "@/context/TripIDContext";
 
 const TripSelector = () => {
   const { trips, fetchTrips } = useTrip();

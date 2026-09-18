@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useAuth } from "./AuthContext";
 
 const MessageContext = createContext();
@@ -159,12 +159,6 @@ export function MessageProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    if (userData?.id) {
-      fetchMessages(userData.id);
-    }
-  }, [userData?.id,open]);
-
   return (
     <MessageContext.Provider
       value={{
@@ -172,7 +166,6 @@ export function MessageProvider({ children }) {
         setMessages,
         loading,
         fetchMessages,
-        setMessages,
         sendMessage,
         markMessageSeen,
         fetchUserMessagesById,

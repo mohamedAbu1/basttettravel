@@ -1,130 +1,42 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { FaClock, FaDownload, FaExpand } from "react-icons/fa";
+"use client";
+
+import { AnimatePresence, motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
+import { FaCheckDouble, FaClock, FaDownload, FaImage, FaRegCommentDots } from "react-icons/fa";
 import { saveAs } from "file-saver";
-import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import { useTranslation } from "react-i18next";
 
-export default function ChatMessages({ messages, userTyping, themeName }) {
+const isImageMessage = (content) => typeof content === "string" && (content.startsWith("data:image/") || /^https?:\/\/.*\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i.test(content));
+
+export default function ChatMessages({ messages = [], userTyping, themeName }) {
   const { t } = useTranslation("common");
+
   const handleDownload = async (url, id) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    // نحول الصورة لـ object URL
-    const img = new Image();
-    img.src = URL.createObjectURL(blob);
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      // نحدد أبعاد الصورة
-      canvas.width = img.width;
-      canvas.height = img.height;
-
-      // نرسم الصورة على الـ canvas
-      ctx.drawImage(img, 0, 0);
-
-      // نحولها لـ Blob بجودة محددة (0.7 = 70%)
-      canvas.toBlob(
-        (newBlob) => {
-          saveAs(newBlob, `chat-image-${id}.jpg`);
-        },
-        "image/jpeg",
-        0.7,
-      );
-    };
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Unable to download image");
+      saveAs(await response.blob(), `chat-image-${id}.jpg`);
+    } catch (error) {
+      console.error("Unable to download chat image:", error);
+    }
   };
 
-  return (
-    <div className="flex-1 p-4 overflow-y-auto space-y-4">
-      <EgyptianBackground />
-      <AnimatePresence>
-        {messages.length > 0 ? (
-          messages.map((msg) => (
-            <motion.div
-              key={msg.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className={`flex items-start gap-3 max-w-[100%] ${
-                msg.sender_type === "user"
-                  ? "self-start"
-                  : "self-end flex-row-reverse"
-              }`}
-            >
-              {/* ✅ صورة المرسل من قاعدة البيانات */}
-              <img
-                src={msg.user_image || "/default-avatar.png"}
-                alt={msg.user_name}
-                className={`w-12 h-12 rounded-full border ${
-                  msg.sender_type === "admin" ? "border-yellow-500" : ""
-                } object-cover`}
-              />
-
-              <div
-                className={`p-3 rounded-lg shadow-md max-w-[70%] ${
-                  msg.sender_type === "user"
-                    ? themeName === "dark"
-                      ? "bg-gray-700 text-white"
-                      : "bg-gray-200 text-black"
-                    : themeName === "dark"
-                      ? "bg-yellow-500 text-black"
-                      : "bg-yellow-400 text-white"
-                }`}
-              >
-                <p className="text-sm font-semibold mb-1 capitalize">
-                  {msg.sender_type === "admin" ? "👑 Admin" : msg.user_name}
-                </p>
-
-                {/* ✅ عرض الصور أو النصوص */}
-                {typeof msg.content === "string" &&
-                msg.content.startsWith("http") &&
-                msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/) ? (
-                  <img
-                    src={msg.content}
-                    alt="message image"
-                    className="rounded-lg shadow-md"
-                  />
-                ) : typeof msg.content === "string" &&
-                  msg.content.startsWith("data:image/") ? (
-                  <img
-                    src={msg.content}
-                    alt="message image"
-                    className="rounded-lg shadow-md"
-                  />
-                ) : (
-                  <p className="text-sm">{msg.content || ""}</p>
-                )}
-
-                {/* ✅ وقت الإرسال وحالة الرسالة */}
-                <div className="flex items-center gap-1 mt-1">
-                  <FaClock className="text-xs opacity-70" />
-                  <span className="text-xs italic opacity-70">
-                    {msg.created_at
-                      ? formatDistanceToNow(new Date(msg.created_at), {
-                          addSuffix: true,
-                        })
-                      : ""}
-                  </span>
-                  {msg.status && (
-                    <span className="text-xs ml-2 opacity-70">
-                      {msg.status === "sent" ? "✅ Sent" : "👀 Seen"}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))
-        ) : (
-          <p className="text-sm opacity-70">{t("noMessages")}</p>
-        )}
+  return <div className={`admin-chat-messages ${themeName === "dark" ? "is-dark" : "is-light"}`}>
+    <div className="admin-chat-thread-label"><span><FaRegCommentDots /> Live conversation</span><small>{messages.length} messages</small></div>
+    <div className="admin-chat-message-list" aria-live="polite">
+      <AnimatePresence initial={false}>
+        {messages.length > 0 ? messages.map((message) => {
+          const isAdmin = message.sender_type === "admin";
+          const imageMessage = isImageMessage(message.content);
+          return <motion.article key={message.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: .25 }} className={`admin-message-row ${isAdmin ? "is-admin" : "is-user"}`}>
+            <img src={message.user_image || "/default-avatar.png"} alt="" className="admin-message-avatar" />
+            <div className="admin-message-stack"><div className="admin-message-author"><strong>{isAdmin ? "You · Admin" : message.user_name || "Traveler"}</strong><span>{message.created_at ? formatDistanceToNow(new Date(message.created_at), { addSuffix: true }) : ""}</span></div>
+              <div className="admin-message-bubble">{imageMessage ? <div className="admin-message-image-wrap"><img src={message.content} alt="Shared attachment" className="admin-message-image" /><button type="button" onClick={() => handleDownload(message.content, message.id)} className="admin-message-download" aria-label="Download image"><FaDownload /></button></div> : <p>{message.content || ""}</p>}<div className="admin-message-meta"><FaClock /><span>{message.created_at ? new Date(message.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}</span>{isAdmin && message.status && <><FaCheckDouble className="admin-message-status" /><span>{message.status === "seen" ? "Seen" : "Sent"}</span></>}</div></div>
+            </div>
+          </motion.article>;
+        }) : <div className="admin-chat-empty"><FaRegCommentDots /><h3>{t("noMessages")}</h3><p>Start a thoughtful conversation with this traveler.</p></div>}
       </AnimatePresence>
-
-      {userTyping && (
-        <p className="text-xs italic opacity-70">{t("userTyping")}</p>
-      )}
+      {userTyping && <div className="admin-typing-indicator"><span /><span /><span /> Traveler is typing</div>}
     </div>
-  );
+  </div>;
 }

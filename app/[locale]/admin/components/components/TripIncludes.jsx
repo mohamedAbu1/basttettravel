@@ -1,7 +1,7 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import { useTrip } from "../../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 
 export default function TripIncludes() {
   const { themeName } = useTheme();

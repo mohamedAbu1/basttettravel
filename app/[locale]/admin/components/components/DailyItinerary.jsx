@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { useTrip } from "../../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 import { v4 as uuidv4 } from "uuid";
 
 export default function DailyItinerary() {

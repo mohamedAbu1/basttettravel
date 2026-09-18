@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { FaImage, FaTrash } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import { useTripID } from "../../context/TripIDContext";
+import { useTripID } from "@/context/TripIDContext";
 
 const EditTripGalleryUpload = () => {
   const { themeName } = useTheme();

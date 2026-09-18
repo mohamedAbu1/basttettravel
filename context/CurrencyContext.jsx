@@ -25,12 +25,15 @@ export function CurrencyProvider({ children }) {
         // هنا ممكن تجيب القيم من الجدول مباشرة
         const usdRow = data.find((r) => r.currency === "USD");
         const eurRow = data.find((r) => r.currency === "EUR");
-setRates({
-  USD_EUR: eurRow?.urop_rate || 0.86,   // اليورو مقابل الدولار
-  EUR_USD: usdRow?.urop_rate ? 1 / usdRow.urop_rate : 1.18, // الدولار مقابل اليورو
-  USD_EGP: usdRow?.eg_rate || 51.34,    // الدولار مقابل الجنيه
-  EUR_EGP: eurRow?.eg_rate || 58.60,    // اليورو مقابل الجنيه
-});
+        const usdToEgp = Number(usdRow?.rate || usdRow?.eg_rate || 51.34);
+        const eurToEgp = Number(eurRow?.rate || eurRow?.eg_rate || 58.60);
+        const eurToUsd = Number(usdRow?.urop_rate || 1.18);
+        setRates({
+          USD_EUR: 1 / eurToUsd,
+          EUR_USD: eurToUsd,
+          USD_EGP: usdToEgp,
+          EUR_EGP: eurToEgp,
+        });
 
         setIds({
           USD: usdRow?.id || null,
@@ -48,12 +51,13 @@ setRates({
   const saveRates = async () => {
     setSaving(true);
     try {
+      const values = { USD: rates.USD_EGP, EUR: rates.EUR_EGP };
       for (const currency of Object.keys(ids)) {
-        if (ids[currency]) {
+        if (ids[currency] && Number.isFinite(Number(values[currency]))) {
           await fetch("/api/currency", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: ids[currency], rate: rates[currency] }),
+            body: JSON.stringify({ id: ids[currency], rate: Number(values[currency]) }),
           });
         }
       }

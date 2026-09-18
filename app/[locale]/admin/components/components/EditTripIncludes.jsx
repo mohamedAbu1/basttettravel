@@ -2,7 +2,7 @@
 import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import { useTripID } from "../../context/TripIDContext";
+import { useTripID } from "@/context/TripIDContext";
 import { v4 as uuidv4 } from "uuid";
 
 const EditTripIncludes = () => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { FaTimesCircle } from "react-icons/fa"; // أيقونة مختلفة للـ Exclusions
 import { useTheme } from "@/context/ThemeContext";
-import { useTrip } from "../../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 
 export default function TripExclusions() {
   const { themeName } = useTheme();

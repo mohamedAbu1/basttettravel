@@ -3,7 +3,7 @@ import React from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { FaCheckCircle, FaTimesCircle, FaClipboardList } from "react-icons/fa";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
-import { usePurchase } from "../context/PurchaseContext";
+import { usePurchase } from "@/context/PurchaseContext";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 export default function BookingsList() {

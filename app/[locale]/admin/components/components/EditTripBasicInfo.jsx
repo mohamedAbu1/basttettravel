@@ -2,7 +2,7 @@
 import React from "react";
 import { FaDollarSign, FaEuroSign } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import { useTripID } from "../../context/TripIDContext";
+import { useTripID } from "@/context/TripIDContext";
 import { useTranslation } from "react-i18next";
 
 const EditTripBasicInfo = () => {

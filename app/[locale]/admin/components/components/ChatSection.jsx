@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import React, { useState, useEffect } from "react";
-import { useMessages } from "../../context/MessageContext";
+import { useMessages } from "@/context/MessageContext";
 import { useAuth } from "@/context/AuthContext";
 import ChatHeader from "./components/ChatHeader";
 import ChatMessages from "./components/ChatMessages";
@@ -9,19 +9,12 @@ import ChatInput from "./components/ChatInput";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 
 const ChatSection = ({ activeUser, theme, themeName }) => {
-  const { messages, fetchMessages, sendMessage, markMessageSeen } = useMessages();
+  const { messages, sendMessage, markMessageSeen } = useMessages();
   const { userData } = useAuth(); // الأدمن الحالي من التوكين
   const [newMessage, setNewMessage] = useState("");
   const [replyTo, setReplyTo] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [userTyping, setUserTyping] = useState(false);
-
-  // ✅ جلب رسائل المستخدم
-  useEffect(() => {
-    if (activeUser) {
-      fetchMessages(activeUser.id);
-    }
-  }, [activeUser]);
 
   // ✅ تحديث حالة الرسائل إلى "seen"
   useEffect(() => {
@@ -110,9 +103,9 @@ const handleSendImage = async (file) => {
 
       <ChatInput
         handleSendImage={handleSendImage}
-        user={activeUser}
-        text={newMessage}
-        setText={setNewMessage}
+        activeUser={activeUser}
+        newMessage={newMessage}
+        setNewMessage={setNewMessage}
         handleSend={handleSend}
         setIsTyping={setIsTyping}
         theme={theme}

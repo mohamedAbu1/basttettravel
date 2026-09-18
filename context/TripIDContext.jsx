@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { v4 as uuidv4 } from "uuid"; // ✅ استدعاء مكتبة UUID
 
 const TripIDContext = createContext();
@@ -208,9 +208,6 @@ export function TripIDProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    fetchAllTrips();
-  }, []);
   return (
     <TripIDContext.Provider
       value={{

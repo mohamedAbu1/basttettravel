@@ -4,9 +4,9 @@ import React, { useEffect, useMemo } from "react";
 import { ResponsiveBar } from "@nivo/bar";
 import { ResponsiveLine } from "@nivo/line";
 import { FaArrowUp, FaClipboardList, FaComments, FaDollarSign, FaPlus, FaSuitcase, FaUsers } from "react-icons/fa";
-import { useUsers } from "../context/UserContext";
-import { useTrip } from "../context/TripContext";
-import { usePurchase } from "../context/PurchaseContext";
+import { useUsers } from "@/context/UserContext";
+import { useTrip } from "@/context/TripContext";
+import { usePurchase } from "@/context/PurchaseContext";
 
 const chartTheme = {
   textColor: "rgba(255,248,233,.64)",

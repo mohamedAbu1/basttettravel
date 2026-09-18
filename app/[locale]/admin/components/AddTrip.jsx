@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { useTrip } from "../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 
 // استدعاء الكومبوننتات
 import BasicInfo from "./components/BasicInfo";

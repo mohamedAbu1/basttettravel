@@ -1,91 +1,25 @@
 "use client";
+
 import React from "react";
-import { useTheme } from "@/context/ThemeContext";
-import { useCurrency } from "@/context/CurrencyContext";
+import { FaArrowRight, FaCheck, FaCoins, FaGlobeAfrica, FaSave, FaSyncAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { useCurrency } from "@/context/CurrencyContext";
+
+const currencies = [
+  { key: "USD_EGP", code: "USD", name: "US Dollar", flag: "🇺🇸", tone: "blue", description: "United States dollar to Egyptian pound" },
+  { key: "EUR_EGP", code: "EUR", name: "Euro", flag: "🇪🇺", tone: "gold", description: "Euro to Egyptian pound" },
+];
 
 export default function CurrencyRates() {
-  const { themeName } = useTheme();
   const { rates, setRates, loading, saving, error, saveRates } = useCurrency();
   const { t } = useTranslation("common");
 
-  if (loading) return <p className="text-center">⏳ {t("loadingCurrencyRates")}</p>;
-  if (error) return <p className="text-center text-red-500">❌ {error}</p>;
+  if (loading) return <div className="currency-rates-page"><div className="currency-loading-card"><FaSyncAlt className="currency-spin" /><span>{t("loadingCurrencyRates")}</span></div></div>;
+  if (error) return <div className="currency-rates-page"><div className="currency-error-card"><strong>Unable to load exchange rates</strong><span>{error}</span></div></div>;
 
-  return (
-    <div
-      className={`admin-page-panel p-6 rounded-xl shadow-lg ${
-        themeName === "dark"
-          ? "bg-black/40 border border-gold/30 text-white"
-          : "bg-white/70 border border-[#c9a34a]/30 text-[#3a2c0a] backdrop-blur-sm"
-      }`}
-    >
-      <h2
-        className={`text-3xl font-bold mb-6 text-center ${
-          themeName === "dark"
-            ? "text-gold"
-            : "bg-gradient-to-r from-[#c9a34a] to-[#eab308] bg-clip-text text-transparent"
-        }`}
-      >
-        💱 {t("currencyRates")}
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* ✅ USD Card */}
-        <div
-          className={`flex flex-col items-center justify-center p-6 rounded-xl shadow-lg ${
-            themeName === "dark"
-              ? "bg-gradient-to-r from-gray-800 to-gray-900 border border-gold/30"
-              : "bg-gradient-to-r from-blue-100 to-blue-200 border border-blue-300"
-          }`}
-        >
-          <span className="text-5xl">🇺🇸</span>
-          <h3 className="text-xl font-semibold mt-2">USD → EGP</h3>
-          <input
-            type="number"
-            value={rates.USD}
-            onChange={(e) =>
-              setRates((prev) => ({ ...prev, USD: parseFloat(e.target.value) }))
-            }
-            className="mt-3 border rounded px-3 py-2 w-40 text-center dark:bg-gray-800 dark:text-white"
-          />
-        </div>
-
-        {/* ✅ EUR Card */}
-        <div
-          className={`flex flex-col items-center justify-center p-6 rounded-xl shadow-lg ${
-            themeName === "dark"
-              ? "bg-gradient-to-r from-gray-800 to-gray-900 border border-gold/30"
-              : "bg-gradient-to-r from-yellow-100 to-yellow-200 border border-yellow-300"
-          }`}
-        >
-          <span className="text-5xl">🇪🇺</span>
-          <h3 className="text-xl font-semibold mt-2">EUR → EGP</h3>
-          <input
-            type="number"
-            value={rates.EUR}
-            onChange={(e) =>
-              setRates((prev) => ({ ...prev, EUR: parseFloat(e.target.value) }))
-            }
-            className="mt-3 border rounded px-3 py-2 w-40 text-center dark:bg-gray-800 dark:text-white"
-          />
-        </div>
-      </div>
-
-      {/* ✅ زر الحفظ */}
-      <div className="mt-6 flex justify-center">
-        <button
-          onClick={saveRates}
-          disabled={saving}
-          className={`px-6 py-2 rounded-lg shadow-md font-semibold transition-transform ${
-            themeName === "dark"
-              ? "from-[#c9a34a] to-[#eab308] text-white hover:scale-105"
-              : "bg-gradient-to-r from-[#c9a34a] to-[#eab308] text-white hover:scale-105"
-          }`}
-        >
-          {saving ? `⏳ ${t("savingChanges")}` : `💾 ${t("saveChanges")}`}
-        </button>
-      </div>
-    </div>
-  );
+  return <div className="currency-rates-page">
+    <section className="currency-rates-hero"><div className="currency-hero-icon"><FaGlobeAfrica /></div><div><span className="admin-section-eyebrow">Finance control</span><h2>Exchange rates</h2><p>Keep every trip price aligned with the current Egyptian pound conversion.</p></div><div className="currency-hero-status"><i /><span>Admin only</span></div></section>
+    <section className="currency-rate-grid">{currencies.map((currency) => <article className={`currency-rate-card tone-${currency.tone}`} key={currency.key}><div className="currency-rate-card-top"><span className="currency-flag">{currency.flag}</span><span className="currency-code">{currency.code} / EGP</span><span className="currency-card-icon"><FaCoins /></span></div><div className="currency-rate-card-copy"><h3>{currency.name}</h3><p>{currency.description}</p></div><label className="currency-rate-field"><span>1 {currency.code} equals</span><div><input type="number" min="0" step="0.01" value={rates[currency.key] ?? ""} onChange={(event) => setRates((previous) => ({ ...previous, [currency.key]: event.target.value === "" ? "" : Number(event.target.value) }))} /><strong>EGP</strong></div></label><div className="currency-rate-card-footer"><span>Live conversion base</span><FaArrowRight /></div></article>)}</section>
+    <section className="currency-rates-footer"><div><span className="currency-footer-check"><FaCheck /></span><div><strong>Ready to publish</strong><p>Changes apply to trip prices after saving.</p></div></div><button type="button" onClick={saveRates} disabled={saving} className="currency-save-button">{saving ? <><FaSyncAlt className="currency-spin" /> Saving</> : <><FaSave /> {t("saveChanges")}</>}</button></section>
+  </div>;
 }

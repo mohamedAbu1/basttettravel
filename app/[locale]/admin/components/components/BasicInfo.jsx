@@ -1,7 +1,7 @@
 import React from "react";
 import { FaDollarSign, FaEuroSign } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import { useTrip } from "../../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 import { useTranslation } from "react-i18next";
 
 export default function BasicInfo() {

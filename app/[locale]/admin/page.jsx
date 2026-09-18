@@ -1,23 +1,25 @@
 /* eslint-disable react-hooks/purity */
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { useTheme } from "@/context/ThemeContext";
 import Sidebar from "./components/Sidebar";
-import DashboardHome from "./components/DashboardHome";
-import AddTrip from "./components/AddTrip";
-import TripsList from "./components/TripsList";
-import BookingsList from "./components/BookingsList";
-import Reports from "./components/Reports";
-import MessagesList from "./components/MessagesList";
-import EditTrip from "./components/EditTrip"; 
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
-import UsersSection from "./components/UsersSection";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "./context/AuthContext";
-import CurrencyRates from "./components/CurrencyRates";
-import SeasonalEvents from "./components/SeasonalEvents";
+import { useAuth } from "@/context/AuthContext";
 import { FaBell, FaCompass, FaShieldAlt } from "react-icons/fa";
 import { useNotifications } from "@/context/NotificationsContext";
+
+const DashboardHome = dynamic(() => import("./components/DashboardHome"));
+const AddTrip = dynamic(() => import("./components/AddTrip"));
+const TripsList = dynamic(() => import("./components/TripsList"));
+const BookingsList = dynamic(() => import("./components/BookingsList"));
+const Reports = dynamic(() => import("./components/Reports"));
+const MessagesList = dynamic(() => import("./components/MessagesList"));
+const EditTrip = dynamic(() => import("./components/EditTrip"));
+const UsersSection = dynamic(() => import("./components/UsersSection"));
+const CurrencyRates = dynamic(() => import("./components/CurrencyRates"));
+const SeasonalEvents = dynamic(() => import("./components/SeasonalEvents"));
 
 const symbols = ["𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽","𓃾","𓅓","𓈇","𓉐","𓊹","𓌙","𓍿","𓎟"];
 

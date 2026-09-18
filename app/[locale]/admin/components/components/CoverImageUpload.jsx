@@ -2,7 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { FaImage, FaTrash } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import { useTrip } from "../../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 
 export default function CoverImageUpload() {
   const { themeName } = useTheme();

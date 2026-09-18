@@ -1,113 +1,39 @@
-import { FaPaperPlane, FaSmile } from "react-icons/fa";
+"use client";
+
+import { useState } from "react";
+import { FaPaperclip, FaPaperPlane, FaSmile } from "react-icons/fa";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-export default function ChatInput({
-  activeUser,
-  newMessage,
-  setNewMessage,
-  handleSend,
-  setIsTyping,
-  theme,
-  themeName,
-  handleSendImage,
-}) {
+export default function ChatInput({ activeUser, newMessage, setNewMessage, handleSend, setIsTyping, themeName, handleSendImage }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const { t } = useTranslation("common");
 
-  if (!activeUser) return null;
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    handleSendImage(file); // ✅ نرسل الملف نفسه
+  if (!activeUser) return <div className="admin-chat-input-empty"><span>Select a traveler to start replying.</span></div>;
+
+  const updateTyping = (value) => {
+    setNewMessage(value);
+    setIsTyping(value.length > 0);
+    fetch("/api/typing", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: activeUser.id, adminTyping: value.length > 0 }) }).catch(() => {});
   };
 
-  return (
-    <div className={`p-3 border-t ${theme.border} flex flex-col gap-2`}>
-      <div className="flex gap-2 items-center">
-        {/* زر رفع صورة كأيقونة */}
-        {/* <label
-          className={`flex items-center justify-center w-10 h-10 rounded-md cursor-pointer transition-all duration-300
-    ${
-      themeName === "dark"
-        ? "bg-gray-700 text-white hover:bg-gray-600"
-        : "bg-gray-200 text-black hover:bg-gray-300"
-    }
-    ${theme.border} ${theme.shadow}`}
-        >
-          <FaImage className={`text-lg ${theme.icon}`} />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
-        </label> */}
+  const handleImageUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (file) handleSendImage(file);
+    event.target.value = "";
+  };
 
-        {/* إدخال النص */}
-        <input
-          type="text"
-          placeholder={t("typeMessage")}
-          value={newMessage}
-          onChange={(e) => {
-            setNewMessage(e.target.value);
-            setIsTyping(e.target.value.length > 0);
-            fetch("/api/typing", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                userId: activeUser.id,
-                adminTyping: e.target.value.length > 0,
-              }),
-            });
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
-          className={`flex-1 rounded px-2 py-1 border ${theme.border} ${
-            themeName === "dark"
-              ? "bg-gray-800 text-white"
-              : "bg-white text-black"
-          }`}
-        />
-        <button
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          className={`flex items-center justify-center w-10 h-10 rounded-md transition-all duration-300 ${
-            themeName === "dark"
-              ? "bg-gray-700 text-white hover:bg-gray-600"
-              : "bg-gray-200 text-black hover:bg-gray-300"
-          }`}
-        >
-          <FaSmile className="text-lg" />
-        </button>
-        {showEmojiPicker && (
-          <div className="mt-2">
-            <Picker
-              data={data}
-              onEmojiSelect={(emoji) =>
-                setNewMessage(newMessage + emoji.native)
-              }
-              theme={themeName === "dark" ? "dark" : "light"}
-            />
-          </div>
-        )}
-        {/* زر إرسال النص مع أيقونة */}
-        <button
-          onClick={handleSend}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all duration-300 ${
-            themeName === "dark"
-              ? "bg-yellow-500 text-black hover:bg-yellow-400"
-              : "bg-yellow-500 text-white hover:bg-yellow-600"
-          }`}
-        >
-          <FaPaperPlane className="text-sm" /> Send
-        </button>
-      </div>
+  const submitMessage = () => {
+    if (newMessage.trim()) handleSend();
+  };
+
+  return <div className={`admin-chat-composer ${themeName === "dark" ? "is-dark" : "is-light"}`}>
+    <div className="admin-chat-composer-tools"><span className="admin-chat-composer-status"><i /> Replying to <strong>{activeUser.name || "traveler"}</strong></span><span className="admin-chat-composer-hint">Enter to send · Shift + Enter for a new line</span></div>
+    <div className="admin-chat-composer-box">
+      <label className="admin-chat-tool-button" aria-label="Attach image"><FaPaperclip /><input type="file" accept="image/*" onChange={handleImageUpload} hidden /></label>
+      <textarea value={newMessage} onChange={(event) => updateTyping(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); submitMessage(); } }} placeholder={t("typeMessage")} rows={1} aria-label={t("typeMessage")} />
+      <div className="admin-chat-composer-actions"><div className="admin-emoji-anchor"><button type="button" className="admin-chat-tool-button" onClick={() => setShowEmojiPicker((visible) => !visible)} aria-label="Add emoji"><FaSmile /></button>{showEmojiPicker && <div className="admin-emoji-popover"><Picker data={data} onEmojiSelect={(emoji) => { setNewMessage((current) => `${current}${emoji.native}`); setShowEmojiPicker(false); }} theme={themeName === "dark" ? "dark" : "light"} /></div>}</div><button type="button" className="admin-send-button" onClick={submitMessage} disabled={!newMessage.trim()}><FaPaperPlane /><span>Send</span></button></div>
     </div>
-  );
+  </div>;
 }

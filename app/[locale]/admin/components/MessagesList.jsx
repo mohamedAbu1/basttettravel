@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { useUsers } from "../context/UserContext";
+import { useUsers } from "@/context/UserContext";
 import { useAuth } from "@/context/AuthContext";
 import UsersSidebar from "./components/UsersSidebar";
 import ChatSection from "./components/ChatSection";
@@ -31,7 +31,7 @@ export default function MessagesPage() {
       };
 
       fetchMessages();
-      interval = setInterval(fetchMessages, 3000); // كل 3 ثواني
+      interval = setInterval(fetchMessages, 5000);
     }
     return () => clearInterval(interval);
   }, [activeUser, setMessages]);

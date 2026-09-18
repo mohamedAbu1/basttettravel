@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useTripID } from "../../context/TripIDContext";
+import { useTripID } from "@/context/TripIDContext";
 import { useTranslation } from "react-i18next";
 
 const EditTripSaveButton = () => {

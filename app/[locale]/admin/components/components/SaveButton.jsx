@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useTrip } from "../../context/TripContext";
+import { useTrip } from "@/context/TripContext";
 import { useTranslation } from "react-i18next";
 
 export default function SaveButton() {

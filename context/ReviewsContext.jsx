@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { useAuth } from "@/context/AuthContext"; 
 
@@ -42,13 +42,15 @@ export function ReviewsProvider({ children }) {
       setAllReviews(data);
 
       const grouped = {};
+      const initialLikes = {};
       data.forEach((review) => {
         if (review.trip_id) {
           if (!grouped[review.trip_id]) grouped[review.trip_id] = [];
           grouped[review.trip_id].push(review);
-          if (review?.id) fetchLikes(review.id);
+          if (review?.id) initialLikes[review.id] = { count: Number(review.likes_count || 0), users: [] };
         }
       });
+      setLikes(initialLikes);
       setReviewsByTrip(grouped);
     } catch (err) {
       console.error("❌ Error fetching all reviews:", err);
@@ -56,10 +58,6 @@ export function ReviewsProvider({ children }) {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchAllReviews();
-  }, []);
 
   // ✅ إضافة تعليق جديد
   const addReview = async (review) => {

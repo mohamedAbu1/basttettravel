@@ -13,9 +13,15 @@ import { useState, useEffect } from "react";
 import DividerWithIcon from "@/components/layout/DividerWithIcon";
 
 export default function TopReviewsSection() {
-  const { allReviews, likes } = useReviews();
+  const { allReviews, likes, fetchAllReviews } = useReviews();
   const { theme } = useTheme();
   const { t } = useTranslation("home");
+
+  useEffect(() => {
+    fetchAllReviews();
+    // Load reviews once when this below-the-fold section mounts.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const safeReviews = Array.isArray(allReviews) ? allReviews : [];
 

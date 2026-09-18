@@ -8,9 +8,9 @@ import { FaChartBar } from "react-icons/fa";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 
 // ✅ استدعاء الـ contexts
-import { useUsers } from "../context/UserContext";
-import { useTrip } from "../context/TripContext";
-import { usePurchase } from "../context/PurchaseContext";
+import { useUsers } from "@/context/UserContext";
+import { useTrip } from "@/context/TripContext";
+import { usePurchase } from "@/context/PurchaseContext";
 
 export default function Reports() {
   const { themeName } = useTheme();

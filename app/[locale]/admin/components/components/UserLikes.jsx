@@ -1,6 +1,6 @@
 import React from "react";
 import { useReviews } from "@/context/ReviewsContext";
-import { useUsers } from "../../context/UserContext";
+import { useUsers } from "@/context/UserContext";
 import { useTheme } from "@/context/ThemeContext";
 import { FaStar, FaCommentDots, FaUsers, FaHeart } from "react-icons/fa";
 import { motion } from "framer-motion";

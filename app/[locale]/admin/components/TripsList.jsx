@@ -3,8 +3,8 @@ import React, { useEffect } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { FaTrash, FaMapMarkedAlt } from "react-icons/fa";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
-import { useTrip } from "../context/TripContext";
-import { useTripID } from "../context/TripIDContext";
+import { useTrip } from "@/context/TripContext";
+import { useTripID } from "@/context/TripIDContext";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 

@@ -10,15 +10,19 @@ export async function GET(req) {
     const tripId = searchParams.get("tripId");
 
     const db = await connectDB();
-    let query = "SELECT * FROM reviews";
+    let query = `
+      SELECT reviews.*, COUNT(review_likes.id) AS likes_count
+      FROM reviews
+      LEFT JOIN review_likes ON review_likes.review_id = reviews.id
+    `;
     let params = [];
 
     if (tripId) {
-      query += " WHERE trip_id = ?";
+      query += " WHERE reviews.trip_id = ?";
       params.push(tripId);
     }
 
-    query += " ORDER BY created_at DESC";
+    query += " GROUP BY reviews.id ORDER BY reviews.created_at DESC";
 
     const [rows] = await db.query(query, params);
 
