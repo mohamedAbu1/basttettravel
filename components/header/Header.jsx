@@ -17,7 +17,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { theme } = useTheme();
   const { userData, logout } = useAuth();
-  const { handleLoginOpen } = useData();
+  const { handleSignUpOpen } = useData();
   const { t } = useTranslation("home");
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function Header() {
         <div className="hidden lg:flex">
           <button
             type="button"
-            onClick={userData ? logout : handleLoginOpen}
+            onClick={userData ? logout : handleSignUpOpen}
             className="header-auth-button"
           >
             {userData ? (

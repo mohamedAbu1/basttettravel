@@ -124,6 +124,7 @@ const BookingCalendar = ({ trip,id }) => {
       )}
 
       <BookingSummaryCard
+        tourName={trip.title?.[i18n.language?.split("-")[0]] || trip.title?.en || "Trip booking"}
         checkInPrice={checkInPrice}
         participants={participants}
         childrenCount={childrenCount}

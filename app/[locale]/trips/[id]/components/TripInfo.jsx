@@ -105,7 +105,9 @@ export default function TripInfo({ trip, lang }) {
     displayedGroup = (Number(displayedGroup) * factor).toFixed(2);
     displayedChild = (Number(displayedChild) * factor).toFixed(2);
   }
-  const localizedDurationUnit = trip.duration_unit?.[lang] || trip.duration_unit?.en || "";
+  const localizedDurationUnit = typeof trip.duration_unit === "string"
+    ? trip.duration_unit
+    : trip.duration_unit?.[lang] || trip.duration_unit?.en || "days";
 
   return (
     <motion.section
@@ -123,7 +125,7 @@ export default function TripInfo({ trip, lang }) {
         <PriceRow label={`${t.AdultPrivate}`} value={displayedSolo} currency={currency} theme={theme} />
         <PriceRow label={`${t.AdultGroup}`} value={displayedGroup} currency={currency} theme={theme} />
         <PriceRow label={t.Child} value={displayedChild} currency={currency} theme={theme} />
-        <PriceRow label={t.ChildrenUnder6} value={t.Free} currency={currency} theme={theme} />
+        <PriceRow label={t.ChildrenUnder6} value={t.Free} currency={currency} theme={theme} isFree />
         
         <motion.div className="flex items-center gap-2">
           <FaClock className={theme.icon} />
@@ -134,7 +136,7 @@ export default function TripInfo({ trip, lang }) {
   );
 }
 
-function PriceRow({ label, value, currency, theme }) {
+function PriceRow({ label, value, currency, theme, isFree = false }) {
   let Icon;
   let color;
 
@@ -152,7 +154,7 @@ function PriceRow({ label, value, currency, theme }) {
   return (
     <motion.div className="flex items-center gap-2">
       <Icon style={{ color }} />
-      <span className={theme.text}>{label}: {value} {currency}</span>
+      <span className={theme.text}>{label}: {value}{isFree ? "" : ` ${currency}`}</span>
     </motion.div>
   );
 }

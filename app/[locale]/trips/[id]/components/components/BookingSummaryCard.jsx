@@ -213,11 +213,11 @@ let EGP = total * 49.85
       <div className="mt-6">
         <motion.button
           onClick={handleBookingClick}
-          disabled={loading}
+          disabled={loading || !participants || !checkInPrice || !checkIn || !checkOut}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className={`hero-primary-action w-full flex items-center justify-center gap-2 ${
-            loading ? "opacity-50 cursor-not-allowed" : ""
+            loading || !participants || !checkInPrice || !checkIn || !checkOut ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
           <span className="text-xl">🛒</span>

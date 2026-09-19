@@ -20,8 +20,15 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
   const { themeName } = useTheme();
   const { currency } = usePurchase();
 
-  const { city, category, group_price, popular, updateValue } =
+  const { city, category, group_price, popular, updateValue, resetFilters } =
     useQueryFilters();
+
+  const activeFilterCount = [
+    Array.isArray(city) ? city.length : city !== "all" ? 1 : 0,
+    Array.isArray(category) ? category.length : category !== "all" ? 1 : 0,
+    group_price !== "All" ? 1 : 0,
+    popular ? 1 : 0,
+  ].reduce((total, count) => total + count, 0);
 
   if (loading)
     return <p className="text-center text-gray-500">{t("Loading")}</p>;
@@ -71,7 +78,7 @@ export default function TripsFilter({ allCities, allCategories, loading }) {
         themeName === "dark" ? "card-dark" : "card-light"
       } `} 
     >
-      <div className="filter-card-heading"><span className="filter-kicker">Basttet Travel</span><h3 className="filter-title">{t("Filters")}</h3><span className="filter-heading-line" /></div>
+      <div className="filter-card-heading"><span className="filter-kicker">Basttet Travel</span><div className="filter-heading-row"><h3 className="filter-title">{t("Filters")}</h3>{activeFilterCount > 0 && <button type="button" className="filter-reset-button" onClick={resetFilters}>{t("ClearFilters", { defaultValue: "Clear all" })} <span>{activeFilterCount}</span></button>}</div><span className="filter-heading-line" /></div>
       <div className="filter-sections">
         {/* المدن */}
         <div>

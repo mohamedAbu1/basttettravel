@@ -7,7 +7,10 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [themeName, setThemeName] = useState("dark");
-  const [theme, setTheme] = useState(lightTheme);
+  // Keep the initial React state aligned with the SSR/default document theme.
+  // Starting with the light palette while advertising dark mode caused a
+  // visible flash and incorrect colors during the first render.
+  const [theme, setTheme] = useState(darkTheme);
 
   // ✅ تحميل الثيم المحفوظ
   useEffect(() => {
@@ -41,7 +44,7 @@ export function ThemeProvider({ children }) {
     );
     document.documentElement.style.setProperty(
       "--background",
-      mode === "dark" ? "#0a0a0a" : "#ffffff"
+      mode === "dark" ? "#0a0a0a" : "#f4f0e8"
     );
   };
 

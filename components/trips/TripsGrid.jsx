@@ -142,7 +142,7 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
               <Swiper
                 spaceBetween={10}
                 slidesPerView={1}
-                loop
+                loop={(trip.images || []).filter(Boolean).length > 1}
                 autoplay={{ delay: 3000 }}
                 pagination={{ clickable: true }}
                 navigation

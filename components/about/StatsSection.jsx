@@ -37,6 +37,8 @@ function AnimatedStat({ stat, themeName }) {
     });
   }, [stat.value, controls]);
 
+  const formattedCount = new Intl.NumberFormat("en-US").format(count);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
@@ -51,7 +53,7 @@ function AnimatedStat({ stat, themeName }) {
         onUpdate={(latest) => setCount(Math.floor(latest.count))}
         className="about-stat-value"
       >
-        {count}+
+        {formattedCount}+
       </motion.div>
       <div
         className="about-stat-label"

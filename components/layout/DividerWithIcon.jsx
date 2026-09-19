@@ -13,6 +13,7 @@ export default function DividerWithIcon() {
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className="flex items-center gap-3 justify-center w-full"
+      aria-hidden="true"
     >
       {/* الخط الأيسر */}
       <div

@@ -36,7 +36,7 @@ export default function PrivacyPolicyPage() {
       className={`policy-page public-page min-h-screen ${theme.background} transition-colors duration-500 font-sans`}
     >
       <EgyptianBackground />
-     <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none">
+     <div className="absolute inset-0 flex flex-wrap justify-center items-center opacity-10 pointer-events-none" aria-hidden="true">
         {symbols.map((sym, i) => (
           <motion.span
             key={i}

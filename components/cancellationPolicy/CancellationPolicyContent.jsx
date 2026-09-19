@@ -20,8 +20,8 @@ export default function CancellationPolicyContent({ theme }) {
         </h1>
         <DividerWithIcon />
 
-        <p>
-          <strong className="capitalize">{t("effectiveDateLabel", { defaultValue: "Effective date:" })}</strong> {t("effectiveDate")}
+        <p className={`${theme.subText} text-sm`}>
+          {t("effectiveDate")}
         </p>
 
         {/* Cancellation Policy */}

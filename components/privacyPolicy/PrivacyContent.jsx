@@ -17,13 +17,8 @@ export default function PrivacyContent({ theme }) {
       <article
         className={`prose max-w-none prose-lg leading-relaxed ${theme.text} flex flex-col gap-3`}
       >
-        <h1 className={`${theme.title} text-3xl pt-5`}>
-          {t("title")}
-        </h1>
-        <DividerWithIcon />
-
-        <p>
-          <strong className="capitalize">{t("effectiveDate", { defaultValue: "Effective date:" })}</strong> {t("effectiveDate")}
+        <p className={`${theme.subText} text-sm pt-5`}>
+          {t("effectiveDate")}
         </p>
         <p>{t("intro")}</p>
         <>
@@ -33,7 +28,6 @@ export default function PrivacyContent({ theme }) {
             Cancellation Policy
           </Link>
         </>
-        <DividerWithIcon />
         <DividerWithIcon />
 
         <h2 className={theme.heading}>

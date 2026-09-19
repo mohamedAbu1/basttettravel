@@ -69,8 +69,13 @@ export default function TripsPage() {
 
   if (loadingTrips)
     return (
-      <main className="min-h-screen p-8 text-center text-gray-500" aria-live="polite">
-        {commonT("loadingTrips")}
+      <main className="public-page trips-loading-state" aria-live="polite" aria-busy="true">
+        <div className="trips-loading-card">
+          <span className="trips-loading-mark" aria-hidden="true">𓂀</span>
+          <h1>{commonT("loadingTrips")}</h1>
+          <p>Preparing curated journeys for you…</p>
+          <span className="trips-loading-bar" aria-hidden="true" />
+        </div>
       </main>
     );
   // فلترة الرحلات
@@ -217,9 +222,13 @@ export default function TripsPage() {
               )}
 
               {totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-4">
+                <nav className="trips-pagination mt-4" aria-label="Trip pages">
+                  <button type="button" disabled={currentPage === 1} onClick={() => { setCurrentPage((page) => Math.max(1, page - 1)); window.scrollTo({ top: 30, behavior: "smooth" }); }}>
+                    Previous
+                  </button>
                   {Array.from({ length: totalPages }, (_, i) => (
                     <button
+                      type="button"
                       key={i}
                       onClick={() => {
                         setCurrentPage(i + 1);
@@ -230,11 +239,15 @@ export default function TripsPage() {
                           ? "bg-[var(--primary-color)] text-white"
                           : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                       }`}
+                      aria-current={currentPage === i + 1 ? "page" : undefined}
                     >
                       {i + 1}
                     </button>
                   ))}
-                </div>
+                  <button type="button" disabled={currentPage === totalPages} onClick={() => { setCurrentPage((page) => Math.min(totalPages, page + 1)); window.scrollTo({ top: 30, behavior: "smooth" }); }}>
+                    Next
+                  </button>
+                </nav>
               )}
             </div>
           </motion.section>
