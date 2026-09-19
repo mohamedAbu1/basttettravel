@@ -33,6 +33,7 @@ export function TripProvider({ children }) {
   const [error, setError] = useState(null);
   const tripsRequestRef = useRef(null);
   const lastTripsFetchRef = useRef(0);
+  const lastTripsFetchKeyRef = useRef(null);
 
   const updateTripField = (field, value) => {
     setTripData((prev) => ({ ...prev, [field]: value }));
@@ -124,19 +125,25 @@ export function TripProvider({ children }) {
   };
 
   // ✅ جلب الرحلات
-  const fetchTrips = useCallback(async () => {
+  const fetchTrips = useCallback(async (options = {}) => {
     const now = Date.now();
+    const requestKey = options.summary || "full";
     if (tripsRequestRef.current) return tripsRequestRef.current;
-    if (now - lastTripsFetchRef.current < 30000) return null;
+    if (
+      lastTripsFetchKeyRef.current === requestKey &&
+      now - lastTripsFetchRef.current < 30000
+    ) return null;
 
     setLoadingTrips(true);
     setError(null);
-    tripsRequestRef.current = fetch("/api/trips", { cache: "no-store" })
+    const query = options.summary ? `?summary=${encodeURIComponent(options.summary)}` : "";
+    tripsRequestRef.current = fetch(`/api/trips${query}`, { cache: "no-store" })
       .then(async (res) => {
         const result = await res.json();
         if (!res.ok || !result.success) throw new Error(result.error || "Failed to load trips");
         setTrips(result.trips);
         lastTripsFetchRef.current = Date.now();
+        lastTripsFetchKeyRef.current = requestKey;
         localStorage.setItem("trips", JSON.stringify(result.trips));
         return result;
       })

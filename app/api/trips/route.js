@@ -130,9 +130,71 @@ export async function POST(req) {
   }
 }
 
-export async function GET() {
+export async function GET(req) {
   try {
     const db = await connectDB();
+    const summary = new URL(req.url).searchParams.get("summary");
+
+    if (summary === "home") {
+      const [rows] = await db.query(`
+        SELECT
+          t.id,
+          t.title,
+          t.currency,
+          t.duration,
+          t.duration_unit,
+          t.cover_image,
+          t.group_price,
+          NULL AS rating,
+          COALESCE(
+            CAST((
+              SELECT JSON_ARRAYAGG(JSON_OBJECT('id', c.id, 'name', c.name))
+              FROM trip_cities tc
+              JOIN cities c ON tc.city_id = c.id
+              WHERE tc.trip_id = t.id
+            ) AS CHAR),
+            '[]'
+          ) AS cities,
+          COALESCE(
+            CAST((
+              SELECT JSON_ARRAYAGG(JSON_OBJECT('id', r.id))
+              FROM reviews r
+              WHERE r.trip_id = t.id
+            ) AS CHAR),
+            '[]'
+          ) AS reviews
+        FROM trips t
+        ORDER BY t.updated_at DESC
+        LIMIT 8
+      `);
+
+      const safeParse = (value) => {
+        try {
+          return value ? JSON.parse(value) : [];
+        } catch {
+          return [];
+        }
+      };
+
+      const compactTrips = rows.map((trip) => ({
+        id: trip.id,
+        title: trip.title ? JSON.parse(trip.title) : {},
+        currency: trip.currency,
+        duration: Number(trip.duration),
+        duration_unit: trip.duration_unit || "",
+        cover_image: trip.cover_image,
+        group_price: Number(trip.group_price),
+        rating: trip.rating,
+        cities: safeParse(trip.cities),
+        reviews: safeParse(trip.reviews),
+      }));
+
+      return new Response(JSON.stringify({ success: true, trips: compactTrips }), {
+        status: 200,
+        headers: { "Cache-Control": "public, max-age=300, stale-while-revalidate=600" },
+      });
+    }
+
     const [trips] = await db.query(`
       SELECT 
         t.*,

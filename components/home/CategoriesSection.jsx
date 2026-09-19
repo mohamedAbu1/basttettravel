@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { FaArrowRight, FaCompass } from "react-icons/fa";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { canUseNextImageOptimizer } from "@/lib/media/image";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -13,7 +14,7 @@ const FALLBACK_IMAGE = "/HomePageImage/asdasdas.webp";
 
 function SafeImage({ src, alt }) {
   const [imageSrc, setImageSrc] = useState(src || FALLBACK_IMAGE);
-  return <Image src={imageSrc} alt={alt} fill sizes="(max-width: 700px) 88vw, (max-width: 1100px) 42vw, 26vw" className="curated-collection-image" unoptimized={imageSrc.startsWith("http")} onError={() => setImageSrc(FALLBACK_IMAGE)} />;
+  return <Image src={imageSrc} alt={alt} fill sizes="(max-width: 700px) 88vw, (max-width: 1100px) 42vw, 26vw" className="curated-collection-image" unoptimized={!canUseNextImageOptimizer(imageSrc)} onError={() => setImageSrc(FALLBACK_IMAGE)} />;
 }
 
 const getName = (value, language, fallback) => {

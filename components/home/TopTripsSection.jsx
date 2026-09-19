@@ -12,6 +12,7 @@ import { usePurchase } from "@/context/PurchaseContext";
 import { useSeasonalEvent } from "@/components/layout/SeasonalTheme";
 import { useAuth } from "@/context/AuthContext";
 import { useCurrency } from "@/context/CurrencyContext";
+import { canUseNextImageOptimizer } from "@/lib/media/image";
 
 const FALLBACK_IMAGE = "/HomePageImage/asdasdas.webp";
 
@@ -20,7 +21,7 @@ function SafeTripImage({ src, alt, ...props }) {
 
   useEffect(() => setImageSrc(src || FALLBACK_IMAGE), [src]);
 
-  return <Image {...props} src={imageSrc} alt={alt} unoptimized={imageSrc.startsWith("http")} onError={() => setImageSrc(FALLBACK_IMAGE)} />;
+  return <Image {...props} src={imageSrc} alt={alt} unoptimized={!canUseNextImageOptimizer(imageSrc)} onError={() => setImageSrc(FALLBACK_IMAGE)} />;
 }
 
 function getLocalizedValue(value, language, fallback = "") {
@@ -44,7 +45,7 @@ const TopTripsSection = () => {
   const { rates } = useCurrency();
 
   useEffect(() => {
-    fetchTrips();
+    fetchTrips({ summary: "home" });
   }, [fetchTrips]);
 
   const topTrips = useMemo(() => [...trips]
