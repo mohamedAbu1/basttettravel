@@ -1,6 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -19,43 +17,28 @@ const lightImages = [
 
 export default function Background() {
   const { themeName } = useTheme();
-  const [index, setIndex] = useState(0);
-
-  // ✅ تحديد الصور حسب الثيم وحجم الشاشة
-  const images = themeName === "dark" ? darkImages : lightImages;
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, [images]);
+  // Keep one stable hero asset in the critical path. Rotating the hero on load
+  // makes the LCP element change and forces the browser to download more than
+  // one large image before the visitor can interact with the page.
+  const image = themeName === "dark" ? darkImages[0] : lightImages[0];
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      <motion.div
-        key={images[index]}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 2 }}
-        className="absolute inset-0"
-      >
-        <Image
-          src={images[index]}
-          // This image is decorative; the meaningful hero copy is rendered separately.
-          alt=""
-          aria-hidden="true"
-          fill
-          sizes="100vw"
-          quality={60}
-          className="object-cover"
-          priority={index === 0}
-        />
-        <div
-          className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/55"
-          aria-hidden="true"
-        ></div>
-      </motion.div>
+      <Image
+        src={image}
+        alt=""
+        aria-hidden="true"
+        fill
+        sizes="100vw"
+        quality={50}
+        fetchPriority="high"
+        className="object-cover"
+        priority
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/55"
+        aria-hidden="true"
+      />
     </div>
   );
 }

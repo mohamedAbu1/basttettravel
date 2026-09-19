@@ -1,5 +1,6 @@
 import "./style/globals.css";
 import { headers } from "next/headers";
+import Script from "next/script";
 import Providers from "./providers";
 import { organizationSchema, siteConfig, websiteSchema } from "@/lib/seo/site";
 
@@ -30,19 +31,21 @@ export default async function RootLayout({ children }) {
             }),
           }}
         />
-        {/* Google Analytics is loaded asynchronously after parsing. */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-GXM9KRNJHH" />
-        <script
+        {/* Analytics is intentionally deferred until the page is idle so it
+            cannot compete with the hero image and critical CSS. */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-GXM9KRNJHH"
+          strategy="lazyOnload"
+        />
+        <Script
           id="google-analytics"
-          dangerouslySetInnerHTML={{
-            __html: `
+          strategy="lazyOnload"
+        >{`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'G-GXM9KRNJHH');
-            `,
-          }}
-        />
+            `}</Script>
       </head>
       <body>
         <Providers>{children}</Providers>

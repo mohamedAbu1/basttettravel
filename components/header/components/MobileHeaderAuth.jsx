@@ -1,20 +1,11 @@
 "use client";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
-import { signOut, signIn } from "next-auth/react"; // ✅ إضافة
 
 export default function MobileHeaderAuth() {
-  const isMobile = useMediaQuery("(max-width:600px)");
   const { userData, loginWithGoogle, logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
-
-  if (!isMobile) return null;
 
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -28,26 +19,25 @@ export default function MobileHeaderAuth() {
   return (
     <div>
       {!userData ? (
-        <IconButton onClick={loginWithGoogle} aria-label="Sign in with Google" style={{ borderRadius: "15px" }}>
+        <button type="button" onClick={loginWithGoogle} aria-label="Sign in with Google" className="mobile-auth-button">
           <FcGoogle size={28} />
-        </IconButton>
+        </button>
       ) : (
         <>
-          <IconButton onClick={handleOpenMenu} aria-label="Open account menu">
-            <Avatar
+          <button type="button" onClick={handleOpenMenu} aria-label="Open account menu" className="mobile-auth-button">
+            <img
               src={userData?.avatar_url || userData?.image || "/default-avatar.png"}
               alt={userData?.name}
+              width="32"
+              height="32"
             />
-          </IconButton>
+          </button>
 
-          {/* ✅ Popup menu */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleCloseMenu}
-          >
-            <MenuItem onClick={signOut}>Logout</MenuItem>
-          </Menu>
+          {anchorEl && (
+            <div className="mobile-auth-menu">
+              <button type="button" onClick={() => { handleCloseMenu(); logout(); }}>Logout</button>
+            </div>
+          )}
         </>
       )}
     </div>

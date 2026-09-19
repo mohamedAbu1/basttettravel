@@ -1,12 +1,10 @@
 "use client";
-import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import CitiesInput from "./components/CitiesInput";
 import CategoriesInput from "./components/CategoriesInput";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { addDays } from "date-fns";
 import { useCitiesCategories } from "@/context/CitiesCategoriesContext";
 import { usePathname, useRouter } from "next/navigation";
@@ -14,6 +12,7 @@ import { useQueryFilters } from "@/context/QueryContext";
 import { useTranslation } from "react-i18next";
 
 const encodeData = (obj) => btoa(JSON.stringify(obj));
+const DatePicker = dynamic(() => import("./DatePickerClient"), { ssr: false });
 
 export default function BookingForm({ setShowTrips, trips = [], compact = false }) {
   const { theme } = useTheme();
@@ -94,10 +93,7 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
   );
 
   return (
-    <motion.form
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+    <form
       onSubmit={handleClick}
       className={`${compact ? "hero-booking-form" : `mt-6 shadow-lg w-[95%] max-w-6xl p-6 md:p-7 backdrop-blur-md border ${theme.logoBorder} rounded-xl`} h-auto relative`}
     >
@@ -164,10 +160,8 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
         </div>
       </div>
 
-      <motion.button
+      <button
         type="button"
-        whileHover={isFormValid ? { scale: 1.05 } : {}}
-        whileTap={isFormValid ? { scale: 0.95 } : {}}
         disabled={!isFormValid} // ✅ تعطيل الزر لو الفورم ناقص
         className={`booking-submit w-full hero-secondary-action
     ${isFormValid ? theme.buttonPrimary : "bg-gray-400 cursor-not-allowed"}`}
@@ -177,7 +171,7 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
         }}
       >
         {t("experience")}
-      </motion.button>
+      </button>
       {!isFormValid && (
         <p className="booking-form-hint" role="status">
           {commonT("selectDatesToContinue", {
@@ -185,6 +179,6 @@ export default function BookingForm({ setShowTrips, trips = [], compact = false 
           })}
         </p>
       )}
-    </motion.form>
+    </form>
   );
 }

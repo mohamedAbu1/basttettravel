@@ -16,9 +16,11 @@ export function CurrencyProvider({ children }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
     const fetchRates = async () => {
       try {
-        const res = await fetch("/api/currency");
+        const res = await fetch("/api/currency", { signal: controller.signal });
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
 
@@ -28,6 +30,7 @@ export function CurrencyProvider({ children }) {
         const usdToEgp = Number(usdRow?.rate || usdRow?.eg_rate || 51.34);
         const eurToEgp = Number(eurRow?.rate || eurRow?.eg_rate || 58.60);
         const eurToUsd = Number(usdRow?.urop_rate || 1.18);
+        if (cancelled) return;
         setRates({
           USD_EUR: 1 / eurToUsd,
           EUR_USD: eurToUsd,
@@ -40,12 +43,21 @@ export function CurrencyProvider({ children }) {
           EUR: eurRow?.id || null,
         });
       } catch (err) {
+        if (err.name === "AbortError") return;
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchRates();
+    const idleId = window.requestIdleCallback
+      ? window.requestIdleCallback(fetchRates, { timeout: 3000 })
+      : window.setTimeout(fetchRates, 1400);
+    return () => {
+      cancelled = true;
+      controller.abort();
+      if (window.cancelIdleCallback && typeof idleId === "number") window.cancelIdleCallback(idleId);
+      else window.clearTimeout(idleId);
+    };
   }, []);
 
   const saveRates = async () => {

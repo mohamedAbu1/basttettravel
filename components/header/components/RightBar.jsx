@@ -1,37 +1,23 @@
 "use client";
-import Typography from "@mui/material/Typography";
-import ThemeToggle from "../../ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
-import { useTranslation } from "react-i18next";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useNotifications } from "@/context/NotificationsContext";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MailIcon from "@mui/icons-material/Mail";
-import Badge from "@mui/material/Badge";
+import { FaBell, FaEnvelope } from "react-icons/fa";
 import { useState } from "react";
 import { useMessages } from "@/context/MessageContext";
 import NotificationsDrawer from "./components/NotificationsDrawer";
 import MessagesDrawer from "./components/MessagesDrawer";
 
-export default function RightBar({ scrolled }) {
+export default function RightBar() {
   const { userData, setChatUser } = useAuth();
   const { themeName, theme } = useTheme();
-  const { t } = useTranslation("header");
   const { notifications, markAsRead } = useNotifications();
   const { fetchUserMessagesById, setMessages } = useMessages();
   const router = useRouter();
-  const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
-
   const now = Date.now();
   const twelveHours = 12 * 60 * 60 * 1000;
   const twoDays = 2 * 24 * 60 * 60 * 1000;
-
-  const isHome =
-    segments.length === 0 ||
-    (segments.length === 1 &&
-      ["en", "fr", "de", "it", "es", "zh"].includes(segments[0]));
 
   // ✅ إشعارات عامة (فلترة + ترتيب)
   const filteredNotifications = notifications
@@ -107,11 +93,7 @@ export default function RightBar({ scrolled }) {
     <div className="hidden lg:flex items-center gap-4">
       {/* ✅ أيقونة الإشعارات العامة */}
       {userData?.role === "ADMIN" && (
-        <Badge
-          badgeContent={unreadCount}
-          color="error"
-          className="hidden lg:flex"
-        >
+        <div className="relative hidden lg:flex">
           <button
             type="button"
             aria-label="Open notifications"
@@ -119,29 +101,15 @@ export default function RightBar({ scrolled }) {
             onClick={() => setOpen(true)}
             className="rounded-full p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <NotificationsIcon
-              sx={{
-                color:
-                  themeName === "dark"
-                    ? "#fff"
-                    : !isHome
-                      ? "#333"
-                      : scrolled
-                        ? "#333"
-                        : "#fff",
-              }}
-            />
+            <FaBell aria-hidden="true" />
           </button>
-        </Badge>
+          {unreadCount > 0 && <span className="header-notification-badge">{unreadCount}</span>}
+        </div>
       )}
 
       {/* ✅ أيقونة الرسائل */}
       {userData?.role === "ADMIN" && messageNotifications.length > 0 && (
-        <Badge
-          badgeContent={unreadMessages}
-          color="error"
-          className="hidden lg:flex"
-        >
+        <div className="relative hidden lg:flex">
           <button
             type="button"
             aria-label="Open messages"
@@ -149,20 +117,10 @@ export default function RightBar({ scrolled }) {
             onClick={() => setOpenMessages(true)}
             className="rounded-full p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            <MailIcon
-              sx={{
-                color:
-                  themeName === "dark"
-                    ? "#fff"
-                    : !isHome
-                      ? "#333"
-                      : scrolled
-                        ? "#333"
-                        : "#fff",
-              }}
-            />
+            <FaEnvelope aria-hidden="true" />
           </button>
-        </Badge>
+          {unreadMessages > 0 && <span className="header-notification-badge">{unreadMessages}</span>}
+        </div>
       )}
 
       {/* Drawers */}
@@ -195,23 +153,9 @@ export default function RightBar({ scrolled }) {
             height={40}
             style={{ border: "2px solid #d4af37", borderRadius: "50%" }}
           />
-          <Typography
-            variant="subtitle1"
-            sx={{
-              textTransform: "capitalize",
-              fontWeight: "600",
-              color:
-                themeName === "dark"
-                  ? "#fff"
-                  : !isHome
-                    ? "#333"
-                    : scrolled
-                      ? "#333"
-                      : "#fff",
-            }}
-          >
+          <span className="header-user-name">
             {userData?.name}
-          </Typography>
+          </span>
         </div>
       )}
     </div>

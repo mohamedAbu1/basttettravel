@@ -1,11 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import Logo from "./components/Logo";
 import NavBar from "./components/NavBar";
 import RightBar from "./components/RightBar";
-import Button from "@mui/material/Button";
 import { useAuth } from "@/context/AuthContext";
 import { FaSignOutAlt, FaUserPlus } from "react-icons/fa";
 import { useData } from "@/context/DataContext";
@@ -29,10 +27,7 @@ export default function Header() {
   }, []);
 
   return (
-    <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+    <header
       className={`site-header fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
         scrolled ? "site-header-scrolled" : "site-header-top"
       }`}
@@ -51,8 +46,9 @@ export default function Header() {
         <RightBar scrolled={scrolled} />
 
         {/* زر تسجيل الدخول/الخروج */}
-        <motion.div whileHover={{ scale: 1.03 }} className="hidden lg:flex">
-          <Button
+        <div className="hidden lg:flex">
+          <button
+            type="button"
             onClick={userData ? logout : handleLoginOpen}
             className="header-auth-button"
           >
@@ -67,8 +63,8 @@ export default function Header() {
                 <span>{t("SignUp")}</span>
               </>
             )}
-          </Button>
-        </motion.div>
+          </button>
+        </div>
         <ThemeToggle scrolled={scrolled} />
         <LanguageSwitcher />
 
@@ -77,6 +73,6 @@ export default function Header() {
           <MobileHeaderAuth />
         </div>
       </div>
-    </motion.header>
+    </header>
   );
 }

@@ -2,13 +2,21 @@
 "use client"
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { usePathname } from "next/navigation";
 
 const CitiesCategoriesContext = createContext();
 
-export function CitiesCategoriesProvider({ children }) {
-  const [cities, setCities] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+export function CitiesCategoriesProvider({
+  children,
+  initialCities = null,
+  initialCategories = null,
+}) {
+  const hasInitialData = Array.isArray(initialCities) && Array.isArray(initialCategories);
+  const pathname = usePathname();
+  const isLocalizedHome = /^\/(en|es|fr|de|it|zh)\/?$/.test(pathname || "");
+  const [cities, setCities] = useState(hasInitialData ? initialCities : []);
+  const [categories, setCategories] = useState(hasInitialData ? initialCategories : []);
+  const [loading, setLoading] = useState(!hasInitialData && !isLocalizedHome);
   const [error, setError] = useState(null);
 
   const { i18n } = useTranslation(); // اللغة الحالية للموقع
@@ -45,8 +53,8 @@ export function CitiesCategoriesProvider({ children }) {
       }
     };
 
-    fetchData();
-  }, []);
+    if (!hasInitialData && !isLocalizedHome) fetchData();
+  }, [hasInitialData, isLocalizedHome]);
 
   const retry = () => {
     setLoading(true);

@@ -37,12 +37,28 @@ export function middleware(req) {
   // اللغة المكتشفة من المتصفح
   const browserLang =
     req.headers.get("accept-language")?.split(",")[0].split("-")[0] || "en";
+  const langToUse = supportedLangs.includes(browserLang) ? browserLang : "en";
+
+  // Preserve links that were published before the localized route structure.
+  // These are the exact legacy URLs currently reported as 404 by Search Console.
+  if (url.pathname === "/$" || url.pathname === "/tours") {
+    url.pathname = url.pathname === "/tours"
+      ? `/${langToUse}/trips`
+      : `/${langToUse}`;
+    return NextResponse.redirect(url, 308);
+  }
+
+  if (segments.length === 2 && supportedLangs.includes(segments[0])) {
+    if (segments[1] === "$" || segments[1] === "tours") {
+      url.pathname = segments[1] === "tours"
+        ? `/${segments[0]}/trips`
+        : `/${segments[0]}`;
+      return NextResponse.redirect(url, 308);
+    }
+  }
 
   // لو أول جزء من المسار مش لغة مدعومة → أضف اللغة المكتشفة
   if (!segments.length || !supportedLangs.includes(segments[0])) {
-    const langToUse = supportedLangs.includes(browserLang)
-      ? browserLang
-      : "en";
     url.pathname = `/${langToUse}${url.pathname}`;
     return NextResponse.redirect(url, 308);
   }

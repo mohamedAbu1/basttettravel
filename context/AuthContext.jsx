@@ -70,7 +70,13 @@ export function AuthProvider({ children }) {
 
   // ✅ استدعاء عند تحميل الصفحة
   useEffect(() => {
-    fetchUserFromServer();
+    const idleId = window.requestIdleCallback
+      ? window.requestIdleCallback(fetchUserFromServer, { timeout: 2500 })
+      : window.setTimeout(fetchUserFromServer, 900);
+    return () => {
+      if (window.cancelIdleCallback && typeof idleId === "number") window.cancelIdleCallback(idleId);
+      else window.clearTimeout(idleId);
+    };
   }, []);
 
   // NextAuth completes Google OAuth after the browser returns from Google's

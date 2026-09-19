@@ -15,11 +15,30 @@ export default function SeasonalTheme({ children }) {
   const [config, setConfig] = useState([]);
   const [configLoaded, setConfigLoaded] = useState(false);
   useEffect(() => {
-    fetch("/api/seasonal-events", { cache: "no-store" })
-      .then((response) => response.ok ? response.json() : [])
-      .then((data) => setConfig(Array.isArray(data) ? data : []))
-      .catch(() => setConfig([]))
-      .finally(() => setConfigLoaded(true));
+    let cancelled = false;
+    const controller = new AbortController();
+    const load = () => {
+      fetch("/api/seasonal-events", { cache: "no-store", signal: controller.signal })
+        .then((response) => response.ok ? response.json() : [])
+        .then((data) => {
+          if (!cancelled) setConfig(Array.isArray(data) ? data : []);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError" && !cancelled) setConfig([]);
+        })
+        .finally(() => {
+          if (!cancelled) setConfigLoaded(true);
+        });
+    };
+    const idleId = window.requestIdleCallback
+      ? window.requestIdleCallback(load, { timeout: 2500 })
+      : window.setTimeout(load, 1200);
+    return () => {
+      cancelled = true;
+      controller.abort();
+      if (window.cancelIdleCallback && typeof idleId === "number") window.cancelIdleCallback(idleId);
+      else window.clearTimeout(idleId);
+    };
   }, []);
   const event = useMemo(() => {
     // A preview must use the saved campaign settings even when its calendar

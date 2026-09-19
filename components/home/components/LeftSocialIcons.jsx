@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 import React from "react";
 import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
@@ -14,33 +13,30 @@ const LeftSocialIcons = () => {
   const { theme } = useTheme();
 
   const socialLinks = [
-    { Icon: FaFacebookF, url: "https://www.facebook.com/profile.php?id=61591222981163" },
-    { Icon: FaInstagram, url: "https://www.instagram.com/ismailharoun225/" },
-    { Icon: FaWhatsapp, url: "https://wa.me/201100507802" }, // رقم واتساب
-    { Icon: MdEmail, url: "mailto:BasttetTravel@outlook.com" }, // فتح البريد
-    { Icon: FaTripadvisor, url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html" }, // ✅ Tripadvisor
+    { Icon: FaFacebookF, url: "https://www.facebook.com/profile.php?id=61591222981163", label: "Basttet Travel on Facebook" },
+    { Icon: FaInstagram, url: "https://www.instagram.com/ismailharoun225/", label: "Basttet Travel on Instagram" },
+    { Icon: FaWhatsapp, url: "https://wa.me/201100507802", label: "Contact Basttet Travel on WhatsApp" },
+    { Icon: MdEmail, url: "mailto:BasttetTravel@outlook.com", label: "Email Basttet Travel" },
+    { Icon: FaTripadvisor, url: "https://www.tripadvisor.com/UserReviewEdit-g294205-d34512222-Basttet_Travel-Luxor_Nile_River_Valley.html", label: "Basttet Travel on Tripadvisor" },
   ];
 
   return (
-    <motion.div
-      initial={{ x: -100, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 1, delay: 0.7 }}
+    <div
       className="absolute left-[30px] top-170 lg:top-[55%] -translate-y-1/2 flex flex-row lg:flex-col gap-6 z-30"
     >
-      {socialLinks.map(({ Icon, url }, i) => (
-        <motion.a
-          whileHover={{ scale: 1.2, rotate: -5 }}
+      {socialLinks.map(({ Icon, url, label }, i) => (
+        <a
           key={i}
           href={url}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={label}
           className={`p-3 rounded-full ${theme.shadow}`}
         >
           <Icon size={22} className={theme.icon} />
-        </motion.a>
+        </a>
       ))}
-    </motion.div>
+    </div>
   );
 };
 

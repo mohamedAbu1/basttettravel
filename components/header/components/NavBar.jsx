@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
@@ -23,13 +22,7 @@ export default function NavBar({ scrolled }) {
   const normalizedPath = "/" + segments.slice(1).join("/");
 
   return (
-    <motion.nav
-      initial="hidden"
-      animate="visible"
-      variants={{
-        hidden: { opacity: 0 },
-        visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
-      }}
+    <nav
       className="site-nav hidden lg:flex items-center gap-2 font-medium text-lg"
     >
       {navItems.map((item) => {
@@ -58,12 +51,8 @@ export default function NavBar({ scrolled }) {
             normalizedPath.startsWith(`/${item}`));
 
         return (
-          <motion.div
+          <div
             key={item}
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
           >
             <Link
               href={`/${langPrefix}${path}`}
@@ -82,9 +71,9 @@ export default function NavBar({ scrolled }) {
                 className={`absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-0.5 bg-[var(--ui-gold)] rounded-full transition-all duration-300 ${isActive ? "w-3/5" : "w-0 group-hover:w-3/5"}`}
               />
             </Link>
-          </motion.div>
+          </div>
         );
       })}
-    </motion.nav>
+    </nav>
   );
 }
