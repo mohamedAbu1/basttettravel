@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useCallback, useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 
 const darkImages = [
@@ -17,28 +18,105 @@ const lightImages = [
 
 export default function Background() {
   const { themeName } = useTheme();
-  // Keep one stable hero asset in the critical path. Rotating the hero on load
-  // makes the LCP element change and forces the browser to download more than
-  // one large image before the visitor can interact with the page.
-  const image = themeName === "dark" ? darkImages[0] : lightImages[0];
+  const slides = themeName === "dark" ? darkImages : lightImages.slice(0, 3);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [previousIndex, setPreviousIndex] = useState(null);
+  const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    setActiveIndex(0);
+    setPreviousIndex(null);
+  }, [themeName]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReducedMotion(mediaQuery.matches);
+    updateMotionPreference();
+    mediaQuery.addEventListener?.("change", updateMotionPreference);
+    return () => mediaQuery.removeEventListener?.("change", updateMotionPreference);
+  }, []);
+
+  const goToSlide = useCallback((nextIndex) => {
+    if (nextIndex === activeIndex || slides.length < 2) return;
+    setPreviousIndex(activeIndex);
+    setActiveIndex(nextIndex);
+    window.setTimeout(() => setPreviousIndex(null), 700);
+  }, [activeIndex, slides.length]);
+
+  const goToNext = useCallback(() => {
+    goToSlide((activeIndex + 1) % slides.length);
+  }, [activeIndex, goToSlide, slides.length]);
+
+  const goToPrevious = useCallback(() => {
+    goToSlide((activeIndex - 1 + slides.length) % slides.length);
+  }, [activeIndex, goToSlide, slides.length]);
+
+  useEffect(() => {
+    if (paused || reducedMotion || slides.length < 2) return undefined;
+    const interval = window.setInterval(goToNext, 6500);
+    return () => window.clearInterval(interval);
+  }, [goToNext, paused, reducedMotion, slides.length]);
+
+  const showControls = slides.length > 1;
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div
+      className="hero-background absolute inset-0 overflow-hidden"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false);
+      }}
+    >
+      {previousIndex !== null && (
+        <Image
+          key={`previous-${themeName}-${previousIndex}`}
+          src={slides[previousIndex]}
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="100vw"
+          quality={52}
+          className="hero-slide hero-slide-previous object-cover"
+        />
+      )}
       <Image
-        src={image}
+        key={`active-${themeName}-${activeIndex}`}
+        src={slides[activeIndex]}
         alt=""
         aria-hidden="true"
         fill
         sizes="100vw"
-        quality={50}
-        fetchPriority="high"
-        className="object-cover"
-        priority
+        quality={52}
+        fetchPriority={activeIndex === 0 ? "high" : "auto"}
+        loading={activeIndex === 0 ? "eager" : "lazy"}
+        className="hero-slide hero-slide-active object-cover"
+        priority={activeIndex === 0}
       />
       <div
-        className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/55"
+        className="hero-background-overlay absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-black/55"
         aria-hidden="true"
       />
+      {showControls && (
+        <div className="hero-slider-controls" role="group" aria-label="Hero image slider">
+          <button type="button" onClick={goToPrevious} aria-label="Previous hero image">‹</button>
+          <div className="hero-slider-dots">
+            {slides.map((slide, index) => (
+              <button
+                key={slide}
+                type="button"
+                aria-label={`Show hero image ${index + 1}`}
+                aria-current={activeIndex === index ? "true" : undefined}
+                className={activeIndex === index ? "is-active" : ""}
+                onClick={() => goToSlide(index)}
+              />
+            ))}
+          </div>
+          <button type="button" onClick={goToNext} aria-label="Next hero image">›</button>
+        </div>
+      )}
     </div>
   );
 }
