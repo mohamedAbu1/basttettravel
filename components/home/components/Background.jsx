@@ -79,6 +79,7 @@ export default function Background() {
           fill
           sizes="100vw"
           quality={52}
+          unoptimized
           className="hero-slide hero-slide-previous object-cover"
         />
       )}
@@ -90,6 +91,7 @@ export default function Background() {
         fill
         sizes="100vw"
         quality={52}
+        unoptimized
         fetchPriority={activeIndex === 0 ? "high" : "auto"}
         loading={activeIndex === 0 ? "eager" : "lazy"}
         className="hero-slide hero-slide-active object-cover"
