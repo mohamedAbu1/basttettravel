@@ -3611,6 +3611,11 @@ textarea:focus-visible {
 .reviews-empty small { font-size: .75rem; }
 
 .site-footer-modern { padding: 0; border-top: 1px solid var(--site-border); background: var(--site-bg); color: var(--site-body); }
+.egyptian-background { z-index: 0; opacity: .34; }
+.egyptian-background.is-light { opacity: .16; }
+.egyptian-background-symbol { display: block; opacity: .28; font-family: "Times New Roman", serif; user-select: none; }
+.curated-empty-state button { margin-top: .85rem; min-height: 2.5rem; padding: .55rem 1rem; border: 1px solid var(--ui-gold-strong); border-radius: 999px; color: var(--site-heading); background: transparent; font-size: .75rem; font-weight: 800; cursor: pointer; }
+.curated-empty-state button:hover { color: #172a2f; background: var(--ui-gold); }
 .site-footer-inner { display: grid; grid-template-columns: 1.5fr .75fr 1fr 1.25fr; gap: clamp(1.5rem, 4vw, 4rem); width: min(100%, 80rem); margin: 0 auto; padding: clamp(2.5rem, 6vw, 5rem) clamp(1rem, 4vw, 2rem); }
 .site-footer-brand { max-width: 20rem; }
 .site-footer-logo { width: min(100%, 15rem); height: auto; }

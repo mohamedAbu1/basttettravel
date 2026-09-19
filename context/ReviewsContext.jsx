@@ -188,10 +188,12 @@ const deleteReview = async (reviewId) => {
     const data = res.data;
     if (data.success) {
       // تحديث التعليقات الخاصة بالرحلة
-      setReviewsByTrip((prev) => ({
-        ...prev,
-        [tripId]: (prev[tripId] || []).filter((review) => review.id !== reviewId),
-      }));
+      setReviewsByTrip((prev) => Object.fromEntries(
+        Object.entries(prev).map(([tripId, reviews]) => [
+          tripId,
+          reviews.filter((review) => review.id !== reviewId),
+        ]),
+      ));
 
       // تحديث جميع التعليقات
       setAllReviews((prev) => prev.filter((review) => review.id !== reviewId));

@@ -1,7 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { motion } from "framer-motion";
 
 const symbols = [
   "𓂀","𓋹","𓆣","𓇼","𓇯","𓏏","𓎛","𓊽",
@@ -9,38 +8,22 @@ const symbols = [
 ];
 
 export default function EgyptianBackground() {
-  const [items, setItems] = useState([]);
   const { theme, themeName } = useTheme();
-
-  useEffect(() => {
-    const count = window.innerWidth < 768 ? 25 : 50; // أقل في الموبايل
-    const generated = Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      symbol: symbols[Math.floor(Math.random() * symbols.length)],
-      top: Math.random() * 100,
-      left: Math.random() * 100,
-      size: 18 + Math.random() * 35,
-      opacity: 0.1 + Math.random() * 0.4,
-      rotate: Math.random() * 360,
-      delay: Math.random() * 5,
-      duration: 6 + Math.random() * 4,
-    }));
-    setItems(generated);
-  }, []);
+  const items = symbols.map((symbol, index) => ({
+    id: index,
+    symbol,
+    top: 8 + ((index * 17) % 84),
+    left: 4 + ((index * 29) % 92),
+    size: 20 + (index % 5) * 7,
+    rotate: (index % 4) * 9 - 12,
+  }));
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className={`egyptian-background absolute inset-0 pointer-events-none overflow-hidden ${themeName === "light" ? "is-light" : ""}`} aria-hidden="true">
       {items.map((item) => (
-        <motion.span
+        <span
           key={item.id}
-          initial={{ y: 0, opacity: 0 }}
-          animate={{ y: [0, -10, 0], opacity: item.opacity }}
-          transition={{
-            duration: item.duration,
-            repeat: Infinity,
-            delay: item.delay,
-            ease: "easeInOut",
-          }}
+          className="egyptian-background-symbol"
           style={{
             position: "absolute",
             top: `${item.top}%`,
@@ -48,11 +31,10 @@ export default function EgyptianBackground() {
             fontSize: `${item.size}px`,
             transform: `rotate(${item.rotate}deg)`,
             color: theme.icon,
-            filter: "blur(0.5px)",
           }}
         >
           {item.symbol}
-        </motion.span>
+        </span>
       ))}
     </div>
   );

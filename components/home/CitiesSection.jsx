@@ -25,7 +25,7 @@ const getName = (value, language, fallback) => {
 const encodeData = (value) => btoa(unescape(encodeURIComponent(JSON.stringify(value))));
 
 export default function CitiesSection() {
-  const { cities = [], loading } = useCitiesCategories();
+  const { cities = [], loading, error, retry } = useCitiesCategories();
   const { theme } = useTheme();
   const { t, i18n } = useTranslation("home");
   const { t: commonT } = useTranslation("common");
@@ -41,6 +41,7 @@ export default function CitiesSection() {
   };
 
   if (loading) return <section className="curated-collection-section curated-section-loading"><div className="curated-collection-shell"><div className="curated-loading-line" /><div className="curated-loading-grid"><span /><span /><span /></div></div></section>;
+  if (error) return <section className="curated-collection-section"><div className="curated-empty-state"><FaMapMarkerAlt /><strong>{commonT("collectionLoadError", { defaultValue: "We couldn't load destinations right now." })}</strong><span>{commonT("tryAgain", { defaultValue: "Please try again in a moment." })}</span><button type="button" onClick={retry}>{commonT("retry", { defaultValue: "Try again" })}</button></div></section>;
   if (!cities.length) return <section className="curated-collection-section"><div className="curated-empty-state"><FaMapMarkerAlt /><strong>No destinations are available right now.</strong><span>{commonT("checkBackSoon", { defaultValue: "Please check back soon for new experiences." })}</span></div></section>;
 
   return <section className="curated-collection-section cities-showcase" style={{ "--collection-accent": theme.logoBorder }}>

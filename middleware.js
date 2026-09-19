@@ -44,7 +44,7 @@ export function middleware(req) {
       ? browserLang
       : "en";
     url.pathname = `/${langToUse}${url.pathname}`;
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(url, 308);
   }
 
   // Pass the resolved locale to the root layout so the initial HTML has the

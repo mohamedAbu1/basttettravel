@@ -8,10 +8,9 @@ export default function TripVideo() {
     "eI90PobkLFI",
   ];
 
-  const randomIndex = Math.floor(Math.random() * videos.length);
-  const videoId = videos[randomIndex];
+  const videoId = videos[0];
 
-  const videoUrl = `https://www.youtube.com/embed/${videoId}?mute=1&autoplay=1&controls=1&loop=1&playlist=${videoId}`;
+  const videoUrl = `https://www.youtube.com/embed/${videoId}?mute=1&controls=1&loop=1&playlist=${videoId}`;
 
   return (
     <div className="rounded-xl m-auto flex items-center shadow-lg overflow-hidden">

@@ -9,6 +9,7 @@ export function CitiesCategoriesProvider({ children }) {
   const [cities, setCities] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const { i18n } = useTranslation(); // اللغة الحالية للموقع
   const getLangKey = (lang) => lang.split("-")[0];
@@ -16,19 +17,29 @@ export function CitiesCategoriesProvider({ children }) {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setError(null);
       try {
         const [citiesRes, categoriesRes] = await Promise.all([
           fetch("/api/cities"),
           fetch("/api/categories"),
         ]);
 
+        if (!citiesRes.ok || !categoriesRes.ok) {
+          throw new Error("Unable to load travel collections");
+        }
+
         const citiesData = await citiesRes.json();
         const categoriesData = await categoriesRes.json();
 
-        if (citiesData.success) setCities(citiesData.cities);
-        if (categoriesData.success) setCategories(categoriesData.categories);
+        if (!citiesData.success || !categoriesData.success) {
+          throw new Error("Travel collections are unavailable");
+        }
+        setCities(Array.isArray(citiesData.cities) ? citiesData.cities : []);
+        setCategories(Array.isArray(categoriesData.categories) ? categoriesData.categories : []);
       } catch (err) {
         console.error("Error fetching cities/categories:", err);
+        setError(err.message || "Unable to load travel collections");
       } finally {
         setLoading(false);
       }
@@ -36,6 +47,21 @@ export function CitiesCategoriesProvider({ children }) {
 
     fetchData();
   }, []);
+
+  const retry = () => {
+    setLoading(true);
+    setError(null);
+    Promise.all([fetch("/api/cities"), fetch("/api/categories")])
+      .then(async ([citiesRes, categoriesRes]) => {
+        if (!citiesRes.ok || !categoriesRes.ok) throw new Error("Unable to load travel collections");
+        const [citiesData, categoriesData] = await Promise.all([citiesRes.json(), categoriesRes.json()]);
+        if (!citiesData.success || !categoriesData.success) throw new Error("Travel collections are unavailable");
+        setCities(Array.isArray(citiesData.cities) ? citiesData.cities : []);
+        setCategories(Array.isArray(categoriesData.categories) ? categoriesData.categories : []);
+      })
+      .catch((err) => setError(err.message || "Unable to load travel collections"))
+      .finally(() => setLoading(false));
+  };
 
   // ✅ فلترة المدن وتحويل الحقول من JSON string إلى كائن/مصفوفة
  // ✅ فلترة المدن وتحويل الحقول من JSON string إلى كائن/مصفوفة
@@ -101,6 +127,8 @@ const localizedCities = cities.map((city) => {
         cities: localizedCities,
         categories: localizedCategories,
         loading,
+        error,
+        retry,
       }}
     >
       {children}

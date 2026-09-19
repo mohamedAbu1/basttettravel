@@ -6,7 +6,7 @@ import { organizationSchema, siteConfig, websiteSchema } from "@/lib/seo/site";
 export const metadata = {
   metadataBase: new URL(siteConfig.url),
   title: { default: "Basttet Travel | Luxury Egypt Tours", template: "%s | Basttet Travel" },
-  description: "Discover luxury Nile cruises, desert adventures and unforgettable Egypt tours with Basttet Travel.",
+  description: "Plan private Egypt tours in Luxor, Aswan and beyond with Basttet Travel — curated Nile cruises, temple visits, desert adventures and local support.",
   icons: {
     icon: "/brand/basttet-travel-mark-light.svg",
     apple: "/brand/basttet-travel-mark-light.svg",

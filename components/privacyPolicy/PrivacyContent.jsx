@@ -29,7 +29,7 @@ export default function PrivacyContent({ theme }) {
         <>
           {t("dataUsage")}{" "}
           {t("consent")}{" "}
-          <Link href="/cancellationPolicy" className="text-blue-500 underline">
+          <Link href="./cancellationPolicy" className="text-blue-500 underline">
             Cancellation Policy
           </Link>
         </>

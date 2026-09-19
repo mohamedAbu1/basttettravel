@@ -84,20 +84,20 @@ export default function ContactPage() {
       <main className="contact-page public-page relative flex flex-col min-h-screen justify-center items-center mt-7">
         <Header />
         {/* خلفية الرموز الفرعونية */}
-        <div className="absolute inset-0 pointer-events-none">
-          {Array.from({ length: 25 }).map((_, i) => (
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          {Array.from({ length: 16 }).map((_, i) => (
             <span
               key={i}
               className={`absolute ${
                 themeName === "dark" ? "text-gray-700" : "text-[#4F6D7A]"
               } opacity-20 text-7xl animate-pulse`}
               style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                transform: `rotate(${Math.random() * 360}deg)`,
+                top: `${8 + ((i * 19) % 84)}%`,
+                left: `${4 + ((i * 31) % 92)}%`,
+                transform: `rotate(${(i % 5) * 12 - 18}deg)`,
               }}
             >
-              {symbols[Math.floor(Math.random() * symbols.length)]}
+              {symbols[i % symbols.length]}
             </span>
           ))}
         </div>
