@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { FaImage, FaPaperPlane, FaSmile } from "react-icons/fa";
+import { FaFile, FaPaperPlane, FaSmile } from "react-icons/fa";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { useState } from "react";
@@ -11,6 +11,7 @@ export default function ChatInput({
   setText,
   handleSend,
   handleSendImage,
+  handleSendFile,
   themeName,
   user,
 }) {
@@ -20,15 +21,15 @@ export default function ChatInput({
 
   return (
     <div className="chat-input-bar">
-      {/* <label className="cursor-pointer">
-        <FaImage size={20} className={theme.icon} />
+      <label className="chat-icon-button" aria-label="Attach image or file">
+        <FaFile className="text-lg" />
         <input
           type="file"
-          accept="image/*"
-          onChange={(e) => { const file = e.target.files[0]; if (file) { handleSendImage(file); } }}
+          accept="image/jpeg,image/png,image/webp,image/gif,application/pdf,.txt,.doc,.docx,.xls,.xlsx,.zip"
+          onChange={(e) => { const file = e.target.files?.[0]; if (file) handleSendFile?.(file); e.target.value = ""; }}
           className="hidden"
         />
-      </label> */}
+      </label>
       <input
         aria-label={commonT("typeMessage")}
         type="text"

@@ -43,14 +43,16 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
 
   // ✅ تحديث حالة الرسائل إلى "seen"
   useEffect(() => {
-    if (userData?.id && messages.length > 0) {
+    // Keep admin messages unread while the chat is closed so the trigger can
+    // notify the traveler. Opening the chat marks them as seen.
+    if (open && userData?.id && messages.length > 0) {
       messages.forEach((msg) => {
         if (msg.sender_type === "admin" && msg.status === "sent") {
           markMessageSeen(msg.id);
         }
       });
     }
-  }, [userData, messages]);
+  }, [open, userData, messages]);
   useEffect(() => {
     if (!userData?.id || userData?.role === "ADMIN" || welcomeRequestedRef.current === userData.id) return;
     welcomeRequestedRef.current = userData.id;
@@ -86,8 +88,11 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
   };
 
   const isAdmin = userData?.role === "ADMIN";
+  const unreadAdminMessages = messages.filter(
+    (message) => message.sender_type === "admin" && message.status === "sent",
+  ).length;
 
-  const handleSendImage = async (file) => {
+  const handleSendFile = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
 
@@ -107,7 +112,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
     });
 
     const data = await res.json();
-    if (!data.content) return;
+    if (!res.ok || !data.content) return;
 
     // The multipart endpoint already inserts the message. Add its response to
     // local state instead of POSTing the same image a second time.
@@ -132,6 +137,11 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
             <small>{commonT("supportOnline", { defaultValue: "We are here to help" })}</small>
           </span>
           <span className="chat-trigger-status" aria-hidden="true" />
+          {!open && unreadAdminMessages > 0 && (
+            <span className="chat-trigger-unread" aria-label={`${unreadAdminMessages} new messages`}>
+              {unreadAdminMessages > 9 ? "9+" : unreadAdminMessages}
+            </span>
+          )}
         </motion.button>
       )}
 
@@ -199,7 +209,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
                 text={text}
                 setText={setText}
                 handleSend={handleSend}
-                handleSendImage={handleSendImage}
+                handleSendFile={handleSendFile}
                 theme={theme}
                 themeName={themeName}
                 user={userData}

@@ -9,7 +9,7 @@ import ChatInput from "./components/ChatInput";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 
 const ChatSection = ({ activeUser, theme, themeName }) => {
-  const { messages, sendMessage, markMessageSeen } = useMessages();
+  const { messages, sendMessage, markMessageSeen, setMessages } = useMessages();
   const { userData } = useAuth(); // الأدمن الحالي من التوكين
   const [newMessage, setNewMessage] = useState("");
   const [replyTo, setReplyTo] = useState(null);
@@ -63,7 +63,7 @@ const ChatSection = ({ activeUser, theme, themeName }) => {
     return () => clearInterval(interval);
   }, [activeUser]);
 
-const handleSendImage = async (file) => {
+const handleSendFile = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -81,12 +81,12 @@ const handleSendImage = async (file) => {
 
   const data = await res.json();
 
-  if (data.error) {
+  if (!res.ok || data.error) {
     console.error("❌ Error uploading image:", data.error);
     return;
   }
 
-  const uploadedUrl = data.url;
+  setMessages((prev) => [...prev, data]);
 };
 
 
@@ -102,7 +102,7 @@ const handleSendImage = async (file) => {
       />
 
       <ChatInput
-        handleSendImage={handleSendImage}
+        handleSendFile={handleSendFile}
         activeUser={activeUser}
         newMessage={newMessage}
         setNewMessage={setNewMessage}

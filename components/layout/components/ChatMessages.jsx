@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { saveAs } from "file-saver";
-import { FaCheck, FaClock, FaDownload, FaExpand, FaComments } from "react-icons/fa";
+import { FaCheck, FaClock, FaDownload, FaExpand, FaComments, FaFile } from "react-icons/fa";
 import { useEffect ,useRef} from "react";
 import { useTranslation } from "react-i18next";
 
@@ -36,6 +36,7 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
       );
     };
   };
+  const isImageMessage = (message) => message.message_type === "image" || (message.message_type === "chat" && typeof message.content === "string" && message.content.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i));
 
   return (
     <div className={`chat-messages-list ${themeName === "dark" ? "is-dark" : "is-light"}`}>
@@ -65,8 +66,7 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
                     {msg.sender_type === "admin" && <span className="chat-message-role">Support</span>}
                   </div>
 
-                  {typeof msg.content === "string" && msg.content.startsWith("http") &&
-                msg.content.match(/\.(jpeg|jpg|gif|png|webp)$/) ? (
+                  {isImageMessage(msg) ? (
                   <div className="chat-attachment group">
                     <img
                       src={msg.content}
@@ -96,6 +96,10 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
                       </button>
                     </div>
                   </div>
+                  ) : msg.message_type === "file" ? (
+                    <button type="button" className="chat-file-attachment" onClick={() => window.open(msg.content, "_blank", "noopener,noreferrer")}>
+                      <FaFile /><span>{msg.attachment_name || "Download attachment"}</span><FaDownload />
+                    </button>
                   ) : (
                     <p className="chat-message-text">{msg.content}</p>
                   )}

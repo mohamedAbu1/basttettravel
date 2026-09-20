@@ -11,7 +11,7 @@ export async function GET(req, context) {
     const db = await connectDB();
 
     const [rows] = await db.query(
-      "SELECT id, content, sender_type, created_at, user_name, user_image, reply_to, admin_id, user_id, status, message_type FROM messages WHERE id = ?",
+      "SELECT id, content, sender_type, created_at, user_name, user_image, reply_to, admin_id, user_id, status, message_type, attachment_name, attachment_mime, attachment_size FROM messages WHERE id = ?",
       [id],
     );
 

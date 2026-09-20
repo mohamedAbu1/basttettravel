@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
 import path from "path";
 import { requireUser } from "@/lib/auth/admin";
-import { safeImageName, validateImageFile } from "@/lib/uploads";
+import { safeAttachmentName, validateChatFile } from "@/lib/uploads";
 
 async function notifyAdminOfMessage(db, { messageId, userId, message }) {
   const [[admin]] = await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1");
@@ -25,31 +25,15 @@ export async function POST(req) {
     const isAdmin = String(auth.user.role).toUpperCase() === "ADMIN";
     const contentType = req.headers.get("content-type") || "";
 
-    // 📌 لو الرسالة صورة
+    // Attachments are stored outside the application directory and are served
+    // through the authenticated file endpoint below.
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
       const file = formData.get("file");
       if (!file) return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
-      const validationError = validateImageFile(file);
+      const validationError = validateChatFile(file);
       if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
 
-      // اسم فريد للصورة
-      const fileName = `${Date.now()}-${safeImageName(file.name)}`;
-      const baseUrl = new URL(`/iamges/${fileName}`, process.env.NEXT_PUBLIC_BASE_URL || req.url).toString();
-
-      // مسار المشروع المحلي
-      const projectPath = path.join(process.cwd(), "public/iamges", fileName);
-
-      // تجهيز المجلدات
-      await fs.promises.mkdir(path.dirname(projectPath), { recursive: true });
-
-      // تحويل الملف إلى buffer
-      const buffer = Buffer.from(await file.arrayBuffer());
-
-      // حفظ نسخة في المشروع
-      await fs.promises.writeFile(projectPath, buffer);
-
-      // باقي البيانات
       const user_id = isAdmin ? formData.get("user_id") : auth.user.id;
       if (!user_id) return NextResponse.json({ error: "user_id is required" }, { status: 400 });
 
@@ -58,32 +42,44 @@ export async function POST(req) {
       const user_image = isAdmin ? formData.get("user_image") || "/default-avatar.png" : auth.user.avatar_url || "/default-avatar.png";
       const reply_to = formData.get("reply_to");
       const admin_id = isAdmin ? auth.user.id : null;
-
       const db = await connectDB();
       const resolvedAdminId = admin_id || (await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1"))[0][0]?.id;
       if (!resolvedAdminId) return NextResponse.json({ error: "No administrator is configured" }, { status: 503 });
       const messagesId = uuidv4();
 
+      const storageRoot = process.env.CHAT_UPLOAD_DIR || path.resolve(process.cwd(), "..", "basttettravel-chat-storage");
+      const relativePath = path.join(new Date().getUTCFullYear().toString(), new Date().getUTCMonth().toString().padStart(2, "0"), `${messagesId}-${safeAttachmentName(file.name)}`);
+      const storedPath = path.join(storageRoot, relativePath);
+      await fs.promises.mkdir(path.dirname(storedPath), { recursive: true });
+      await fs.promises.writeFile(storedPath, Buffer.from(await file.arrayBuffer()), { flag: "wx" });
+
+      const messageType = file.type.startsWith("image/") ? "image" : "file";
+      const attachmentUrl = `/api/messages/files/${messagesId}`;
+
       await db.query(
         `INSERT INTO messages 
-         (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, message_type, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', 'chat', NOW())`,
-        [messagesId, user_id, baseUrl, sender_type, user_name, user_image, reply_to ?? null, resolvedAdminId],
+         (id, user_id, content, sender_type, user_name, user_image, reply_to, admin_id, status, message_type, attachment_path, attachment_name, attachment_mime, attachment_size, created_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'sent', ?, ?, ?, ?, ?, NOW())`,
+        [messagesId, user_id, attachmentUrl, sender_type, user_name, user_image, reply_to ?? null, resolvedAdminId, messageType, relativePath, file.name, file.type, file.size],
       );
       if (sender_type === "user") {
-        await notifyAdminOfMessage(db, { messageId: messagesId, userId: user_id, message: "تم إرسال صورة جديدة في المحادثة" });
+        await notifyAdminOfMessage(db, { messageId: messagesId, userId: user_id, message: `تم إرسال ${messageType === "image" ? "صورة" : "ملف"} جديد في المحادثة` });
       }
 
       const newMessage = {
         id: messagesId,
         user_id,
-        content: baseUrl,
+        content: attachmentUrl,
         sender_type,
         user_name,
         user_image,
         reply_to,
         admin_id: resolvedAdminId,
         status: "sent",
+        message_type: messageType,
+        attachment_name: file.name,
+        attachment_mime: file.type,
+        attachment_size: file.size,
         created_at: new Date(),
       };
 
@@ -150,7 +146,7 @@ export async function GET(req) {
     const messageId = searchParams.get("messageId");
 
     const db = await connectDB();
-    let query = `SELECT id, content, sender_type, created_at, user_name, user_image, reply_to, admin_id,user_id , status, message_type
+    let query = `SELECT id, content, sender_type, created_at, user_name, user_image, reply_to, admin_id,user_id , status, message_type, attachment_name, attachment_mime, attachment_size
                  FROM messages`;
     let params = [];
 
