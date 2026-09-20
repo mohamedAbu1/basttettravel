@@ -64,7 +64,7 @@ export default function ChatMessages({ messages = [], userTyping, themeName }) {
         }) : <div className="admin-chat-empty"><FaRegCommentDots /><h3>{t("noMessages")}</h3><p>Start a thoughtful conversation with this traveler.</p></div>}
       </AnimatePresence>
       {userTyping && <div className="admin-typing-indicator"><span /><span /><span /> Traveler is typing</div>}
-      {showScrollToLatest && <button type="button" className="chat-scroll-latest admin-scroll-latest" onClick={() => scrollToLatest()} aria-label="Scroll to latest message" title="Scroll to latest message"><FaArrowDown /></button>}
     </div>
+    {showScrollToLatest && <button type="button" className="chat-scroll-latest admin-scroll-latest" onClick={() => scrollToLatest()} aria-label="Scroll to latest message" title="Scroll to latest message"><FaArrowDown /></button>}
   </div>;
 }

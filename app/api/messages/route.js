@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { requireUser } from "@/lib/auth/admin";
 import { safeAttachmentName, validateChatFile } from "@/lib/uploads";
+import { getChatUploadRoot } from "@/lib/chatAttachments";
 
 async function notifyAdminOfMessage(db, { messageId, userId, message }) {
   const [[admin]] = await db.query("SELECT id FROM users WHERE role = 'ADMIN' ORDER BY created_at ASC LIMIT 1");
@@ -47,8 +48,8 @@ export async function POST(req) {
       if (!resolvedAdminId) return NextResponse.json({ error: "No administrator is configured" }, { status: 503 });
       const messagesId = uuidv4();
 
-      const storageRoot = process.env.CHAT_UPLOAD_DIR || path.resolve(process.cwd(), "..", "basttettravel-chat-storage");
-      const relativePath = path.join(new Date().getUTCFullYear().toString(), new Date().getUTCMonth().toString().padStart(2, "0"), `${messagesId}-${safeAttachmentName(file.name)}`);
+      const storageRoot = getChatUploadRoot();
+      const relativePath = path.posix.join(new Date().getUTCFullYear().toString(), String(new Date().getUTCMonth() + 1).padStart(2, "0"), `${messagesId}-${safeAttachmentName(file.name)}`);
       const storedPath = path.join(storageRoot, relativePath);
       await fs.promises.mkdir(path.dirname(storedPath), { recursive: true });
       await fs.promises.writeFile(storedPath, Buffer.from(await file.arrayBuffer()), { flag: "wx" });

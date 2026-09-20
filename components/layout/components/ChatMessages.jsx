@@ -60,6 +60,7 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
   const isImageMessage = (message) => message.message_type === "image" || message.attachment_mime?.startsWith("image/") || (message.message_type === "chat" && typeof message.content === "string" && message.content.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i));
 
   return (
+    <div className="chat-messages-shell">
     <div ref={messagesListRef} className={`chat-messages-list ${themeName === "dark" ? "is-dark" : "is-light"}`}>
       <AnimatePresence>
         {messages.length > 0 ? (
@@ -151,7 +152,8 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
 
       {adminTyping && <p className="chat-typing-indicator"><span /><span /><span /> {t("adminTyping")}</p>}
       <div ref={messagesEndRef} aria-hidden="true" />
-      {showScrollToLatest && <button type="button" className="chat-scroll-latest" onClick={() => scrollToLatest()} aria-label="Scroll to latest message" title="Scroll to latest message"><FaArrowDown /></button>}
+    </div>
+    {showScrollToLatest && <button type="button" className="chat-scroll-latest" onClick={() => scrollToLatest()} aria-label="Scroll to latest message" title="Scroll to latest message"><FaArrowDown /></button>}
     </div>
   );
 }

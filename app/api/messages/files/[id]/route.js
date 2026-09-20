@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
-import path from "path";
 import { connectDB } from "@/lib/db";
 import { getAuthenticatedUser } from "@/lib/auth/admin";
+import { getChatUploadRoot, getLegacyChatUploadRoot, resolveStoredAttachment } from "@/lib/chatAttachments";
 
 export const dynamic = "force-dynamic";
 
@@ -23,14 +23,21 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const root = path.resolve(process.env.CHAT_UPLOAD_DIR || path.resolve(process.cwd(), "..", "basttettravel-chat-storage"));
-  const filePath = path.resolve(root, attachment.attachment_path);
-  if (filePath !== root && !filePath.startsWith(`${root}${path.sep}`)) {
-    return NextResponse.json({ error: "Invalid attachment path" }, { status: 400 });
-  }
-
   try {
-    const file = await fs.readFile(filePath);
+    const candidatePaths = [
+      resolveStoredAttachment(getChatUploadRoot(), attachment.attachment_path),
+      resolveStoredAttachment(getLegacyChatUploadRoot(), attachment.attachment_path),
+    ].filter(Boolean);
+    let file;
+    for (const filePath of [...new Set(candidatePaths)]) {
+      try {
+        file = await fs.readFile(filePath);
+        break;
+      } catch {
+        // Try the legacy root for attachments uploaded before the stable path.
+      }
+    }
+    if (!file) return NextResponse.json({ error: "Attachment file is unavailable" }, { status: 404 });
     return new Response(file, {
       headers: {
         "Content-Type": attachment.attachment_mime || "application/octet-stream",
