@@ -2,18 +2,39 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { saveAs } from "file-saver";
-import { FaCheck, FaClock, FaDownload, FaExpand, FaComments, FaFile } from "react-icons/fa";
-import { useEffect ,useRef} from "react";
+import { FaArrowDown, FaCheck, FaClock, FaDownload, FaExpand, FaComments, FaFile } from "react-icons/fa";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function ChatMessages({ messages, adminTyping, themeName }) {
     const { t } = useTranslation("common");
     const messagesEndRef = useRef(null);
-   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+    const messagesListRef = useRef(null);
+    const wasNearBottomRef = useRef(true);
+    const [showScrollToLatest, setShowScrollToLatest] = useState(false);
+    const scrollToLatest = (behavior = "smooth") => {
+      const container = messagesListRef.current;
+      if (!container) return;
+      container.scrollTo({ top: container.scrollHeight, behavior });
+      wasNearBottomRef.current = true;
+      setShowScrollToLatest(false);
+    };
+    useEffect(() => {
+      const container = messagesListRef.current;
+      if (!container) return undefined;
+      const handleScroll = () => {
+        const nearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 72;
+        wasNearBottomRef.current = nearBottom;
+        setShowScrollToLatest(!nearBottom && container.scrollHeight > container.clientHeight);
+      };
+      handleScroll();
+      container.addEventListener("scroll", handleScroll, { passive: true });
+      return () => container.removeEventListener("scroll", handleScroll);
+    }, []);
+    useEffect(() => {
+      if (wasNearBottomRef.current) scrollToLatest();
+      else setShowScrollToLatest(true);
+    }, [messages]);
   const handleDownload = async (url, id) => {
     const response = await fetch(url);
     const blob = await response.blob();
@@ -36,10 +57,10 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
       );
     };
   };
-  const isImageMessage = (message) => message.message_type === "image" || (message.message_type === "chat" && typeof message.content === "string" && message.content.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i));
+  const isImageMessage = (message) => message.message_type === "image" || message.attachment_mime?.startsWith("image/") || (message.message_type === "chat" && typeof message.content === "string" && message.content.match(/\.(jpeg|jpg|gif|png|webp)(\?.*)?$/i));
 
   return (
-    <div className={`chat-messages-list ${themeName === "dark" ? "is-dark" : "is-light"}`}>
+    <div ref={messagesListRef} className={`chat-messages-list ${themeName === "dark" ? "is-dark" : "is-light"}`}>
       <AnimatePresence>
         {messages.length > 0 ? (
           messages.map((msg) => (
@@ -130,6 +151,7 @@ export default function ChatMessages({ messages, adminTyping, themeName }) {
 
       {adminTyping && <p className="chat-typing-indicator"><span /><span /><span /> {t("adminTyping")}</p>}
       <div ref={messagesEndRef} aria-hidden="true" />
+      {showScrollToLatest && <button type="button" className="chat-scroll-latest" onClick={() => scrollToLatest()} aria-label="Scroll to latest message" title="Scroll to latest message"><FaArrowDown /></button>}
     </div>
   );
 }

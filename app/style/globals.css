@@ -2050,6 +2050,10 @@ textarea:focus-visible {
 .chat-file-attachment span, .admin-chat-file span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chat-file-attachment svg:first-child, .admin-chat-file svg:first-child { color: var(--ui-gold, #c2a878); }
 .chat-file-attachment svg:last-child, .admin-chat-file svg:last-child { flex: 0 0 auto; opacity: .75; }
+.chat-scroll-latest { position: absolute; right: 1rem; bottom: 1rem; z-index: 5; display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border: 1px solid rgba(212, 181, 111, .55); border-radius: 50%; color: #173b45; background: #d4b56f; box-shadow: 0 8px 20px rgba(0, 0, 0, .28); cursor: pointer; transition: transform 180ms ease, box-shadow 180ms ease; }
+.chat-scroll-latest:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0, 0, 0, .35); }
+.admin-chat-message-list { position: relative; }
+.admin-scroll-latest { right: 1.35rem; bottom: 1.35rem; }
 .chat-trigger-unread { position: absolute; top: -0.35rem; right: -0.25rem; display: grid; min-width: 1.35rem; height: 1.35rem; padding: 0 .25rem; place-items: center; border: 2px solid var(--background); border-radius: 999px; color: #fff; background: #d94b4b; font-size: .62rem; font-weight: 900; line-height: 1; box-shadow: 0 5px 14px rgba(120, 24, 24, .32); animation: chat-unread-pulse 1.8s ease-in-out infinite; }
 @keyframes chat-unread-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
