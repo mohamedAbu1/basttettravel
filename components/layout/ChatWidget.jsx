@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { useMessages } from "@/context/MessageContext";
-import { FaComments } from "react-icons/fa";
+import { FaComments, FaTimes } from "react-icons/fa";
 import EgyptianBackground from "@/components/layout/EgyptianBackground";
 import { useAuth } from "@/context/AuthContext";
 import ChatHeader from "./components/ChatHeader";
@@ -18,6 +18,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
   const [text, setText] = useState("");
   const { userData } = useAuth(); // ✅ بيانات من AuthContext
   const [adminTyping, setAdminTyping] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
   const welcomeRequestedRef = useRef(null);
   const {
     open,
@@ -32,6 +33,21 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
   } = useChat();
   const { t } = useTranslation("home");
   const { t: commonT } = useTranslation("common");
+
+  useEffect(() => {
+    const storageKey = `basttet-chat-welcome-dismissed-${userData?.id || "guest"}`;
+    if (window.localStorage.getItem(storageKey) === "1") setShowWelcome(false);
+  }, [userData?.id]);
+
+  const dismissWelcome = () => {
+    setShowWelcome(false);
+    window.localStorage.setItem(`basttet-chat-welcome-dismissed-${userData?.id || "guest"}`, "1");
+  };
+
+  const toggleChat = () => {
+    if (!open) dismissWelcome();
+    setOpen(!open);
+  };
 
   // ✅ جلب رسائل المستخدم
   useEffect(() => {
@@ -122,9 +138,27 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
   return (
     <>
       {!isAdmin && (
+        <>
+        <AnimatePresence>
+          {!open && showWelcome && (
+            <motion.div
+              className="chat-welcome-popover"
+              initial={{ opacity: 0, y: 12, scale: .96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: .96 }}
+              transition={{ duration: .22 }}
+            >
+              <button type="button" className="chat-welcome-close" onClick={dismissWelcome} aria-label="Close welcome message"><FaTimes /></button>
+              <span className="chat-welcome-kicker">Basttet Travel · Support</span>
+              <strong>{commonT("chatWelcomeTitle", { defaultValue: "Welcome to our site" })}</strong>
+              <p>{commonT("chatWelcomeMessage", { defaultValue: "Need help? Simply reply to this message. We are online and ready to help." })}</p>
+              <button type="button" className="chat-welcome-action" onClick={toggleChat}>{commonT("startChat", { defaultValue: "Start a conversation" })} <FaComments /></button>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <motion.button
           style={{ cursor: "pointer" }}
-          onClick={() => setOpen(!open)}
+          onClick={toggleChat}
           aria-label={open ? "Close support chat" : "Open support chat"}
           title={open ? "Close support chat" : "Chat with Basttet Travel"}
           whileHover={{ scale: 1.1 }}
@@ -143,6 +177,7 @@ export default function ChatWidget({ setShowEmojiPicker, showEmojiPicker }) {
             </span>
           )}
         </motion.button>
+        </>
       )}
 
       <AnimatePresence>
