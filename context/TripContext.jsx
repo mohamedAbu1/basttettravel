@@ -130,6 +130,7 @@ export function TripProvider({ children }) {
     const requestKey = options.summary || "full";
     if (tripsRequestRef.current) return tripsRequestRef.current;
     if (
+      !options.force &&
       lastTripsFetchKeyRef.current === requestKey &&
       now - lastTripsFetchRef.current < 30000
     ) return null;

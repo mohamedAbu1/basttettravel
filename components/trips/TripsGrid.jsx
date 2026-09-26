@@ -122,6 +122,13 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
           currencyColor = theme.egpColor || "#b8860b";
         }
 
+        const galleryImages = (trip.gallery_images || [])
+          .map((image) => image?.url || image)
+          .filter(Boolean);
+        const tripImages = galleryImages.length
+          ? galleryImages
+          : [trip.cover_image].filter(Boolean);
+
         return (
           <motion.div
             key={trip.id || i}
@@ -134,33 +141,30 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
             }}
             className={`trip-list-card flex ${cardStyle === "vertical" ? "w-full flex-col" : "flex-row"} rounded-xl overflow-hidden`}
           >
-           
-
-          
-             {/* قسم الصور بسليدر */}
+            {/* قسم الصور بسليدر */}
             <div className={` ${cardStyle === "vertical" ? "w-full" : "lg:w-1/2"} w-full`}>
-              <Swiper
-                spaceBetween={10}
-                slidesPerView={1}
-                loop={(trip.images || []).filter(Boolean).length > 1}
-                autoplay={{ delay: 3000 }}
-                pagination={{ clickable: true }}
-                navigation
-                modules={[Autoplay, Pagination, Navigation]}
-                className="h-[300px] lg:h-[400px]"
-              >
-                {(trip.images || [trip.cover_image]).map((img, idx) => (
-                  <SwiperSlide key={idx}>
-                    <SafeTripImage
-                      src={img || "/default.jpg"}
-                      alt={trip.title?.[lang] || trip.title?.en || "Trip image"}
-                      width={1900}
-                      height={400}
-                      className="object-cover w-full h-full"
-                    />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={1}
+                  loop={tripImages.length > 1}
+                  autoplay={{ delay: 3000 }}
+                  pagination={{ clickable: true }}
+                  navigation
+                  modules={[Autoplay, Pagination, Navigation]}
+                  className="h-[300px] lg:h-[400px]"
+                >
+                  {tripImages.map((img, idx) => (
+                    <SwiperSlide key={idx}>
+                      <SafeTripImage
+                        src={img || "/default.jpg"}
+                        alt={trip.title?.[lang] || trip.title?.en || "Trip image"}
+                        width={1900}
+                        height={400}
+                        className="object-cover w-full h-full"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
             </div>
               {/* قسم المعلومات */}
             <div className={`${cardStyle === "vertical" ? "w-full" : "lg:w-1/2"} trip-list-copy w-full p-6 flex flex-col gap-4`}>

@@ -16,7 +16,12 @@ export async function POST(req) {
       return Response.json({ success: false, message: "Please check the submitted information." }, { status: 400 });
     }
 
-    if (!process.env.GMAIL_USER || !process.env.GMAIL_PASS) {
+    // Support both the current environment names and the legacy GMAIL_* names.
+    // This keeps the contact form compatible with the existing deployment config.
+    const mailUser = process.env.EMAIL_USER || process.env.GMAIL_USER;
+    const mailPass = process.env.EMAIL_PASS || process.env.GMAIL_PASS;
+
+    if (!mailUser || !mailPass) {
       return Response.json({ success: false, message: "Contact service is not configured." }, { status: 503 });
     }
 
@@ -25,14 +30,14 @@ export async function POST(req) {
       port: 465,
       secure: true,
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS,
+        user: mailUser,
+        pass: mailPass,
       },
     });
 
     await transporter.sendMail({
-      from: process.env.GMAIL_USER,
-      to: process.env.GMAIL_USER,
+      from: mailUser,
+      to: mailUser,
       replyTo: email,
       subject: `رسالة جديدة من ${name}`,
       text: `

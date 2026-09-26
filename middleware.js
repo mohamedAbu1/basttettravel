@@ -14,6 +14,7 @@ export function middleware(req) {
     url.pathname === "/robots.txt" ||
     url.pathname.startsWith("/api") ||
     url.pathname.startsWith("/assets") ||
+    url.pathname.startsWith("/iamges") ||
     url.pathname.startsWith("/HomePageImage") ||
     url.pathname.startsWith("/Aswan")||
     url.pathname.startsWith("/Fayoum")||

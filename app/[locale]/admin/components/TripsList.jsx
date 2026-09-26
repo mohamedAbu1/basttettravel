@@ -15,7 +15,7 @@ export default function TripsList() {
   const { t } = useTranslation("common");
 
   useEffect(() => {
-    fetchTrips();
+    fetchTrips({ force: true });
   }, []);
 
   const handleDelete = async (id) => {
