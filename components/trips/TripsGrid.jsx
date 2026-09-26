@@ -65,8 +65,8 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
   return (
     <div
       className={`flex-1 z-[0] ${
-        cardStyle === "vertical"
-          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          cardStyle === "vertical"
+          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start"
           : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6"
       } `}
     >
@@ -130,13 +130,13 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
             className={`trip-list-card flex ${cardStyle === "vertical" ? "w-full flex-col" : "flex-row"} rounded-xl overflow-hidden`}
           >
             {/* قائمة الرحلات تعرض صورة الغلاف فقط؛ السليدر موجود في صفحة التفاصيل */}
-            <div className={` ${cardStyle === "vertical" ? "w-full" : "lg:w-1/2"} w-full`}>
+            <div className={`trip-list-media ${cardStyle === "vertical" ? "trip-list-media-vertical w-full" : "trip-list-media-horizontal lg:w-1/2"} w-full`}>
               <SafeTripImage
                 src={trip.cover_image || "/default.jpg"}
                 alt={trip.title?.[lang] || trip.title?.en || "Trip cover image"}
                 width={1900}
                 height={400}
-                className="object-cover w-full h-full"
+                className="trip-list-image object-cover w-full h-full"
               />
             </div>
               {/* قسم المعلومات */}

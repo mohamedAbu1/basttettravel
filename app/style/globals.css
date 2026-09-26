@@ -3152,6 +3152,28 @@ textarea:focus-visible {
   min-height: 18rem;
 }
 
+/* Keep every trip cover consistent, regardless of the source image ratio. */
+.public-page .trip-list-media {
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+  background: var(--site-surface-strong);
+}
+
+.public-page .trip-list-media-vertical {
+  aspect-ratio: 4 / 5;
+}
+
+.public-page .trip-list-media-horizontal {
+  min-height: 18rem;
+}
+
+.public-page .trip-list-image {
+  display: block;
+  min-width: 100%;
+  min-height: 100%;
+}
+
 .public-page .trip-list-copy {
   background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.05));
 }
@@ -3513,6 +3535,10 @@ textarea:focus-visible {
 
   .public-page .trip-list-copy {
     padding: 1.25rem;
+  }
+
+  .public-page .trip-list-media-horizontal {
+    min-height: 14rem;
   }
 
   .public-page .contact-content {
