@@ -10,11 +10,6 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useCurrency } from "@/context/CurrencyContext"; // ✅ استدعاء الكونتكست
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 import { useSeasonalEvent } from "@/components/layout/SeasonalTheme";
 
 const TRIP_IMAGE_FALLBACK = "/HomePageImage/asdasdas.webp";
@@ -122,13 +117,6 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
           currencyColor = theme.egpColor || "#b8860b";
         }
 
-        const galleryImages = (trip.gallery_images || [])
-          .map((image) => image?.url || image)
-          .filter(Boolean);
-        const tripImages = galleryImages.length
-          ? galleryImages
-          : [trip.cover_image].filter(Boolean);
-
         return (
           <motion.div
             key={trip.id || i}
@@ -141,30 +129,15 @@ export default function TripsGrid({ trips, cardStyle = "vertical" }) {
             }}
             className={`trip-list-card flex ${cardStyle === "vertical" ? "w-full flex-col" : "flex-row"} rounded-xl overflow-hidden`}
           >
-            {/* قسم الصور بسليدر */}
+            {/* قائمة الرحلات تعرض صورة الغلاف فقط؛ السليدر موجود في صفحة التفاصيل */}
             <div className={` ${cardStyle === "vertical" ? "w-full" : "lg:w-1/2"} w-full`}>
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView={1}
-                  loop={tripImages.length > 1}
-                  autoplay={{ delay: 3000 }}
-                  pagination={{ clickable: true }}
-                  navigation
-                  modules={[Autoplay, Pagination, Navigation]}
-                  className="h-[300px] lg:h-[400px]"
-                >
-                  {tripImages.map((img, idx) => (
-                    <SwiperSlide key={idx}>
-                      <SafeTripImage
-                        src={img || "/default.jpg"}
-                        alt={trip.title?.[lang] || trip.title?.en || "Trip image"}
-                        width={1900}
-                        height={400}
-                        className="object-cover w-full h-full"
-                      />
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+              <SafeTripImage
+                src={trip.cover_image || "/default.jpg"}
+                alt={trip.title?.[lang] || trip.title?.en || "Trip cover image"}
+                width={1900}
+                height={400}
+                className="object-cover w-full h-full"
+              />
             </div>
               {/* قسم المعلومات */}
             <div className={`${cardStyle === "vertical" ? "w-full" : "lg:w-1/2"} trip-list-copy w-full p-6 flex flex-col gap-4`}>
