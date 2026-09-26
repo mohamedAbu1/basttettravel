@@ -29,7 +29,7 @@ export async function POST(req) {
         fs.writeFileSync(uploadPath, Buffer.from(await coverFile.arrayBuffer()));
       }
 
-      coverImageUrl = `https://basttettravel.com/${folder}/${originalName}`;
+      coverImageUrl = `/${folder}/${originalName}`;
     }
 
     return new Response(JSON.stringify({ success: true, cover_image: coverImageUrl }), { status: 201 });

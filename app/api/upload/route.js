@@ -30,7 +30,7 @@ export async function POST(req) {
   }
 
   // رابط دائم على موقعك
-  const publicUrl = `https://basttettravel.com/iamges/${fileName}`;
+  const publicUrl = `/iamges/${fileName}`;
 
   return NextResponse.json({ url: publicUrl });
 }
