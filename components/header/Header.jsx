@@ -19,6 +19,7 @@ export default function Header() {
   const { userData, logout } = useAuth();
   const { handleSignUpOpen } = useData();
   const { t } = useTranslation("home");
+  const { t: uiT } = useTranslation("ui");
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -33,7 +34,7 @@ export default function Header() {
       }`}
     >
       <a href="#main-content" className="skip-link">
-        Skip to main content
+        {uiT("skipToMain")}
       </a>
       <div className="site-header-inner max-w-8xl container mx-auto px-6 py-3 flex items-center justify-between">
         {/* شعار الموقع */}

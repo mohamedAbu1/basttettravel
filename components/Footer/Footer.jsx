@@ -18,6 +18,7 @@ const socialLinks = [
 export default function Footer() {
   const pathname = usePathname();
   const { t } = useTranslation("footer");
+  const { t: uiT } = useTranslation("ui");
   const locale = pathname.split("/").filter(Boolean)[0] || "en";
   const link = (path) => `/${locale}/${path}`;
 
@@ -27,7 +28,7 @@ export default function Footer() {
         <div className="site-footer-brand">
           <BrandLogo variant="horizontal" className="site-footer-logo" />
           <p>{t("p")}</p>
-          <div className="site-footer-socials" aria-label="Social media">
+          <div className="site-footer-socials" aria-label={uiT("socialMedia")}>
             {socialLinks.map(({ Icon, label, url, color }) => (
               <a key={label} href={url} aria-label={label} title={label} target="_blank" rel="noopener noreferrer" style={{ "--social-color": color }}>
                 <Icon aria-hidden="true" />
@@ -37,7 +38,7 @@ export default function Footer() {
         </div>
 
         <div className="site-footer-column">
-          <p className="site-footer-label">Explore</p>
+          <p className="site-footer-label">{uiT("explore")}</p>
           <Link href={`/${locale}`}>{t("Home")}</Link>
           <Link href={link("trips")}>{t("Tours")}</Link>
           <Link href={link("about")}>{t("AboutUs")}</Link>
@@ -45,7 +46,7 @@ export default function Footer() {
         </div>
 
         <div className="site-footer-column">
-          <p className="site-footer-label">Support</p>
+          <p className="site-footer-label">{uiT("support")}</p>
           <Link href={link("privacyPolicy")}>{t("privacyPolicy")}</Link>
           <Link href={link("cancellationPolicy")}>{t("cancellationPolicy", { defaultValue: "Cancellation Policy" })}</Link>
           <a href="tel:+201100507802">+20 110 050 7802</a>
@@ -53,10 +54,10 @@ export default function Footer() {
         </div>
 
         <div className="site-footer-cta">
-          <span className="site-footer-kicker">Plan with confidence</span>
-          <h2>Egypt is waiting.</h2>
-          <p>Tell us what you want to feel, and we will help shape the journey.</p>
-          <Link href={link("contact")} className="site-footer-cta-link">Talk to our team <span aria-hidden="true">↗</span></Link>
+          <span className="site-footer-kicker">{uiT("planWithConfidence")}</span>
+          <h2>{uiT("egyptIsWaiting")}</h2>
+          <p>{uiT("footerCta")}</p>
+          <Link href={link("contact")} className="site-footer-cta-link">{uiT("talkToOurTeam")} <span aria-hidden="true">↗</span></Link>
         </div>
       </div>
       <div className="site-footer-bottom">

@@ -15,6 +15,13 @@ import frCommon from "./locales/fr/common.json";
 import deCommon from "./locales/de/common.json";
 import itCommon from "./locales/it/common.json";
 import zhCommon from "./locales/zh/common.json";
+import enUi from "./locales/en/ui.json";
+import esUi from "./locales/es/ui.json";
+import frUi from "./locales/fr/ui.json";
+import deUi from "./locales/de/ui.json";
+import itUi from "./locales/it/ui.json";
+import zhUi from "./locales/zh/ui.json";
+import uiExtra from "./locales/ui-extra";
 
 const resources = {
   en,
@@ -28,12 +35,25 @@ const resources = {
 };
 
 resources.en.common = enCommon;
+resources.en.ui = enUi;
+Object.assign(resources.en.ui, uiExtra.en);
 resources.es.common = esCommon;
+resources.es.ui = esUi;
+Object.assign(resources.es.ui, uiExtra.es);
 resources.fr.common = frCommon;
+resources.fr.ui = frUi;
+Object.assign(resources.fr.ui, uiExtra.fr);
 resources.de.common = deCommon;
+resources.de.ui = deUi;
+Object.assign(resources.de.ui, uiExtra.de);
 resources.it.common = itCommon;
+resources.it.ui = itUi;
+Object.assign(resources.it.ui, uiExtra.it);
 resources.zh.common = zhCommon;
+resources.zh.ui = zhUi;
+Object.assign(resources.zh.ui, uiExtra.zh);
 resources["zh-CN"].common = zhCommon;
+resources["zh-CN"].ui = zhUi;
 
 i18n
   .use(LanguageDetector) // يكتشف لغة المتصفح
@@ -51,6 +71,7 @@ i18n
       "privacyPolicy",
       "cancellationPolicy",
       "common",
+      "ui",
     ],
     defaultNS: "home",
     fallbackLng: "en", // اللغة الافتراضية لو اللغة غير موجودة

@@ -34,6 +34,7 @@ const TopTripsSection = () => {
   const { theme } = useTheme();
   const { t, i18n } = useTranslation("home");
   const { t: commonT } = useTranslation("common");
+  const { t: uiT } = useTranslation("ui");
   const router = useRouter();
   const pathname = usePathname();
   const locale = pathname.split("/").filter(Boolean)[0] || "en";
@@ -88,7 +89,7 @@ const TopTripsSection = () => {
       <button type="button" className="top-trip-image-wrap" onClick={() => openTrip(trip)} aria-label={title}>
         <SafeTripImage src={trip.cover_image} alt={title} fill sizes={featured ? "(max-width: 900px) 100vw, 58vw" : "(max-width: 900px) 82vw, 24vw"} className="top-trip-image" />
         <span className="top-trip-image-shade" /><span className="top-trip-index">{String(index + 1).padStart(2, "0")}</span>
-        {featured && <span className="top-trip-featured-label"><FaStar /> Editor&apos;s pick</span>}<span className="top-trip-arrow"><FaArrowRight /></span>
+        {featured && <span className="top-trip-featured-label"><FaStar /> {uiT("editorsPick")}</span>}<span className="top-trip-arrow"><FaArrowRight /></span>
       </button>
       <div className="top-trip-info">
         <div className="top-trip-meta"><span><FaMapMarkerAlt /> {location}</span><span><FaClock /> {trip.duration || 1} {trip.duration_unit || "days"}</span></div>
@@ -101,7 +102,7 @@ const TopTripsSection = () => {
 
   return <section id="top-trips" className="top-trips-section" style={{ "--top-trips-accent": theme.logoBorder }}>
     <div className="top-trips-shell">
-      <header className="top-trips-heading"><div><span className="top-trips-eyebrow">Basttet Travel · Curated journeys</span><h2>{t("TopTrips")}</h2><p>Handpicked experiences across Egypt, designed for travelers who want more from every mile.</p></div><button type="button" className="top-trips-view-all" onClick={() => router.push(`/${locale}/trips`)}>Explore all trips <FaArrowRight /></button></header>
+      <header className="top-trips-heading"><div><span className="top-trips-eyebrow">{uiT("curatedJourneys")}</span><h2>{t("TopTrips")}</h2><p>{uiT("handpickedExperiences")}</p></div><button type="button" className="top-trips-view-all" onClick={() => router.push(`/${locale}/trips`)}>{uiT("exploreAllTrips")} <FaArrowRight /></button></header>
       <div className="top-trips-grid">{topTrips.map((trip, index) => <TripTile key={trip.id} trip={trip} index={index} featured={index === 0} />)}</div>
     </div>
   </section>;

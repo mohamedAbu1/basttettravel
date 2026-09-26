@@ -17,6 +17,7 @@ const images = [
 
 export default function OurSection() {
   const { t } = useTranslation("home");
+  const { t: uiT } = useTranslation("ui");
   const pathname = usePathname();
   const locale = pathname.split("/").filter(Boolean)[0] || "en";
 
@@ -44,10 +45,10 @@ export default function OurSection() {
           <p className="our-story-lead">
             {t("At")} <strong>Basttet Travel</strong>{t("AtP")} <strong>{t("professionalguides")}</strong> {t("AtPP")}
           </p>
-          <div className="our-story-points" aria-label="Basttet Travel values">
-            <span><b>01</b> Local knowledge</span>
-            <span><b>02</b> Thoughtful planning</span>
-            <span><b>03</b> Human support</span>
+          <div className="our-story-points" aria-label={uiT("humanSupport")}>
+            <span><b>01</b> {uiT("localKnowledge")}</span>
+            <span><b>02</b> {uiT("thoughtfulPlanning")}</span>
+            <span><b>03</b> {uiT("humanSupport")}</span>
           </div>
           <Link className="our-story-action" href={`/${locale}/about`}>
             {t("LearnMoreAboutUs")} <span aria-hidden="true">↗</span>

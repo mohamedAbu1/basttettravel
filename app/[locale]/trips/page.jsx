@@ -49,6 +49,7 @@ export default function TripsPage() {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const { messages  } = useMessages();
   const { t: commonT } = useTranslation("common");
+  const { t: uiT } = useTranslation("ui");
 
   const { city, category, group_price, popular } = useQueryFilters();
 
@@ -73,7 +74,7 @@ export default function TripsPage() {
         <div className="trips-loading-card">
           <span className="trips-loading-mark" aria-hidden="true">𓂀</span>
           <h1>{commonT("loadingTrips")}</h1>
-          <p>Preparing curated journeys for you…</p>
+          <p>{uiT("preparingJourneys")}</p>
           <span className="trips-loading-bar" aria-hidden="true" />
         </div>
       </main>
@@ -201,7 +202,7 @@ export default function TripsPage() {
 
             <div className="flex-1 flex flex-col gap-6">
               <details className="lg:hidden card-theme trips-mobile-filter rounded-xl p-4">
-                <summary className="cursor-pointer font-semibold">Filters</summary>
+                <summary className="cursor-pointer font-semibold">{uiT("filters")}</summary>
                 <div className="pt-4">
                   <TripsFilter allCities={allCities} allCategories={allCategories} loading={loading} />
                 </div>
@@ -216,15 +217,15 @@ export default function TripsPage() {
 
               {!currentTrips.length && (
                 <div className="card-theme rounded-xl p-10 text-center" role="status">
-                  <h2 className="text-xl font-semibold">No trips found</h2>
-                  <p className="mt-2 opacity-75">Try changing your search or filters.</p>
+                  <h2 className="text-xl font-semibold">{uiT("noTripsFound")}</h2>
+                  <p className="mt-2 opacity-75">{uiT("changeSearchFilters")}</p>
                 </div>
               )}
 
               {totalPages > 1 && (
-                <nav className="trips-pagination mt-4" aria-label="Trip pages">
+                <nav className="trips-pagination mt-4" aria-label={uiT("tripPages")}>
                   <button type="button" disabled={currentPage === 1} onClick={() => { setCurrentPage((page) => Math.max(1, page - 1)); window.scrollTo({ top: 30, behavior: "smooth" }); }}>
-                    Previous
+                    {uiT("previous")}
                   </button>
                   {Array.from({ length: totalPages }, (_, i) => (
                     <button
@@ -245,7 +246,7 @@ export default function TripsPage() {
                     </button>
                   ))}
                   <button type="button" disabled={currentPage === totalPages} onClick={() => { setCurrentPage((page) => Math.min(totalPages, page + 1)); window.scrollTo({ top: 30, behavior: "smooth" }); }}>
-                    Next
+                    {uiT("next")}
                   </button>
                 </nav>
               )}

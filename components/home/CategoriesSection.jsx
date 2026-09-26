@@ -30,6 +30,7 @@ export default function CategoriesSection() {
   const { theme } = useTheme();
   const { t, i18n } = useTranslation("home");
   const { t: commonT } = useTranslation("common");
+  const { t: uiT } = useTranslation("ui");
   const router = useRouter();
   const pathname = usePathname();
   const language = i18n.language.split("-")[0];
@@ -43,12 +44,12 @@ export default function CategoriesSection() {
 
   if (loading) return <section className="curated-collection-section curated-section-loading"><div className="curated-collection-shell"><div className="curated-loading-line" /><div className="curated-loading-grid"><span /><span /><span /></div></div></section>;
   if (error) return <section className="curated-collection-section"><div className="curated-empty-state"><FaCompass /><strong>{commonT("collectionLoadError", { defaultValue: "We couldn't load experiences right now." })}</strong><span>{commonT("tryAgain", { defaultValue: "Please try again in a moment." })}</span><button type="button" onClick={retry}>{commonT("retry", { defaultValue: "Try again" })}</button></div></section>;
-  if (!categories.length) return <section className="curated-collection-section"><div className="curated-empty-state"><FaCompass /><strong>No categories are available right now.</strong><span>{commonT("checkBackSoon", { defaultValue: "Please check back soon for new experiences." })}</span></div></section>;
+  if (!categories.length) return <section className="curated-collection-section"><div className="curated-empty-state"><FaCompass /><strong>{uiT("noCategories")}</strong><span>{commonT("checkBackSoon", { defaultValue: "Please check back soon for new experiences." })}</span></div></section>;
 
   return <section className="curated-collection-section categories-showcase" style={{ "--collection-accent": theme.logoBorder }}>
     <div className="curated-collection-shell">
-      <header className="curated-collection-header"><div><span className="curated-eyebrow">Basttet Travel · Find your pace</span><h2>{t("ExploreCategories")}</h2><p>{t("Discover")}</p></div><span className="curated-count"><strong>{String(categories.length).padStart(2, "0")}</strong><small>Ways to travel</small></span></header>
-      <div className="curated-collection-grid">{categories.map((category, index) => { const name = getName(category.name, language, "Travel experience"); const image = category.images?.[0] || FALLBACK_IMAGE; return <motion.button type="button" key={category.id || name} className={`curated-collection-card ${index === 0 ? "is-featured" : ""}`} onClick={() => openCategory(category)} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .45, delay: index * .05 }}><SafeImage src={image} alt={name} /><span className="curated-card-overlay" /><span className="curated-card-number">{String(index + 1).padStart(2, "0")}</span><span className="curated-card-content"><small>{t("Explore")}</small><strong>{name}</strong><span className="curated-card-link">Discover collection <FaArrowRight /></span></span></motion.button>; })}</div>
+      <header className="curated-collection-header"><div><span className="curated-eyebrow">{uiT("findYourPace")}</span><h2>{t("ExploreCategories")}</h2><p>{t("Discover")}</p></div><span className="curated-count"><strong>{String(categories.length).padStart(2, "0")}</strong><small>{uiT("waysToTravel")}</small></span></header>
+      <div className="curated-collection-grid">{categories.map((category, index) => { const name = getName(category.name, language, "Travel experience"); const image = category.images?.[0] || FALLBACK_IMAGE; return <motion.button type="button" key={category.id || name} className={`curated-collection-card ${index === 0 ? "is-featured" : ""}`} onClick={() => openCategory(category)} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .45, delay: index * .05 }}><SafeImage src={image} alt={name} /><span className="curated-card-overlay" /><span className="curated-card-number">{String(index + 1).padStart(2, "0")}</span><span className="curated-card-content"><small>{t("Explore")}</small><strong>{name}</strong><span className="curated-card-link">{uiT("discoverCollection")} <FaArrowRight /></span></span></motion.button>; })}</div>
     </div>
   </section>;
 }
